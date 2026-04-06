@@ -4,17 +4,33 @@ import Footer from './components/Footer';
 import CookieConsent from './components/CookieConsent';
 import HomePage from './pages/HomePage';
 import ImpactPage from './pages/ImpactPage';
+import AdminLayout from './layouts/AdminLayout';
+import AdminDashboard from './pages/AdminDashboard';
+
+function PublicLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <Header />
+      {children}
+      <Footer />
+      <CookieConsent />
+    </>
+  );
+}
 
 function App() {
   return (
     <BrowserRouter>
-      <Header />
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/impact" element={<ImpactPage />} />
+        {/* Public pages */}
+        <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
+        <Route path="/impact" element={<PublicLayout><ImpactPage /></PublicLayout>} />
+
+        {/* Admin portal */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+        </Route>
       </Routes>
-      <Footer />
-      <CookieConsent />
     </BrowserRouter>
   );
 }
