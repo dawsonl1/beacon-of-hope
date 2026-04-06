@@ -9,10 +9,15 @@ backend/obj/
 frontend/node_modules/
 frontend/dist/
 
-# Environment (committed: .env.development, .env.production)
+# Environment
 .env
 .env.local
 .env.*.local
+backend/appsettings.Development.json
+
+# Supabase local
+supabase/.branches/
+supabase/.temp/
 
 # OS
 .DS_Store

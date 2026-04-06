@@ -16,13 +16,20 @@ A web application for a nonprofit organization supporting survivors of abuse and
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
 - [Node.js 20+](https://nodejs.org/)
-- A [Supabase](https://supabase.com/) project (free tier works)
+- [Supabase CLI](https://supabase.com/docs/guides/cli)
+- [Docker](https://www.docker.com/) (required by Supabase CLI)
+
+### First-time setup
+
+```bash
+supabase start          # Start local Supabase (requires Docker)
+./scripts/setup-env.sh  # Generate .env files from your local Supabase
+```
 
 ### Backend
 
 ```bash
 cd backend
-cp .env.example .env        # Fill in your Supabase connection string
 dotnet restore
 dotnet run
 ```
