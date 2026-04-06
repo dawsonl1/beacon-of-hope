@@ -1,6 +1,6 @@
-# Intex 2
+# Beacon of Hope
 
-A web application for a nonprofit organization supporting survivors of abuse and trafficking. Built for BYU IS 401/413/414/455 INTEX.
+A web application for **Beacon of Hope**, a nonprofit organization supporting survivors of abuse and trafficking. Built for BYU IS 401/413/414/455 INTEX.
 
 ## Tech Stack
 
