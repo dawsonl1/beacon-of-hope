@@ -9,9 +9,10 @@ backend/obj/
 frontend/node_modules/
 frontend/dist/
 
-# Environment
+# Environment (committed: .env.development, .env.production)
 .env
-*.env.local
+.env.local
+.env.*.local
 
 # OS
 .DS_Store
