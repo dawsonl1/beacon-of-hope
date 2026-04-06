@@ -30,7 +30,7 @@ export default function Header() {
         </nav>
 
         <div className={styles.actions}>
-          <Link to="/login" className={styles.loginBtn}>
+          <Link to="/admin" className={styles.loginBtn}>
             <User size={16} />
             <span>Login</span>
           </Link>
