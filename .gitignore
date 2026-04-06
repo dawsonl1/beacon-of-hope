@@ -1,0 +1,17 @@
+# .NET
+backend/bin/
+backend/obj/
+*.user
+*.suo
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Environment
+.env
+*.env.local
+
+# OS
+.DS_Store
+Thumbs.db
