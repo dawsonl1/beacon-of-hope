@@ -52,11 +52,32 @@ app.MapGet("/api/health", async (AppDbContext db) =>
 {
     var canConnect = false;
     try { canConnect = await db.Database.CanConnectAsync(); } catch { }
+    var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+    var buildDate = System.IO.File.GetLastWriteTimeUtc(assembly.Location).ToString("yyyy-MM-dd HH:mm:ss UTC");
+
     return new
     {
         status = canConnect ? "ok" : "degraded",
         database = canConnect ? "connected" : "unreachable",
-        environment = app.Environment.EnvironmentName
+        environment = app.Environment.EnvironmentName,
+        version = assembly.GetName().Version?.ToString() ?? "unknown",
+        buildDate,
+        endpoints = new[] {
+            "/api/health",
+            "/api/impact/summary",
+            "/api/impact/donations-by-month",
+            "/api/impact/allocations-by-program",
+            "/api/impact/education-trends",
+            "/api/impact/health-trends",
+            "/api/impact/safehouses",
+            "/api/impact/snapshots",
+            "/api/admin/metrics",
+            "/api/admin/residents",
+            "/api/admin/recent-donations",
+            "/api/admin/donations-by-channel",
+            "/api/admin/active-residents-trend",
+            "/api/admin/flagged-cases-trend"
+        }
     };
 });
 
