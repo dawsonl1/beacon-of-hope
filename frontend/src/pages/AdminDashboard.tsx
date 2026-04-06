@@ -1,4 +1,8 @@
+import { useEffect, useState } from 'react';
 import { ArrowUpRight, AlertTriangle, Calendar, UserPlus, DollarSign, FileText } from 'lucide-react';
+import { apiFetch } from '../api';
+import { formatMonthLabel } from '../constants';
+import { ChartTooltip } from '../components/ChartTooltip';
 import {
   AreaChart,
   Area,
@@ -13,9 +17,9 @@ import {
 } from 'recharts';
 import styles from './AdminDashboard.module.css';
 
-/* ── Static data (replaced by API later) ───────────────── */
+/* ── Fallback static data ──────────────────────────────── */
 
-const activeResidentsOverTime = [
+const fallbackResidentsOverTime = [
   { month: 'Jul 24', count: 47 },
   { month: 'Aug', count: 45 },
   { month: 'Sep', count: 50 },
@@ -27,7 +31,7 @@ const activeResidentsOverTime = [
   { month: 'Mar', count: 55 },
 ];
 
-const flaggedCasesOverTime = [
+const fallbackFlaggedCases = [
   { month: 'Jul 24', count: 6 },
   { month: 'Aug', count: 4 },
   { month: 'Sep', count: 5 },
@@ -39,7 +43,7 @@ const flaggedCasesOverTime = [
   { month: 'Mar', count: 7 },
 ];
 
-const donationsByChannel = [
+const fallbackChannels = [
   { channel: 'Social', amount: 48200 },
   { channel: 'Church', amount: 62100 },
   { channel: 'Event', amount: 31400 },
@@ -95,28 +99,105 @@ const severityConfig: Record<Severity, { color: string; bg: string; border: stri
   Critical: { color: '#A5524D', bg: '#C4756E18', border: '#C4756E40' },
 };
 
-/* ── Tooltips ──────────────────────────────────────────── */
+/* ── Dashboard ─────────────────────────────────────────── */
 
-function ChartTooltip({ active, payload, label, prefix = '' }: {
-  active?: boolean;
-  payload?: Array<{ value: number }>;
-  label?: string;
-  prefix?: string;
-}) {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className={styles.tooltip}>
-      <p className={styles.tooltipLabel}>{label}</p>
-      <p className={styles.tooltipValue}>{prefix}{payload[0].value.toLocaleString()}</p>
-    </div>
-  );
+interface Metrics {
+  activeResidents: number;
+  openIncidents: number;
+  criticalIncidents: number;
+  highIncidents: number;
+  monthlyDonations: number;
+  monthlyDonationCount: number;
+  donationChange: number;
+  upcomingConferences: number;
+  nextConference: string | null;
 }
 
-/* ── Dashboard ─────────────────────────────────────────── */
+interface ApiResident {
+  internalCode: string;
+  safehouse: string;
+  caseCategory: string;
+  currentRiskLevel: string;
+  dateOfAdmission: string;
+  assignedSocialWorker: string;
+  lastSession: string | null;
+}
+
+interface ApiDonation {
+  supporter: string;
+  donationType: string;
+  amount: number | null;
+  estimatedValue: number | null;
+  donationDate: string;
+  campaignName: string | null;
+}
 
 export default function AdminDashboard() {
   const today = new Date();
   const dateStr = today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+  const [metrics, setMetrics] = useState<Metrics | null>(null);
+  const [residents, setResidents] = useState<ResidentRow[]>(residentsTable);
+  const [donations, setDonations] = useState<RecentDonation[]>(recentDonations);
+  const [activeResidentsChart, setActiveResidentsChart] = useState(fallbackResidentsOverTime);
+  const [flaggedChart, setFlaggedChart] = useState(fallbackFlaggedCases);
+  const [channels, setChannels] = useState(fallbackChannels);
+
+  useEffect(() => {
+    apiFetch<Metrics>('/api/admin/metrics').then(setMetrics).catch(e => console.error('API fetch failed', e));
+
+    apiFetch<ApiResident[]>('/api/admin/residents').then(data => {
+      const mapped: ResidentRow[] = data.map(r => {
+        let lastSessionStr = 'Unknown';
+        if (r.lastSession) {
+          const days = Math.floor((Date.now() - new Date(r.lastSession).getTime()) / 86400000);
+          lastSessionStr = days === 0 ? 'Today' : days === 1 ? '1 day ago' : `${days} days ago`;
+        }
+        return {
+          code: r.internalCode,
+          safehouse: r.safehouse ?? '',
+          category: r.caseCategory ?? '',
+          riskLevel: (r.currentRiskLevel ?? 'Low') as Severity,
+          admittedDate: r.dateOfAdmission?.slice(0, 10) ?? '',
+          socialWorker: r.assignedSocialWorker ?? '',
+          lastSession: lastSessionStr,
+        };
+      });
+      if (mapped.length > 0) setResidents(mapped);
+    }).catch(e => console.error('API fetch failed', e));
+
+    apiFetch<ApiDonation[]>('/api/admin/recent-donations').then(data => {
+      const mapped: RecentDonation[] = data.map(d => ({
+        supporter: d.supporter ?? 'Anonymous',
+        type: d.donationType ?? '',
+        amount: d.amount ? `₱${Number(d.amount).toLocaleString()}` : d.estimatedValue ? `₱${Number(d.estimatedValue).toLocaleString()} est.` : '—',
+        date: d.donationDate ? new Date(d.donationDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '',
+        campaign: d.campaignName ?? '—',
+      }));
+      if (mapped.length > 0) setDonations(mapped);
+    }).catch(e => console.error('API fetch failed', e));
+
+    apiFetch<Array<{ year: number; month: number; count: number }>>('/api/admin/active-residents-trend').then(data => {
+      const mapped = data.map(d => ({ month: formatMonthLabel(d.year, d.month), count: d.count }));
+      if (mapped.length > 0) setActiveResidentsChart(mapped);
+    }).catch(e => console.error('API fetch failed', e));
+
+    apiFetch<Array<{ year: number; month: number; count: number }>>('/api/admin/flagged-cases-trend').then(data => {
+      const mapped = data.map(d => ({ month: formatMonthLabel(d.year, d.month), count: d.count }));
+      if (mapped.length > 0) setFlaggedChart(mapped);
+    }).catch(e => console.error('API fetch failed', e));
+
+    apiFetch<Array<{ channel: string; count: number }>>('/api/admin/donations-by-channel').then(data => {
+      const mapped = data.map(d => ({ channel: d.channel, amount: d.count }));
+      if (mapped.length > 0) setChannels(mapped);
+    }).catch(e => console.error('API fetch failed', e));
+  }, []);
+
+  const m = metrics ?? {
+    activeResidents: 55, openIncidents: 7, criticalIncidents: 2, highIncidents: 2,
+    monthlyDonations: 182400, monthlyDonationCount: 42, donationChange: 18,
+    upcomingConferences: 5, nextConference: null,
+  };
 
   return (
     <div className={styles.page}>
@@ -150,34 +231,39 @@ export default function AdminDashboard() {
         <div className={styles.metricCard}>
           <span className={styles.metricLabel}>Active Residents</span>
           <div className={styles.metricRow}>
-            <span className={styles.metricNumber}>55</span>
-            <span className={styles.metricUp}><ArrowUpRight size={14} />+5.7%</span>
+            <span className={styles.metricNumber}>{m.activeResidents}</span>
           </div>
-          <span className={styles.metricSub}>across 9 safehouses</span>
+          <span className={styles.metricSub}>across all safehouses</span>
         </div>
         <div className={styles.metricCard}>
           <span className={styles.metricLabel}>Open Incidents</span>
           <div className={styles.metricRow}>
-            <span className={styles.metricNumber}>7</span>
-            <span className={styles.metricDanger}><AlertTriangle size={14} />2 critical</span>
+            <span className={styles.metricNumber}>{m.openIncidents}</span>
+            {m.criticalIncidents > 0 && (
+              <span className={styles.metricDanger}><AlertTriangle size={14} />{m.criticalIncidents} critical</span>
+            )}
           </div>
-          <span className={styles.metricSub}>3 unresolved &gt; 7 days</span>
+          <span className={styles.metricSub}>{m.highIncidents} high severity</span>
         </div>
         <div className={styles.metricCard}>
           <span className={styles.metricLabel}>Monthly Donations</span>
           <div className={styles.metricRow}>
-            <span className={styles.metricNumber}>₱182.4k</span>
-            <span className={styles.metricUp}><ArrowUpRight size={14} />+18%</span>
+            <span className={styles.metricNumber}>₱{(Number(m.monthlyDonations) / 1000).toFixed(1)}k</span>
+            {m.donationChange !== 0 && (
+              <span className={styles.metricUp}><ArrowUpRight size={14} />{m.donationChange > 0 ? '+' : ''}{m.donationChange}%</span>
+            )}
           </div>
-          <span className={styles.metricSub}>42 donations this month</span>
+          <span className={styles.metricSub}>{m.monthlyDonationCount} donations this month</span>
         </div>
         <div className={styles.metricCard}>
           <span className={styles.metricLabel}>Case Conferences</span>
           <div className={styles.metricRow}>
-            <span className={styles.metricNumber}>5</span>
-            <span className={styles.metricDate}><Calendar size={14} />Next: Dec 11</span>
+            <span className={styles.metricNumber}>{m.upcomingConferences}</span>
+            {m.nextConference && (
+              <span className={styles.metricDate}><Calendar size={14} />Next: {new Date(m.nextConference).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+            )}
           </div>
-          <span className={styles.metricSub}>2 this week, 3 next week</span>
+          <span className={styles.metricSub}>upcoming</span>
         </div>
       </section>
 
@@ -208,7 +294,7 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {residentsTable.map((r) => (
+                {residents.map((r) => (
                   <tr key={r.code} className={r.riskLevel === 'Critical' ? styles.rowCritical : ''}>
                     <td>
                       <span className={styles.residentCode}>{r.code}</span>
@@ -247,7 +333,7 @@ export default function AdminDashboard() {
               <button className={styles.viewAllBtn}>View all</button>
             </div>
             <div className={styles.donationsList}>
-              {recentDonations.map((d, i) => (
+              {donations.map((d, i) => (
                 <div key={i} className={styles.donationRow}>
                   <div className={styles.donationInfo}>
                     <span className={styles.donationName}>{d.supporter}</span>
@@ -268,12 +354,12 @@ export default function AdminDashboard() {
               <span className={styles.cardSubtitle}>Acquisition source</span>
             </div>
             <ResponsiveContainer width="100%" height={160}>
-              <BarChart data={donationsByChannel} layout="vertical" barCategoryGap="25%">
+              <BarChart data={channels} layout="vertical" barCategoryGap="25%">
                 <XAxis type="number" hide />
                 <YAxis dataKey="channel" type="category" tick={{ fontSize: 12, fill: '#8A8078' }} axisLine={false} tickLine={false} width={55} />
                 <Tooltip content={<ChartTooltip prefix="₱" />} cursor={{ fill: 'rgba(212, 168, 83, 0.06)' }} />
                 <Bar dataKey="amount" radius={[0, 4, 4, 0]}>
-                  {donationsByChannel.map((_, i) => (
+                  {channels.map((_, i) => (
                     <Cell key={i} fill={channelColors[i]} />
                   ))}
                 </Bar>
@@ -291,7 +377,7 @@ export default function AdminDashboard() {
             <span className={styles.chartCallout}>+3 admitted this month</span>
           </div>
           <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={activeResidentsOverTime}>
+            <AreaChart data={activeResidentsChart}>
               <defs>
                 <linearGradient id="gradActive" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#1B2838" stopOpacity={0.12} />
@@ -313,7 +399,7 @@ export default function AdminDashboard() {
             <span className={styles.chartCalloutDanger}>7 currently flagged</span>
           </div>
           <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={flaggedCasesOverTime}>
+            <AreaChart data={flaggedChart}>
               <defs>
                 <linearGradient id="gradFlagged" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#C4756E" stopOpacity={0.12} />

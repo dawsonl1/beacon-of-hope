@@ -1,5 +1,10 @@
+import { useEffect, useState } from 'react';
 import { useReveal } from '../hooks/useReveal';
 import { Heart, ArrowUpRight } from 'lucide-react';
+import { apiFetch } from '../api';
+import type { ImpactSummary } from '../types';
+import { formatMonthLabel } from '../constants';
+import { ChartTooltip } from '../components/ChartTooltip';
 import {
   BarChart,
   Bar,
@@ -12,9 +17,9 @@ import {
 } from 'recharts';
 import styles from './ImpactPage.module.css';
 
-/* ── Static data (will be replaced with API calls) ─────── */
+/* ── Fallback static data ──────────────────────────────── */
 
-const monthlyDonations = [
+const fallbackDonations = [
   { month: 'Jan 23', total: 1380 },
   { month: 'Apr 23', total: 5401 },
   { month: 'Jul 23', total: 8230 },
@@ -27,7 +32,7 @@ const monthlyDonations = [
   { month: 'Apr 25', total: 12400 },
 ];
 
-const allocationData = [
+const fallbackAllocations = [
   { area: 'Education', amount: 42800 },
   { area: 'Health', amount: 31200 },
   { area: 'Nutrition', amount: 18600 },
@@ -37,6 +42,7 @@ const allocationData = [
   { area: 'Supplies', amount: 8900 },
   { area: 'Other', amount: 5200 },
 ];
+
 
 const CHART_COLORS = {
   primary: '#B8913A',
@@ -51,25 +57,6 @@ const allocationColors = [
   '#5A6B7A', '#E8C97A', '#2A3A4E', '#D4CFC8',
 ];
 
-/* ── Custom Tooltip ────────────────────────────────────── */
-
-function CustomTooltip({ active, payload, label, prefix = '₱' }: {
-  active?: boolean;
-  payload?: Array<{ value: number }>;
-  label?: string;
-  prefix?: string;
-}) {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className={styles.tooltip}>
-      <p className={styles.tooltipLabel}>{label}</p>
-      <p className={styles.tooltipValue}>
-        {prefix}{payload[0].value.toLocaleString()}
-      </p>
-    </div>
-  );
-}
-
 /* ── Impact Page ───────────────────────────────────────── */
 
 export default function ImpactPage() {
@@ -79,6 +66,40 @@ export default function ImpactPage() {
   const allocationRef = useReveal();
   const storiesRef = useReveal();
   const ctaRef = useReveal();
+
+  const [summary, setSummary] = useState<ImpactSummary | null>(null);
+  const [monthlyDonations, setMonthlyDonations] = useState(fallbackDonations);
+  const [allocationData, setAllocationData] = useState(fallbackAllocations);
+
+  useEffect(() => {
+    apiFetch<ImpactSummary>('/api/impact/summary').then(setSummary).catch(e => console.error('API fetch failed', e));
+
+    apiFetch<Array<{ year: number; month: number; total: number }>>('/api/impact/donations-by-month')
+      .then(data => {
+        const formatted = data.map(d => ({
+          month: formatMonthLabel(d.year, d.month),
+          total: Math.round(Number(d.total)),
+        }));
+        if (formatted.length > 0) setMonthlyDonations(formatted);
+      })
+      .catch(e => console.error('API fetch failed', e));
+
+    apiFetch<Array<{ area: string; amount: number }>>('/api/impact/allocations-by-program')
+      .then(data => {
+        const formatted = data.map(d => ({ area: d.area, amount: Math.round(Number(d.amount)) }));
+        if (formatted.length > 0) setAllocationData(formatted);
+      })
+      .catch(e => console.error('API fetch failed', e));
+  }, []);
+
+  const stats = {
+    totalResidents: summary?.totalResidents ?? 247,
+    reintegrationRate: summary?.reintegrationRate ?? 68,
+    totalDonations: summary ? `₱${(Number(summary.totalDonations) / 1000000).toFixed(1)}M` : '₱4.2M',
+    activeSafehouses: summary?.activeSafehouses ?? 9,
+  };
+
+  const latestDonation = monthlyDonations[monthlyDonations.length - 1];
 
   return (
     <main className={styles.page}>
@@ -91,19 +112,19 @@ export default function ImpactPage() {
           </div>
           <div className={`${styles.statsGrid} reveal-stagger`}>
             <div className={`${styles.statItem} reveal`}>
-              <span className={styles.statNumber}>247</span>
+              <span className={styles.statNumber}>{stats.totalResidents}</span>
               <span className={styles.statDesc}>Girls served</span>
             </div>
             <div className={`${styles.statItem} reveal`}>
-              <span className={styles.statNumber}>68%</span>
+              <span className={styles.statNumber}>{stats.reintegrationRate}%</span>
               <span className={styles.statDesc}>Successfully reintegrated</span>
             </div>
             <div className={`${styles.statItem} reveal`}>
-              <span className={styles.statNumber}>₱4.2M</span>
+              <span className={styles.statNumber}>{stats.totalDonations}</span>
               <span className={styles.statDesc}>Total donations</span>
             </div>
             <div className={`${styles.statItem} reveal`}>
-              <span className={styles.statNumber}>9</span>
+              <span className={styles.statNumber}>{stats.activeSafehouses}</span>
               <span className={styles.statDesc}>Active safehouses</span>
             </div>
           </div>
@@ -117,11 +138,7 @@ export default function ImpactPage() {
             <div>
               <p className={styles.chartLabel}>Monthly donations over time</p>
               <div className={styles.chartHighlight}>
-                <span className={styles.chartBigNumber}>₱12.4k</span>
-                <span className={styles.chartChange}>
-                  <ArrowUpRight size={14} />
-                  +10.7% last mo
-                </span>
+                <span className={styles.chartBigNumber}>₱{(latestDonation.total / 1000).toFixed(1)}k</span>
               </div>
             </div>
           </div>
@@ -145,7 +162,7 @@ export default function ImpactPage() {
                   tickLine={false}
                   tickFormatter={(v: number) => `₱${(v / 1000).toFixed(0)}k`}
                 />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(212, 168, 83, 0.08)' }} />
+                <Tooltip content={<ChartTooltip prefix="₱" />} cursor={{ fill: 'rgba(212, 168, 83, 0.08)' }} />
                 <Bar dataKey="total" radius={[4, 4, 0, 0]}>
                   {monthlyDonations.map((_, i) => (
                     <Cell
@@ -235,7 +252,7 @@ export default function ImpactPage() {
                   tickLine={false}
                   tickFormatter={(v: number) => `₱${(v / 1000).toFixed(0)}k`}
                 />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(212, 168, 83, 0.08)' }} />
+                <Tooltip content={<ChartTooltip prefix="₱" />} cursor={{ fill: 'rgba(212, 168, 83, 0.08)' }} />
                 <Bar dataKey="amount" radius={[4, 4, 0, 0]}>
                   {allocationData.map((_, i) => (
                     <Cell key={i} fill={allocationColors[i % allocationColors.length]} />
