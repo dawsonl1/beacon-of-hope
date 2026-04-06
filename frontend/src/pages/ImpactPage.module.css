@@ -1,0 +1,405 @@
+/* ── Stats Banner ──────────────────────────────────────── */
+.page {
+  min-height: 100vh;
+}
+
+.statsBanner {
+  padding: 4rem 2rem 3rem;
+  border-bottom: 1px solid var(--color-sand);
+}
+
+.statsInner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 3rem;
+}
+
+.statsLabel {
+  flex-shrink: 0;
+}
+
+.statsHeadline {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 500;
+  color: var(--color-deep-navy);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.35rem;
+}
+
+.statsUpdated {
+  font-size: 0.8rem;
+  color: var(--color-warm-gray);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem 3rem;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 140px;
+}
+
+.statNumber {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  font-weight: 600;
+  color: var(--color-deep-navy);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.statDesc {
+  font-size: 0.85rem;
+  color: var(--color-warm-gray);
+  padding-top: 0.2rem;
+  border-top: 2px solid var(--color-amber);
+  display: inline-block;
+}
+
+/* ── Chart Sections ───────────────────────────────────── */
+.chartSection {
+  padding: 3rem 2rem;
+}
+
+.chartInner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  background: var(--color-warm-white);
+  border: 1px solid var(--color-sand);
+  border-radius: 16px;
+  padding: 2rem;
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.chartLabel {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-warm-gray);
+  margin-bottom: 0.5rem;
+}
+
+.chartHighlight {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.chartBigNumber {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--color-deep-navy);
+  letter-spacing: -0.02em;
+}
+
+.chartChange {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-sage);
+}
+
+.chartSubtext {
+  font-size: 0.85rem;
+  color: var(--color-warm-gray);
+}
+
+.chartContainer {
+  width: 100%;
+}
+
+/* ── Tooltip ──────────────────────────────────────────── */
+.tooltip {
+  background: var(--color-deep-navy);
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.tooltipLabel {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.15rem;
+}
+
+.tooltipValue {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* ── Metric Cards ─────────────────────────────────────── */
+.metricsSection {
+  padding: 0 2rem 3rem;
+}
+
+.metricsInner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.metricCard {
+  background: var(--color-warm-white);
+  border: 1px solid var(--color-sand);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.metricCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+}
+
+.metricNumber {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--color-deep-navy);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.metricLabel {
+  font-size: 0.8rem;
+  color: var(--color-warm-gray);
+  margin-top: 0.15rem;
+}
+
+.metricChange {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-sage);
+  margin-top: 0.25rem;
+}
+
+/* ── Stories of Hope ──────────────────────────────────── */
+.stories {
+  padding: 3rem 2rem 4rem;
+}
+
+.storiesInner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.storyRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: stretch;
+}
+
+.storyRowReverse {
+  direction: ltr;
+}
+
+.storyRowReverse .storyText {
+  order: 2;
+}
+
+.storyRowReverse .storyImage {
+  order: 1;
+}
+
+.storyText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.storyTag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-amber-dark);
+  margin-bottom: 0.5rem;
+}
+
+.storyTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 500;
+  color: var(--color-deep-navy);
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+.storyBody {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--color-slate);
+  margin-bottom: 1rem;
+}
+
+.storyNote {
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--color-light-gray);
+}
+
+.storyImage {
+  border-radius: 16px;
+  overflow: hidden;
+  min-height: 320px;
+}
+
+.storyImagePlaceholder {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  background:
+    linear-gradient(135deg, var(--color-sand) 0%, rgba(212, 168, 83, 0.15) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Bottom CTA ───────────────────────────────────────── */
+.bottomCta {
+  padding: 5rem 2rem;
+  background:
+    linear-gradient(135deg, var(--color-deep-navy) 0%, var(--color-navy-soft) 100%);
+  text-align: center;
+}
+
+.ctaInner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.ctaTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.92);
+  letter-spacing: -0.02em;
+  margin-bottom: 2rem;
+  line-height: 1.3;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-deep-navy);
+  background: var(--color-amber);
+  padding: 0.9rem 2.25rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 2px 12px rgba(184, 145, 58, 0.3);
+}
+
+.ctaButton:hover {
+  background: var(--color-amber-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(184, 145, 58, 0.4);
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .metricsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .statsBanner {
+    padding: 3rem 1.25rem 2rem;
+  }
+
+  .statsInner {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .statsGrid {
+    gap: 1.25rem 2rem;
+  }
+
+  .statNumber {
+    font-size: 2.2rem;
+  }
+
+  .chartSection,
+  .metricsSection,
+  .stories {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .chartInner {
+    padding: 1.25rem;
+  }
+
+  .metricsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .storyRow {
+    grid-template-columns: 1fr;
+  }
+
+  .storyRowReverse .storyText {
+    order: 1;
+  }
+
+  .storyRowReverse .storyImage {
+    order: 2;
+  }
+
+  .storyText {
+    padding: 0;
+  }
+
+  .storyImage {
+    min-height: 220px;
+  }
+
+  .storyImagePlaceholder {
+    min-height: 220px;
+  }
+
+  .bottomCta {
+    padding: 3.5rem 1.25rem;
+  }
+}

@@ -18,13 +18,13 @@ export default function Header() {
           <Link to="/" className={styles.navLink} onClick={() => setMenuOpen(false)}>
             Home
           </Link>
-          <a href="#mission" className={styles.navLink} onClick={() => setMenuOpen(false)}>
+          <a href="/#mission" className={styles.navLink} onClick={() => setMenuOpen(false)}>
             Our Mission
           </a>
-          <a href="#impact" className={styles.navLink} onClick={() => setMenuOpen(false)}>
+          <Link to="/impact" className={styles.navLink} onClick={() => setMenuOpen(false)}>
             Impact
-          </a>
-          <a href="#involved" className={styles.navLink} onClick={() => setMenuOpen(false)}>
+          </Link>
+          <a href="/#involved" className={styles.navLink} onClick={() => setMenuOpen(false)}>
             Get Involved
           </a>
         </nav>

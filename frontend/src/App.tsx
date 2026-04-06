@@ -3,6 +3,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import CookieConsent from './components/CookieConsent';
 import HomePage from './pages/HomePage';
+import ImpactPage from './pages/ImpactPage';
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/impact" element={<ImpactPage />} />
       </Routes>
       <Footer />
       <CookieConsent />
