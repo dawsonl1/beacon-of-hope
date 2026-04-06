@@ -12,7 +12,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://intex2-1.vercel.app")
+        policy.WithOrigins(
+                "http://localhost:5173",
+                "https://intex2-1.vercel.app",
+                "https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
