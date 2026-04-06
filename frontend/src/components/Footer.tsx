@@ -1,0 +1,53 @@
+import { Link } from 'react-router-dom';
+import { Heart } from 'lucide-react';
+import styles from './Footer.module.css';
+
+export default function Footer() {
+  return (
+    <footer className={styles.footer}>
+      <div className={styles.inner}>
+        <div className={styles.top}>
+          <div className={styles.brand}>
+            <span className={styles.logoIcon}>&#9670;</span>
+            <span className={styles.logoText}>Beacon of Hope</span>
+            <p className={styles.tagline}>
+              A 501(c)(3) nonprofit restoring hope and rebuilding lives
+              for survivors of abuse and trafficking in the Philippines.
+            </p>
+          </div>
+
+          <div className={styles.links}>
+            <div className={styles.linkGroup}>
+              <h4 className={styles.linkGroupTitle}>Organization</h4>
+              <a href="#mission">Our Mission</a>
+              <a href="#impact">Our Impact</a>
+              <a href="#involved">Get Involved</a>
+            </div>
+            <div className={styles.linkGroup}>
+              <h4 className={styles.linkGroupTitle}>Legal</h4>
+              <Link to="/privacy">Privacy Policy</Link>
+              <button className={styles.cookieBtn}>Cookie Settings</button>
+            </div>
+            <div className={styles.linkGroup}>
+              <h4 className={styles.linkGroupTitle}>Connect</h4>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.divider} />
+
+        <div className={styles.bottom}>
+          <p className={styles.copy}>
+            &copy; {new Date().getFullYear()} Beacon of Hope. All rights reserved.
+          </p>
+          <p className={styles.madeWith}>
+            Made with <Heart size={12} className={styles.heart} /> for those who need it most
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
