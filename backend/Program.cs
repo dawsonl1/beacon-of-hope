@@ -28,13 +28,44 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
 
-app.MapGet("/api/health", () => new { status = "ok" });
+app.MapGet("/api/health", async (AppDbContext db) =>
+{
+    // NOTE: Do NOT use db.Database.CanConnectAsync() or ExecuteSqlRawAsync() here.
+    // Both have issues with Supabase connection pooler + Npgsql.
+    // Use a normal EF Core query instead.
+    var canConnect = false;
+    try
+    {
+        await db.Safehouses.Select(s => s.SafehouseId).FirstOrDefaultAsync();
+        canConnect = true;
+    }
+    catch { }
+
+    return new
+    {
+        status = canConnect ? "ok" : "degraded",
+        database = canConnect ? "connected" : "unreachable",
+        environment = app.Environment.EnvironmentName
+    };
+});
+
+// ── IMPORTANT: DbContext is NOT thread-safe. ──────────────
+// Do NOT use Task.WhenAll() with multiple queries on the same DbContext.
+// Always await queries sequentially (one at a time).
+// Using Task.WhenAll causes ObjectDisposedException with Supabase pooler + Npgsql.
+//
+// ✅ var x = await db.Table1.CountAsync();
+//    var y = await db.Table2.CountAsync();
+//
+// ❌ var t1 = db.Table1.CountAsync();
+//    var t2 = db.Table2.CountAsync();
+//    await Task.WhenAll(t1, t2);
 
 // ── Public endpoints (Impact page, Home page) ──────────────
 
 app.MapGet("/api/impact/summary", async (AppDbContext db) =>
 {
-    var residentStatsTask = db.Residents
+    var r = await db.Residents
         .GroupBy(_ => 1)
         .Select(g => new
         {
@@ -42,21 +73,17 @@ app.MapGet("/api/impact/summary", async (AppDbContext db) =>
             active = g.Count(r => r.CaseStatus == "Active"),
             completed = g.Count(r => r.ReintegrationStatus == "Completed")
         })
-        .FirstOrDefaultAsync();
+        .FirstOrDefaultAsync() ?? new { total = 0, active = 0, completed = 0 };
 
-    var safehouseTask = db.Safehouses.CountAsync(s => s.Status == "Active");
-    var donationsTask = db.Donations.SumAsync(d => (decimal?)d.Amount ?? 0);
-
-    await Task.WhenAll(residentStatsTask, safehouseTask, donationsTask);
-
-    var r = residentStatsTask.Result ?? new { total = 0, active = 0, completed = 0 };
+    var activeSafehouses = await db.Safehouses.CountAsync(s => s.Status == "Active");
+    var totalDonations = await db.Donations.SumAsync(d => (decimal?)d.Amount ?? 0);
 
     return new
     {
         totalResidents = r.total,
         activeResidents = r.active,
-        activeSafehouses = safehouseTask.Result,
-        totalDonations = donationsTask.Result,
+        activeSafehouses,
+        totalDonations,
         completedReintegrations = r.completed,
         reintegrationRate = r.total > 0 ? Math.Round((double)r.completed / r.total * 100) : 0
     };
@@ -175,9 +202,9 @@ app.MapGet("/api/admin/metrics", async (AppDbContext db) =>
     var startOfMonth = new DateOnly(now.Year, now.Month, 1);
     var startOfLastMonth = startOfMonth.AddMonths(-1);
 
-    var activeResidentsTask = db.Residents.CountAsync(r => r.CaseStatus == "Active");
+    var activeResidents = await db.Residents.CountAsync(r => r.CaseStatus == "Active");
 
-    var incidentStatsTask = db.IncidentReports
+    var incidents = await db.IncidentReports
         .Where(i => i.Resolved != true)
         .GroupBy(_ => 1)
         .Select(g => new
@@ -186,9 +213,9 @@ app.MapGet("/api/admin/metrics", async (AppDbContext db) =>
             critical = g.Count(i => i.Severity == "Critical"),
             high = g.Count(i => i.Severity == "High")
         })
-        .FirstOrDefaultAsync();
+        .FirstOrDefaultAsync() ?? new { total = 0, critical = 0, high = 0 };
 
-    var currentMonthTask = db.Donations
+    var currentMonth = await db.Donations
         .Where(d => d.DonationDate >= startOfMonth)
         .GroupBy(_ => 1)
         .Select(g => new
@@ -196,39 +223,30 @@ app.MapGet("/api/admin/metrics", async (AppDbContext db) =>
             total = g.Sum(d => (decimal?)d.Amount ?? 0),
             count = g.Count()
         })
-        .FirstOrDefaultAsync();
+        .FirstOrDefaultAsync() ?? new { total = 0m, count = 0 };
 
-    var lastMonthTask = db.Donations
+    var lastMonthDonations = await db.Donations
         .Where(d => d.DonationDate >= startOfLastMonth && d.DonationDate < startOfMonth)
         .SumAsync(d => (decimal?)d.Amount ?? 0);
 
-    var nextConferenceTask = db.InterventionPlans
+    var nextConference = await db.InterventionPlans
         .Where(p => p.CaseConferenceDate > DateOnly.FromDateTime(now))
         .OrderBy(p => p.CaseConferenceDate)
-        .Select(p => new { p.CaseConferenceDate })
+        .Select(p => p.CaseConferenceDate)
         .FirstOrDefaultAsync();
 
-    var conferenceCountTask = db.InterventionPlans
+    var upcomingConferences = await db.InterventionPlans
         .CountAsync(p => p.CaseConferenceDate > DateOnly.FromDateTime(now));
-
-    await Task.WhenAll(activeResidentsTask, incidentStatsTask, currentMonthTask, lastMonthTask, nextConferenceTask, conferenceCountTask);
-
-    var incidents = incidentStatsTask.Result ?? new { total = 0, critical = 0, high = 0 };
-    var currentMonth = currentMonthTask.Result ?? new { total = 0m, count = 0 };
-    var lastMonthDonations = lastMonthTask.Result;
 
     var donationChange = lastMonthDonations > 0
         ? Math.Round((double)(currentMonth.total - lastMonthDonations) / (double)lastMonthDonations * 100, 1)
         : 0;
 
-    var activeResidents = activeResidentsTask.Result;
     var openIncidents = incidents.total;
     var criticalIncidents = incidents.critical;
     var highIncidents = incidents.high;
     var monthlyDonations = currentMonth.total;
     var monthlyDonationCount = currentMonth.count;
-    var upcomingConferences = conferenceCountTask.Result;
-    var nextConference = nextConferenceTask.Result?.CaseConferenceDate;
 
     return new
     {
