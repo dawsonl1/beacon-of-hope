@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Pencil, Trash2, AlertTriangle, Clock } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
+import { formatDate } from '../../constants';
 import styles from './VisitationDetailPage.module.css';
 
 interface VisitationDetail {
@@ -31,16 +32,6 @@ function getVisitTypeClass(type: string | null): string {
   if (type.includes('Post')) return styles.typePostPlacement;
   if (type.includes('Emergency')) return styles.typeEmergency;
   return styles.typeRoutine;
-}
-
-function formatDate(d: string | null): string {
-  if (!d) return '--';
-  return new Date(d).toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
 }
 
 export default function VisitationDetailPage() {

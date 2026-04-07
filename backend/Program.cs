@@ -451,7 +451,7 @@ app.MapGet("/api/admin/metrics", async (AppDbContext db) =>
         upcomingConferences,
         nextConference
     };
-});
+}).RequireAuthorization();
 
 app.MapGet("/api/admin/residents", async (
     AppDbContext db,
@@ -747,7 +747,7 @@ app.MapGet("/api/admin/recent-donations", async (AppDbContext db) =>
         .ToListAsync();
 
     return data;
-});
+}).RequireAuthorization();
 
 app.MapGet("/api/admin/donations-by-channel", async (AppDbContext db) =>
 {
@@ -763,7 +763,7 @@ app.MapGet("/api/admin/donations-by-channel", async (AppDbContext db) =>
         .ToListAsync();
 
     return data;
-});
+}).RequireAuthorization();
 
 app.MapGet("/api/admin/active-residents-trend", async (AppDbContext db) =>
 {
@@ -780,7 +780,7 @@ app.MapGet("/api/admin/active-residents-trend", async (AppDbContext db) =>
         .ToListAsync();
 
     return data;
-});
+}).RequireAuthorization();
 
 app.MapGet("/api/admin/flagged-cases-trend", async (AppDbContext db) =>
 {
@@ -797,7 +797,7 @@ app.MapGet("/api/admin/flagged-cases-trend", async (AppDbContext db) =>
         .ToListAsync();
 
     return data;
-});
+}).RequireAuthorization();
 
 // ── Visitations endpoints ─────────────────────────────────
 
@@ -1529,7 +1529,7 @@ app.MapPost("/api/admin/supporters", async (AppDbContext db, HttpContext httpCon
     db.Supporters.Add(supporter);
     await db.SaveChangesAsync();
     return Results.Ok(new { supporter.SupporterId });
-}).RequireAuthorization("Admin");
+}).RequireAuthorization("AdminOnly");
 
 app.MapPut("/api/admin/supporters/{id:int}", async (int id, AppDbContext db, HttpContext httpContext) =>
 {
@@ -1554,7 +1554,7 @@ app.MapPut("/api/admin/supporters/{id:int}", async (int id, AppDbContext db, Htt
 
     await db.SaveChangesAsync();
     return Results.Ok(new { supporter.SupporterId });
-}).RequireAuthorization("Admin");
+}).RequireAuthorization("AdminOnly");
 
 app.MapDelete("/api/admin/supporters/{id:int}", async (int id, AppDbContext db) =>
 {
@@ -1564,7 +1564,7 @@ app.MapDelete("/api/admin/supporters/{id:int}", async (int id, AppDbContext db) 
     db.Supporters.Remove(supporter);
     await db.SaveChangesAsync();
     return Results.Ok(new { deleted = true });
-}).RequireAuthorization("Admin");
+}).RequireAuthorization("AdminOnly");
 
 // ── Donations CRUD ──────────────────────────────────────────
 
@@ -1639,7 +1639,7 @@ app.MapPost("/api/admin/donations", async (AppDbContext db, HttpContext httpCont
     db.Donations.Add(donation);
     await db.SaveChangesAsync();
     return Results.Ok(new { donation.DonationId });
-}).RequireAuthorization("Admin");
+}).RequireAuthorization("AdminOnly");
 
 app.MapPut("/api/admin/donations/{id:int}", async (int id, AppDbContext db, HttpContext httpContext) =>
 {
@@ -1663,7 +1663,7 @@ app.MapPut("/api/admin/donations/{id:int}", async (int id, AppDbContext db, Http
 
     await db.SaveChangesAsync();
     return Results.Ok(new { donation.DonationId });
-}).RequireAuthorization("Admin");
+}).RequireAuthorization("AdminOnly");
 
 app.MapDelete("/api/admin/donations/{id:int}", async (int id, AppDbContext db) =>
 {
@@ -1673,7 +1673,7 @@ app.MapDelete("/api/admin/donations/{id:int}", async (int id, AppDbContext db) =
     db.Donations.Remove(donation);
     await db.SaveChangesAsync();
     return Results.Ok(new { deleted = true });
-}).RequireAuthorization("Admin");
+}).RequireAuthorization("AdminOnly");
 
 // ── Allocation reports ──────────────────────────────────────
 

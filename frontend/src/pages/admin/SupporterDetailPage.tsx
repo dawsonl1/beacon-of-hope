@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
+import { formatDate, formatAmount } from '../../constants';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
 import styles from './SupporterDetailPage.module.css';
 
@@ -74,16 +75,6 @@ export default function SupporterDetailPage() {
       setDeleting(false);
       setShowDelete(false);
     }
-  }
-
-  function formatDate(d: string | null) {
-    if (!d) return '--';
-    return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  }
-
-  function formatAmount(n: number | null | undefined) {
-    if (n == null || n === 0) return '--';
-    return `₱${Number(n).toLocaleString()}`;
   }
 
   function statusBadgeClass(s: string | null) {

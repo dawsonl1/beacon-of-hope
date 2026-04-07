@@ -12,6 +12,7 @@ import {
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import { ApiError } from '../../components/ApiError';
+import { formatDate } from '../../constants';
 import styles from './RecordingDetailPage.module.css';
 
 interface Recording {
@@ -87,16 +88,6 @@ export default function RecordingDetailPage() {
       setDeleting(false);
       setShowDeleteConfirm(false);
     }
-  }
-
-  function formatDate(d: string | null): string {
-    if (!d) return '--';
-    return new Date(d).toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    });
   }
 
   if (loading) {

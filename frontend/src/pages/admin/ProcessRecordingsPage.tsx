@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Plus, FileText, Shield, AlertTriangle, CheckCircle } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { ApiError } from '../../components/ApiError';
+import { formatDate } from '../../constants';
 import styles from './ProcessRecordingsPage.module.css';
 
 interface RecordingRow {
@@ -117,15 +118,6 @@ export default function ProcessRecordingsPage() {
   }, [page, residentFilter, sortBy, setSearchParams]);
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
-
-  function formatDate(d: string | null): string {
-    if (!d) return '--';
-    return new Date(d).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  }
 
   return (
     <div className={styles.page}>

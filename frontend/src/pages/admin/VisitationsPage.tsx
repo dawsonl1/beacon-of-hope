@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Plus, Eye, AlertTriangle, Calendar, ClipboardList } from 'lucide-react';
 import { apiFetch } from '../../api';
+import { formatDate } from '../../constants';
 import styles from './VisitationsPage.module.css';
 
 /* ── Types ──────────────────────────────────────────── */
@@ -69,15 +70,6 @@ function getCoopClass(level: string | null): string {
   if (level === 'Uncooperative') return styles.coopUncooperative;
   if (level === 'Hostile') return styles.coopHostile;
   return '';
-}
-
-function formatDate(d: string | null): string {
-  if (!d) return '--';
-  return new Date(d).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
 }
 
 /* ── Component ──────────────────────────────────────── */

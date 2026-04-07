@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, Plus, Loader2, X } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
+import { formatDate, formatAmount } from '../../constants';
 import Pagination from '../../components/admin/Pagination';
 import styles from './DonorsPage.module.css';
 
@@ -159,16 +160,6 @@ export default function DonorsPage() {
     if (k === 'active') return styles.statusActive;
     if (k === 'lapsed') return styles.statusLapsed;
     return styles.statusInactive;
-  }
-
-  function formatAmount(n: number | null | undefined) {
-    if (n == null || n === 0) return '--';
-    return `₱${Number(n).toLocaleString()}`;
-  }
-
-  function formatDate(d: string | null) {
-    if (!d) return '--';
-    return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
   const hasFilters = search || supporterType || status || donationType;

@@ -69,15 +69,14 @@ function OverviewTab() {
     let cancelled = false;
     async function load() {
       try {
-        const s = await apiFetch<SummaryData>('/api/impact/summary');
+        const [s, health] = await Promise.all([
+          apiFetch<SummaryData>('/api/impact/summary'),
+          apiFetch<HealthRow[]>('/api/admin/reports/health-scores'),
+        ]);
         if (cancelled) return;
         setSummary(s);
-
-        const health = await apiFetch<HealthRow[]>('/api/admin/reports/health-scores');
-        if (cancelled) return;
         if (health.length > 0) {
-          const last = health[health.length - 1];
-          setAvgHealth(last.avgHealth);
+          setAvgHealth(health[health.length - 1].avgHealth);
         }
       } catch (e) {
         console.error('Failed to load overview', e);
@@ -132,16 +131,14 @@ function DonationsTab() {
     let cancelled = false;
     async function load() {
       try {
-        const t = await apiFetch<MonthRow[]>('/api/admin/reports/donation-trends');
+        const [t, s, c] = await Promise.all([
+          apiFetch<MonthRow[]>('/api/admin/reports/donation-trends'),
+          apiFetch<SourceRow[]>('/api/admin/reports/donations-by-source'),
+          apiFetch<CampaignRow[]>('/api/admin/reports/donations-by-campaign'),
+        ]);
         if (cancelled) return;
         setTrends(t);
-
-        const s = await apiFetch<SourceRow[]>('/api/admin/reports/donations-by-source');
-        if (cancelled) return;
         setBySrc(s);
-
-        const c = await apiFetch<CampaignRow[]>('/api/admin/reports/donations-by-campaign');
-        if (cancelled) return;
         setByCampaign(c);
       } catch (e) {
         console.error('Failed to load donations', e);
@@ -222,16 +219,14 @@ function OutcomesTab() {
     let cancelled = false;
     async function load() {
       try {
-        const o = await apiFetch<OutcomeData>('/api/admin/reports/resident-outcomes');
+        const [o, e, h] = await Promise.all([
+          apiFetch<OutcomeData>('/api/admin/reports/resident-outcomes'),
+          apiFetch<EduRow[]>('/api/admin/reports/education-progress'),
+          apiFetch<HealthRow[]>('/api/admin/reports/health-scores'),
+        ]);
         if (cancelled) return;
         setOutcomes(o);
-
-        const e = await apiFetch<EduRow[]>('/api/admin/reports/education-progress');
-        if (cancelled) return;
         setEdu(e);
-
-        const h = await apiFetch<HealthRow[]>('/api/admin/reports/health-scores');
-        if (cancelled) return;
         setHealth(h);
       } catch (e) {
         console.error('Failed to load outcomes', e);
