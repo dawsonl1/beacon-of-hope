@@ -13,6 +13,20 @@ import LoginPage from './pages/LoginPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import AdminLayout from './layouts/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard';
+import ReportsPage from './pages/admin/ReportsPage';
+import VisitationsPage from './pages/admin/VisitationsPage';
+import VisitationDetailPage from './pages/admin/VisitationDetailPage';
+import VisitationFormPage from './pages/admin/VisitationFormPage';
+import CaseloadPage from './pages/admin/CaseloadPage';
+import ResidentDetailPage from './pages/admin/ResidentDetailPage';
+import ResidentFormPage from './pages/admin/ResidentFormPage';
+import ProcessRecordingsPage from './pages/admin/ProcessRecordingsPage';
+import RecordingDetailPage from './pages/admin/RecordingDetailPage';
+import RecordingFormPage from './pages/admin/RecordingFormPage';
+import DonorsPage from './pages/admin/DonorsPage';
+import SupporterDetailPage from './pages/admin/SupporterDetailPage';
+import SupporterFormPage from './pages/admin/SupporterFormPage';
+import DonationFormPage from './pages/admin/DonationFormPage';
 
 function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -44,6 +58,25 @@ function App() {
               </ProtectedRoute>
             }>
               <Route index element={<AdminDashboard />} />
+              <Route path="caseload" element={<CaseloadPage />} />
+              <Route path="caseload/new" element={<ResidentFormPage />} />
+              <Route path="caseload/:id" element={<ResidentDetailPage />} />
+              <Route path="caseload/:id/edit" element={<ResidentFormPage />} />
+              <Route path="reports" element={<ReportsPage />} />
+              <Route path="visitations" element={<VisitationsPage />} />
+              <Route path="visitations/new" element={<VisitationFormPage />} />
+              <Route path="visitations/:id" element={<VisitationDetailPage />} />
+              <Route path="visitations/:id/edit" element={<VisitationFormPage />} />
+              <Route path="recordings" element={<ProcessRecordingsPage />} />
+              <Route path="recordings/new" element={<RecordingFormPage />} />
+              <Route path="recordings/:id" element={<RecordingDetailPage />} />
+              <Route path="recordings/:id/edit" element={<RecordingFormPage />} />
+              <Route path="donors" element={<DonorsPage />} />
+              <Route path="donors/new" element={<SupporterFormPage />} />
+              <Route path="donors/:id" element={<SupporterDetailPage />} />
+              <Route path="donors/:id/edit" element={<SupporterFormPage />} />
+              <Route path="donations/new" element={<DonationFormPage />} />
+              <Route path="donations/:id/edit" element={<DonationFormPage />} />
             </Route>
           </Routes>
           <CookieConsent />

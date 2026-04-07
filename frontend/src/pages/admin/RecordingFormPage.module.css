@@ -1,0 +1,273 @@
+.page {
+  padding: 2rem 2.5rem;
+  max-width: 760px;
+}
+
+/* ── Back link ───────────────────────────────────────── */
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-warm-gray);
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+  padding: 0;
+  margin-bottom: 1.25rem;
+  transition: color 0.2s;
+}
+
+.backLink:hover {
+  color: var(--color-deep-navy);
+}
+
+/* ── Header ──────────────────────────────────────────── */
+.header h1 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--color-deep-navy);
+  letter-spacing: -0.03em;
+  margin: 0 0 0.2rem;
+}
+
+.subtitle {
+  font-size: 0.82rem;
+  color: var(--color-warm-gray);
+  margin: 0 0 1.5rem;
+}
+
+/* ── Privacy notice ──────────────────────────────────── */
+.privacyNotice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.73rem;
+  color: var(--color-warm-gray);
+  background: #FAFAF7;
+  border: 1px solid var(--color-sand);
+  border-radius: 8px;
+  padding: 0.55rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.privacyNotice svg {
+  flex-shrink: 0;
+}
+
+/* ── Form card ───────────────────────────────────────── */
+.formCard {
+  background: #fff;
+  border: 1px solid var(--color-sand);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-deep-navy);
+  margin: 0 0 0.85rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #F4F1EB;
+}
+
+/* ── Field grid ──────────────────────────────────────── */
+.fieldGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.fieldFull {
+  grid-column: 1 / -1;
+}
+
+/* ── Field ───────────────────────────────────────────── */
+.field label {
+  display: block;
+  font-size: 0.73rem;
+  font-weight: 700;
+  color: var(--color-warm-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.3rem;
+}
+
+.required {
+  color: var(--color-rose);
+}
+
+.field input,
+.field select,
+.field textarea {
+  display: block;
+  width: 100%;
+  font-size: 0.88rem;
+  font-family: var(--font-body);
+  color: var(--color-slate);
+  background: #fff;
+  border: 1px solid var(--color-sand);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--color-amber);
+  box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.1);
+}
+
+.field select {
+  cursor: pointer;
+}
+
+/* ── Narrative textarea ──────────────────────────────── */
+.narrativeField {
+  min-height: 200px;
+  resize: vertical;
+  line-height: 1.7;
+}
+
+/* ── Text area (interventions, follow-up) ────────────── */
+.textareaField {
+  min-height: 100px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* ── Checkboxes ──────────────────────────────────────── */
+.checkboxRow {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+}
+
+.checkbox input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-deep-navy);
+  cursor: pointer;
+}
+
+.checkbox span {
+  font-size: 0.82rem;
+  color: var(--color-slate);
+}
+
+/* ── Actions ─────────────────────────────────────────── */
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #F4F1EB;
+}
+
+.cancelBtn {
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  color: var(--color-slate);
+  background: #fff;
+  border: 1px solid var(--color-sand);
+  padding: 0.55rem 1.1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelBtn:hover {
+  border-color: var(--color-amber);
+}
+
+.saveBtn {
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  color: #fff;
+  background: var(--color-deep-navy);
+  border: none;
+  padding: 0.55rem 1.1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.saveBtn:hover:not(:disabled) {
+  background: #2a3d52;
+}
+
+.saveBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ── Error ───────────────────────────────────────────── */
+.errorMsg {
+  font-size: 0.78rem;
+  color: var(--color-rose);
+  background: rgba(196, 117, 110, 0.08);
+  border: 1px solid rgba(196, 117, 110, 0.2);
+  border-radius: 8px;
+  padding: 0.55rem 0.85rem;
+  margin-bottom: 1rem;
+}
+
+/* ── Loading ─────────────────────────────────────────── */
+.loading {
+  text-align: center;
+  padding: 3rem;
+  font-size: 0.88rem;
+  color: var(--color-warm-gray);
+}
+
+/* ── Responsive ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  .page {
+    padding: 1.25rem;
+  }
+
+  .fieldGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .checkboxRow {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .cancelBtn,
+  .saveBtn {
+    width: 100%;
+    text-align: center;
+  }
+}

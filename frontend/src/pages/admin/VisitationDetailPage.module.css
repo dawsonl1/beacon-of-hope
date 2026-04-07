@@ -1,0 +1,273 @@
+.page {
+  padding: 2rem 2.5rem;
+  max-width: 860px;
+}
+
+/* ── Back link ────────────────────────────────────────── */
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-warm-gray);
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+  transition: color 0.2s;
+}
+
+.backLink:hover {
+  color: var(--color-deep-navy);
+}
+
+/* ── Header ───────────────────────────────────────────── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.75rem;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 500;
+  color: var(--color-deep-navy);
+  letter-spacing: -0.02em;
+}
+
+.headerMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.82rem;
+  color: var(--color-warm-gray);
+}
+
+.headerActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.editBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-deep-navy);
+  background: #fff;
+  border: 1px solid var(--color-sand);
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.editBtn:hover {
+  border-color: var(--color-amber);
+  background: rgba(212, 168, 83, 0.05);
+}
+
+.deleteBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #A5524D;
+  background: #fff;
+  border: 1px solid rgba(196, 117, 110, 0.3);
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+}
+
+.deleteBtn:hover {
+  border-color: #A5524D;
+  background: rgba(196, 117, 110, 0.06);
+}
+
+/* ── Cards ────────────────────────────────────────────── */
+.card {
+  background: #fff;
+  border: 1px solid var(--color-sand);
+  border-radius: 12px;
+  padding: 1.35rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.cardTitle {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-deep-navy);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #F4F1EB;
+}
+
+.fieldGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 2rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.fieldLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-warm-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.fieldValue {
+  font-size: 0.88rem;
+  color: var(--color-slate);
+  line-height: 1.5;
+}
+
+.fieldValueFull {
+  grid-column: 1 / -1;
+}
+
+/* ── Safety concerns highlight ────────────────────────── */
+.safetyCard {
+  background: rgba(196, 117, 110, 0.04);
+  border-color: rgba(196, 117, 110, 0.25);
+}
+
+.safetyHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: #A5524D;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(196, 117, 110, 0.2);
+}
+
+.safetyBadgeLarge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fff;
+  background: #C4756E;
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+}
+
+.safeBadgeLarge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-sage);
+  background: rgba(122, 158, 126, 0.12);
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+}
+
+/* ── Follow-up highlight ──────────────────────────────── */
+.followUpCard {
+  background: rgba(212, 168, 83, 0.04);
+  border-color: rgba(212, 168, 83, 0.25);
+}
+
+.followUpHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-amber-dark, #A08030);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(212, 168, 83, 0.2);
+}
+
+/* ── Visit type badge ─────────────────────────────────── */
+.visitTypeBadge {
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+}
+
+.typeInitial {
+  color: #4A7A4E;
+  background: rgba(122, 158, 126, 0.12);
+  border: 1px solid rgba(122, 158, 126, 0.3);
+}
+
+.typeRoutine {
+  color: #5A6B7A;
+  background: rgba(90, 107, 122, 0.1);
+  border: 1px solid rgba(90, 107, 122, 0.25);
+}
+
+.typeReintegration {
+  color: #A68B3A;
+  background: rgba(212, 168, 83, 0.12);
+  border: 1px solid rgba(212, 168, 83, 0.3);
+}
+
+.typePostPlacement {
+  color: #6A5A8A;
+  background: rgba(106, 90, 138, 0.1);
+  border: 1px solid rgba(106, 90, 138, 0.25);
+}
+
+.typeEmergency {
+  color: #A5524D;
+  background: rgba(196, 117, 110, 0.12);
+  border: 1px solid rgba(196, 117, 110, 0.3);
+}
+
+/* ── Loading / Error ──────────────────────────────────── */
+.loading {
+  text-align: center;
+  padding: 3rem;
+  font-size: 0.85rem;
+  color: var(--color-warm-gray);
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .page {
+    padding: 1.25rem;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .fieldGrid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,56 @@
+.card {
+  background: #fff;
+  border: 1px solid var(--color-sand);
+  border-radius: 12px;
+  padding: 1.25rem 1.35rem;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+}
+
+.label {
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: var(--color-warm-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+}
+
+.valueRow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.value {
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  font-weight: 600;
+  color: var(--color-deep-navy);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.sub {
+  font-size: 0.73rem;
+  color: var(--color-light-gray);
+  margin-top: 0.25rem;
+}
+
+.skeleton {
+  height: 2.1rem;
+  width: 80px;
+  background: linear-gradient(90deg, #f0ede6 25%, #f7f5f0 50%, #f0ede6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

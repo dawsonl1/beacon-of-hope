@@ -51,7 +51,10 @@ builder.Services.ConfigureApplicationCookie(opts =>
     };
 });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(opts =>
+{
+    opts.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+});
 
 builder.Services.AddCors(options =>
 {
@@ -231,6 +234,8 @@ app.MapGet("/api/health", async (AppDbContext db) =>
             "/api/impact/snapshots",
             "/api/admin/metrics",
             "/api/admin/residents",
+            "/api/admin/residents/{id}",
+            "/api/admin/residents/filter-options",
             "/api/admin/recent-donations",
             "/api/admin/donations-by-channel",
             "/api/admin/active-residents-trend",
@@ -448,36 +453,279 @@ app.MapGet("/api/admin/metrics", async (AppDbContext db) =>
     };
 });
 
-app.MapGet("/api/admin/residents", async (AppDbContext db) =>
+app.MapGet("/api/admin/residents", async (
+    AppDbContext db,
+    int page = 1,
+    int pageSize = 20,
+    string? search = null,
+    string? caseStatus = null,
+    int? safehouseId = null,
+    string? caseCategory = null,
+    string? riskLevel = null,
+    string? sortBy = null,
+    string? sortDir = null) =>
 {
-    var data = await db.Residents
-        .Where(r => r.CaseStatus == "Active")
-        .OrderByDescending(r => r.CurrentRiskLevel == "Critical" ? 0 :
-                                r.CurrentRiskLevel == "High" ? 1 :
-                                r.CurrentRiskLevel == "Medium" ? 2 : 3)
-        .ThenByDescending(r => r.DateOfAdmission)
-        .Take(20)
+    var query = db.Residents.AsQueryable();
+
+    if (!string.IsNullOrWhiteSpace(search))
+    {
+        var s = search.Trim().ToLower();
+        query = query.Where(r =>
+            (r.InternalCode != null && r.InternalCode.ToLower().Contains(s)) ||
+            (r.CaseControlNo != null && r.CaseControlNo.ToLower().Contains(s)) ||
+            (r.AssignedSocialWorker != null && r.AssignedSocialWorker.ToLower().Contains(s)));
+    }
+    if (!string.IsNullOrWhiteSpace(caseStatus))
+        query = query.Where(r => r.CaseStatus == caseStatus);
+    if (safehouseId.HasValue)
+        query = query.Where(r => r.SafehouseId == safehouseId.Value);
+    if (!string.IsNullOrWhiteSpace(caseCategory))
+        query = query.Where(r => r.CaseCategory == caseCategory);
+    if (!string.IsNullOrWhiteSpace(riskLevel))
+        query = query.Where(r => r.CurrentRiskLevel == riskLevel);
+
+    var totalCount = await query.CountAsync();
+
+    var desc = string.Equals(sortDir, "desc", StringComparison.OrdinalIgnoreCase);
+    query = sortBy?.ToLower() switch
+    {
+        "internalcode" => desc ? query.OrderByDescending(r => r.InternalCode) : query.OrderBy(r => r.InternalCode),
+        "casecontrolno" => desc ? query.OrderByDescending(r => r.CaseControlNo) : query.OrderBy(r => r.CaseControlNo),
+        "casestatus" => desc ? query.OrderByDescending(r => r.CaseStatus) : query.OrderBy(r => r.CaseStatus),
+        "casecategory" => desc ? query.OrderByDescending(r => r.CaseCategory) : query.OrderBy(r => r.CaseCategory),
+        "risklevel" => desc ? query.OrderByDescending(r => r.CurrentRiskLevel) : query.OrderBy(r => r.CurrentRiskLevel),
+        "dateofadmission" => desc ? query.OrderByDescending(r => r.DateOfAdmission) : query.OrderBy(r => r.DateOfAdmission),
+        "socialworker" => desc ? query.OrderByDescending(r => r.AssignedSocialWorker) : query.OrderBy(r => r.AssignedSocialWorker),
+        _ => query.OrderByDescending(r => r.DateOfAdmission)
+    };
+
+    if (page < 1) page = 1;
+    if (pageSize < 1) pageSize = 20;
+    if (pageSize > 100) pageSize = 100;
+
+    var items = await query
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
         .Select(r => new
         {
+            r.ResidentId,
             r.InternalCode,
+            r.CaseControlNo,
+            r.SafehouseId,
             safehouse = db.Safehouses
                 .Where(s => s.SafehouseId == r.SafehouseId)
                 .Select(s => s.SafehouseCode + " " + s.City)
                 .FirstOrDefault(),
+            r.CaseStatus,
             r.CaseCategory,
             r.CurrentRiskLevel,
             r.DateOfAdmission,
             r.AssignedSocialWorker,
-            lastSession = db.ProcessRecordings
-                .Where(p => p.ResidentId == r.ResidentId)
-                .OrderByDescending(p => p.SessionDate)
-                .Select(p => p.SessionDate)
-                .FirstOrDefault()
+            r.Sex,
+            r.PresentAge
         })
         .ToListAsync();
 
-    return data;
-});
+    return new { items, totalCount, page, pageSize };
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/residents/filter-options", async (AppDbContext db) =>
+{
+    var caseStatuses = await db.Residents
+        .Where(r => r.CaseStatus != null)
+        .Select(r => r.CaseStatus!)
+        .Distinct().OrderBy(x => x).ToListAsync();
+
+    var safehouses = await db.Safehouses
+        .Select(s => new { s.SafehouseId, label = s.SafehouseCode + " " + s.City })
+        .OrderBy(s => s.label)
+        .ToListAsync();
+
+    var categories = await db.Residents
+        .Where(r => r.CaseCategory != null)
+        .Select(r => r.CaseCategory!)
+        .Distinct().OrderBy(x => x).ToListAsync();
+
+    var riskLevels = await db.Residents
+        .Where(r => r.CurrentRiskLevel != null)
+        .Select(r => r.CurrentRiskLevel!)
+        .Distinct().OrderBy(x => x).ToListAsync();
+
+    var socialWorkers = await db.Residents
+        .Where(r => r.AssignedSocialWorker != null)
+        .Select(r => r.AssignedSocialWorker!)
+        .Distinct().OrderBy(x => x).ToListAsync();
+
+    return new { caseStatuses, safehouses, categories, riskLevels, socialWorkers };
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/residents/{id:int}", async (int id, AppDbContext db) =>
+{
+    var r = await db.Residents
+        .Where(r => r.ResidentId == id)
+        .Select(r => new
+        {
+            r.ResidentId, r.CaseControlNo, r.InternalCode, r.SafehouseId,
+            safehouse = db.Safehouses
+                .Where(s => s.SafehouseId == r.SafehouseId)
+                .Select(s => s.SafehouseCode + " " + s.City)
+                .FirstOrDefault(),
+            r.CaseStatus, r.Sex, r.DateOfBirth, r.BirthStatus, r.PlaceOfBirth, r.Religion,
+            r.CaseCategory,
+            r.SubCatOrphaned, r.SubCatTrafficked, r.SubCatChildLabor,
+            r.SubCatPhysicalAbuse, r.SubCatSexualAbuse, r.SubCatOsaec,
+            r.SubCatCicl, r.SubCatAtRisk, r.SubCatStreetChild, r.SubCatChildWithHiv,
+            r.IsPwd, r.PwdType, r.HasSpecialNeeds, r.SpecialNeedsDiagnosis,
+            r.FamilyIs4ps, r.FamilySoloParent, r.FamilyIndigenous,
+            r.FamilyParentPwd, r.FamilyInformalSettler,
+            r.DateOfAdmission, r.AgeUponAdmission, r.PresentAge, r.LengthOfStay,
+            r.ReferralSource, r.ReferringAgencyPerson,
+            r.DateColbRegistered, r.DateColbObtained,
+            r.AssignedSocialWorker, r.InitialCaseAssessment, r.DateCaseStudyPrepared,
+            r.ReintegrationType, r.ReintegrationStatus,
+            r.InitialRiskLevel, r.CurrentRiskLevel,
+            r.DateEnrolled, r.DateClosed, r.CreatedAt, r.NotesRestricted
+        })
+        .FirstOrDefaultAsync();
+
+    return r is null ? Results.NotFound(new { error = "Resident not found." }) : Results.Ok(r);
+}).RequireAuthorization();
+
+app.MapPost("/api/admin/residents", async (HttpContext httpContext, AppDbContext db) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<ResidentRequest>();
+    if (body == null)
+        return Results.BadRequest(new { error = "Request body is required." });
+
+    var resident = new Resident
+    {
+        CaseControlNo = body.CaseControlNo,
+        InternalCode = body.InternalCode,
+        SafehouseId = body.SafehouseId,
+        CaseStatus = body.CaseStatus,
+        Sex = body.Sex,
+        DateOfBirth = body.DateOfBirth,
+        BirthStatus = body.BirthStatus,
+        PlaceOfBirth = body.PlaceOfBirth,
+        Religion = body.Religion,
+        CaseCategory = body.CaseCategory,
+        SubCatOrphaned = body.SubCatOrphaned,
+        SubCatTrafficked = body.SubCatTrafficked,
+        SubCatChildLabor = body.SubCatChildLabor,
+        SubCatPhysicalAbuse = body.SubCatPhysicalAbuse,
+        SubCatSexualAbuse = body.SubCatSexualAbuse,
+        SubCatOsaec = body.SubCatOsaec,
+        SubCatCicl = body.SubCatCicl,
+        SubCatAtRisk = body.SubCatAtRisk,
+        SubCatStreetChild = body.SubCatStreetChild,
+        SubCatChildWithHiv = body.SubCatChildWithHiv,
+        IsPwd = body.IsPwd,
+        PwdType = body.PwdType,
+        HasSpecialNeeds = body.HasSpecialNeeds,
+        SpecialNeedsDiagnosis = body.SpecialNeedsDiagnosis,
+        FamilyIs4ps = body.FamilyIs4ps,
+        FamilySoloParent = body.FamilySoloParent,
+        FamilyIndigenous = body.FamilyIndigenous,
+        FamilyParentPwd = body.FamilyParentPwd,
+        FamilyInformalSettler = body.FamilyInformalSettler,
+        DateOfAdmission = body.DateOfAdmission,
+        AgeUponAdmission = body.AgeUponAdmission,
+        PresentAge = body.PresentAge,
+        LengthOfStay = body.LengthOfStay,
+        ReferralSource = body.ReferralSource,
+        ReferringAgencyPerson = body.ReferringAgencyPerson,
+        DateColbRegistered = body.DateColbRegistered,
+        DateColbObtained = body.DateColbObtained,
+        AssignedSocialWorker = body.AssignedSocialWorker,
+        InitialCaseAssessment = body.InitialCaseAssessment,
+        DateCaseStudyPrepared = body.DateCaseStudyPrepared,
+        ReintegrationType = body.ReintegrationType,
+        ReintegrationStatus = body.ReintegrationStatus,
+        InitialRiskLevel = body.InitialRiskLevel,
+        CurrentRiskLevel = body.CurrentRiskLevel,
+        DateEnrolled = body.DateEnrolled,
+        DateClosed = body.DateClosed,
+        CreatedAt = DateTime.UtcNow,
+        NotesRestricted = body.NotesRestricted
+    };
+
+    db.Residents.Add(resident);
+    await db.SaveChangesAsync();
+    return Results.Created($"/api/admin/residents/{resident.ResidentId}", new { resident.ResidentId });
+}).RequireAuthorization("AdminOnly");
+
+app.MapPut("/api/admin/residents/{id:int}", async (int id, HttpContext httpContext, AppDbContext db) =>
+{
+    var resident = await db.Residents.FindAsync(id);
+    if (resident == null)
+        return Results.NotFound(new { error = "Resident not found." });
+
+    var body = await httpContext.Request.ReadFromJsonAsync<ResidentRequest>();
+    if (body == null)
+        return Results.BadRequest(new { error = "Request body is required." });
+
+    resident.CaseControlNo = body.CaseControlNo;
+    resident.InternalCode = body.InternalCode;
+    resident.SafehouseId = body.SafehouseId;
+    resident.CaseStatus = body.CaseStatus;
+    resident.Sex = body.Sex;
+    resident.DateOfBirth = body.DateOfBirth;
+    resident.BirthStatus = body.BirthStatus;
+    resident.PlaceOfBirth = body.PlaceOfBirth;
+    resident.Religion = body.Religion;
+    resident.CaseCategory = body.CaseCategory;
+    resident.SubCatOrphaned = body.SubCatOrphaned;
+    resident.SubCatTrafficked = body.SubCatTrafficked;
+    resident.SubCatChildLabor = body.SubCatChildLabor;
+    resident.SubCatPhysicalAbuse = body.SubCatPhysicalAbuse;
+    resident.SubCatSexualAbuse = body.SubCatSexualAbuse;
+    resident.SubCatOsaec = body.SubCatOsaec;
+    resident.SubCatCicl = body.SubCatCicl;
+    resident.SubCatAtRisk = body.SubCatAtRisk;
+    resident.SubCatStreetChild = body.SubCatStreetChild;
+    resident.SubCatChildWithHiv = body.SubCatChildWithHiv;
+    resident.IsPwd = body.IsPwd;
+    resident.PwdType = body.PwdType;
+    resident.HasSpecialNeeds = body.HasSpecialNeeds;
+    resident.SpecialNeedsDiagnosis = body.SpecialNeedsDiagnosis;
+    resident.FamilyIs4ps = body.FamilyIs4ps;
+    resident.FamilySoloParent = body.FamilySoloParent;
+    resident.FamilyIndigenous = body.FamilyIndigenous;
+    resident.FamilyParentPwd = body.FamilyParentPwd;
+    resident.FamilyInformalSettler = body.FamilyInformalSettler;
+    resident.DateOfAdmission = body.DateOfAdmission;
+    resident.AgeUponAdmission = body.AgeUponAdmission;
+    resident.PresentAge = body.PresentAge;
+    resident.LengthOfStay = body.LengthOfStay;
+    resident.ReferralSource = body.ReferralSource;
+    resident.ReferringAgencyPerson = body.ReferringAgencyPerson;
+    resident.DateColbRegistered = body.DateColbRegistered;
+    resident.DateColbObtained = body.DateColbObtained;
+    resident.AssignedSocialWorker = body.AssignedSocialWorker;
+    resident.InitialCaseAssessment = body.InitialCaseAssessment;
+    resident.DateCaseStudyPrepared = body.DateCaseStudyPrepared;
+    resident.ReintegrationType = body.ReintegrationType;
+    resident.ReintegrationStatus = body.ReintegrationStatus;
+    resident.InitialRiskLevel = body.InitialRiskLevel;
+    resident.CurrentRiskLevel = body.CurrentRiskLevel;
+    resident.DateEnrolled = body.DateEnrolled;
+    resident.DateClosed = body.DateClosed;
+    resident.NotesRestricted = body.NotesRestricted;
+
+    await db.SaveChangesAsync();
+    return Results.Ok(new { resident.ResidentId });
+}).RequireAuthorization("AdminOnly");
+
+app.MapDelete("/api/admin/residents/{id:int}", async (int id, AppDbContext db) =>
+{
+    var resident = await db.Residents.FindAsync(id);
+    if (resident == null)
+        return Results.NotFound(new { error = "Resident not found." });
+
+    db.Residents.Remove(resident);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { message = "Resident deleted." });
+}).RequireAuthorization("AdminOnly");
 
 app.MapGet("/api/admin/recent-donations", async (AppDbContext db) =>
 {
@@ -551,6 +799,922 @@ app.MapGet("/api/admin/flagged-cases-trend", async (AppDbContext db) =>
     return data;
 });
 
+// ── Visitations endpoints ─────────────────────────────────
+
+app.MapGet("/api/admin/visitations", async (
+    AppDbContext db,
+    int? residentId,
+    string? visitType,
+    bool? safetyOnly,
+    int page = 1,
+    int pageSize = 20) =>
+{
+    var query = db.HomeVisitations.AsQueryable();
+
+    if (residentId.HasValue)
+        query = query.Where(v => v.ResidentId == residentId.Value);
+    if (!string.IsNullOrWhiteSpace(visitType))
+        query = query.Where(v => v.VisitType == visitType);
+    if (safetyOnly == true)
+        query = query.Where(v => v.SafetyConcernsNoted == true);
+
+    var totalCount = await query.CountAsync();
+
+    var items = await query
+        .OrderByDescending(v => v.VisitDate)
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .Select(v => new
+        {
+            v.VisitationId,
+            v.ResidentId,
+            residentCode = db.Residents
+                .Where(r => r.ResidentId == v.ResidentId)
+                .Select(r => r.InternalCode)
+                .FirstOrDefault(),
+            v.VisitDate,
+            v.SocialWorker,
+            v.VisitType,
+            v.LocationVisited,
+            v.SafetyConcernsNoted,
+            v.FollowUpNeeded,
+            v.VisitOutcome,
+            v.FamilyCooperationLevel
+        })
+        .ToListAsync();
+
+    return new { items, totalCount, page, pageSize };
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/visitations/{id}", async (AppDbContext db, int id) =>
+{
+    var v = await db.HomeVisitations
+        .Where(v => v.VisitationId == id)
+        .Select(v => new
+        {
+            v.VisitationId,
+            v.ResidentId,
+            residentCode = db.Residents
+                .Where(r => r.ResidentId == v.ResidentId)
+                .Select(r => r.InternalCode)
+                .FirstOrDefault(),
+            v.VisitDate,
+            v.SocialWorker,
+            v.VisitType,
+            v.LocationVisited,
+            v.FamilyMembersPresent,
+            v.Purpose,
+            v.Observations,
+            v.FamilyCooperationLevel,
+            v.SafetyConcernsNoted,
+            v.FollowUpNeeded,
+            v.FollowUpNotes,
+            v.VisitOutcome
+        })
+        .FirstOrDefaultAsync();
+
+    return v is null ? Results.NotFound() : Results.Ok(v);
+}).RequireAuthorization();
+
+app.MapPost("/api/admin/visitations", async (AppDbContext db, HomeVisitation body) =>
+{
+    db.HomeVisitations.Add(body);
+    await db.SaveChangesAsync();
+    return Results.Created($"/api/admin/visitations/{body.VisitationId}", new { body.VisitationId });
+}).RequireAuthorization();
+
+app.MapPut("/api/admin/visitations/{id}", async (AppDbContext db, int id, HomeVisitation body) =>
+{
+    var existing = await db.HomeVisitations.FindAsync(id);
+    if (existing is null) return Results.NotFound();
+
+    existing.ResidentId = body.ResidentId;
+    existing.VisitDate = body.VisitDate;
+    existing.SocialWorker = body.SocialWorker;
+    existing.VisitType = body.VisitType;
+    existing.LocationVisited = body.LocationVisited;
+    existing.FamilyMembersPresent = body.FamilyMembersPresent;
+    existing.Purpose = body.Purpose;
+    existing.Observations = body.Observations;
+    existing.FamilyCooperationLevel = body.FamilyCooperationLevel;
+    existing.SafetyConcernsNoted = body.SafetyConcernsNoted;
+    existing.FollowUpNeeded = body.FollowUpNeeded;
+    existing.FollowUpNotes = body.FollowUpNotes;
+    existing.VisitOutcome = body.VisitOutcome;
+
+    await db.SaveChangesAsync();
+    return Results.Ok(new { id });
+}).RequireAuthorization();
+
+app.MapDelete("/api/admin/visitations/{id}", async (AppDbContext db, int id) =>
+{
+    var existing = await db.HomeVisitations.FindAsync(id);
+    if (existing is null) return Results.NotFound();
+
+    db.HomeVisitations.Remove(existing);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { deleted = true });
+}).RequireAuthorization("AdminOnly");
+
+app.MapGet("/api/admin/conferences", async (AppDbContext db) =>
+{
+    var now = DateOnly.FromDateTime(DateTime.UtcNow);
+
+    var upcoming = await db.InterventionPlans
+        .Where(p => p.CaseConferenceDate != null && p.CaseConferenceDate > now)
+        .OrderBy(p => p.CaseConferenceDate)
+        .Select(p => new
+        {
+            p.PlanId,
+            p.ResidentId,
+            residentCode = db.Residents
+                .Where(r => r.ResidentId == p.ResidentId)
+                .Select(r => r.InternalCode)
+                .FirstOrDefault(),
+            p.PlanCategory,
+            p.PlanDescription,
+            p.CaseConferenceDate,
+            p.Status
+        })
+        .ToListAsync();
+
+    var past = await db.InterventionPlans
+        .Where(p => p.CaseConferenceDate != null && p.CaseConferenceDate <= now)
+        .OrderByDescending(p => p.CaseConferenceDate)
+        .Take(50)
+        .Select(p => new
+        {
+            p.PlanId,
+            p.ResidentId,
+            residentCode = db.Residents
+                .Where(r => r.ResidentId == p.ResidentId)
+                .Select(r => r.InternalCode)
+                .FirstOrDefault(),
+            p.PlanCategory,
+            p.PlanDescription,
+            p.CaseConferenceDate,
+            p.Status
+        })
+        .ToListAsync();
+
+    return new { upcoming, past };
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/residents-list", async (AppDbContext db) =>
+{
+    var data = await db.Residents
+        .OrderBy(r => r.InternalCode)
+        .Select(r => new
+        {
+            r.ResidentId,
+            r.InternalCode,
+            r.CaseStatus
+        })
+        .ToListAsync();
+
+    return data;
+}).RequireAuthorization();
+
+// ── Reports & Analytics endpoints ──────────────────────
+
+app.MapGet("/api/admin/reports/donation-trends", async (AppDbContext db) =>
+{
+    var data = await db.Donations
+        .Where(d => d.DonationDate != null && d.Amount != null)
+        .GroupBy(d => new { d.DonationDate!.Value.Year, d.DonationDate!.Value.Month })
+        .Select(g => new
+        {
+            year = g.Key.Year,
+            month = g.Key.Month,
+            total = g.Sum(d => (decimal?)d.Amount ?? 0),
+            count = g.Count()
+        })
+        .OrderBy(x => x.year).ThenBy(x => x.month)
+        .ToListAsync();
+
+    return data;
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/reports/donations-by-source", async (AppDbContext db) =>
+{
+    var data = await db.Donations
+        .Where(d => d.ChannelSource != null && d.Amount != null)
+        .GroupBy(d => d.ChannelSource)
+        .Select(g => new
+        {
+            source = g.Key,
+            total = g.Sum(d => (decimal?)d.Amount ?? 0),
+            count = g.Count()
+        })
+        .OrderByDescending(x => x.total)
+        .ToListAsync();
+
+    return data;
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/reports/donations-by-campaign", async (AppDbContext db) =>
+{
+    var data = await db.Donations
+        .Where(d => d.CampaignName != null && d.Amount != null)
+        .GroupBy(d => d.CampaignName)
+        .Select(g => new
+        {
+            campaign = g.Key,
+            total = g.Sum(d => (decimal?)d.Amount ?? 0),
+            count = g.Count()
+        })
+        .OrderByDescending(x => x.total)
+        .ToListAsync();
+
+    return data;
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/reports/resident-outcomes", async (AppDbContext db) =>
+{
+    var total = await db.Residents.CountAsync();
+
+    var byType = await db.Residents
+        .Where(r => r.ReintegrationStatus == "Completed" && r.ReintegrationType != null)
+        .GroupBy(r => r.ReintegrationType)
+        .Select(g => new
+        {
+            type = g.Key,
+            count = g.Count()
+        })
+        .OrderByDescending(x => x.count)
+        .ToListAsync();
+
+    var completedTotal = byType.Sum(b => b.count);
+    var successRate = total > 0 ? Math.Round((double)completedTotal / total * 100, 1) : 0;
+
+    var avgLengthOfStay = await db.Residents
+        .Where(r => r.ReintegrationStatus == "Completed"
+            && r.DateOfAdmission != null && r.DateClosed != null)
+        .Select(r => (double)(r.DateClosed!.Value.DayNumber - r.DateOfAdmission!.Value.DayNumber))
+        .DefaultIfEmpty(0)
+        .AverageAsync();
+
+    return new
+    {
+        totalResidents = total,
+        completedReintegrations = completedTotal,
+        successRate,
+        avgLengthOfStayDays = Math.Round(avgLengthOfStay, 0),
+        byType
+    };
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/reports/education-progress", async (AppDbContext db) =>
+{
+    var data = await db.EducationRecords
+        .Where(e => e.RecordDate != null && e.ProgressPercent != null)
+        .GroupBy(e => new { e.RecordDate!.Value.Year, e.RecordDate!.Value.Month })
+        .Select(g => new
+        {
+            year = g.Key.Year,
+            month = g.Key.Month,
+            avgProgress = Math.Round(g.Average(e => (double?)e.ProgressPercent ?? 0), 1)
+        })
+        .OrderBy(x => x.year).ThenBy(x => x.month)
+        .ToListAsync();
+
+    return data;
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/reports/health-scores", async (AppDbContext db) =>
+{
+    var data = await db.HealthWellbeingRecords
+        .Where(h => h.RecordDate != null && h.GeneralHealthScore != null)
+        .GroupBy(h => new { h.RecordDate!.Value.Year, h.RecordDate!.Value.Month })
+        .Select(g => new
+        {
+            year = g.Key.Year,
+            month = g.Key.Month,
+            avgHealth = Math.Round(g.Average(h => (double?)h.GeneralHealthScore ?? 0), 2),
+            avgNutrition = Math.Round(g.Average(h => (double?)h.NutritionScore ?? 0), 2),
+            avgSleep = Math.Round(g.Average(h => (double?)h.SleepQualityScore ?? 0), 2),
+            avgEnergy = Math.Round(g.Average(h => (double?)h.EnergyLevelScore ?? 0), 2)
+        })
+        .OrderBy(x => x.year).ThenBy(x => x.month)
+        .ToListAsync();
+
+    return data;
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/reports/safehouse-comparison", async (AppDbContext db) =>
+{
+    var safehouses = await db.Safehouses
+        .Select(s => new
+        {
+            s.SafehouseId,
+            s.SafehouseCode,
+            s.Name,
+            s.City,
+            s.Status,
+            s.CapacityGirls,
+            s.CurrentOccupancy
+        })
+        .ToListAsync();
+
+    var activeResidentsBySafehouse = await db.Residents
+        .Where(r => r.CaseStatus == "Active" && r.SafehouseId != null)
+        .GroupBy(r => r.SafehouseId)
+        .Select(g => new { safehouseId = g.Key, count = g.Count() })
+        .ToListAsync();
+
+    var incidentsBySafehouse = await db.IncidentReports
+        .Where(i => i.SafehouseId != null)
+        .GroupBy(i => i.SafehouseId)
+        .Select(g => new { safehouseId = g.Key, count = g.Count() })
+        .ToListAsync();
+
+    var recordingsBySafehouse = await db.ProcessRecordings
+        .Join(db.Residents, p => p.ResidentId, r => r.ResidentId, (p, r) => new { p, r })
+        .Where(x => x.r.SafehouseId != null)
+        .GroupBy(x => x.r.SafehouseId)
+        .Select(g => new { safehouseId = g.Key, count = g.Count() })
+        .ToListAsync();
+
+    var educationBySafehouse = await db.EducationRecords
+        .Where(e => e.ProgressPercent != null)
+        .Join(db.Residents, e => e.ResidentId, r => r.ResidentId, (e, r) => new { e, r })
+        .Where(x => x.r.SafehouseId != null)
+        .GroupBy(x => x.r.SafehouseId)
+        .Select(g => new { safehouseId = g.Key, avgEducation = Math.Round(g.Average(x => (double?)x.e.ProgressPercent ?? 0), 1) })
+        .ToListAsync();
+
+    var healthBySafehouse = await db.HealthWellbeingRecords
+        .Where(h => h.GeneralHealthScore != null)
+        .Join(db.Residents, h => h.ResidentId, r => r.ResidentId, (h, r) => new { h, r })
+        .Where(x => x.r.SafehouseId != null)
+        .GroupBy(x => x.r.SafehouseId)
+        .Select(g => new { safehouseId = g.Key, avgHealth = Math.Round(g.Average(x => (double?)x.h.GeneralHealthScore ?? 0), 2) })
+        .ToListAsync();
+
+    var result = safehouses.Select(s =>
+    {
+        var active = activeResidentsBySafehouse.FirstOrDefault(a => a.safehouseId == s.SafehouseId);
+        var incidents = incidentsBySafehouse.FirstOrDefault(i => i.safehouseId == s.SafehouseId);
+        var recordings = recordingsBySafehouse.FirstOrDefault(r => r.safehouseId == s.SafehouseId);
+        var education = educationBySafehouse.FirstOrDefault(e => e.safehouseId == s.SafehouseId);
+        var health = healthBySafehouse.FirstOrDefault(h => h.safehouseId == s.SafehouseId);
+        var occupancyPct = s.CapacityGirls > 0 ? Math.Round((double)(s.CurrentOccupancy ?? 0) / s.CapacityGirls.Value * 100, 1) : 0;
+
+        return new
+        {
+            s.SafehouseId,
+            s.SafehouseCode,
+            s.Name,
+            s.City,
+            s.Status,
+            s.CapacityGirls,
+            s.CurrentOccupancy,
+            occupancyPct,
+            activeResidents = active?.count ?? 0,
+            incidents = incidents?.count ?? 0,
+            recordings = recordings?.count ?? 0,
+            avgEducation = education?.avgEducation ?? 0,
+            avgHealth = health?.avgHealth ?? 0
+        };
+    }).ToList();
+
+    return result;
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/reports/reintegration-rates", async (AppDbContext db) =>
+{
+    var byTypeAndSafehouse = await db.Residents
+        .Where(r => r.ReintegrationStatus == "Completed"
+            && r.ReintegrationType != null && r.SafehouseId != null)
+        .Join(db.Safehouses, r => r.SafehouseId, s => s.SafehouseId, (r, s) => new { r, s })
+        .GroupBy(x => new { x.r.ReintegrationType, x.s.SafehouseCode })
+        .Select(g => new
+        {
+            type = g.Key.ReintegrationType,
+            safehouse = g.Key.SafehouseCode,
+            count = g.Count()
+        })
+        .OrderBy(x => x.safehouse).ThenByDescending(x => x.count)
+        .ToListAsync();
+
+    var totalBySafehouse = await db.Residents
+        .Where(r => r.SafehouseId != null)
+        .Join(db.Safehouses, r => r.SafehouseId, s => s.SafehouseId, (r, s) => new { r, s })
+        .GroupBy(x => x.s.SafehouseCode)
+        .Select(g => new
+        {
+            safehouse = g.Key,
+            total = g.Count(),
+            completed = g.Count(x => x.r.ReintegrationStatus == "Completed")
+        })
+        .ToListAsync();
+
+    return new { byTypeAndSafehouse, totalBySafehouse };
+}).RequireAuthorization();
+
+// ── Process Recordings endpoints ──────────────────────────
+
+app.MapGet("/api/admin/recordings", async (
+    AppDbContext db,
+    int? residentId,
+    int page,
+    int pageSize,
+    string? sortBy) =>
+{
+    if (page < 1) page = 1;
+    if (pageSize < 1 || pageSize > 100) pageSize = 20;
+
+    var query = db.ProcessRecordings.AsQueryable();
+
+    if (residentId.HasValue)
+        query = query.Where(r => r.ResidentId == residentId.Value);
+
+    query = (sortBy ?? "date_desc") switch
+    {
+        "date_asc" => query.OrderBy(r => r.SessionDate),
+        "worker" => query.OrderBy(r => r.SocialWorker).ThenByDescending(r => r.SessionDate),
+        _ => query.OrderByDescending(r => r.SessionDate),
+    };
+
+    var totalCount = await query.CountAsync();
+
+    var items = await query
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .Select(r => new
+        {
+            r.RecordingId,
+            r.ResidentId,
+            residentCode = db.Residents
+                .Where(res => res.ResidentId == r.ResidentId)
+                .Select(res => res.InternalCode)
+                .FirstOrDefault(),
+            r.SessionDate,
+            r.SocialWorker,
+            r.SessionType,
+            r.SessionDurationMinutes,
+            r.EmotionalStateObserved,
+            r.EmotionalStateEnd,
+            narrativePreview = r.SessionNarrative != null
+                ? r.SessionNarrative.Substring(0, Math.Min(r.SessionNarrative.Length, 120))
+                : null,
+            r.ProgressNoted,
+            r.ConcernsFlagged,
+            r.ReferralMade
+        })
+        .ToListAsync();
+
+    return new { items, totalCount, page, pageSize };
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/recordings/emotional-trends", async (int residentId, AppDbContext db) =>
+{
+    var data = await db.ProcessRecordings
+        .Where(r => r.ResidentId == residentId && r.SessionDate != null)
+        .OrderBy(r => r.SessionDate)
+        .Select(r => new
+        {
+            r.SessionDate,
+            r.SessionType,
+            r.EmotionalStateObserved,
+            r.EmotionalStateEnd
+        })
+        .ToListAsync();
+
+    return data;
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/recordings/{id:int}", async (int id, AppDbContext db) =>
+{
+    var r = await db.ProcessRecordings
+        .Where(p => p.RecordingId == id)
+        .Select(p => new
+        {
+            p.RecordingId,
+            p.ResidentId,
+            residentCode = db.Residents
+                .Where(res => res.ResidentId == p.ResidentId)
+                .Select(res => res.InternalCode)
+                .FirstOrDefault(),
+            p.SessionDate,
+            p.SocialWorker,
+            p.SessionType,
+            p.SessionDurationMinutes,
+            p.EmotionalStateObserved,
+            p.EmotionalStateEnd,
+            p.SessionNarrative,
+            p.InterventionsApplied,
+            p.FollowUpActions,
+            p.ProgressNoted,
+            p.ConcernsFlagged,
+            p.ReferralMade,
+            p.NotesRestricted
+        })
+        .FirstOrDefaultAsync();
+
+    return r is null ? Results.NotFound(new { error = "Recording not found." }) : Results.Ok(r);
+}).RequireAuthorization();
+
+app.MapPost("/api/admin/recordings", async (HttpContext httpContext, AppDbContext db) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<RecordingRequest>();
+    if (body == null || body.ResidentId <= 0)
+        return Results.BadRequest(new { error = "Resident is required." });
+
+    var resident = await db.Residents.AnyAsync(r => r.ResidentId == body.ResidentId);
+    if (!resident)
+        return Results.BadRequest(new { error = "Resident not found." });
+
+    var recording = new ProcessRecording
+    {
+        ResidentId = body.ResidentId,
+        SessionDate = body.SessionDate,
+        SocialWorker = body.SocialWorker,
+        SessionType = body.SessionType,
+        SessionDurationMinutes = body.SessionDurationMinutes,
+        EmotionalStateObserved = body.EmotionalStateObserved,
+        EmotionalStateEnd = body.EmotionalStateEnd,
+        SessionNarrative = body.SessionNarrative,
+        InterventionsApplied = body.InterventionsApplied,
+        FollowUpActions = body.FollowUpActions,
+        ProgressNoted = body.ProgressNoted,
+        ConcernsFlagged = body.ConcernsFlagged,
+        ReferralMade = body.ReferralMade,
+        NotesRestricted = body.NotesRestricted
+    };
+
+    db.ProcessRecordings.Add(recording);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/api/admin/recordings/{recording.RecordingId}", new { recording.RecordingId });
+}).RequireAuthorization(policy => policy.RequireRole("Admin", "Staff"));
+
+app.MapPut("/api/admin/recordings/{id:int}", async (int id, HttpContext httpContext, AppDbContext db) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<RecordingRequest>();
+    if (body == null)
+        return Results.BadRequest(new { error = "Request body is required." });
+
+    var recording = await db.ProcessRecordings.FindAsync(id);
+    if (recording == null)
+        return Results.NotFound(new { error = "Recording not found." });
+
+    recording.ResidentId = body.ResidentId;
+    recording.SessionDate = body.SessionDate;
+    recording.SocialWorker = body.SocialWorker;
+    recording.SessionType = body.SessionType;
+    recording.SessionDurationMinutes = body.SessionDurationMinutes;
+    recording.EmotionalStateObserved = body.EmotionalStateObserved;
+    recording.EmotionalStateEnd = body.EmotionalStateEnd;
+    recording.SessionNarrative = body.SessionNarrative;
+    recording.InterventionsApplied = body.InterventionsApplied;
+    recording.FollowUpActions = body.FollowUpActions;
+    recording.ProgressNoted = body.ProgressNoted;
+    recording.ConcernsFlagged = body.ConcernsFlagged;
+    recording.ReferralMade = body.ReferralMade;
+    recording.NotesRestricted = body.NotesRestricted;
+
+    await db.SaveChangesAsync();
+    return Results.Ok(new { recording.RecordingId });
+}).RequireAuthorization();
+
+app.MapDelete("/api/admin/recordings/{id:int}", async (int id, AppDbContext db) =>
+{
+    var recording = await db.ProcessRecordings.FindAsync(id);
+    if (recording == null)
+        return Results.NotFound(new { error = "Recording not found." });
+
+    db.ProcessRecordings.Remove(recording);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { message = "Recording deleted." });
+}).RequireAuthorization(policy => policy.RequireRole("Admin"));
+
+// ── Supporters CRUD ─────────────────────────────────────────
+
+app.MapGet("/api/admin/supporters", async (
+    AppDbContext db,
+    string? supporterType,
+    string? status,
+    string? acquisitionChannel,
+    string? search,
+    int page = 1,
+    int pageSize = 20) =>
+{
+    var q = db.Supporters.AsQueryable();
+
+    if (!string.IsNullOrWhiteSpace(supporterType))
+        q = q.Where(s => s.SupporterType == supporterType);
+    if (!string.IsNullOrWhiteSpace(status))
+        q = q.Where(s => s.Status == status);
+    if (!string.IsNullOrWhiteSpace(acquisitionChannel))
+        q = q.Where(s => s.AcquisitionChannel == acquisitionChannel);
+    if (!string.IsNullOrWhiteSpace(search))
+    {
+        var term = search.ToLower();
+        q = q.Where(s =>
+            (s.DisplayName != null && s.DisplayName.ToLower().Contains(term)) ||
+            (s.FirstName != null && s.FirstName.ToLower().Contains(term)) ||
+            (s.LastName != null && s.LastName.ToLower().Contains(term)) ||
+            (s.OrganizationName != null && s.OrganizationName.ToLower().Contains(term)) ||
+            (s.Email != null && s.Email.ToLower().Contains(term)));
+    }
+
+    var totalCount = await q.CountAsync();
+    var items = await q
+        .OrderByDescending(s => s.CreatedAt)
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .Select(s => new
+        {
+            s.SupporterId,
+            s.SupporterType,
+            s.DisplayName,
+            s.OrganizationName,
+            s.FirstName,
+            s.LastName,
+            s.Email,
+            s.Phone,
+            s.Region,
+            s.Country,
+            s.Status,
+            s.AcquisitionChannel,
+            s.FirstDonationDate,
+            s.CreatedAt,
+            totalDonated = db.Donations
+                .Where(d => d.SupporterId == s.SupporterId && d.Amount != null)
+                .Sum(d => (decimal?)d.Amount ?? 0),
+            lastDonationDate = db.Donations
+                .Where(d => d.SupporterId == s.SupporterId)
+                .OrderByDescending(d => d.DonationDate)
+                .Select(d => d.DonationDate)
+                .FirstOrDefault()
+        })
+        .ToListAsync();
+
+    return new { totalCount, page, pageSize, items };
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/supporters/{id:int}", async (int id, AppDbContext db) =>
+{
+    var s = await db.Supporters
+        .Where(s => s.SupporterId == id)
+        .Select(s => new
+        {
+            s.SupporterId,
+            s.SupporterType,
+            s.DisplayName,
+            s.OrganizationName,
+            s.FirstName,
+            s.LastName,
+            s.RelationshipType,
+            s.Email,
+            s.Phone,
+            s.Region,
+            s.Country,
+            s.Status,
+            s.AcquisitionChannel,
+            s.FirstDonationDate,
+            s.CreatedAt,
+            totalDonated = db.Donations
+                .Where(d => d.SupporterId == id && d.Amount != null)
+                .Sum(d => (decimal?)d.Amount ?? 0)
+        })
+        .FirstOrDefaultAsync();
+
+    if (s == null) return Results.NotFound();
+
+    var donations = await db.Donations
+        .Where(d => d.SupporterId == id)
+        .OrderByDescending(d => d.DonationDate)
+        .Select(d => new
+        {
+            d.DonationId,
+            d.DonationType,
+            d.DonationDate,
+            d.Amount,
+            d.EstimatedValue,
+            d.CurrencyCode,
+            d.ImpactUnit,
+            d.IsRecurring,
+            d.CampaignName,
+            d.Notes
+        })
+        .ToListAsync();
+
+    return Results.Ok(new { supporter = s, donations });
+}).RequireAuthorization();
+
+app.MapPost("/api/admin/supporters", async (AppDbContext db, HttpContext httpContext) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<SupporterRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+
+    var supporter = new backend.Models.Supporter
+    {
+        SupporterType = body.SupporterType,
+        DisplayName = body.DisplayName,
+        OrganizationName = body.OrganizationName,
+        FirstName = body.FirstName,
+        LastName = body.LastName,
+        RelationshipType = body.RelationshipType,
+        Email = body.Email,
+        Phone = body.Phone,
+        Region = body.Region,
+        Country = body.Country,
+        Status = body.Status ?? "Active",
+        AcquisitionChannel = body.AcquisitionChannel,
+        CreatedAt = DateTime.UtcNow
+    };
+
+    db.Supporters.Add(supporter);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { supporter.SupporterId });
+}).RequireAuthorization("Admin");
+
+app.MapPut("/api/admin/supporters/{id:int}", async (int id, AppDbContext db, HttpContext httpContext) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<SupporterRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+
+    var supporter = await db.Supporters.FindAsync(id);
+    if (supporter == null) return Results.NotFound();
+
+    supporter.SupporterType = body.SupporterType;
+    supporter.DisplayName = body.DisplayName;
+    supporter.OrganizationName = body.OrganizationName;
+    supporter.FirstName = body.FirstName;
+    supporter.LastName = body.LastName;
+    supporter.RelationshipType = body.RelationshipType;
+    supporter.Email = body.Email;
+    supporter.Phone = body.Phone;
+    supporter.Region = body.Region;
+    supporter.Country = body.Country;
+    supporter.Status = body.Status;
+    supporter.AcquisitionChannel = body.AcquisitionChannel;
+
+    await db.SaveChangesAsync();
+    return Results.Ok(new { supporter.SupporterId });
+}).RequireAuthorization("Admin");
+
+app.MapDelete("/api/admin/supporters/{id:int}", async (int id, AppDbContext db) =>
+{
+    var supporter = await db.Supporters.FindAsync(id);
+    if (supporter == null) return Results.NotFound();
+
+    db.Supporters.Remove(supporter);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { deleted = true });
+}).RequireAuthorization("Admin");
+
+// ── Donations CRUD ──────────────────────────────────────────
+
+app.MapGet("/api/admin/donations", async (
+    AppDbContext db,
+    int? supporterId,
+    string? donationType,
+    DateOnly? dateFrom,
+    DateOnly? dateTo,
+    int page = 1,
+    int pageSize = 20) =>
+{
+    var q = db.Donations.AsQueryable();
+
+    if (supporterId.HasValue)
+        q = q.Where(d => d.SupporterId == supporterId.Value);
+    if (!string.IsNullOrWhiteSpace(donationType))
+        q = q.Where(d => d.DonationType == donationType);
+    if (dateFrom.HasValue)
+        q = q.Where(d => d.DonationDate >= dateFrom.Value);
+    if (dateTo.HasValue)
+        q = q.Where(d => d.DonationDate <= dateTo.Value);
+
+    var totalCount = await q.CountAsync();
+    var items = await q
+        .OrderByDescending(d => d.DonationDate)
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .Select(d => new
+        {
+            d.DonationId,
+            d.SupporterId,
+            supporterName = db.Supporters
+                .Where(s => s.SupporterId == d.SupporterId)
+                .Select(s => s.DisplayName)
+                .FirstOrDefault(),
+            d.DonationType,
+            d.DonationDate,
+            d.Amount,
+            d.EstimatedValue,
+            d.CurrencyCode,
+            d.ImpactUnit,
+            d.IsRecurring,
+            d.CampaignName,
+            d.Notes
+        })
+        .ToListAsync();
+
+    return new { totalCount, page, pageSize, items };
+}).RequireAuthorization();
+
+app.MapPost("/api/admin/donations", async (AppDbContext db, HttpContext httpContext) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<DonationRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+
+    var donation = new backend.Models.Donation
+    {
+        SupporterId = body.SupporterId,
+        DonationType = body.DonationType,
+        DonationDate = body.DonationDate,
+        ChannelSource = body.ChannelSource,
+        CurrencyCode = body.CurrencyCode,
+        Amount = body.Amount,
+        EstimatedValue = body.EstimatedValue,
+        ImpactUnit = body.ImpactUnit,
+        IsRecurring = body.IsRecurring,
+        CampaignName = body.CampaignName,
+        Notes = body.Notes
+    };
+
+    db.Donations.Add(donation);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { donation.DonationId });
+}).RequireAuthorization("Admin");
+
+app.MapPut("/api/admin/donations/{id:int}", async (int id, AppDbContext db, HttpContext httpContext) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<DonationRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+
+    var donation = await db.Donations.FindAsync(id);
+    if (donation == null) return Results.NotFound();
+
+    donation.SupporterId = body.SupporterId;
+    donation.DonationType = body.DonationType;
+    donation.DonationDate = body.DonationDate;
+    donation.ChannelSource = body.ChannelSource;
+    donation.CurrencyCode = body.CurrencyCode;
+    donation.Amount = body.Amount;
+    donation.EstimatedValue = body.EstimatedValue;
+    donation.ImpactUnit = body.ImpactUnit;
+    donation.IsRecurring = body.IsRecurring;
+    donation.CampaignName = body.CampaignName;
+    donation.Notes = body.Notes;
+
+    await db.SaveChangesAsync();
+    return Results.Ok(new { donation.DonationId });
+}).RequireAuthorization("Admin");
+
+app.MapDelete("/api/admin/donations/{id:int}", async (int id, AppDbContext db) =>
+{
+    var donation = await db.Donations.FindAsync(id);
+    if (donation == null) return Results.NotFound();
+
+    db.Donations.Remove(donation);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { deleted = true });
+}).RequireAuthorization("Admin");
+
+// ── Allocation reports ──────────────────────────────────────
+
+app.MapGet("/api/admin/allocations/by-program", async (AppDbContext db) =>
+{
+    var data = await db.DonationAllocations
+        .Where(a => a.ProgramArea != null)
+        .GroupBy(a => a.ProgramArea)
+        .Select(g => new
+        {
+            programArea = g.Key,
+            totalAllocated = g.Sum(a => (decimal?)a.AmountAllocated ?? 0),
+            count = g.Count()
+        })
+        .OrderByDescending(x => x.totalAllocated)
+        .ToListAsync();
+
+    return data;
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/allocations/by-safehouse", async (AppDbContext db) =>
+{
+    var data = await db.DonationAllocations
+        .Where(a => a.SafehouseId != null)
+        .GroupBy(a => a.SafehouseId)
+        .Select(g => new
+        {
+            safehouseId = g.Key,
+            safehouseName = db.Safehouses
+                .Where(s => s.SafehouseId == g.Key)
+                .Select(s => s.Name ?? s.SafehouseCode)
+                .FirstOrDefault(),
+            totalAllocated = g.Sum(a => (decimal?)a.AmountAllocated ?? 0),
+            count = g.Count()
+        })
+        .OrderByDescending(x => x.totalAllocated)
+        .ToListAsync();
+
+    return data;
+}).RequireAuthorization();
+
 app.Run();
 
 // ── Request DTOs ────────────────────────────────────────────
@@ -560,4 +1724,104 @@ public class LoginRequest
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
     public bool RememberMe { get; set; }
+}
+
+public class RecordingRequest
+{
+    public int ResidentId { get; set; }
+    public DateOnly? SessionDate { get; set; }
+    public string? SocialWorker { get; set; }
+    public string? SessionType { get; set; }
+    public int? SessionDurationMinutes { get; set; }
+    public string? EmotionalStateObserved { get; set; }
+    public string? EmotionalStateEnd { get; set; }
+    public string? SessionNarrative { get; set; }
+    public string? InterventionsApplied { get; set; }
+    public string? FollowUpActions { get; set; }
+    public bool? ProgressNoted { get; set; }
+    public bool? ConcernsFlagged { get; set; }
+    public bool? ReferralMade { get; set; }
+    public string? NotesRestricted { get; set; }
+}
+
+public class ResidentRequest
+{
+    public string? CaseControlNo { get; set; }
+    public string? InternalCode { get; set; }
+    public int? SafehouseId { get; set; }
+    public string? CaseStatus { get; set; }
+    public string? Sex { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
+    public string? BirthStatus { get; set; }
+    public string? PlaceOfBirth { get; set; }
+    public string? Religion { get; set; }
+    public string? CaseCategory { get; set; }
+    public bool? SubCatOrphaned { get; set; }
+    public bool? SubCatTrafficked { get; set; }
+    public bool? SubCatChildLabor { get; set; }
+    public bool? SubCatPhysicalAbuse { get; set; }
+    public bool? SubCatSexualAbuse { get; set; }
+    public bool? SubCatOsaec { get; set; }
+    public bool? SubCatCicl { get; set; }
+    public bool? SubCatAtRisk { get; set; }
+    public bool? SubCatStreetChild { get; set; }
+    public bool? SubCatChildWithHiv { get; set; }
+    public bool? IsPwd { get; set; }
+    public string? PwdType { get; set; }
+    public bool? HasSpecialNeeds { get; set; }
+    public string? SpecialNeedsDiagnosis { get; set; }
+    public bool? FamilyIs4ps { get; set; }
+    public bool? FamilySoloParent { get; set; }
+    public bool? FamilyIndigenous { get; set; }
+    public bool? FamilyParentPwd { get; set; }
+    public bool? FamilyInformalSettler { get; set; }
+    public DateOnly? DateOfAdmission { get; set; }
+    public string? AgeUponAdmission { get; set; }
+    public string? PresentAge { get; set; }
+    public string? LengthOfStay { get; set; }
+    public string? ReferralSource { get; set; }
+    public string? ReferringAgencyPerson { get; set; }
+    public DateOnly? DateColbRegistered { get; set; }
+    public DateOnly? DateColbObtained { get; set; }
+    public string? AssignedSocialWorker { get; set; }
+    public string? InitialCaseAssessment { get; set; }
+    public DateOnly? DateCaseStudyPrepared { get; set; }
+    public string? ReintegrationType { get; set; }
+    public string? ReintegrationStatus { get; set; }
+    public string? InitialRiskLevel { get; set; }
+    public string? CurrentRiskLevel { get; set; }
+    public DateOnly? DateEnrolled { get; set; }
+    public DateOnly? DateClosed { get; set; }
+    public string? NotesRestricted { get; set; }
+}
+
+public class SupporterRequest
+{
+    public string? SupporterType { get; set; }
+    public string? DisplayName { get; set; }
+    public string? OrganizationName { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? RelationshipType { get; set; }
+    public string? Email { get; set; }
+    public string? Phone { get; set; }
+    public string? Region { get; set; }
+    public string? Country { get; set; }
+    public string? Status { get; set; }
+    public string? AcquisitionChannel { get; set; }
+}
+
+public class DonationRequest
+{
+    public int? SupporterId { get; set; }
+    public string? DonationType { get; set; }
+    public DateOnly? DonationDate { get; set; }
+    public string? ChannelSource { get; set; }
+    public string? CurrencyCode { get; set; }
+    public decimal? Amount { get; set; }
+    public decimal? EstimatedValue { get; set; }
+    public string? ImpactUnit { get; set; }
+    public bool? IsRecurring { get; set; }
+    public string? CampaignName { get; set; }
+    public string? Notes { get; set; }
 }

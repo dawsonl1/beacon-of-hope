@@ -1,0 +1,246 @@
+.page {
+  padding: 2rem 2.5rem;
+  max-width: 720px;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-warm-gray);
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.backLink:hover {
+  color: var(--color-deep-navy);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--color-deep-navy);
+  letter-spacing: -0.02em;
+  margin: 0 0 1.5rem;
+}
+
+/* ── Form card ────────────────────────────────────────── */
+.formCard {
+  background: #fff;
+  border: 1px solid var(--color-sand);
+  border-radius: 12px;
+  padding: 1.5rem 1.75rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.25rem;
+}
+
+.fieldFull {
+  grid-column: 1 / -1;
+}
+
+.field label {
+  display: block;
+  font-size: 0.73rem;
+  font-weight: 700;
+  color: var(--color-warm-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.3rem;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+  border: 1px solid var(--color-sand);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--color-deep-navy);
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--color-amber);
+}
+
+.field textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--color-light-gray);
+}
+
+/* ── Toggle ───────────────────────────────────────────── */
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-top: 1.5rem;
+}
+
+.toggleSwitch {
+  position: relative;
+  width: 38px;
+  height: 20px;
+  background: var(--color-sand);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: none;
+  padding: 0;
+}
+
+.toggleSwitch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.toggleSwitchOn {
+  background: var(--color-sage);
+}
+
+.toggleSwitchOn::after {
+  transform: translateX(18px);
+}
+
+.toggleLabel {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-slate);
+}
+
+/* ── Conditional section ──────────────────────────────── */
+.typeSection {
+  grid-column: 1 / -1;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #F4F1EB;
+}
+
+.typeSectionTitle {
+  font-size: 0.73rem;
+  font-weight: 700;
+  color: var(--color-amber-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.75rem;
+}
+
+.typeSectionGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.25rem;
+}
+
+/* ── Actions ──────────────────────────────────────────── */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #F4F1EB;
+}
+
+.cancelBtn {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-warm-gray);
+  background: #fff;
+  border: 1px solid var(--color-sand);
+  padding: 0.55rem 1.25rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+}
+
+.cancelBtn:hover {
+  border-color: var(--color-light-gray);
+}
+
+.saveBtn {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--color-deep-navy);
+  border: 1px solid var(--color-deep-navy);
+  padding: 0.55rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+}
+
+.saveBtn:hover {
+  background: var(--color-navy-soft);
+}
+
+.saveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.errorMsg {
+  color: var(--color-rose);
+  font-size: 0.82rem;
+  margin-top: 1rem;
+}
+
+/* ── Loading ──────────────────────────────────────────── */
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 3rem;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  color: var(--color-amber);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 1.25rem;
+  }
+
+  .formGrid,
+  .typeSectionGrid {
+    grid-template-columns: 1fr;
+  }
+}

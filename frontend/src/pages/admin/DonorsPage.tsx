@@ -1,0 +1,368 @@
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Search, Plus, Loader2, X } from 'lucide-react';
+import { apiFetch } from '../../api';
+import { useAuth } from '../../contexts/AuthContext';
+import Pagination from '../../components/admin/Pagination';
+import styles from './DonorsPage.module.css';
+
+/* ── Types ──────────────────────────────────────────────── */
+
+interface SupporterRow {
+  supporterId: number;
+  supporterType: string | null;
+  displayName: string | null;
+  organizationName: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  email: string | null;
+  phone: string | null;
+  region: string | null;
+  country: string | null;
+  status: string | null;
+  acquisitionChannel: string | null;
+  totalDonated: number;
+  lastDonationDate: string | null;
+}
+
+interface DonationRow {
+  donationId: number;
+  supporterId: number | null;
+  supporterName: string | null;
+  donationType: string | null;
+  donationDate: string | null;
+  amount: number | null;
+  estimatedValue: number | null;
+  currencyCode: string | null;
+  impactUnit: string | null;
+  isRecurring: boolean | null;
+  campaignName: string | null;
+}
+
+interface PagedResult<T> {
+  items: T[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
+const SUPPORTER_TYPES = ['MonetaryDonor', 'Volunteer', 'SkillsContributor', 'SocialMediaAdvocate'];
+const STATUSES = ['Active', 'Inactive', 'Prospective', 'Lapsed'];
+const DONATION_TYPES = ['Monetary', 'InKind', 'Time', 'Skills', 'SocialMedia'];
+
+/* ── Component ──────────────────────────────────────────── */
+
+export default function DonorsPage() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isAdmin = user?.roles?.includes('Admin') ?? false;
+
+  const [activeTab, setActiveTab] = useState<'supporters' | 'donations'>(
+    (searchParams.get('tab') as 'supporters' | 'donations') || 'supporters'
+  );
+
+  // Supporters state
+  const [supporters, setSupporters] = useState<PagedResult<SupporterRow> | null>(null);
+  const [sLoading, setSLoading] = useState(true);
+  const [sError, setSError] = useState<string | null>(null);
+
+  // Donations state
+  const [donations, setDonations] = useState<PagedResult<DonationRow> | null>(null);
+  const [dLoading, setDLoading] = useState(false);
+  const [dError, setDError] = useState<string | null>(null);
+
+  // Filters from URL
+  const page = parseInt(searchParams.get('page') || '1', 10);
+  const search = searchParams.get('search') || '';
+  const supporterType = searchParams.get('supporterType') || '';
+  const status = searchParams.get('status') || '';
+  const donationType = searchParams.get('donationType') || '';
+
+  const [searchInput, setSearchInput] = useState(search);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  function setParam(key: string, value: string) {
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      if (value) next.set(key, value);
+      else next.delete(key);
+      if (key !== 'page') next.set('page', '1');
+      return next;
+    });
+  }
+
+  function clearFilters() {
+    setSearchParams({ tab: activeTab });
+    setSearchInput('');
+  }
+
+  // Fetch supporters
+  const fetchSupporters = useCallback(async () => {
+    setSLoading(true);
+    setSError(null);
+    try {
+      const params = new URLSearchParams();
+      params.set('page', String(page));
+      params.set('pageSize', '20');
+      if (search) params.set('search', search);
+      if (supporterType) params.set('supporterType', supporterType);
+      if (status) params.set('status', status);
+      const data = await apiFetch<PagedResult<SupporterRow>>(`/api/admin/supporters?${params}`);
+      setSupporters(data);
+    } catch (e) {
+      setSError(e instanceof Error ? e.message : 'Failed to load supporters');
+    } finally {
+      setSLoading(false);
+    }
+  }, [page, search, supporterType, status]);
+
+  // Fetch donations
+  const fetchDonations = useCallback(async () => {
+    setDLoading(true);
+    setDError(null);
+    try {
+      const params = new URLSearchParams();
+      params.set('page', String(page));
+      params.set('pageSize', '20');
+      if (donationType) params.set('donationType', donationType);
+      const data = await apiFetch<PagedResult<DonationRow>>(`/api/admin/donations?${params}`);
+      setDonations(data);
+    } catch (e) {
+      setDError(e instanceof Error ? e.message : 'Failed to load donations');
+    } finally {
+      setDLoading(false);
+    }
+  }, [page, donationType]);
+
+  useEffect(() => {
+    if (activeTab === 'supporters') fetchSupporters();
+    else fetchDonations();
+  }, [activeTab, fetchSupporters, fetchDonations]);
+
+  // Debounced search
+  function handleSearchChange(value: string) {
+    setSearchInput(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => setParam('search', value), 350);
+  }
+
+  function handleTabChange(tab: 'supporters' | 'donations') {
+    setActiveTab(tab);
+    setSearchParams({ tab, page: '1' });
+    setSearchInput('');
+  }
+
+  function statusClassName(s: string | null) {
+    if (!s) return '';
+    const k = s.toLowerCase();
+    if (k === 'active') return styles.statusActive;
+    if (k === 'lapsed') return styles.statusLapsed;
+    return styles.statusInactive;
+  }
+
+  function formatAmount(n: number | null | undefined) {
+    if (n == null || n === 0) return '--';
+    return `₱${Number(n).toLocaleString()}`;
+  }
+
+  function formatDate(d: string | null) {
+    if (!d) return '--';
+    return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  const hasFilters = search || supporterType || status || donationType;
+
+  return (
+    <div className={styles.page}>
+      {/* Header */}
+      <header className={styles.header}>
+        <div className={styles.headerLeft}>
+          <h1>Donors & Contributions</h1>
+          <p>Manage supporter profiles and track all contribution types</p>
+        </div>
+        {isAdmin && (
+          <div className={styles.headerActions}>
+            <button className={styles.btnSecondary} onClick={() => navigate('/admin/donations/new')}>
+              <Plus size={15} />
+              Log Donation
+            </button>
+            <button className={styles.btnPrimary} onClick={() => navigate('/admin/donors/new')}>
+              <Plus size={15} />
+              Add Supporter
+            </button>
+          </div>
+        )}
+      </header>
+
+      {/* Tabs */}
+      <div className={styles.tabs}>
+        <button
+          className={`${styles.tab} ${activeTab === 'supporters' ? styles.tabActive : ''}`}
+          onClick={() => handleTabChange('supporters')}
+        >
+          Supporters Directory
+        </button>
+        <button
+          className={`${styles.tab} ${activeTab === 'donations' ? styles.tabActive : ''}`}
+          onClick={() => handleTabChange('donations')}
+        >
+          Recent Donations
+        </button>
+      </div>
+
+      {/* Filters */}
+      <div className={styles.filters}>
+        {activeTab === 'supporters' && (
+          <>
+            <div className={styles.searchWrap}>
+              <Search size={16} className={styles.searchIcon} />
+              <input
+                className={styles.searchInput}
+                placeholder="Search by name, email, org..."
+                value={searchInput}
+                onChange={e => handleSearchChange(e.target.value)}
+              />
+            </div>
+            <select
+              className={styles.filterSelect}
+              value={supporterType}
+              onChange={e => setParam('supporterType', e.target.value)}
+            >
+              <option value="">All Types</option>
+              {SUPPORTER_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+            <select
+              className={styles.filterSelect}
+              value={status}
+              onChange={e => setParam('status', e.target.value)}
+            >
+              <option value="">All Statuses</option>
+              {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </>
+        )}
+        {activeTab === 'donations' && (
+          <select
+            className={styles.filterSelect}
+            value={donationType}
+            onChange={e => setParam('donationType', e.target.value)}
+          >
+            <option value="">All Types</option>
+            {DONATION_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+          </select>
+        )}
+        {hasFilters && (
+          <button className={styles.clearBtn} onClick={clearFilters}>
+            <X size={14} /> Clear
+          </button>
+        )}
+      </div>
+
+      {/* Supporters Table */}
+      {activeTab === 'supporters' && (
+        <div className={styles.tableCard}>
+          {sLoading ? (
+            <div className={styles.loading}><Loader2 size={28} className={styles.spinner} /></div>
+          ) : sError ? (
+            <div className={styles.error}>{sError}</div>
+          ) : !supporters || supporters.items.length === 0 ? (
+            <div className={styles.empty}>No supporters found</div>
+          ) : (
+            <>
+              <div className={styles.tableWrapper}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Status</th>
+                      <th>Email</th>
+                      <th>Region</th>
+                      <th>Total Given</th>
+                      <th>Last Donation</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {supporters.items.map(s => (
+                      <tr key={s.supporterId} onClick={() => navigate(`/admin/donors/${s.supporterId}`)}>
+                        <td>
+                          <span className={styles.supporterName}>{s.displayName || `${s.firstName ?? ''} ${s.lastName ?? ''}`.trim() || 'Unnamed'}</span>
+                          {s.organizationName && <span className={styles.supporterOrg}>{s.organizationName}</span>}
+                        </td>
+                        <td>{s.supporterType ? <span className={styles.typeBadge}>{s.supporterType}</span> : '--'}</td>
+                        <td><span className={statusClassName(s.status)}>{s.status ?? '--'}</span></td>
+                        <td>{s.email ?? '--'}</td>
+                        <td>{[s.region, s.country].filter(Boolean).join(', ') || '--'}</td>
+                        <td className={styles.amountCol}>{formatAmount(s.totalDonated)}</td>
+                        <td>{formatDate(s.lastDonationDate)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <Pagination
+                page={supporters.page}
+                pageSize={supporters.pageSize}
+                totalCount={supporters.totalCount}
+                onPageChange={p => setParam('page', String(p))}
+              />
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Donations Table */}
+      {activeTab === 'donations' && (
+        <div className={styles.tableCard}>
+          {dLoading ? (
+            <div className={styles.loading}><Loader2 size={28} className={styles.spinner} /></div>
+          ) : dError ? (
+            <div className={styles.error}>{dError}</div>
+          ) : !donations || donations.items.length === 0 ? (
+            <div className={styles.empty}>No donations found</div>
+          ) : (
+            <>
+              <div className={styles.tableWrapper}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Supporter</th>
+                      <th>Type</th>
+                      <th>Amount</th>
+                      <th>Date</th>
+                      <th>Campaign</th>
+                      <th>Recurring</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {donations.items.map(d => (
+                      <tr key={d.donationId} onClick={() => navigate(`/admin/donations/${d.donationId}/edit`)}>
+                        <td>
+                          <span className={styles.donationName}>{d.supporterName ?? 'Anonymous'}</span>
+                        </td>
+                        <td>{d.donationType ? <span className={styles.typeBadge}>{d.donationType}</span> : '--'}</td>
+                        <td className={styles.amountCol}>
+                          {d.amount ? formatAmount(d.amount) : d.estimatedValue ? `${formatAmount(d.estimatedValue)} est.` : d.impactUnit ?? '--'}
+                        </td>
+                        <td>{formatDate(d.donationDate)}</td>
+                        <td>{d.campaignName ?? '--'}</td>
+                        <td>{d.isRecurring ? <span className={styles.recurringBadge}>Recurring</span> : '--'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <Pagination
+                page={donations.page}
+                pageSize={donations.pageSize}
+                totalCount={donations.totalCount}
+                onPageChange={p => setParam('page', String(p))}
+              />
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

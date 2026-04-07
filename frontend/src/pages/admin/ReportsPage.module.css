@@ -1,0 +1,291 @@
+.page {
+  padding: 2rem 2.5rem;
+  max-width: 1120px;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+}
+
+/* ── Header ───────────────────────────────────────────── */
+.header {
+  margin-bottom: 1.75rem;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--color-deep-navy);
+  letter-spacing: -0.03em;
+  margin-bottom: 0.2rem;
+}
+
+.subtitle {
+  font-size: 0.82rem;
+  color: var(--color-warm-gray);
+}
+
+/* ── Tabs ─────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 0.15rem;
+  border-bottom: 1px solid var(--color-sand);
+  margin-bottom: 1.75rem;
+  overflow-x: auto;
+}
+
+.tab {
+  padding: 0.65rem 1.15rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-warm-gray);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-family: var(--font-body);
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tab:hover {
+  color: var(--color-deep-navy);
+}
+
+.tabActive {
+  color: var(--color-deep-navy);
+  border-bottom-color: var(--color-amber);
+}
+
+/* ── KPI Grid ─────────────────────────────────────────── */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.85rem;
+  margin-bottom: 1.75rem;
+}
+
+/* ── Chart Card ───────────────────────────────────────── */
+.chartCard {
+  background: #fff;
+  border: 1px solid var(--color-sand);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.chartTitle {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-deep-navy);
+  margin-bottom: 1rem;
+}
+
+.chartContainer {
+  width: 100%;
+}
+
+/* ── Charts Row ───────────────────────────────────────── */
+.chartsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+/* ── Three-col grid ───────────────────────────────────── */
+.chartsThreeCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+/* ── Comparison Table ─────────────────────────────────── */
+.tableCard {
+  background: #fff;
+  border: 1px solid var(--color-sand);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+
+.tableHeader {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #F4F1EB;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.table th {
+  text-align: left;
+  padding: 0.6rem 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-warm-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: #FAFAF7;
+  border-bottom: 1px solid var(--color-sand);
+}
+
+.table td {
+  padding: 0.55rem 1rem;
+  color: var(--color-slate);
+  border-bottom: 1px solid #F7F5F0;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr {
+  transition: background 0.15s;
+}
+
+.table tbody tr:hover {
+  background: #FDFCF9;
+}
+
+/* ── Occupancy bar ────────────────────────────────────── */
+.occupancyBar {
+  width: 100%;
+  height: 6px;
+  background: #F0EDE6;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 0.2rem;
+}
+
+.occupancyFill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.occupancyGreen {
+  background: var(--color-sage);
+}
+
+.occupancyYellow {
+  background: var(--color-amber);
+}
+
+.occupancyRed {
+  background: var(--color-rose);
+}
+
+/* ── Loading ──────────────────────────────────────────── */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 0;
+  color: var(--color-warm-gray);
+  font-size: 0.9rem;
+}
+
+.loadingDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--color-amber);
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* ── Donut Center ─────────────────────────────────────── */
+.donutCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.donutBig {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--color-deep-navy);
+  letter-spacing: -0.02em;
+}
+
+.donutLabel {
+  font-size: 0.73rem;
+  color: var(--color-warm-gray);
+}
+
+/* ── Legend ────────────────────────────────────────────── */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.73rem;
+  color: var(--color-slate);
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .chartsRow {
+    grid-template-columns: 1fr;
+  }
+
+  .chartsThreeCol {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 1.25rem;
+  }
+
+  .kpiGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+  }
+
+  .tabs {
+    gap: 0;
+  }
+
+  .tab {
+    padding: 0.55rem 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  .table {
+    min-width: 700px;
+  }
+}
