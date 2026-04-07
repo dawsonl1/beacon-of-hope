@@ -197,27 +197,56 @@ def engineer_home_visit_features(home_visitations: pd.DataFrame) -> pd.DataFrame
     return out
 
 
+def engineer_intervention_features(intervention_plans: pd.DataFrame) -> pd.DataFrame:
+    """Resident-level aggregates from intervention_plans."""
+    empty_cols = ["resident_id", "intervention_plan_count", "intervention_achieved_rate"]
+    if intervention_plans.empty:
+        return pd.DataFrame(columns=empty_cols)
+
+    df = intervention_plans.copy()
+    if "resident_id" not in df.columns:
+        return pd.DataFrame(columns=empty_cols)
+
+    status = df.get("status", pd.Series(index=df.index, dtype=object)).fillna("").astype(str).str.strip()
+    st_lower = status.str.lower()
+    df["is_achieved"] = st_lower.isin({"achieved", "completed", "complete"}) | st_lower.str.contains(
+        "achiev", na=False
+    )
+
+    out = df.groupby("resident_id", as_index=False).agg(
+        intervention_plan_count=("resident_id", "size"),
+        intervention_achieved_rate=("is_achieved", "mean"),
+    )
+    return out
+
+
 def build_reintegration_feature_frame(
     residents: pd.DataFrame,
     health: pd.DataFrame,
     education: pd.DataFrame,
     process_recordings: pd.DataFrame,
     home_visitations: pd.DataFrame,
+    intervention_plans: pd.DataFrame | None = None,
     case_category_values: Iterable[str] | None = None,
 ) -> pd.DataFrame:
     """
     Return one row per resident with all engineered features and case_category one-hot.
     """
+    if intervention_plans is None:
+        intervention_plans = pd.DataFrame()
+
     base = engineer_resident_base_features(residents)
     health_f = engineer_health_features(health)
     edu_f = engineer_education_features(education)
     proc_f = engineer_process_features(process_recordings)
     visit_f = engineer_home_visit_features(home_visitations)
+    int_f = engineer_intervention_features(intervention_plans)
 
     feature_df = base.merge(health_f, on="resident_id", how="left")
     feature_df = feature_df.merge(edu_f, on="resident_id", how="left")
     feature_df = feature_df.merge(proc_f, on="resident_id", how="left")
     feature_df = feature_df.merge(visit_f, on="resident_id", how="left")
+    feature_df = feature_df.merge(int_f, on="resident_id", how="left")
 
     months = _positive_denominator(feature_df["length_of_stay_months"])
     feature_df["sessions_per_month"] = feature_df.get("total_sessions", 0) / months

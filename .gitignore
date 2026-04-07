@@ -31,3 +31,10 @@ supabase/.temp/
 # OS
 .DS_Store
 Thumbs.db
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+
+# ML model artifact policy
+models/*.pkl

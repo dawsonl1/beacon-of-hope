@@ -66,6 +66,7 @@ def build_training_frame() -> pd.DataFrame:
         education=tables.education,
         process_recordings=tables.process_recordings,
         home_visitations=tables.home_visitations,
+        intervention_plans=tables.intervention_plans,
     )
     train_df = X.merge(
         residents[["resident_id"]].assign(reintegration_complete=y.values),

@@ -80,7 +80,7 @@ def run_inference() -> list[dict]:
     education = fetch_table(client, TABLE_EDUCATION)
     process = fetch_table(client, TABLE_PROCESS_RECORDINGS)
     visitations = fetch_table(client, TABLE_HOME_VISITATIONS)
-    _ = fetch_table(client, TABLE_INTERVENTION_PLANS)
+    intervention_plans = fetch_table(client, TABLE_INTERVENTION_PLANS)
 
     active_residents = residents[residents["case_status"].eq("Active")].copy()
     features = build_reintegration_feature_frame(
@@ -89,6 +89,7 @@ def run_inference() -> list[dict]:
         education=education,
         process_recordings=process,
         home_visitations=visitations,
+        intervention_plans=intervention_plans,
     )
 
     bundle = load_model_bundle()

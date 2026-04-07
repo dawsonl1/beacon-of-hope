@@ -56,3 +56,8 @@ Runs on `http://localhost:5173` by default.
 - Never push directly to `main` — use feature branches and open PRs
 - Keep commits small and frequent
 - Secrets go in `.env` files (never committed to the repo)
+
+## ML Artifacts
+
+- Persist ML model bundles in `models/` using the `.sav` extension.
+- Do not commit `.pkl` model files; they are ignored by repo policy.

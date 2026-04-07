@@ -1,0 +1,26 @@
+{
+  "training_date": "20260407",
+  "model_type": "OLS (statsmodels) + Logit comparison",
+  "feature_list": [
+    "current_risk_num",
+    "risk_reduction",
+    "trauma_severity_score",
+    "family_vulnerability_score",
+    "psych_checkups",
+    "health_trend",
+    "courses_completed",
+    "total_sessions",
+    "positive_session_rate",
+    "favorable_rate",
+    "safety_concern_rate",
+    "post_placement_visits",
+    "reintegration_assessments",
+    "intervention_achieved_rate",
+    "case_category_Abandoned",
+    "case_category_Foundling",
+    "case_category_Neglected"
+  ],
+  "train_rows": 48,
+  "test_rows": 12,
+  "total_rows": 60
+}
