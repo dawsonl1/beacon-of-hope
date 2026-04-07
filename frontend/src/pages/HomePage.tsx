@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { apiFetch } from '../api';
 import type { ImpactSummary } from '../types';
 import { ApiError } from '../components/ApiError';
@@ -84,12 +85,12 @@ export default function HomePage() {
             <em>one child at a time</em>
           </h1>
           <p className={styles.heroSub}>
-            We operate safe homes in the Philippines for girls who are survivors
+            We operate safe homes in Guam for girls who are survivors
             of sexual abuse and trafficking — providing shelter, healing, education,
             and a path to a new life.
           </p>
           <div className={styles.heroCtas}>
-            <a href="#involved" className={styles.btnPrimary}>
+            <a href="https://www.paypal.com/donate" target="_blank" rel="noopener noreferrer" className={styles.btnPrimary}>
               <Heart size={16} />
               Donate Now
             </a>
@@ -128,7 +129,7 @@ export default function HomePage() {
               </div>
               <div className={`${styles.statCard} reveal`}>
                 <span className={styles.statNumber}>
-                  <Counter end={Math.round(impact.totalDonations / 1000)} prefix="&#8369;" suffix="K" />
+                  <Counter end={Math.round(impact.totalDonations / 1000)} prefix="$" suffix="K" />
                 </span>
                 <span className={styles.statDesc}>Donations received</span>
               </div>
@@ -149,7 +150,7 @@ export default function HomePage() {
           <h2 className={styles.sectionTitle}>Our Mission</h2>
           <p className={styles.missionText}>
             Beacon of Hope contracts with in-country individuals and organizations across
-            the Philippines to provide safehouses and comprehensive rehabilitation services.
+            Guam to provide safehouses and comprehensive rehabilitation services.
             Every girl who enters our care receives a personalized path toward healing
             and independence.
           </p>
@@ -173,7 +174,7 @@ export default function HomePage() {
               <div className={styles.processStep}>02</div>
               <h3 className={styles.processTitle}>Safe Housing</h3>
               <p className={styles.processDesc}>
-                Placed in one of our safehouses across Luzon, Visayas, and Mindanao
+                Placed in one of our safehouses across Guam
                 with around-the-clock care.
               </p>
             </div>
@@ -235,26 +236,26 @@ export default function HomePage() {
           </p>
 
           <div className={`${styles.involvedGrid} reveal-stagger`}>
-            <div className={`${styles.involvedCard} reveal`}>
+            <a href="https://www.paypal.com/donate" target="_blank" rel="noopener noreferrer" className={`${styles.involvedCard} reveal`} style={{ textDecoration: 'none', color: 'inherit' }}>
               <Heart size={28} className={styles.involvedIcon} />
               <h3>Donate</h3>
               <p>Your financial support funds shelter, education, counseling, and care.</p>
-            </div>
+            </a>
             <div className={`${styles.involvedCard} reveal`}>
               <Users size={28} className={styles.involvedIcon} />
               <h3>Volunteer</h3>
               <p>Give your time and skills to help our team on the ground.</p>
             </div>
-            <div className={`${styles.involvedCard} reveal`}>
+            <Link to="/login" className={`${styles.involvedCard} reveal`} style={{ textDecoration: 'none', color: 'inherit' }}>
               <HandHeart size={28} className={styles.involvedIcon} />
               <h3>Partner</h3>
               <p>Bring your church, company, or community alongside our mission.</p>
-            </div>
-            <div className={`${styles.involvedCard} reveal`}>
+            </Link>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className={`${styles.involvedCard} reveal`} style={{ textDecoration: 'none', color: 'inherit' }}>
               <Megaphone size={28} className={styles.involvedIcon} />
               <h3>Advocate</h3>
               <p>Amplify our voice on social media and raise awareness.</p>
-            </div>
+            </a>
           </div>
         </div>
       </section>
@@ -265,15 +266,15 @@ export default function HomePage() {
           <h2 className={styles.donateTitle}>Your donation changes a life</h2>
           <div className={styles.donateAmounts}>
             <div className={styles.donateCard}>
-              <span className={styles.donateAmount}>&#8369;500</span>
+              <span className={styles.donateAmount}>$500</span>
               <span className={styles.donateDesc}>One week of education supplies</span>
             </div>
             <div className={styles.donateCard}>
-              <span className={styles.donateAmount}>&#8369;2,000</span>
+              <span className={styles.donateAmount}>$2,000</span>
               <span className={styles.donateDesc}>One month of counseling sessions</span>
             </div>
             <div className={styles.donateCard}>
-              <span className={styles.donateAmount}>&#8369;8,000</span>
+              <span className={styles.donateAmount}>$8,000</span>
               <span className={styles.donateDesc}>Full month of care for one girl</span>
             </div>
           </div>

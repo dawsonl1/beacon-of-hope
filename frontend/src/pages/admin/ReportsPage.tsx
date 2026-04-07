@@ -99,7 +99,7 @@ function OverviewTab() {
         />
         <KpiCard
           label="Total Donations"
-          value={summary ? `₱${summary.totalDonations.toLocaleString()}` : '--'}
+          value={summary ? `$${summary.totalDonations.toLocaleString()}` : '--'}
           sub={`${summary?.activeSafehouses ?? 0} active safehouses`}
           loading={loading}
         />
@@ -167,8 +167,8 @@ function DonationsTab() {
             <LineChart data={trendData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#F0EDE6" />
               <XAxis dataKey="month" tick={{ fontSize: 11 }} stroke="#B0A99F" />
-              <YAxis tick={{ fontSize: 11 }} stroke="#B0A99F" tickFormatter={v => `₱${(v / 1000).toFixed(0)}k`} />
-              <Tooltip content={<ChartTooltip prefix="₱" />} />
+              <YAxis tick={{ fontSize: 11 }} stroke="#B0A99F" tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} />
+              <Tooltip content={<ChartTooltip prefix="$" />} />
               <Line type="monotone" dataKey="total" stroke="#D4A853" strokeWidth={2.5} dot={{ r: 3, fill: '#D4A853' }} activeDot={{ r: 5 }} />
             </LineChart>
           </ResponsiveContainer>
@@ -182,9 +182,9 @@ function DonationsTab() {
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={bySrc.map(d => ({ ...d, total: Number(d.total) }))} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#F0EDE6" />
-              <XAxis type="number" tick={{ fontSize: 11 }} stroke="#B0A99F" tickFormatter={v => `₱${(v / 1000).toFixed(0)}k`} />
+              <XAxis type="number" tick={{ fontSize: 11 }} stroke="#B0A99F" tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} />
               <YAxis type="category" dataKey="source" tick={{ fontSize: 11 }} stroke="#B0A99F" width={100} />
-              <Tooltip content={<ChartTooltip prefix="₱" />} />
+              <Tooltip content={<ChartTooltip prefix="$" />} />
               <Bar dataKey="total" fill="#7A9E7E" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -196,9 +196,9 @@ function DonationsTab() {
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={byCampaign.slice(0, 8).map(d => ({ ...d, total: Number(d.total) }))} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#F0EDE6" />
-              <XAxis type="number" tick={{ fontSize: 11 }} stroke="#B0A99F" tickFormatter={v => `₱${(v / 1000).toFixed(0)}k`} />
+              <XAxis type="number" tick={{ fontSize: 11 }} stroke="#B0A99F" tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} />
               <YAxis type="category" dataKey="campaign" tick={{ fontSize: 10 }} stroke="#B0A99F" width={120} />
-              <Tooltip content={<ChartTooltip prefix="₱" />} />
+              <Tooltip content={<ChartTooltip prefix="$" />} />
               <Bar dataKey="total" fill="#4A6FA5" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>

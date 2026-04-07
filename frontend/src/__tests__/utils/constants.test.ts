@@ -45,9 +45,9 @@ describe('formatDate', () => {
 });
 
 describe('formatAmount', () => {
-  it('formats a number with peso sign', () => {
+  it('formats a number with dollar sign', () => {
     const result = formatAmount(5000);
-    expect(result).toContain('\u20B1');
+    expect(result).toContain('$');
     expect(result).toContain('5');
   });
 
@@ -61,7 +61,7 @@ describe('formatAmount', () => {
 
   it('handles zero', () => {
     const result = formatAmount(0);
-    expect(result).toContain('\u20B1');
+    expect(result).toContain('$');
     expect(result).toContain('0');
   });
 });

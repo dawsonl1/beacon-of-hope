@@ -125,7 +125,7 @@ export default function AdminDashboard() {
       setDonations(data.map(d => ({
         supporter: d.supporter ?? 'Anonymous',
         type: formatEnumLabel(d.donationType ?? ''),
-        amount: d.amount ? `₱${Number(d.amount).toLocaleString()}` : d.estimatedValue ? `₱${Number(d.estimatedValue).toLocaleString()} est.` : '—',
+        amount: d.amount ? `$${Number(d.amount).toLocaleString()}` : d.estimatedValue ? `$${Number(d.estimatedValue).toLocaleString()} est.` : '—',
         date: d.donationDate ? new Date(d.donationDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '',
         campaign: d.campaignName ?? '—',
       })));
@@ -196,7 +196,7 @@ export default function AdminDashboard() {
         <div className={styles.metricCard}>
           <span className={styles.metricLabel}>Monthly Donations</span>
           <div className={styles.metricRow}>
-            <span className={styles.metricNumber}>₱{(Number(metrics.monthlyDonations) / 1000).toFixed(1)}k</span>
+            <span className={styles.metricNumber}>${(Number(metrics.monthlyDonations) / 1000).toFixed(1)}k</span>
             {metrics.donationChange !== 0 && (
               <span className={styles.metricUp}><ArrowUpRight size={14} />{metrics.donationChange > 0 ? '+' : ''}{metrics.donationChange}%</span>
             )}
@@ -305,7 +305,7 @@ export default function AdminDashboard() {
               <BarChart data={channels} layout="vertical" barCategoryGap="25%">
                 <XAxis type="number" hide />
                 <YAxis dataKey="channel" type="category" tick={{ fontSize: 12, fill: '#8A8078' }} axisLine={false} tickLine={false} width={55} />
-                <Tooltip content={<ChartTooltip prefix="₱" />} cursor={{ fill: 'rgba(212, 168, 83, 0.06)' }} />
+                <Tooltip content={<ChartTooltip prefix="$" />} cursor={{ fill: 'rgba(212, 168, 83, 0.06)' }} />
                 <Bar dataKey="amount" radius={[0, 4, 4, 0]}>
                   {channels.map((_, i) => (
                     <Cell key={i} fill={channelColors[i]} />

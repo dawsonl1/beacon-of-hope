@@ -37,6 +37,6 @@ describe('HomePage', () => {
       expect(screen.getByText('Donations received')).toBeInTheDocument();
     });
     // Should show K suffix, not M (which would round to 0 for small amounts)
-    expect(screen.queryByText(/₱0M/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/\$0M/)).not.toBeInTheDocument();
   });
 });

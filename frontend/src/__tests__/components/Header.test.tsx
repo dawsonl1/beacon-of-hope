@@ -32,10 +32,10 @@ describe('Header', () => {
     });
   });
 
-  it('shows user name and Logout when authenticated', async () => {
+  it('shows Admin Dashboard label and Logout when authenticated as admin', async () => {
     renderWithProviders(<Header />);
     await waitFor(() => {
-      expect(screen.getByText('Jane')).toBeInTheDocument();
+      expect(screen.getByText('Admin Dashboard')).toBeInTheDocument();
     });
     expect(screen.getByText('Logout')).toBeInTheDocument();
   });

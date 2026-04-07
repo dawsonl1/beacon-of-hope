@@ -40,9 +40,9 @@ export default function Header() {
             <>
               <Link to={user.roles?.includes('Admin') || user.roles?.includes('Staff') ? '/admin' : '/donor'} className={styles.loginBtn}>
                 <User size={16} />
-                <span>{user.firstName}</span>
+                <span>{user.roles?.includes('Admin') || user.roles?.includes('Staff') ? 'Admin Dashboard' : user.firstName}</span>
               </Link>
-              <button onClick={handleLogout} className={styles.loginBtn} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+              <button onClick={handleLogout} className={styles.logoutBtn}>
                 <LogOut size={16} />
                 <span>Logout</span>
               </button>

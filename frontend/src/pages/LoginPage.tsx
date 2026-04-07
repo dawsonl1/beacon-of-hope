@@ -80,7 +80,7 @@ export default function LoginPage() {
           <div className={styles.header}>
             <span className={styles.logoIcon}>&#9670;</span>
             <h1 className={styles.title}>Beacon of Hope</h1>
-            <p className={styles.subtitle}>Safe homes for girls in the Philippines</p>
+            <p className={styles.subtitle}>Safe homes for girls in Guam</p>
             <p className={styles.nonprofit}>501(c)(3) Nonprofit Organization</p>
           </div>
 

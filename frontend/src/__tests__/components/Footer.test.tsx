@@ -34,7 +34,8 @@ describe('Footer', () => {
   it('displays current year in copyright', () => {
     renderWithProviders(<Footer />);
     const year = new Date().getFullYear().toString();
-    expect(screen.getByText(new RegExp(year))).toBeInTheDocument();
+    const matches = screen.getAllByText(new RegExp(year));
+    expect(matches.length).toBeGreaterThanOrEqual(1);
   });
 
   it('uses absolute paths for anchor links so they work from any page', () => {
