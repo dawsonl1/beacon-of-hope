@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 from supabase import create_client, Client
 from config import (
     SUPABASE_URL,
-    SUPABASE_SERVICE_KEY,
+    SUPABASE_SERVICE_ROLE_KEY,
     TABLE_ML_PREDICTIONS,
     TABLE_ML_PREDICTION_HISTORY,
 )
@@ -33,7 +33,7 @@ def get_client() -> Client:
     The service key bypasses Row Level Security — only used server-side
     by GitHub Actions, never exposed to the frontend.
     """
-    return create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+    return create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
 
 # ── Fetching ───────────────────────────────────────────────────────────────────

@@ -12,21 +12,25 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load .env file if running locally
-load_dotenv()
-
 # ── Project paths ─────────────────────────────────────────────────────────────
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]  # root of the repo
 MODELS_DIR   = PROJECT_ROOT / "models"              # where .sav files live
 
-# ── Supabase credentials ───────────────────────────────────────────────────────
-# These are never hardcoded here.
-# Locally: set them in a .env file at the repo root (gitignored).
-# In GitHub Actions: set them as GitHub Secrets.
+# Load .env files for local runs (repo root first, then ml-scripts/.env).
+load_dotenv(PROJECT_ROOT / ".env")
+load_dotenv(Path(__file__).resolve().parent / ".env")
 
-SUPABASE_URL         = os.environ["SUPABASE_URL"]
-SUPABASE_SERVICE_KEY = os.environ["SUPABASE_SERVICE_KEY"]  # service key bypasses RLS
+# ── Supabase credentials ───────────────────────────────────────────────────────
+# Read from environment only (typically loaded from .env in local development
+# and from CI/CD secret variables in production).
+SUPABASE_PROJECT_ID = os.environ["SUPABASE_PROJECT_ID"]
+SUPABASE_URL = os.environ["SUPABASE_URL"]
+SUPABASE_PUBLISHABLE_KEY = os.environ["SUPABASE_PUBLISHABLE_KEY"]
+SUPABASE_ANON_KEY = os.environ["SUPABASE_ANON_KEY"]
+# Backward-compatible fallback for older variable name.
+SUPABASE_SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ["SUPABASE_SERVICE_KEY"]
+SUPABASE_DB_URL = os.environ["SUPABASE_DB_URL"]
 
 # ── Supabase table names ───────────────────────────────────────────────────────
 # Operational tables (read by ETL jobs)
