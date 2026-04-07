@@ -96,6 +96,12 @@
   color: rgba(255, 255, 255, 0.65);
 }
 
+.dataNote {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-style: italic;
+}
+
 .madeWith {
   font-size: 0.84rem;
   display: flex;

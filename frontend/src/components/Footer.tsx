@@ -48,6 +48,9 @@ export default function Footer() {
           <p className={styles.copy}>
             &copy; {new Date().getFullYear()} Beacon of Hope. All rights reserved.
           </p>
+          <p className={styles.dataNote}>
+            *Data as of February 15, 2026
+          </p>
           <p className={styles.madeWith}>
             Made with <Heart size={12} className={styles.heart} /> for those who need it most
           </p>
