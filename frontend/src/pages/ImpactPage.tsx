@@ -286,7 +286,7 @@ export default function ImpactPage() {
           <h2 className={styles.ctaTitle}>
             Inspired by what you've seen? Help us do more.
           </h2>
-          <a href="#" className={styles.ctaButton}>
+          <a href="https://www.paypal.com/donate" target="_blank" rel="noopener noreferrer" className={styles.ctaButton}>
             <Heart size={16} />
             Donate Now
           </a>

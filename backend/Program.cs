@@ -87,6 +87,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseHsts();
 app.UseCors("AllowFrontend");
 
 // ── Security headers ────────────────────────────────────────
@@ -104,6 +105,7 @@ app.Use(async (context, next) =>
         "form-action 'self'; " +
         "base-uri 'self'"
     );
+    context.Response.Headers.Append("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
     context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
     context.Response.Headers.Append("X-Frame-Options", "DENY");
     context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
@@ -191,7 +193,8 @@ app.MapGet("/api/auth/me", async (
         email = user.Email,
         firstName = user.FirstName,
         lastName = user.LastName,
-        roles
+        roles,
+        supporterId = user.SupporterId
     });
 });
 
@@ -1482,6 +1485,68 @@ app.MapGet("/api/admin/allocations/by-safehouse", async (AppDbContext db) =>
         .ToListAsync();
 
     return data;
+}).RequireAuthorization();
+
+// ── Donor portal endpoints ──────────────────────────────────
+app.MapGet("/api/donor/my-donations", async (
+    HttpContext httpContext,
+    UserManager<ApplicationUser> userManager,
+    AppDbContext db) =>
+{
+    var appUser = await userManager.GetUserAsync(httpContext.User);
+    if (appUser?.SupporterId == null)
+        return Results.Ok(new { supporter = (object?)null, donations = Array.Empty<object>(), allocations = Array.Empty<object>() });
+
+    var sid = appUser.SupporterId.Value;
+
+    var supporter = await db.Supporters
+        .Where(s => s.SupporterId == sid)
+        .Select(s => new
+        {
+            s.SupporterId,
+            s.DisplayName,
+            s.FirstName,
+            s.LastName,
+            s.SupporterType,
+            s.Status,
+            s.FirstDonationDate,
+        })
+        .FirstOrDefaultAsync();
+
+    var donations = await db.Donations
+        .Where(d => d.SupporterId == sid)
+        .OrderByDescending(d => d.DonationDate)
+        .Select(d => new
+        {
+            d.DonationId,
+            d.DonationType,
+            d.DonationDate,
+            d.Amount,
+            d.EstimatedValue,
+            d.CurrencyCode,
+            d.IsRecurring,
+            d.CampaignName,
+            d.ChannelSource,
+        })
+        .ToListAsync();
+
+    var donationIds = donations.Select(d => d.DonationId).ToList();
+
+    var allocations = await db.DonationAllocations
+        .Where(a => donationIds.Contains(a.DonationId))
+        .Select(a => new
+        {
+            a.DonationId,
+            a.ProgramArea,
+            a.AmountAllocated,
+            safehouseName = db.Safehouses
+                .Where(s => s.SafehouseId == a.SafehouseId)
+                .Select(s => s.Name ?? s.SafehouseCode)
+                .FirstOrDefault()
+        })
+        .ToListAsync();
+
+    return Results.Ok(new { supporter, donations, allocations });
 }).RequireAuthorization();
 
 app.Run();

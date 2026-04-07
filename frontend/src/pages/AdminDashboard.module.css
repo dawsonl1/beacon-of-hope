@@ -473,3 +473,55 @@
     min-width: 580px;
   }
 }
+
+/* ── ML Insights ─────────────────────────────────────────── */
+.mlSection {
+  margin-top: 2.5rem;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: var(--color-deep-navy);
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.scoreBar {
+  display: inline-block;
+  width: 80px;
+  height: 6px;
+  background: #E8E0D430;
+  border-radius: 3px;
+  overflow: hidden;
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+.scoreBarFill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.scoreText {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--color-deep-navy);
+}
+
+.scoreBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}

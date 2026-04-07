@@ -15,7 +15,7 @@ from config import (
     TABLE_PROCESS_RECORDINGS,
     TABLE_RESIDENTS,
 )
-from features.reintegration_features import (
+from reintegration_readiness.features import (
     build_reintegration_feature_frame,
     build_target,
 )

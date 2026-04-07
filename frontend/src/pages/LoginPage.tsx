@@ -42,7 +42,7 @@ export default function LoginPage() {
     if (returnUrl && !returnUrl.startsWith('/login')) return returnUrl;
     if (roles.includes('Admin')) return '/admin';
     if (roles.includes('Staff')) return '/admin';
-    if (roles.includes('Donor')) return '/';
+    if (roles.includes('Donor')) return '/donor';
     return '/';
   }
 

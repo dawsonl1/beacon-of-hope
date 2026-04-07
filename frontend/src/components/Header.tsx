@@ -38,7 +38,7 @@ export default function Header() {
         <div className={styles.actions}>
           {isAuthenticated && user ? (
             <>
-              <Link to="/admin" className={styles.loginBtn}>
+              <Link to={user.roles?.includes('Admin') || user.roles?.includes('Staff') ? '/admin' : '/donor'} className={styles.loginBtn}>
                 <User size={16} />
                 <span>{user.firstName}</span>
               </Link>

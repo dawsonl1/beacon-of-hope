@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowUpRight, AlertTriangle, Calendar, UserPlus, DollarSign, FileText } from 'lucide-react';
 import { apiFetch } from '../api';
 import { formatMonthLabel } from '../constants';
@@ -80,7 +81,9 @@ interface ApiDonation {
   campaignName: string | null;
 }
 
+
 export default function AdminDashboard() {
+  const navigate = useNavigate();
   const today = new Date();
   const dateStr = today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
@@ -137,6 +140,7 @@ export default function AdminDashboard() {
     apiFetch<Array<{ channel: string; count: number }>>('/api/admin/donations-by-channel').then(data => {
       setChannels(data.map(d => ({ channel: d.channel, amount: d.count })));
     }).catch(onErr);
+
   }, []);
 
   return (
@@ -153,15 +157,15 @@ export default function AdminDashboard() {
           <p className={styles.dateText}>{dateStr}</p>
         </div>
         <div className={styles.quickActions}>
-          <button className={styles.actionBtn}>
+          <button className={styles.actionBtn} onClick={() => navigate('/admin/caseload/new')}>
             <UserPlus size={15} />
             <span>Add Resident</span>
           </button>
-          <button className={styles.actionBtn}>
+          <button className={styles.actionBtn} onClick={() => navigate('/admin/donations/new')}>
             <DollarSign size={15} />
             <span>Log Donation</span>
           </button>
-          <button className={styles.actionBtn}>
+          <button className={styles.actionBtn} onClick={() => navigate('/admin/recordings/new')}>
             <FileText size={15} />
             <span>New Recording</span>
           </button>
@@ -357,6 +361,7 @@ export default function AdminDashboard() {
           </ResponsiveContainer>
         </div>
       </section>
+
     </div>
   );
 }

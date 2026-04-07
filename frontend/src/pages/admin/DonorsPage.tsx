@@ -41,6 +41,19 @@ interface DonationRow {
   campaignName: string | null;
 }
 
+interface AllocationByProgram {
+  programArea: string;
+  totalAllocated: number;
+  count: number;
+}
+
+interface AllocationBySafehouse {
+  safehouseId: number;
+  safehouseName: string;
+  totalAllocated: number;
+  count: number;
+}
+
 interface PagedResult<T> {
   items: T[];
   totalCount: number;
@@ -58,8 +71,9 @@ export default function DonorsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const isAdmin = user?.roles?.includes('Admin') ?? false;
 
-  const [activeTab, setActiveTab] = useState<'supporters' | 'donations'>(
-    (searchParams.get('tab') as 'supporters' | 'donations') || 'supporters'
+  type TabName = 'supporters' | 'donations' | 'allocations';
+  const [activeTab, setActiveTab] = useState<TabName>(
+    (searchParams.get('tab') as TabName) || 'supporters'
   );
 
   // Supporters state
@@ -71,6 +85,12 @@ export default function DonorsPage() {
   const [donations, setDonations] = useState<PagedResult<DonationRow> | null>(null);
   const [dLoading, setDLoading] = useState(false);
   const [dError, setDError] = useState<string | null>(null);
+
+  // Allocations state
+  const [allocByProgram, setAllocByProgram] = useState<AllocationByProgram[]>([]);
+  const [allocBySafehouse, setAllocBySafehouse] = useState<AllocationBySafehouse[]>([]);
+  const [allocLoading, setAllocLoading] = useState(false);
+  const [allocError, setAllocError] = useState<string | null>(null);
 
   // Filters from URL
   const page = parseInt(searchParams.get('page') || '1', 10);
@@ -135,10 +155,29 @@ export default function DonorsPage() {
     }
   }, [page, donationType]);
 
+  // Fetch allocations
+  const fetchAllocations = useCallback(async () => {
+    setAllocLoading(true);
+    setAllocError(null);
+    try {
+      const [byProgram, bySafehouse] = await Promise.all([
+        apiFetch<AllocationByProgram[]>('/api/admin/allocations/by-program'),
+        apiFetch<AllocationBySafehouse[]>('/api/admin/allocations/by-safehouse'),
+      ]);
+      setAllocByProgram(byProgram);
+      setAllocBySafehouse(bySafehouse);
+    } catch (e) {
+      setAllocError(e instanceof Error ? e.message : 'Failed to load allocations');
+    } finally {
+      setAllocLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (activeTab === 'supporters') fetchSupporters();
-    else fetchDonations();
-  }, [activeTab, fetchSupporters, fetchDonations]);
+    else if (activeTab === 'donations') fetchDonations();
+    else fetchAllocations();
+  }, [activeTab, fetchSupporters, fetchDonations, fetchAllocations]);
 
   // Debounced search
   function handleSearchChange(value: string) {
@@ -147,7 +186,7 @@ export default function DonorsPage() {
     debounceRef.current = setTimeout(() => setParam('search', value), 350);
   }
 
-  function handleTabChange(tab: 'supporters' | 'donations') {
+  function handleTabChange(tab: TabName) {
     setActiveTab(tab);
     setSearchParams({ tab, page: '1' });
     setSearchInput('');
@@ -198,6 +237,12 @@ export default function DonorsPage() {
           onClick={() => handleTabChange('donations')}
         >
           Recent Donations
+        </button>
+        <button
+          className={`${styles.tab} ${activeTab === 'allocations' ? styles.tabActive : ''}`}
+          onClick={() => handleTabChange('allocations')}
+        >
+          Allocations
         </button>
       </div>
 
@@ -350,6 +395,74 @@ export default function DonorsPage() {
                 onPageChange={p => setParam('page', String(p))}
               />
             </>
+          )}
+        </div>
+      )}
+
+      {/* Allocations View */}
+      {activeTab === 'allocations' && (
+        <div className={styles.tableCard}>
+          {allocLoading ? (
+            <div className={styles.loading}><Loader2 size={28} className={styles.spinner} /></div>
+          ) : allocError ? (
+            <div className={styles.error}>{allocError}</div>
+          ) : (
+            <div className={styles.allocGrid}>
+              <div>
+                <h3 className={styles.allocTitle}>By Program Area</h3>
+                {allocByProgram.length === 0 ? (
+                  <div className={styles.empty}>No allocation data</div>
+                ) : (
+                  <div className={styles.tableWrapper}>
+                    <table className={styles.table}>
+                      <thead>
+                        <tr>
+                          <th>Program Area</th>
+                          <th>Donations</th>
+                          <th>Total Allocated</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {allocByProgram.map(a => (
+                          <tr key={a.programArea}>
+                            <td>{a.programArea}</td>
+                            <td>{a.count}</td>
+                            <td className={styles.amountCol}>{formatAmount(a.totalAllocated)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+              <div>
+                <h3 className={styles.allocTitle}>By Safehouse</h3>
+                {allocBySafehouse.length === 0 ? (
+                  <div className={styles.empty}>No allocation data</div>
+                ) : (
+                  <div className={styles.tableWrapper}>
+                    <table className={styles.table}>
+                      <thead>
+                        <tr>
+                          <th>Safehouse</th>
+                          <th>Donations</th>
+                          <th>Total Allocated</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {allocBySafehouse.map(a => (
+                          <tr key={a.safehouseId}>
+                            <td>{a.safehouseName}</td>
+                            <td>{a.count}</td>
+                            <td className={styles.amountCol}>{formatAmount(a.totalAllocated)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
           )}
         </div>
       )}

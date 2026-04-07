@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import logging
 
-from pipelines.reintegration import build_training_frame
+from reintegration_readiness.etl import build_training_frame
 
 logger = logging.getLogger(__name__)
 

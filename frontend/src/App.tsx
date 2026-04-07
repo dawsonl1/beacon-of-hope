@@ -30,6 +30,7 @@ const DonorsPage = lazy(() => import('./pages/admin/DonorsPage'));
 const SupporterDetailPage = lazy(() => import('./pages/admin/SupporterDetailPage'));
 const SupporterFormPage = lazy(() => import('./pages/admin/SupporterFormPage'));
 const DonationFormPage = lazy(() => import('./pages/admin/DonationFormPage'));
+const DonorPortal = lazy(() => import('./pages/DonorPortal'));
 
 function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -53,6 +54,15 @@ function App() {
             <Route path="/login" element={<PublicLayout><LoginPage /></PublicLayout>} />
             <Route path="/privacy-policy" element={<PublicLayout><PrivacyPolicyPage /></PublicLayout>} />
             <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
+
+            {/* Donor portal */}
+            <Route path="/donor" element={
+              <ProtectedRoute allowedRoles={['Donor']}>
+                <Suspense fallback={<div>Loading...</div>}>
+                  <PublicLayout><DonorPortal /></PublicLayout>
+                </Suspense>
+              </ProtectedRoute>
+            } />
 
             {/* Admin portal — lazy-loaded with Suspense */}
             <Route path="/admin" element={

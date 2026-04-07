@@ -45,6 +45,18 @@ npm run dev
 
 Runs on `http://localhost:5173` by default.
 
+## Default Login Credentials (Development)
+
+The database seeder creates three test accounts for local development:
+
+| Role  | Email                      | Password       |
+|-------|----------------------------|----------------|
+| Admin | `admin@beaconofhope.org`   | `Test1234!@#$` |
+| Staff | `staff@beaconofhope.org`   | `Test1234!@#$` |
+| Donor | `donor@beaconofhope.org`   | `Test1234!@#$` |
+
+These accounts are created automatically when the backend seeds the database on first run.
+
 ## Deployment
 
 - **Frontend** — Auto-deploys to Vercel from the `main` branch

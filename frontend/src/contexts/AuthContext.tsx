@@ -7,6 +7,7 @@ export interface AuthUser {
   firstName: string;
   lastName: string;
   roles: string[];
+  supporterId?: number | null;
 }
 
 interface AuthState {

@@ -1,0 +1,193 @@
+.page {
+  padding: 2rem 2.5rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error {
+  color: #A5524D;
+  font-size: 1rem;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.header {
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--color-deep-navy);
+  letter-spacing: -0.03em;
+}
+
+.subtitle {
+  color: #8A8078;
+  margin-top: 0.25rem;
+  font-size: 0.95rem;
+}
+
+/* ── Summary Cards ───────────────────────────────────────── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  background: #ffffff;
+  border: 1px solid #E8E0D4;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.cardIcon {
+  color: var(--color-deep-navy);
+  margin-bottom: 0.75rem;
+}
+
+.cardValue {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 500;
+  color: var(--color-deep-navy);
+  letter-spacing: -0.02em;
+}
+
+.cardLabel {
+  font-size: 0.82rem;
+  color: #8A8078;
+  margin-top: 0.25rem;
+}
+
+/* ── Sections ────────────────────────────────────────────── */
+.section {
+  margin-bottom: 2.5rem;
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--color-deep-navy);
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+/* ── Allocation Grid ─────────────────────────────────────── */
+.allocGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.allocCard {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem;
+  background: #ffffff;
+  border: 1px solid #E8E0D4;
+  border-radius: 10px;
+}
+
+.allocProgram {
+  font-weight: 500;
+  color: var(--color-deep-navy);
+  font-size: 0.92rem;
+  margin-bottom: 0.25rem;
+}
+
+.allocAmount {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-deep-navy);
+}
+
+.allocDetail {
+  font-size: 0.78rem;
+  color: #8A8078;
+  margin-top: 0.35rem;
+}
+
+/* ── Table ────────────────────────────────────────────────── */
+.tableWrapper {
+  overflow-x: auto;
+  background: #ffffff;
+  border: 1px solid #E8E0D4;
+  border-radius: 10px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #E8E0D4;
+  font-weight: 500;
+  color: #8A8078;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.table td {
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid #E8E0D408;
+  color: var(--color-deep-navy);
+}
+
+.table tbody tr:hover {
+  background: #F8F5F0;
+}
+
+.amountCol {
+  font-family: var(--font-display);
+  font-weight: 500;
+}
+
+.empty {
+  color: #8A8078;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .page {
+    padding: 1.5rem 1rem;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+}

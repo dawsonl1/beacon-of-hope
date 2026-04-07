@@ -277,7 +277,7 @@ export default function HomePage() {
               <span className={styles.donateDesc}>Full month of care for one girl</span>
             </div>
           </div>
-          <a href="#" className={styles.btnPrimary} style={{ marginTop: '1.5rem' }}>
+          <a href="https://www.paypal.com/donate" target="_blank" rel="noopener noreferrer" className={styles.btnPrimary} style={{ marginTop: '1.5rem' }}>
             <Heart size={16} />
             Give Today
           </a>

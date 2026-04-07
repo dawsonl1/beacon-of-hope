@@ -41,3 +41,7 @@ This file contains a growing ruleset that improves over time. **At session start
 2. [PROCESS] Commit and push to remote frequently (after each meaningful change or logical unit of work). Never push directly to main — always push to appropriately named branches and open PRs for review. Each commit should not be a separate PR. Create the PR when Dawson asks for one.
 
 3. [UX] Prioritize user experience above all else. Every UI decision must favor clean, intuitive design that serves real functionality and utility — never add visual clutter, unnecessary complexity, or decorative elements that don't help the user accomplish their goals.
+
+4. [PROCESS] Always follow test-driven development (TDD). Before implementing any new feature or change, plan and write the tests first that define expected behavior. Then implement the minimum code to make all tests pass. Backend tests go in `backend.Tests/` (xUnit), frontend tests go in `frontend/src/__tests__/` (Vitest). Run `cd backend.Tests && dotnet test` and `cd frontend && npm test` to verify all tests pass before considering work complete.
+
+5. [PROCESS] Before modifying any existing code, check what tests cover that code. Update or add tests to reflect the new behavior before making the code change. After the change, run the full test suite to ensure nothing is broken.

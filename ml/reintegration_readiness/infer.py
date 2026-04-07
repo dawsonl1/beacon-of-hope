@@ -17,8 +17,8 @@ from config import (
     TABLE_PROCESS_RECORDINGS,
     TABLE_RESIDENTS,
 )
-from features.reintegration_features import build_reintegration_feature_frame
-from pipelines.reintegration_artifacts import load_metadata, load_model_bundle
+from reintegration_readiness.features import build_reintegration_feature_frame
+from reintegration_readiness.artifacts import load_metadata, load_model_bundle
 from utils_db import fetch_table, get_client, now_utc, score_to_label, write_predictions
 
 logger = logging.getLogger(__name__)

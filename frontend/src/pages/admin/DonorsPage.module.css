@@ -344,4 +344,24 @@
   .table {
     min-width: 640px;
   }
+
+  .allocGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Allocations ─────────────────────────────────────── */
+.allocGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 1.5rem;
+}
+
+.allocTitle {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--color-deep-navy);
+  margin-bottom: 1rem;
 }

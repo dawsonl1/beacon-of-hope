@@ -6,7 +6,6 @@ import {
   Eye,
   HandHeart,
   BarChart3,
-  Settings,
   LogOut,
   UserCircle,
 } from 'lucide-react';
@@ -61,15 +60,6 @@ export default function AdminLayout() {
             </NavLink>
           ))}
           <div className={styles.navDivider} />
-          <NavLink
-            to="/admin/settings"
-            className={({ isActive }) =>
-              `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
-            }
-          >
-            <Settings size={18} />
-            <span>Settings</span>
-          </NavLink>
           <button onClick={handleLogout} className={styles.navItem} style={{ border: 'none', background: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}>
             <LogOut size={18} />
             <span>Logout</span>
@@ -82,7 +72,7 @@ export default function AdminLayout() {
           </div>
           <p className={styles.userName}>{displayName}</p>
           <p className={styles.userRole}>{displayRole}</p>
-          <button className={styles.editProfileBtn}>Edit Profile</button>
+          <button className={styles.editProfileBtn} onClick={() => navigate('/admin')}>Dashboard</button>
         </div>
       </aside>
       <main className={styles.content}>
