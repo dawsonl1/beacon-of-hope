@@ -4,7 +4,19 @@
       "Bash(claude --version)",
       "Bash(brew list:*)",
       "Bash(brew info:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)",
+      "Bash(grep -E \"\\\\.\\(py\\)$\")",
+      "Bash(grep:*)",
+      "Bash(touch:*)",
+      "Bash(rm:*)",
+      "Bash(find /Users/dawsonpitcher/School/intex2/ml -name \"__pycache__\" -type d -exec rm -rf {} +)",
+      "Bash(curl -s https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/Movie/AllMovies?pageSize=1)",
+      "Bash(curl -s \"https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/Movie/AllMovies?pageSize=1\")",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)"
     ]
   }
 }

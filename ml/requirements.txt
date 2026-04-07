@@ -4,7 +4,7 @@
 # version without a wheel for that sklearn release — use scikit-learn>=1.8 (wheels for 3.14).
 #
 # Recommended (avoids "user site" installs and permission issues):
-#   cd ml-scripts
+#   cd ml
 #   py -3.14 -m venv .venv
 #   .\.venv\Scripts\Activate.ps1
 #   python -m pip install --upgrade pip

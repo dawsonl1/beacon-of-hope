@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import logging
 
-from pipelines.reintegration import build_training_frame
-from pipelines.reintegration_drivers_infer import run_inference
+from reintegration_readiness.etl import build_training_frame
+from reintegration_drivers.infer import run_inference
 
 __all__ = ["build_training_frame", "run_inference"]
 

@@ -8,7 +8,7 @@ from typing import Any
 import pandas as pd
 
 from config import MODEL_NAME_REINTEGRATION_DRIVERS, MODEL_REINTEGRATION_DRIVERS
-from pipelines.reintegration_drivers_artifacts import load_metadata, load_model_bundle
+from reintegration_drivers.artifacts import load_metadata, load_model_bundle
 from utils_db import get_client, now_utc, write_predictions
 
 logger = logging.getLogger(__name__)
@@ -104,7 +104,7 @@ def _top_drivers_from_ols(ols: Any, max_features: int = 12) -> list[dict[str, An
 
 
 def _metadata_from_metrics_fallback() -> tuple[list[dict[str, Any]], float | None, int | None]:
-    from pipelines.reintegration_drivers_artifacts import load_metrics
+    from reintegration_drivers.artifacts import load_metrics
 
     m = load_metrics()
     drivers = m.get("ols_coefficients") or []
@@ -156,7 +156,7 @@ def run_inference() -> list[dict]:
         n_observations = int(ols.nobs) if hasattr(ols, "nobs") else None
 
     if adjusted_r2 is None:
-        from pipelines.reintegration_drivers_artifacts import load_metrics
+        from reintegration_drivers.artifacts import load_metrics
 
         m = load_metrics()
         ar = m.get("adjusted_r2")

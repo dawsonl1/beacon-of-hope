@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import logging
 
-from pipelines.reintegration_drivers_infer import run_inference as run_reintegration_drivers
-from pipelines.reintegration_infer import run_inference as run_reintegration_readiness
+from reintegration_drivers.infer import run_inference as run_reintegration_drivers
+from reintegration_readiness.infer import run_inference as run_reintegration_readiness
 
 logger = logging.getLogger(__name__)
 
