@@ -20,6 +20,10 @@ backend/appsettings.Development.json
 supabase/.branches/
 supabase/.temp/
 
+# IDE
+.vscode/
+*.sln
+
 # OS
 .DS_Store
 Thumbs.db
