@@ -46,10 +46,14 @@ This file contains a growing ruleset that improves over time. **At session start
 
 5. [PROCESS] Before modifying any existing code, check what tests cover that code. Update or add tests to reflect the new behavior before making the code change. After the change, run the full test suite to ensure nothing is broken.
 
-6. [DATA] Never run EF Core migrations at app startup (no `MigrateAsync()` or `Database.Migrate()` in Program.cs) — the Supabase transaction pooler (PgBouncer) does not support migration operations and will throw `ObjectDisposedException`. Migrations must be applied manually from a developer's local machine using the direct IPv6 connection.
+6. [DATA] Superseded by rule 11.
 
-7. [DATA] To apply EF Core migrations to the production Supabase database, use the direct IPv6 connection (port 5432), never the transaction pooler (port 6543). Command: `dotnet ef database update --project backend --connection "Host=2600:1f18:2e13:9d56:3f45:a9b1:dd9c:21a4;Port=5432;Database=postgres;User Id=postgres;Password=<password>;SSL Mode=Require;Trust Server Certificate=true"`. The IPv6 address is for `db.eetsyddzvjcqdihgvvew.supabase.co` which lacks an IPv4 record.
+7. [DATA] Superseded by rule 11.
 
-8. [DATA] Never register Supabase-owned schemas (auth, realtime, storage, net, vault, graphql, extensions) in AppDbContext via `HasPostgresEnum` or `HasPostgresExtension` — EF Core will try to create them in migrations and fail with permission errors. Only manage your own tables (AspNet*, domain tables) in the DbContext.
+8. [DATA] Superseded by rule 11.
 
-9. [DATA] The Azure App Service runtime connection uses the Supabase transaction pooler (`Host=aws-1-us-east-1.pooler.supabase.com;Port=6543`) which works for normal queries. The direct connection is only needed for running migrations locally.
+9. [DATA] Superseded by rule 11.
+
+10. [DATA] Superseded by rule 11.
+
+11. [DATA] The database is Azure PostgreSQL, managed entirely by EF Core. `MigrateAsync()` runs at startup in Program.cs. To add/change tables: edit C# models → `dotnet ef migrations add <Name>` → the backend applies it on next startup. `DataSeeder.SeedAsync()` also runs at startup and populates domain data (safehouses, residents, etc.) if tables are empty. Only manage your own tables (AspNet*, domain tables) in the DbContext.
