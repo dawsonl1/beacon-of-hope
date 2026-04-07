@@ -36,4 +36,14 @@ describe('Footer', () => {
     const year = new Date().getFullYear().toString();
     expect(screen.getByText(new RegExp(year))).toBeInTheDocument();
   });
+
+  it('uses absolute paths for anchor links so they work from any page', () => {
+    renderWithProviders(<Footer />);
+    const missionLink = screen.getByText('Our Mission').closest('a');
+    const impactLink = screen.getByText('Our Impact').closest('a');
+    const involvedLink = screen.getByText('Get Involved').closest('a');
+    expect(missionLink?.getAttribute('href')).toBe('/#mission');
+    expect(impactLink?.getAttribute('href')).toBe('/#impact');
+    expect(involvedLink?.getAttribute('href')).toBe('/#involved');
+  });
 });

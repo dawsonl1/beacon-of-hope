@@ -30,4 +30,13 @@ describe('HomePage', () => {
     renderWithProviders(<HomePage />);
     expect(screen.getByText(/Beacon of Hope gave me one/)).toBeInTheDocument();
   });
+
+  it('displays donations in K format not M', async () => {
+    renderWithProviders(<HomePage />);
+    await waitFor(() => {
+      expect(screen.getByText('Donations received')).toBeInTheDocument();
+    });
+    // Should show K suffix, not M (which would round to 0 for small amounts)
+    expect(screen.queryByText(/₱0M/)).not.toBeInTheDocument();
+  });
 });

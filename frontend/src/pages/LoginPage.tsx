@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import styles from './LoginPage.module.css';
 
 export default function LoginPage() {
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const returnUrl = searchParams.get('returnUrl');
@@ -20,11 +20,12 @@ export default function LoginPage() {
   const [passwordError, setPasswordError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // If already authenticated, redirect
-  if (isAuthenticated) {
-    navigate(returnUrl ?? '/admin', { replace: true });
-    return null;
-  }
+  // If already authenticated, redirect (in useEffect to avoid setState during render)
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      navigate(getRedirectPath(user.roles), { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
 
   function validateEmail(value: string): string {
     if (!value) return 'Email is required.';
@@ -39,10 +40,15 @@ export default function LoginPage() {
   }
 
   function getRedirectPath(roles: string[]): string {
-    if (returnUrl && !returnUrl.startsWith('/login')) return returnUrl;
-    if (roles.includes('Admin')) return '/admin';
-    if (roles.includes('Staff')) return '/admin';
-    if (roles.includes('Donor')) return '/donor';
+    const isAdminOrStaff = roles.includes('Admin') || roles.includes('Staff');
+    const isDonor = roles.includes('Donor');
+    // Only use returnUrl if it matches the user's role
+    if (returnUrl && !returnUrl.startsWith('/login')) {
+      if (returnUrl.startsWith('/admin') && isAdminOrStaff) return returnUrl;
+      if (returnUrl.startsWith('/donor') && isDonor) return returnUrl;
+    }
+    if (isAdminOrStaff) return '/admin';
+    if (isDonor) return '/donor';
     return '/';
   }
 

@@ -27,7 +27,7 @@ describe('apiFetch', () => {
   it('sets Content-Type to application/json', async () => {
     let capturedContentType = '';
     server.use(
-      http.get('http://localhost:5000/api/test-headers', ({ request }) => {
+      http.get('http://localhost:5001/api/test-headers', ({ request }) => {
         capturedContentType = request.headers.get('content-type') ?? '';
         return HttpResponse.json({ ok: true });
       }),
@@ -38,7 +38,7 @@ describe('apiFetch', () => {
 
   it('throws on non-OK response with error message', async () => {
     server.use(
-      http.get('http://localhost:5000/api/fail', () =>
+      http.get('http://localhost:5001/api/fail', () =>
         HttpResponse.json({ error: 'Not found' }, { status: 404 }),
       ),
     );
@@ -50,7 +50,7 @@ describe('apiFetch', () => {
     window.addEventListener('auth:unauthorized', handler);
 
     server.use(
-      http.get('http://localhost:5000/api/unauth', () =>
+      http.get('http://localhost:5001/api/unauth', () =>
         HttpResponse.json({ error: 'Unauthorized' }, { status: 401 }),
       ),
     );
@@ -63,7 +63,7 @@ describe('apiFetch', () => {
 
   it('attaches status property to error on failure', async () => {
     server.use(
-      http.get('http://localhost:5000/api/server-error', () =>
+      http.get('http://localhost:5001/api/server-error', () =>
         HttpResponse.json({ error: 'Server error' }, { status: 500 }),
       ),
     );

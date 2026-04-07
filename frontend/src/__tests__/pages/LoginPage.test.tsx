@@ -10,7 +10,7 @@ describe('LoginPage', () => {
   // Override the default auth handler so user is NOT authenticated
   function renderLogin() {
     server.use(
-      http.get('http://localhost:5000/api/auth/me', () =>
+      http.get('http://localhost:5001/api/auth/me', () =>
         HttpResponse.json({ isAuthenticated: false }),
       ),
     );

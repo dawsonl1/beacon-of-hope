@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
+import { formatEnumLabel } from '../../constants';
 import { DONATION_TYPES } from '../../domain';
 import styles from './DonationFormPage.module.css';
 const CURRENCIES = ['PHP', 'USD', 'EUR', 'GBP', 'AUD', 'CAD'];
@@ -169,7 +170,7 @@ export default function DonationFormPage() {
           <div className={styles.field}>
             <label>Donation Type</label>
             <select value={form.donationType} onChange={e => set('donationType', e.target.value)}>
-              {DONATION_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+              {DONATION_TYPES.map(t => <option key={t} value={t}>{formatEnumLabel(t)}</option>)}
             </select>
           </div>
 

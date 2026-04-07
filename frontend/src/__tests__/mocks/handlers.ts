@@ -28,7 +28,7 @@ import {
   mockSafehouseComparison,
 } from './data';
 
-const API = 'http://localhost:5000';
+const API = 'http://localhost:5001';
 
 /* ── Auth handlers ──────────────────────────────────────── */
 export const authHandlers = [

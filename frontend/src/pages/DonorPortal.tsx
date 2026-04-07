@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Heart, Calendar, TrendingUp, Loader2 } from 'lucide-react';
 import { apiFetch } from '../api';
 import { useAuth } from '../contexts/AuthContext';
-import { formatDate, formatAmount } from '../constants';
+import { formatDate, formatAmount, formatEnumLabel } from '../constants';
 import styles from './DonorPortal.module.css';
 
 interface Supporter {
@@ -138,7 +138,7 @@ export default function DonorPortal() {
                 {data.donations.map(d => (
                   <tr key={d.donationId}>
                     <td>{formatDate(d.donationDate)}</td>
-                    <td>{d.donationType ?? '--'}</td>
+                    <td>{d.donationType ? formatEnumLabel(d.donationType) : '--'}</td>
                     <td className={styles.amountCol}>
                       {d.amount ? formatAmount(d.amount) : d.estimatedValue ? `${formatAmount(d.estimatedValue)} est.` : '--'}
                     </td>

@@ -22,7 +22,7 @@ describe('Header', () => {
 
   it('shows Login link when not authenticated', async () => {
     server.use(
-      http.get('http://localhost:5000/api/auth/me', () =>
+      http.get('http://localhost:5001/api/auth/me', () =>
         HttpResponse.json({ isAuthenticated: false }),
       ),
     );

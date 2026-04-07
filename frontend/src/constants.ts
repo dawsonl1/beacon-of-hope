@@ -13,3 +13,16 @@ export function formatAmount(amount: number | null | undefined): string {
   if (amount == null) return '—';
   return `₱${Number(amount).toLocaleString()}`;
 }
+
+/** Convert CamelCase or PascalCase enum values to human-readable labels.
+ *  e.g. "WordOfMouth" → "Word of Mouth", "InKind" → "In-Kind", "SocialMedia" → "Social Media" */
+export function formatEnumLabel(value: string): string {
+  const special: Record<string, string> = {
+    InKind: 'In-Kind',
+    MonetaryDonor: 'Monetary Donor',
+    SkillsContributor: 'Skills Contributor',
+    SocialMediaAdvocate: 'Social Media Advocate',
+  };
+  if (special[value]) return special[value];
+  return value.replace(/([a-z])([A-Z])/g, '$1 $2');
+}

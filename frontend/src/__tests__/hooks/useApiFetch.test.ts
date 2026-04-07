@@ -25,7 +25,7 @@ describe('useApiFetch', () => {
 
   it('returns error on failure', async () => {
     server.use(
-      http.get('http://localhost:5000/api/broken', () =>
+      http.get('http://localhost:5001/api/broken', () =>
         HttpResponse.json({ error: 'Broken' }, { status: 500 }),
       ),
     );

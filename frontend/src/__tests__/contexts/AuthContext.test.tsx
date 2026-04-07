@@ -46,7 +46,7 @@ describe('AuthContext', () => {
 
   it('sets isAuthenticated to false when /me returns unauthenticated', async () => {
     server.use(
-      http.get('http://localhost:5000/api/auth/me', () =>
+      http.get('http://localhost:5001/api/auth/me', () =>
         HttpResponse.json({ isAuthenticated: false }),
       ),
     );
@@ -59,7 +59,7 @@ describe('AuthContext', () => {
 
   it('handles /me network error gracefully', async () => {
     server.use(
-      http.get('http://localhost:5000/api/auth/me', () =>
+      http.get('http://localhost:5001/api/auth/me', () =>
         HttpResponse.error(),
       ),
     );
@@ -72,7 +72,7 @@ describe('AuthContext', () => {
 
   it('login sets user on success', async () => {
     server.use(
-      http.get('http://localhost:5000/api/auth/me', () =>
+      http.get('http://localhost:5001/api/auth/me', () =>
         HttpResponse.json({ isAuthenticated: false }),
       ),
     );
@@ -92,7 +92,7 @@ describe('AuthContext', () => {
 
   it('login throws on bad credentials', async () => {
     server.use(
-      http.get('http://localhost:5000/api/auth/me', () =>
+      http.get('http://localhost:5001/api/auth/me', () =>
         HttpResponse.json({ isAuthenticated: false }),
       ),
     );

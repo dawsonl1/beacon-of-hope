@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { MONTH_NAMES, formatMonthLabel, formatDate, formatAmount } from '../../constants';
+import { MONTH_NAMES, formatMonthLabel, formatDate, formatAmount, formatEnumLabel } from '../../constants';
 
 describe('MONTH_NAMES', () => {
   it('has 12 month abbreviations', () => {
@@ -63,5 +63,26 @@ describe('formatAmount', () => {
     const result = formatAmount(0);
     expect(result).toContain('\u20B1');
     expect(result).toContain('0');
+  });
+});
+
+describe('formatEnumLabel', () => {
+  it('converts CamelCase to spaced words', () => {
+    expect(formatEnumLabel('WordOfMouth')).toBe('Word Of Mouth');
+    expect(formatEnumLabel('SocialMedia')).toBe('Social Media');
+    expect(formatEnumLabel('PartnerReferral')).toBe('Partner Referral');
+  });
+
+  it('handles special cases with explicit mappings', () => {
+    expect(formatEnumLabel('InKind')).toBe('In-Kind');
+    expect(formatEnumLabel('MonetaryDonor')).toBe('Monetary Donor');
+    expect(formatEnumLabel('SkillsContributor')).toBe('Skills Contributor');
+    expect(formatEnumLabel('SocialMediaAdvocate')).toBe('Social Media Advocate');
+  });
+
+  it('passes through already-readable values unchanged', () => {
+    expect(formatEnumLabel('Monetary')).toBe('Monetary');
+    expect(formatEnumLabel('Active')).toBe('Active');
+    expect(formatEnumLabel('Time')).toBe('Time');
   });
 });

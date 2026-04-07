@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, Plus, Loader2, X } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
-import { formatDate, formatAmount } from '../../constants';
+import { formatDate, formatAmount, formatEnumLabel } from '../../constants';
 import Pagination from '../../components/admin/Pagination';
 import { SUPPORTER_TYPES, SUPPORTER_STATUSES, DONATION_TYPES } from '../../domain';
 import styles from './DonorsPage.module.css';
@@ -265,7 +265,7 @@ export default function DonorsPage() {
               onChange={e => setParam('supporterType', e.target.value)}
             >
               <option value="">All Types</option>
-              {SUPPORTER_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+              {SUPPORTER_TYPES.map(t => <option key={t} value={t}>{formatEnumLabel(t)}</option>)}
             </select>
             <select
               className={styles.filterSelect}
@@ -284,7 +284,7 @@ export default function DonorsPage() {
             onChange={e => setParam('donationType', e.target.value)}
           >
             <option value="">All Types</option>
-            {DONATION_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+            {DONATION_TYPES.map(t => <option key={t} value={t}>{formatEnumLabel(t)}</option>)}
           </select>
         )}
         {hasFilters && (
@@ -376,7 +376,7 @@ export default function DonorsPage() {
                         <td>
                           <span className={styles.donationName}>{d.supporterName ?? 'Anonymous'}</span>
                         </td>
-                        <td>{d.donationType ? <span className={styles.typeBadge}>{d.donationType}</span> : '--'}</td>
+                        <td>{d.donationType ? <span className={styles.typeBadge}>{formatEnumLabel(d.donationType)}</span> : '--'}</td>
                         <td className={styles.amountCol}>
                           {d.amount ? formatAmount(d.amount) : d.estimatedValue ? `${formatAmount(d.estimatedValue)} est.` : d.impactUnit ?? '--'}
                         </td>

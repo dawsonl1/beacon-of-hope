@@ -28,7 +28,7 @@ describe('ProtectedRoute', () => {
 
   it('redirects to login when not authenticated', async () => {
     server.use(
-      http.get('http://localhost:5000/api/auth/me', () =>
+      http.get('http://localhost:5001/api/auth/me', () =>
         HttpResponse.json({ isAuthenticated: false }),
       ),
     );
@@ -56,7 +56,7 @@ describe('ProtectedRoute', () => {
 
   it('redirects when user lacks required role', async () => {
     server.use(
-      http.get('http://localhost:5000/api/auth/me', () =>
+      http.get('http://localhost:5001/api/auth/me', () =>
         HttpResponse.json({
           isAuthenticated: true,
           email: 'donor@example.com',
@@ -79,7 +79,7 @@ describe('ProtectedRoute', () => {
 
   it('includes returnUrl in login redirect', async () => {
     server.use(
-      http.get('http://localhost:5000/api/auth/me', () =>
+      http.get('http://localhost:5001/api/auth/me', () =>
         HttpResponse.json({ isAuthenticated: false }),
       ),
     );

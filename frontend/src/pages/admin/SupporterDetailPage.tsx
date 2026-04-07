@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
-import { formatDate, formatAmount } from '../../constants';
+import { formatDate, formatAmount, formatEnumLabel } from '../../constants';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
 import styles from './SupporterDetailPage.module.css';
 
@@ -191,7 +191,7 @@ export default function SupporterDetailPage() {
                 {data.donations.map(d => (
                   <tr key={d.donationId}>
                     <td>{formatDate(d.donationDate)}</td>
-                    <td>{d.donationType ?? '--'}</td>
+                    <td>{d.donationType ? formatEnumLabel(d.donationType) : '--'}</td>
                     <td className={styles.amountCol}>
                       {d.amount ? formatAmount(d.amount) : d.estimatedValue ? `${formatAmount(d.estimatedValue)} est.` : d.impactUnit ?? '--'}
                     </td>

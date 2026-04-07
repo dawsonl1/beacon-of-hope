@@ -128,7 +128,7 @@ export default function HomePage() {
               </div>
               <div className={`${styles.statCard} reveal`}>
                 <span className={styles.statNumber}>
-                  <Counter end={Math.round(impact.totalDonations / 1000000)} prefix="&#8369;" suffix="M" />
+                  <Counter end={Math.round(impact.totalDonations / 1000)} prefix="&#8369;" suffix="K" />
                 </span>
                 <span className={styles.statDesc}>Donations received</span>
               </div>

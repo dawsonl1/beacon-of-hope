@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowUpRight, AlertTriangle, Calendar, UserPlus, DollarSign, FileText } from 'lucide-react';
 import { apiFetch } from '../api';
-import { formatMonthLabel } from '../constants';
+import { formatMonthLabel, formatEnumLabel } from '../constants';
 import { ChartTooltip } from '../components/ChartTooltip';
 import { ApiError } from '../components/ApiError';
 import {
@@ -96,11 +96,13 @@ export default function AdminDashboard() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    const onErr = (e: unknown) => { console.error('API fetch failed', e); setError(true); };
+    const onErr = (e: unknown) => { console.error('API fetch failed', e); };
+    const onCriticalErr = (e: unknown) => { console.error('API fetch failed', e); setError(true); };
 
-    apiFetch<Metrics>('/api/admin/metrics').then(setMetrics).catch(onErr);
+    apiFetch<Metrics>('/api/admin/metrics').then(setMetrics).catch(onCriticalErr);
 
-    apiFetch<ApiResident[]>('/api/admin/residents').then(data => {
+    apiFetch<{ items: ApiResident[] }>('/api/admin/residents').then(resp => {
+      const data = resp.items ?? [];
       setResidents(data.map(r => {
         let lastSessionStr = 'Unknown';
         if (r.lastSession) {
@@ -122,7 +124,7 @@ export default function AdminDashboard() {
     apiFetch<ApiDonation[]>('/api/admin/recent-donations').then(data => {
       setDonations(data.map(d => ({
         supporter: d.supporter ?? 'Anonymous',
-        type: d.donationType ?? '',
+        type: formatEnumLabel(d.donationType ?? ''),
         amount: d.amount ? `₱${Number(d.amount).toLocaleString()}` : d.estimatedValue ? `₱${Number(d.estimatedValue).toLocaleString()} est.` : '—',
         date: d.donationDate ? new Date(d.donationDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '',
         campaign: d.campaignName ?? '—',
@@ -138,7 +140,7 @@ export default function AdminDashboard() {
     }).catch(onErr);
 
     apiFetch<Array<{ channel: string; count: number }>>('/api/admin/donations-by-channel').then(data => {
-      setChannels(data.map(d => ({ channel: d.channel, amount: d.count })));
+      setChannels(data.map(d => ({ channel: formatEnumLabel(d.channel), amount: d.count })));
     }).catch(onErr);
 
   }, []);
@@ -240,8 +242,8 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {residents.map((r) => (
-                  <tr key={r.code} className={r.riskLevel === 'Critical' ? styles.rowCritical : ''}>
+                {residents.map((r, i) => (
+                  <tr key={`${r.code}-${i}`} className={r.riskLevel === 'Critical' ? styles.rowCritical : ''}>
                     <td>
                       <span className={styles.residentCode}>{r.code}</span>
                       <span className={styles.residentWorker}>{r.socialWorker}</span>
@@ -276,7 +278,7 @@ export default function AdminDashboard() {
           <div className={styles.donationsCard}>
             <div className={styles.cardHeader}>
               <h2 className={styles.cardTitle}>Recent Donations</h2>
-              <button className={styles.viewAllBtn}>View all</button>
+              <button className={styles.viewAllBtn} onClick={() => navigate('/admin/donors?tab=donations')}>View all</button>
             </div>
             <div className={styles.donationsList}>
               {donations.map((d, i) => (
