@@ -1,0 +1,114 @@
+{
+  "model_name": "social-media-timing",
+  "runs": [
+    {
+      "model_name": "social-media-timing",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T18:41:56.601113+00:00",
+      "model_type": "GradientBoosting",
+      "features": [
+        "is_boosted",
+        "has_call_to_action",
+        "is_weekend",
+        "post_hour",
+        "boost_budget_php",
+        "platform_Facebook",
+        "platform_Instagram",
+        "platform_LinkedIn",
+        "platform_TikTok",
+        "platform_Twitter",
+        "platform_WhatsApp",
+        "platform_YouTube",
+        "day_of_week_Friday",
+        "day_of_week_Monday",
+        "day_of_week_Saturday",
+        "day_of_week_Sunday",
+        "day_of_week_Thursday",
+        "day_of_week_Tuesday",
+        "day_of_week_Wednesday",
+        "media_type_Carousel",
+        "media_type_Photo",
+        "media_type_Reel",
+        "media_type_Text",
+        "media_type_Video",
+        "post_type_Campaign",
+        "post_type_EducationalContent",
+        "post_type_EventPromotion",
+        "post_type_FundraisingAppeal",
+        "post_type_ImpactStory",
+        "post_type_ThankYou"
+      ],
+      "num_training_rows": 649,
+      "num_test_rows": 163,
+      "total_rows": 812,
+      "mae": 0.03164213801694636,
+      "rmse": 0.0017932181944333608,
+      "r2": 0.4746549212667266,
+      "cv_results": [
+        {
+          "model": "GradientBoosting",
+          "cv_mae_mean": 0.028670886360134568,
+          "cv_mae_std": 0.0023823487108167916,
+          "cv_r2_mean": 0.5221978052221005,
+          "cv_r2_std": 0.033335119659476616
+        },
+        {
+          "model": "Stacking",
+          "cv_mae_mean": 0.02890956954963992,
+          "cv_mae_std": 0.002678696668155359,
+          "cv_r2_mean": 0.5071030278146388,
+          "cv_r2_std": 0.03882325199408974
+        },
+        {
+          "model": "RandomForest",
+          "cv_mae_mean": 0.029052720021050433,
+          "cv_mae_std": 0.0027232971270538847,
+          "cv_r2_mean": 0.5021178609130962,
+          "cv_r2_std": 0.0513009539193675
+        },
+        {
+          "model": "ExtraTrees",
+          "cv_mae_mean": 0.031212088151460936,
+          "cv_mae_std": 0.0034614601316408,
+          "cv_r2_mean": 0.419138421202371,
+          "cv_r2_std": 0.06410010024948071
+        },
+        {
+          "model": "AdaBoost",
+          "cv_mae_mean": 0.03217659617134561,
+          "cv_mae_std": 0.001850459457829768,
+          "cv_r2_mean": 0.41633974200419643,
+          "cv_r2_std": 0.028182450521878264
+        },
+        {
+          "model": "DecisionTree",
+          "cv_mae_mean": 0.03774572331544425,
+          "cv_mae_std": 0.004962515503701987,
+          "cv_r2_mean": 0.10992250136909228,
+          "cv_r2_std": 0.1561331239561326
+        },
+        {
+          "model": "LinearRegression",
+          "cv_mae_mean": 0.03897046042114989,
+          "cv_mae_std": 0.0036521418547966855,
+          "cv_r2_mean": 0.1993314135705225,
+          "cv_r2_std": 0.06349406485883534
+        },
+        {
+          "model": "KNN",
+          "cv_mae_mean": 0.046500703160405485,
+          "cv_mae_std": 0.0041800410765225815,
+          "cv_r2_mean": -0.09551475987898125,
+          "cv_r2_std": 0.07692701119134683
+        },
+        {
+          "model": "SVR",
+          "cv_mae_mean": 0.05291481454284456,
+          "cv_mae_std": 0.003375879145862034,
+          "cv_r2_mean": -0.2803499804637604,
+          "cv_r2_std": 0.10820712303740464
+        }
+      ]
+    }
+  ]
+}

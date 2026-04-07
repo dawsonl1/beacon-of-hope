@@ -66,7 +66,7 @@ These accounts are created automatically when the backend seeds the database on 
 
 ## Database Migrations
 
-The production database is Azure Database for PostgreSQL Flexible Server (`intex-db.postgres.database.azure.com`).
+The production database is Azure Database for PostgreSQL Flexible Server (`intex-db.postgres.database.azure.com`). Migrations run automatically at app startup via `MigrateAsync()`.
 
 ### Workflow
 
@@ -75,17 +75,10 @@ The production database is Azure Database for PostgreSQL Flexible Server (`intex
    dotnet ef migrations add YourMigrationName --project backend
    ```
 
-2. **Apply to production:**
-   ```bash
-   dotnet ef database update --project backend --connection "Host=intex-db.postgres.database.azure.com;Port=5432;Database=postgres;Username=postgres;Password=<password>;SslMode=Require;TrustServerCertificate=true"
-   ```
+2. **The backend applies it on next startup** — no manual step needed.
 
 3. **Commit and push** the migration files.
 
-### Important notes
-
-- Developers must have their IP added to the Azure PostgreSQL **firewall rules** (Azure Portal → PostgreSQL server → Networking)
-- Use camelCase connection string keys for Npgsql 10.x: `SslMode`, `TrustServerCertificate`, `Username`
 
 ## ML Artifacts
 

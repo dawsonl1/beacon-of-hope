@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "model_name": "social-media-content",
+    "model_type": "OLS Multiple Linear Regression (explanatory)",
+    "target": "donation_referrals",
+    "n_observations": 812,
+    "n_features_selected": 11,
+    "selected_features": [
+      "features_resident_story",
+      "boost_budget_php",
+      "caption_length",
+      "post_hour",
+      "platform_Twitter",
+      "platform_WhatsApp",
+      "post_type_EducationalContent",
+      "post_type_ImpactStory",
+      "sentiment_tone_Celebratory",
+      "sentiment_tone_Emotional",
+      "sentiment_tone_Urgent"
+    ],
+    "training_date": "20260407",
+    "purpose": "Explanatory \u2014 quantify which content characteristics drive donation referrals",
+    "before_post_only": true
+  },
+  "metrics": {
+    "adjusted_r2_train": 0.28101273142883076,
+    "r2_test": 0.3346445686903621,
+    "adjusted_r2_test": 0.28617496773403084,
+    "mae_test": 14.283808067454052,
+    "rmse_test": 21.561027858202568,
+    "n_train": 649,
+    "n_test": 163,
+    "n_features": 11
+  }
+}

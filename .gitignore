@@ -38,3 +38,8 @@ __pycache__/
 
 # ML model artifact policy
 models/*.pkl
+
+
+# ML context files
+ml/social_media_content/context.md
+ml/social_media_content/sample_migration.sql

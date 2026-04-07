@@ -78,10 +78,8 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await db.Database.MigrateAsync();
     await IdentitySeeder.SeedAsync(scope.ServiceProvider);
+    await DataSeeder.SeedAsync(scope.ServiceProvider);
 }
-
-// DB connection is tested via /api/health — no startup check needed
-// (Startup checks corrupt the Npgsql connection pool with Supabase pooler)
 
 if (app.Environment.IsDevelopment())
 {
@@ -101,7 +99,7 @@ app.Use(async (context, next) =>
         "script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com; " +
         "style-src 'self' 'unsafe-inline'; " +
         "img-src 'self' data: https:; " +
-        "connect-src 'self' https://www.google-analytics.com https://*.supabase.co; " +
+        "connect-src 'self' https://www.google-analytics.com; " +
         "font-src 'self' https://fonts.gstatic.com; " +
         "frame-ancestors 'none'; " +
         "form-action 'self'; " +
@@ -204,9 +202,7 @@ app.MapGet("/api/auth/me", async (
 
 app.MapGet("/api/health", async (AppDbContext db) =>
 {
-    // NOTE: Do NOT use db.Database.CanConnectAsync() or ExecuteSqlRawAsync() here.
-    // Both have issues with Supabase connection pooler + Npgsql.
-    // Use a normal EF Core query instead.
+    // NOTE: Use a normal EF Core query to verify connectivity.
     var canConnect = false;
     try
     {
@@ -252,7 +248,6 @@ app.MapGet("/api/health", async (AppDbContext db) =>
 // ── IMPORTANT: DbContext is NOT thread-safe. ──────────────
 // Do NOT use Task.WhenAll() with multiple queries on the same DbContext.
 // Always await queries sequentially (one at a time).
-// Using Task.WhenAll causes ObjectDisposedException with Supabase pooler + Npgsql.
 //
 // var x = await db.Table1.CountAsync();
 //    var y = await db.Table2.CountAsync();

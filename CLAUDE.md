@@ -32,6 +32,51 @@ This file contains a growing ruleset that improves over time. **At session start
 
 ---
 
+## Project Structure
+
+The repository follows a strict top-level layout. Do not create new top-level directories or move existing ones without explicit approval.
+
+```
+intex2/
+├── backend/          # .NET 10 C# Web API (ASP.NET, EF Core, Identity)
+├── backend.Tests/    # xUnit tests for backend (mirrors backend/ structure)
+├── frontend/         # React 19 + TypeScript + Vite
+│   └── src/
+│       ├── __tests__/    # Vitest tests
+│       ├── components/   # Reusable UI components
+│       ├── contexts/     # React contexts (auth, cookies, etc.)
+│       ├── hooks/        # Custom hooks
+│       ├── layouts/      # Page layouts
+│       ├── pages/        # Route-level page components
+│       ├── utils/        # Utility functions
+│       ├── api.ts        # API client
+│       ├── constants.ts  # App constants
+│       ├── domain.ts     # Domain types
+│       └── types.ts      # Shared TypeScript types
+├── ml/               # Python ML code, organized by model use-case
+│   ├── <model_name>/ # Each model gets its own subdirectory
+│   ├── config.py     # Shared ML configuration
+│   ├── utils_db.py   # DB utilities for ML scripts
+│   └── requirements.txt
+├── models/           # Trained model artifacts (.sav files) — planned move to ml/models/
+├── data/             # CSV seed/import data — planned move to supabase/data/
+├── scripts/          # Utility shell scripts (setup-env.sh, etc.)
+├── supabase/         # Database migrations and seed SQL
+├── INTEX/            # Project documentation, rubric, audit notes
+├── .github/          # CI/CD workflows (GitHub Actions)
+└── CLAUDE.md         # This file — agent instructions and rules
+```
+
+### Structure rules
+
+- **Never commit build artifacts.** `frontend/dist/`, `node_modules/`, `bin/`, `obj/` must stay gitignored.
+- **ML code goes in `ml/`.** Each model/prediction task gets its own subdirectory under `ml/`. Do not create separate top-level directories for ML scripts or notebooks.
+- **Tests live next to what they test.** Backend tests in `backend.Tests/`, frontend tests in `frontend/src/__tests__/`.
+- **New frontend files** go in the appropriate `src/` subdirectory (`components/`, `pages/`, `hooks/`, etc.). Do not add new subdirectories under `src/` without good reason.
+- **Configuration and environment files** follow existing patterns (`.env.example` templates committed, actual `.env` files gitignored).
+
+---
+
 ## Learned Rules
 
 <!-- New rules are appended below this line. Do not edit above this section. -->
@@ -46,10 +91,6 @@ This file contains a growing ruleset that improves over time. **At session start
 
 5. [PROCESS] Before modifying any existing code, check what tests cover that code. Update or add tests to reflect the new behavior before making the code change. After the change, run the full test suite to ensure nothing is broken.
 
-6. [DATA] The production database is Azure Database for PostgreSQL Flexible Server (`intex-db.postgres.database.azure.com`), not Supabase. EF Core has full control — migrations, reads, and writes all work directly without any pooler issues. Migrations auto-apply at startup via `MigrateAsync()` in Program.cs.
+6. [DATA] The database is Azure Database for PostgreSQL Flexible Server (`intex-db.postgres.database.azure.com`), managed entirely by EF Core. `MigrateAsync()` runs at startup in Program.cs. To add/change tables: edit C# models → `dotnet ef migrations add <Name>` → the backend applies it on next startup. Only manage your own tables (AspNet*, domain tables) in the DbContext.
 
-7. [DATA] To apply EF Core migrations to the production database: `dotnet ef database update --project backend --connection "Host=intex-db.postgres.database.azure.com;Port=5432;Database=postgres;Username=postgres;Password=<password>;SslMode=Require;TrustServerCertificate=true"`. Developers must have their IP added to the Azure PostgreSQL firewall rules.
-
-8. [DATA] Never register third-party-owned schemas in AppDbContext via `HasPostgresEnum` or `HasPostgresExtension` — only manage your own tables (AspNet*, domain tables) in the DbContext.
-
-9. [DATA] For Npgsql connection strings, use camelCase key names without spaces: `SslMode` (not `SSL Mode`), `TrustServerCertificate` (not `Trust Server Certificate`), `Username` (not `User Id`). Npgsql 10.x is strict about this.
+7. [DATA] For Npgsql connection strings, use camelCase key names without spaces: `SslMode` (not `SSL Mode`), `TrustServerCertificate` (not `Trust Server Certificate`), `Username` (not `User Id`). Npgsql 10.x is strict about this.

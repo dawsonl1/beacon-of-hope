@@ -75,6 +75,8 @@ METRICS_INCIDENT_WARNING        = MODELS_DIR / "incident-early-warning"  / "metr
 # combined per-pipeline model run files (metadata + metrics, append-only runs)
 MODEL_RUNS_REINTEGRATION_READINESS = MODELS_DIR / "reintegration-readiness" / "model.json"
 MODEL_RUNS_REINTEGRATION_DRIVERS   = MODELS_DIR / "reintegration-drivers"   / "model.json"
+MODEL_RUNS_SOCIAL_CONTENT          = MODELS_DIR / "social-media-content"    / "model.json"
+MODEL_RUNS_SOCIAL_TIMING           = MODELS_DIR / "social-media-timing"     / "model.json"
 
 # ── Model name constants ───────────────────────────────────────────────────────
 # These are the values written to the model_name column in ml_predictions.

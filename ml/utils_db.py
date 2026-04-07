@@ -15,7 +15,7 @@ import logging
 import pandas as pd
 from datetime import datetime, timezone
 from supabase import create_client, Client
-from config import (
+from ml.config import (
     SUPABASE_URL,
     SUPABASE_SERVICE_ROLE_KEY,
     TABLE_ML_PREDICTIONS,
