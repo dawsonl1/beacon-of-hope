@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(26, 32, 44, 0.45);
+  background: rgba(15, 27, 45, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,12 +16,12 @@
 
 .dialog {
   position: relative;
-  background: #fff;
-  border-radius: 14px;
+  background: var(--surface-1);
+  border-radius: var(--radius-md);
   padding: 2rem 2rem 1.5rem;
   max-width: 400px;
   width: 90%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
   text-align: center;
   animation: slideUp 0.2s ease;
 }
@@ -45,7 +45,7 @@
 }
 
 .closeBtn:hover {
-  color: var(--color-slate);
+  color: var(--text-muted);
 }
 
 .iconWrap {
@@ -55,7 +55,7 @@
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: rgba(196, 117, 110, 0.1);
+  background: rgba(203, 87, 104, 0.1);
   color: var(--color-rose);
   margin-bottom: 1rem;
 }
@@ -64,13 +64,13 @@
   font-family: var(--font-display);
   font-size: 1.15rem;
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   margin: 0 0 0.5rem;
 }
 
 .message {
   font-size: 0.85rem;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
   line-height: 1.5;
   margin: 0 0 1.5rem;
 }
@@ -83,10 +83,10 @@
 
 .cancelBtn {
   padding: 0.55rem 1.25rem;
-  border: 1px solid var(--color-sand);
-  border-radius: 8px;
-  background: #fff;
-  color: var(--color-slate);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-sm);
+  background: var(--surface-1);
+  color: var(--text-muted);
   font-size: 0.82rem;
   font-weight: 600;
   font-family: var(--font-body);
@@ -95,13 +95,13 @@
 }
 
 .cancelBtn:hover:not(:disabled) {
-  border-color: var(--color-warm-gray);
+  border-color: rgba(15, 27, 45, 0.2);
 }
 
 .deleteBtn {
   padding: 0.55rem 1.25rem;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: 999px;
   background: var(--color-rose);
   color: #fff;
   font-size: 0.82rem;
@@ -112,7 +112,7 @@
 }
 
 .deleteBtn:hover:not(:disabled) {
-  background: #b5635c;
+  background: #b34d58;
 }
 
 .deleteBtn:disabled,

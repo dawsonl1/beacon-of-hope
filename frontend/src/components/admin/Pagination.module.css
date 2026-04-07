@@ -3,12 +3,12 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 1.25rem;
-  border-top: 1px solid var(--color-sand);
+  border-top: 1px solid rgba(15, 27, 45, 0.08);
 }
 
 .info {
   font-size: 0.78rem;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
 }
 
 .controls {
@@ -23,17 +23,17 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  border: 1px solid var(--color-sand);
+  border: 1px solid rgba(15, 27, 45, 0.08);
   border-radius: 6px;
-  background: #fff;
-  color: var(--color-slate);
+  background: var(--surface-1);
+  color: var(--text-muted);
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .navBtn:hover:not(:disabled) {
-  border-color: var(--color-amber);
-  color: var(--color-deep-navy);
+  border-color: var(--color-sage);
+  color: var(--text-strong);
 }
 
 .navBtn:disabled {
@@ -50,7 +50,7 @@
   border: 1px solid transparent;
   border-radius: 6px;
   background: transparent;
-  color: var(--color-slate);
+  color: var(--text-muted);
   font-size: 0.78rem;
   font-weight: 600;
   font-family: var(--font-body);
@@ -59,18 +59,18 @@
 }
 
 .pageBtn:hover {
-  background: rgba(212, 168, 83, 0.08);
-  color: var(--color-deep-navy);
+  background: rgba(15, 143, 125, 0.08);
+  color: var(--text-strong);
 }
 
 .pageBtnActive {
-  background: var(--color-deep-navy);
+  background: linear-gradient(120deg, var(--color-sage), #13a490);
   color: #fff;
-  border-color: var(--color-deep-navy);
+  border-color: transparent;
 }
 
 .pageBtnActive:hover {
-  background: var(--color-deep-navy);
+  background: linear-gradient(120deg, var(--color-sage), #13a490);
   color: #fff;
 }
 

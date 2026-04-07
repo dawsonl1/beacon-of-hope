@@ -1,14 +1,16 @@
 .banner {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
   z-index: 200;
-  background: var(--color-deep-navy);
-  color: rgba(255, 255, 255, 0.85);
-  padding: 1.25rem 2rem;
+  background: rgba(15, 27, 45, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 1rem 1.25rem;
   animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.24);
 }
 
 .inner {
@@ -21,18 +23,19 @@
 }
 
 .text {
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .link {
-  color: var(--color-amber-light);
-  text-decoration: underline;
-  text-underline-offset: 2px;
+  color: #9ce5da;
+  text-decoration: underline 1.5px;
+  text-underline-offset: 3px;
 }
 
 .link:hover {
-  color: var(--color-amber);
+  color: #c1eee7;
 }
 
 .buttons {
@@ -42,12 +45,12 @@
 }
 
 .declineBtn {
-  font-size: 0.85rem;
-  font-weight: 500;
-  padding: 0.55rem 1.25rem;
-  border-radius: 6px;
-  color: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 0.86rem;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   background: transparent;
   transition: all 0.25s;
   font-family: var(--font-body);
@@ -55,17 +58,17 @@
 }
 
 .declineBtn:hover {
-  border-color: rgba(255, 255, 255, 0.5);
+  border-color: rgba(255, 255, 255, 0.62);
   color: #fff;
 }
 
 .manageBtn {
-  font-size: 0.85rem;
-  font-weight: 500;
-  padding: 0.55rem 1.25rem;
-  border-radius: 6px;
-  color: var(--color-amber-light);
-  border: 1px solid var(--color-amber-light);
+  font-size: 0.86rem;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  color: #9ce5da;
+  border: 1px solid #9ce5da;
   background: transparent;
   transition: all 0.25s;
   font-family: var(--font-body);
@@ -73,26 +76,27 @@
 }
 
 .manageBtn:hover {
-  background: rgba(212, 168, 83, 0.15);
-  color: var(--color-amber);
-  border-color: var(--color-amber);
+  background: rgba(15, 143, 125, 0.15);
+  color: #c1eee7;
+  border-color: #c1eee7;
 }
 
 .acceptBtn {
-  font-size: 0.85rem;
+  font-size: 0.86rem;
   font-weight: 600;
-  padding: 0.55rem 1.25rem;
-  border-radius: 6px;
-  color: var(--color-deep-navy);
-  background: var(--color-amber);
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  color: #062a25;
+  background: linear-gradient(120deg, #77d9cc, #9ce5da);
   border: none;
-  transition: all 0.25s;
+  transition: transform 0.25s, filter 0.25s;
   font-family: var(--font-body);
   cursor: pointer;
 }
 
 .acceptBtn:hover {
-  background: var(--color-amber-light);
+  transform: translateY(-1px);
+  filter: brightness(1.04);
 }
 
 @keyframes slideUp {
@@ -108,7 +112,10 @@
 
 @media (max-width: 768px) {
   .banner {
-    padding: 1rem 1.25rem;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    padding: 1rem;
   }
 
   .inner {

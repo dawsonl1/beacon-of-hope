@@ -32,13 +32,13 @@
 .title {
   font-family: var(--font-display);
   font-size: 2rem;
-  font-weight: 500;
-  color: var(--color-deep-navy);
+  font-weight: 600;
+  color: var(--text-strong);
   letter-spacing: -0.03em;
 }
 
 .subtitle {
-  color: #8A8078;
+  color: var(--text-muted);
   margin-top: 0.25rem;
   font-size: 0.95rem;
 }
@@ -56,28 +56,29 @@
   flex-direction: column;
   align-items: center;
   padding: 1.5rem;
-  background: #ffffff;
-  border: 1px solid #E8E0D4;
-  border-radius: 12px;
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   text-align: center;
 }
 
 .cardIcon {
-  color: var(--color-deep-navy);
+  color: var(--color-sage);
   margin-bottom: 0.75rem;
 }
 
 .cardValue {
   font-family: var(--font-display);
   font-size: 1.75rem;
-  font-weight: 500;
-  color: var(--color-deep-navy);
+  font-weight: 600;
+  color: var(--text-strong);
   letter-spacing: -0.02em;
 }
 
 .cardLabel {
   font-size: 0.82rem;
-  color: #8A8078;
+  color: var(--text-muted);
   margin-top: 0.25rem;
 }
 
@@ -89,8 +90,8 @@
 .sectionTitle {
   font-family: var(--font-display);
   font-size: 1.2rem;
-  font-weight: 500;
-  color: var(--color-deep-navy);
+  font-weight: 600;
+  color: var(--text-strong);
   margin-bottom: 1rem;
   letter-spacing: -0.02em;
 }
@@ -106,14 +107,15 @@
   display: flex;
   flex-direction: column;
   padding: 1.25rem;
-  background: #ffffff;
-  border: 1px solid #E8E0D4;
-  border-radius: 10px;
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
 }
 
 .allocProgram {
-  font-weight: 500;
-  color: var(--color-deep-navy);
+  font-weight: 600;
+  color: var(--text-strong);
   font-size: 0.92rem;
   margin-bottom: 0.25rem;
 }
@@ -121,22 +123,23 @@
 .allocAmount {
   font-family: var(--font-display);
   font-size: 1.25rem;
-  font-weight: 500;
-  color: var(--color-deep-navy);
+  font-weight: 600;
+  color: var(--color-sage);
 }
 
 .allocDetail {
   font-size: 0.78rem;
-  color: #8A8078;
+  color: var(--text-muted);
   margin-top: 0.35rem;
 }
 
 /* ── Table ────────────────────────────────────────────────── */
 .tableWrapper {
   overflow-x: auto;
-  background: #ffffff;
-  border: 1px solid #E8E0D4;
-  border-radius: 10px;
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
 }
 
 .table {
@@ -148,9 +151,9 @@
 .table th {
   text-align: left;
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid #E8E0D4;
-  font-weight: 500;
-  color: #8A8078;
+  border-bottom: 1px solid rgba(15, 27, 45, 0.08);
+  font-weight: 600;
+  color: var(--text-muted);
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -158,21 +161,21 @@
 
 .table td {
   padding: 0.65rem 1rem;
-  border-bottom: 1px solid #E8E0D408;
-  color: var(--color-deep-navy);
+  border-bottom: 1px solid rgba(15, 27, 45, 0.04);
+  color: var(--text-strong);
 }
 
 .table tbody tr:hover {
-  background: #F8F5F0;
+  background: var(--surface-2);
 }
 
 .amountCol {
   font-family: var(--font-display);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .empty {
-  color: #8A8078;
+  color: var(--text-muted);
   text-align: center;
   padding: 2rem;
 }

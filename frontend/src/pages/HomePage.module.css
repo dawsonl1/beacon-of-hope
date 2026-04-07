@@ -1,136 +1,145 @@
 /* ── Hero ──────────────────────────────────────────────────── */
 .hero {
   position: relative;
-  min-height: 92vh;
+  min-height: min(94vh, 860px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 6rem 2rem 4rem;
+  padding: 8rem 1.25rem 5rem;
   overflow: hidden;
   background:
-    radial-gradient(ellipse 80% 60% at 50% 30%, rgba(212, 168, 83, 0.12), transparent),
-    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(196, 117, 110, 0.08), transparent),
-    var(--color-cream);
+    radial-gradient(circle at 12% 18%, rgba(15, 143, 125, 0.2), transparent 38%),
+    radial-gradient(circle at 90% 72%, rgba(255, 159, 67, 0.22), transparent 42%),
+    linear-gradient(180deg, #f8fbff 0%, #f8f7f3 70%);
 }
 
 .heroOverlay {
   position: absolute;
   inset: 0;
-  background-image:
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.45)),
     repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 50px,
-      rgba(212, 168, 83, 0.03) 50px,
-      rgba(212, 168, 83, 0.03) 51px
+      90deg,
+      transparent 0,
+      transparent 48px,
+      rgba(15, 27, 45, 0.025) 48px,
+      rgba(15, 27, 45, 0.025) 49px
     );
   pointer-events: none;
 }
 
 .heroContent {
   position: relative;
-  max-width: 720px;
+  max-width: 800px;
+  z-index: 1;
   animation: fadeUp 1s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .heroLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-amber-dark);
-  margin-bottom: 1.5rem;
+  color: var(--color-sage);
+  margin-bottom: 1.15rem;
 }
 
 .heroHeadline {
   font-family: var(--font-display);
-  font-size: clamp(2.8rem, 6vw, 4.5rem);
-  font-weight: 500;
-  line-height: 1.1;
-  letter-spacing: -0.025em;
-  color: var(--color-deep-navy);
-  margin-bottom: 1.5rem;
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: var(--text-strong);
+  margin-bottom: 1.25rem;
 }
 
 .heroHeadline em {
   font-style: italic;
-  color: var(--color-amber-dark);
+  color: var(--color-sage);
 }
 
 .heroSub {
-  font-size: 1.1rem;
-  line-height: 1.7;
-  color: var(--color-slate);
-  max-width: 540px;
-  margin: 0 auto 2.5rem;
+  margin: 0 auto 2.2rem;
+  max-width: 620px;
+  font-size: 1.07rem;
+  line-height: 1.75;
+  color: var(--text-muted);
 }
 
 .heroCtas {
   display: flex;
-  gap: 1rem;
   justify-content: center;
+  gap: 0.9rem;
   flex-wrap: wrap;
 }
 
 .scrollHint {
   position: absolute;
-  bottom: 2rem;
   left: 50%;
+  bottom: 1.5rem;
   transform: translateX(-50%);
-  color: var(--color-warm-gray);
-  animation: bounce 2.5s ease-in-out infinite;
-  opacity: 0.6;
+  color: var(--text-muted);
+  opacity: 0.75;
+  animation: bounce 2.2s ease-in-out infinite;
 }
 
 /* ── Buttons ──────────────────────────────────────────────── */
 .btnPrimary {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  font-size: 0.95rem;
-  font-weight: 600;
+  min-height: 46px;
+  font-size: 0.93rem;
+  font-weight: 700;
   color: #fff;
-  background: var(--color-amber-dark);
-  padding: 0.85rem 2rem;
-  border-radius: 8px;
-  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  background: linear-gradient(120deg, var(--color-sage), #13a490);
+  padding: 0.8rem 1.35rem;
+  border-radius: 999px;
+  transition: transform 0.24s, box-shadow 0.24s, filter 0.24s;
   text-decoration: none;
-  box-shadow: 0 2px 12px rgba(184, 145, 58, 0.25);
+  box-shadow: 0 10px 24px rgba(15, 143, 125, 0.24);
 }
 
 .btnPrimary:hover {
-  background: var(--color-amber);
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(184, 145, 58, 0.35);
+  filter: brightness(1.03);
 }
 
 .btnSecondary {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--color-deep-navy);
-  padding: 0.85rem 2rem;
-  border-radius: 8px;
-  border: 1.5px solid var(--color-light-gray);
-  transition: all 0.3s;
+  min-height: 46px;
+  font-size: 0.93rem;
+  font-weight: 700;
+  color: var(--text-strong);
+  background: #fff;
+  padding: 0.8rem 1.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 27, 45, 0.15);
+  transition: transform 0.24s, box-shadow 0.24s, filter 0.24s;
   text-decoration: none;
 }
 
 .btnSecondary:hover {
-  border-color: var(--color-amber);
-  color: var(--color-amber-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 /* ── Impact ───────────────────────────────────────────────── */
 .impact {
-  padding: 5rem 2rem;
-  background: var(--color-warm-white);
-  border-top: 1px solid var(--color-sand);
-  border-bottom: 1px solid var(--color-sand);
+  padding: 5.5rem 1.25rem;
+  background: var(--surface-2);
+  border-top: 1px solid rgba(15, 27, 45, 0.08);
+  border-bottom: 1px solid rgba(15, 27, 45, 0.08);
 }
 
 .impactInner {
@@ -141,33 +150,34 @@
 .impactLabel {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-warm-gray);
-  margin-bottom: 2.5rem;
+  color: var(--text-muted);
+  margin-bottom: 1.7rem;
 }
 
 .impactDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
   background: var(--color-sage);
 }
 
 .impactGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
 }
 
 .statCard {
-  background: var(--color-cream);
-  border: 1px solid var(--color-sand);
-  border-radius: 12px;
-  padding: 2rem 1.5rem;
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 1.55rem 1.2rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -175,28 +185,31 @@
 }
 
 .statCard:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .statNumber {
+  display: block;
   font-family: var(--font-display);
-  font-size: 3rem;
+  font-size: clamp(2.1rem, 4vw, 3rem);
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   line-height: 1;
   letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
 }
 
 .statDesc {
-  font-size: 0.85rem;
-  color: var(--color-warm-gray);
+  font-size: 0.88rem;
+  color: var(--text-muted);
   line-height: 1.4;
 }
 
 /* ── Mission ──────────────────────────────────────────────── */
 .mission {
-  padding: 6rem 2rem;
+  padding: 5.5rem 1.25rem;
+  background: transparent;
 }
 
 .missionInner {
@@ -206,81 +219,81 @@
 
 .sectionTitle {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 4vw, 2.8rem);
-  font-weight: 500;
-  color: var(--color-deep-navy);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 600;
+  color: var(--text-strong);
   letter-spacing: -0.02em;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
 }
 
 .missionText {
-  font-size: 1.05rem;
+  max-width: 720px;
+  font-size: 1rem;
   line-height: 1.75;
-  color: var(--color-slate);
-  max-width: 640px;
-  margin-bottom: 3rem;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
 }
 
 .processGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
 }
 
 .processCard {
-  padding: 2rem 1.5rem;
-  border-radius: 12px;
-  border: 1px solid var(--color-sand);
-  background: var(--color-warm-white);
-  transition: all 0.3s;
+  padding: 1.45rem 1.1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  background: var(--surface-1);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s, border-color 0.25s;
   position: relative;
 }
 
 .processCard:hover {
-  border-color: var(--color-amber-light);
-  background: #fff;
+  transform: translateY(-2px);
+  border-color: rgba(15, 143, 125, 0.35);
 }
 
 .processIcon {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
-  background: rgba(212, 168, 83, 0.12);
-  color: var(--color-amber-dark);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1.25rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(15, 143, 125, 0.11);
+  color: var(--color-sage);
+  display: grid;
+  place-items: center;
+  margin-bottom: 0.85rem;
 }
 
 .processStep {
-  font-family: var(--font-display);
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--color-light-gray);
-  margin-bottom: 0.5rem;
-  letter-spacing: 0.02em;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
 }
 
 .processTitle {
   font-family: var(--font-display);
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  color: var(--color-deep-navy);
-  margin-bottom: 0.5rem;
+  color: var(--text-strong);
+  margin-bottom: 0.45rem;
 }
 
 .processDesc {
-  font-size: 0.875rem;
+  font-size: 0.88rem;
   line-height: 1.6;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
 }
 
 /* ── Testimonial ──────────────────────────────────────────── */
 .testimonial {
-  padding: 5rem 2rem;
+  padding: 5.5rem 1.25rem;
   background:
-    linear-gradient(135deg, var(--color-deep-navy) 0%, var(--color-navy-soft) 100%);
+    radial-gradient(circle at 90% 10%, rgba(255, 194, 116, 0.2), transparent 35%),
+    linear-gradient(130deg, #10223a, #203956);
   text-align: center;
 }
 
@@ -291,47 +304,47 @@
 
 .quote p {
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+  font-size: clamp(1.7rem, 3.3vw, 2.6rem);
   font-weight: 400;
   font-style: italic;
-  color: rgba(255, 255, 255, 0.92);
-  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.35;
   letter-spacing: -0.01em;
 }
 
 .quoteAttr {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  margin-top: 2rem;
+  gap: 0.8rem;
+  margin-top: 1.7rem;
 }
 
 .quoteAvatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.28);
   flex-shrink: 0;
 }
 
 .quoteName {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.85);
   text-align: left;
+  font-size: 0.93rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .quoteDetail {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.5);
   text-align: left;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.66);
 }
 
 /* ── Get Involved ─────────────────────────────────────────── */
 .involved {
-  padding: 6rem 2rem;
+  padding: 5.5rem 1.25rem;
 }
 
 .involvedInner {
@@ -341,58 +354,59 @@
 }
 
 .involvedSub {
-  font-size: 1.05rem;
-  color: var(--color-slate);
-  max-width: 520px;
-  margin: 0 auto 3rem;
+  max-width: 620px;
+  margin: 0 auto 2rem;
+  font-size: 1rem;
+  color: var(--text-muted);
   line-height: 1.7;
 }
 
 .involvedGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
   text-align: left;
 }
 
 .involvedCard {
-  padding: 2rem;
-  border-radius: 12px;
-  border: 1px solid var(--color-sand);
-  background: var(--color-warm-white);
-  transition: all 0.3s;
+  padding: 1.45rem 1.2rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  background: var(--surface-1);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s, border-color 0.25s;
 }
 
 .involvedCard:hover {
-  border-color: var(--color-amber);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  border-color: rgba(15, 143, 125, 0.4);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .involvedIcon {
-  color: var(--color-amber-dark);
-  margin-bottom: 1rem;
+  color: var(--color-sage);
+  margin-bottom: 0.75rem;
 }
 
 .involvedCard h3 {
   font-family: var(--font-display);
   font-size: 1.3rem;
   font-weight: 600;
-  color: var(--color-deep-navy);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
+  color: var(--text-strong);
 }
 
 .involvedCard p {
-  font-size: 0.875rem;
-  line-height: 1.6;
-  color: var(--color-warm-gray);
+  font-size: 0.89rem;
+  line-height: 1.62;
+  color: var(--text-muted);
 }
 
 /* ── Donate CTA ───────────────────────────────────────────── */
 .donateCta {
-  padding: 5rem 2rem;
-  background: var(--color-warm-white);
-  border-top: 1px solid var(--color-sand);
+  padding: 5.5rem 1.25rem;
+  background: var(--surface-2);
+  border-top: 1px solid rgba(15, 27, 45, 0.08);
   text-align: center;
 }
 
@@ -403,56 +417,56 @@
 
 .donateTitle {
   font-family: var(--font-display);
-  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
-  font-weight: 500;
-  color: var(--color-deep-navy);
-  margin-bottom: 2.5rem;
+  font-size: clamp(1.9rem, 3.8vw, 2.7rem);
+  font-weight: 600;
+  color: var(--text-strong);
+  margin-bottom: 1.8rem;
   letter-spacing: -0.02em;
 }
 
 .donateAmounts {
-  display: flex;
-  gap: 1.5rem;
-  justify-content: center;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
 }
 
 .donateCard {
-  background: var(--color-cream);
-  border: 1.5px solid var(--color-sand);
-  border-radius: 12px;
-  padding: 2rem 2.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  min-width: 200px;
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem 1rem;
+  min-height: 148px;
+  display: grid;
+  align-content: center;
+  gap: 0.35rem;
   transition: all 0.3s;
 }
 
 .donateCard:hover {
-  border-color: var(--color-amber);
+  border-color: rgba(15, 143, 125, 0.35);
   transform: translateY(-2px);
 }
 
 .donateAmount {
   font-family: var(--font-display);
-  font-size: 2.2rem;
+  font-size: clamp(2rem, 4vw, 2.4rem);
   font-weight: 600;
-  color: var(--color-amber-dark);
   line-height: 1;
+  color: var(--color-sage);
 }
 
 .donateDesc {
-  font-size: 0.85rem;
-  color: var(--color-warm-gray);
-  line-height: 1.4;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
 }
 
 /* ── Animations ───────────────────────────────────────────── */
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(32px);
+    transform: translateY(24px);
   }
   to {
     opacity: 1;
@@ -462,22 +476,23 @@
 
 @keyframes bounce {
   0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(8px); }
+  50% { transform: translateX(-50%) translateY(6px); }
 }
 
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .impactGrid,
   .processGrid,
-  .involvedGrid {
-    grid-template-columns: repeat(2, 1fr);
+  .involvedGrid,
+  .donateAmounts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 768px) {
   .hero {
-    min-height: 85vh;
-    padding: 5rem 1.25rem 3rem;
+    min-height: 86vh;
+    padding: 7rem 1rem 4rem;
   }
 
   .heroSub {
@@ -487,23 +502,16 @@
   .impact,
   .mission,
   .involved,
-  .donateCta {
-    padding: 3.5rem 1.25rem;
-  }
-
+  .donateCta,
   .testimonial {
-    padding: 3.5rem 1.25rem;
+    padding: 4rem 1rem;
   }
 
   .impactGrid,
   .processGrid,
-  .involvedGrid {
-    grid-template-columns: 1fr;
-  }
-
+  .involvedGrid,
   .donateAmounts {
-    flex-direction: column;
-    align-items: center;
+    grid-template-columns: 1fr;
   }
 
   .donateCard {

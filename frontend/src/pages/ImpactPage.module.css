@@ -4,17 +4,17 @@
 }
 
 .statsBanner {
-  padding: 4rem 2rem 3rem;
-  border-bottom: 1px solid var(--color-sand);
+  padding: 4.8rem 1.25rem 2.5rem;
+  border-bottom: 1px solid rgba(15, 27, 45, 0.08);
 }
 
 .statsInner {
   max-width: var(--max-width);
   margin: 0 auto;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 3rem;
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(0, 1.2fr);
+  gap: 2rem;
+  align-items: start;
 }
 
 .statsLabel {
@@ -23,25 +23,31 @@
 
 .statsHeadline {
   font-family: var(--font-display);
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  font-weight: 500;
-  color: var(--color-deep-navy);
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 600;
+  color: var(--text-strong);
   letter-spacing: -0.02em;
-  margin-bottom: 0.35rem;
+  line-height: 1.1;
+  margin-bottom: 0.45rem;
 }
 
 .statsUpdated {
-  font-size: 0.8rem;
-  color: var(--color-warm-gray);
+  font-size: 0.88rem;
+  color: var(--text-muted);
 }
 
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem 3rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
 }
 
 .statItem {
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  background: var(--surface-1);
+  border-radius: var(--radius-md);
+  padding: 1.1rem;
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
@@ -49,61 +55,68 @@
 }
 
 .statNumber {
+  display: block;
   font-family: var(--font-display);
-  font-size: 2.8rem;
+  font-size: clamp(2rem, 3.2vw, 2.8rem);
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   line-height: 1;
   letter-spacing: -0.03em;
 }
 
 .statDesc {
-  font-size: 0.85rem;
-  color: var(--color-warm-gray);
+  display: block;
+  margin-top: 0.45rem;
+  font-size: 0.86rem;
+  color: var(--text-muted);
   padding-top: 0.2rem;
-  border-top: 2px solid var(--color-amber);
-  display: inline-block;
+  border-top: 2px solid var(--color-sage);
 }
 
 /* ── Chart Sections ───────────────────────────────────── */
 .chartSection {
-  padding: 3rem 2rem;
+  padding: 0 1.25rem 1.1rem;
 }
 
 .chartInner {
   max-width: var(--max-width);
   margin: 0 auto;
-  background: var(--color-warm-white);
-  border: 1px solid var(--color-sand);
-  border-radius: 16px;
-  padding: 2rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), #ffffff);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: 18px;
+  padding: 1.3rem 1.3rem 1rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .chartHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.1rem;
 }
 
 .chartLabel {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--color-warm-gray);
-  margin-bottom: 0.5rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 0.45rem;
 }
 
 .chartHighlight {
-  display: flex;
+  display: inline-flex;
   align-items: baseline;
-  gap: 0.75rem;
+  gap: 0.6rem;
+  flex-wrap: wrap;
 }
 
 .chartBigNumber {
   font-family: var(--font-display);
-  font-size: 2rem;
+  font-size: clamp(1.9rem, 3vw, 2.5rem);
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
+  line-height: 1;
   letter-spacing: -0.02em;
 }
 
@@ -111,14 +124,14 @@
   display: inline-flex;
   align-items: center;
   gap: 0.2rem;
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.83rem;
+  font-weight: 700;
   color: var(--color-sage);
 }
 
 .chartSubtext {
-  font-size: 0.85rem;
-  color: var(--color-warm-gray);
+  font-size: 0.84rem;
+  color: var(--text-muted);
 }
 
 .chartContainer {
@@ -127,28 +140,29 @@
 
 /* ── Tooltip ──────────────────────────────────────────── */
 .tooltip {
-  background: var(--color-deep-navy);
-  padding: 0.6rem 0.9rem;
-  border-radius: 8px;
+  background: rgba(15, 27, 45, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-sm);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .tooltipLabel {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
-  margin-bottom: 0.15rem;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 0.2rem;
 }
 
 .tooltipValue {
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #fff;
 }
 
 /* ── Metric Cards ─────────────────────────────────────── */
 .metricsSection {
-  padding: 0 2rem 3rem;
+  padding: 0 1.25rem 2.4rem;
 }
 
 .metricsInner {
@@ -158,16 +172,17 @@
 
 .metricsGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.9rem;
   margin-top: 0.75rem;
 }
 
 .metricCard {
-  background: var(--color-warm-white);
-  border: 1px solid var(--color-sand);
-  border-radius: 12px;
-  padding: 1.5rem;
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-md);
+  padding: 1.1rem;
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -176,37 +191,39 @@
 
 .metricCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-md);
 }
 
 .metricNumber {
+  display: block;
   font-family: var(--font-display);
   font-size: 2rem;
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   line-height: 1;
   letter-spacing: -0.02em;
 }
 
 .metricLabel {
-  font-size: 0.8rem;
-  color: var(--color-warm-gray);
-  margin-top: 0.15rem;
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.84rem;
+  color: var(--text-muted);
 }
 
 .metricChange {
   display: inline-flex;
   align-items: center;
   gap: 0.15rem;
-  font-size: 0.75rem;
-  font-weight: 600;
+  margin-top: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: var(--color-sage);
-  margin-top: 0.25rem;
 }
 
 /* ── Stories of Hope ──────────────────────────────────── */
 .stories {
-  padding: 3rem 2rem 4rem;
+  padding: 2.2rem 1.25rem 2.7rem;
 }
 
 .storiesInner {
@@ -214,13 +231,13 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.2rem;
 }
 
 .storyRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  gap: 1.2rem;
   align-items: stretch;
 }
 
@@ -237,55 +254,61 @@
 }
 
 .storyText {
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: 16px;
+  padding: 1.5rem;
+  background: var(--surface-1);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 2rem 0;
 }
 
 .storyTag {
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.73rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-amber-dark);
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: var(--color-sage);
   margin-bottom: 0.5rem;
 }
 
 .storyTitle {
   font-family: var(--font-display);
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
-  font-weight: 500;
-  color: var(--color-deep-navy);
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  font-weight: 600;
+  color: var(--text-strong);
   letter-spacing: -0.02em;
-  margin-bottom: 1rem;
+  margin: 0.5rem 0 0.7rem;
 }
 
 .storyBody {
   font-size: 0.95rem;
-  line-height: 1.75;
-  color: var(--color-slate);
-  margin-bottom: 1rem;
+  line-height: 1.72;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
 }
 
 .storyNote {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-style: italic;
-  color: var(--color-light-gray);
+  color: var(--text-muted);
 }
 
 .storyImage {
   border-radius: 16px;
   overflow: hidden;
-  min-height: 320px;
+  min-height: 270px;
+  border: 1px solid rgba(15, 27, 45, 0.08);
 }
 
 .storyImagePlaceholder {
   width: 100%;
+  min-height: 270px;
   height: 100%;
-  min-height: 320px;
   background:
-    linear-gradient(135deg, var(--color-sand) 0%, rgba(212, 168, 83, 0.15) 100%);
+    radial-gradient(circle at 20% 20%, rgba(15, 143, 125, 0.18), transparent 38%),
+    linear-gradient(140deg, #ecf2fa, #fdf6ef);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -293,9 +316,10 @@
 
 /* ── Bottom CTA ───────────────────────────────────────── */
 .bottomCta {
-  padding: 5rem 2rem;
+  padding: 4.5rem 1.25rem;
   background:
-    linear-gradient(135deg, var(--color-deep-navy) 0%, var(--color-navy-soft) 100%);
+    radial-gradient(circle at 10% 12%, rgba(255, 194, 116, 0.18), transparent 42%),
+    linear-gradient(130deg, #11233c, #1f3a58);
   text-align: center;
 }
 
@@ -306,75 +330,60 @@
 
 .ctaTitle {
   font-family: var(--font-display);
-  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.92);
+  font-size: clamp(1.8rem, 3.6vw, 2.8rem);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.96);
   letter-spacing: -0.02em;
-  margin-bottom: 2rem;
-  line-height: 1.3;
+  line-height: 1.2;
+  margin-bottom: 1.2rem;
 }
 
 .ctaButton {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--color-deep-navy);
-  background: var(--color-amber);
-  padding: 0.9rem 2.25rem;
-  border-radius: 8px;
+  gap: 0.45rem;
+  min-height: 46px;
+  border-radius: 999px;
+  padding: 0.8rem 1.4rem;
+  background: linear-gradient(120deg, var(--color-sage), #13a490);
+  color: #fff;
+  font-weight: 700;
   text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-  box-shadow: 0 2px 12px rgba(184, 145, 58, 0.3);
+  transition: transform 0.24s, filter 0.24s;
+  box-shadow: 0 10px 24px rgba(15, 143, 125, 0.24);
 }
 
 .ctaButton:hover {
-  background: var(--color-amber-light);
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(184, 145, 58, 0.4);
+  filter: brightness(1.03);
 }
 
 /* ── Responsive ───────────────────────────────────────── */
 @media (max-width: 1024px) {
   .metricsGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 768px) {
   .statsBanner {
-    padding: 3rem 1.25rem 2rem;
+    padding: 3.8rem 1rem 1.8rem;
   }
 
   .statsInner {
-    flex-direction: column;
-    gap: 2rem;
-  }
-
-  .statsGrid {
-    gap: 1.25rem 2rem;
-  }
-
-  .statNumber {
-    font-size: 2.2rem;
+    grid-template-columns: 1fr;
   }
 
   .chartSection,
   .metricsSection,
-  .stories {
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
+  .stories,
+  .bottomCta {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
-  .chartInner {
-    padding: 1.25rem;
-  }
-
-  .metricsGrid {
-    grid-template-columns: 1fr 1fr;
-  }
-
+  .metricsGrid,
+  .statsGrid,
   .storyRow {
     grid-template-columns: 1fr;
   }
@@ -388,7 +397,7 @@
   }
 
   .storyText {
-    padding: 0;
+    padding: 1rem;
   }
 
   .storyImage {
@@ -399,7 +408,11 @@
     min-height: 220px;
   }
 
-  .bottomCta {
-    padding: 3.5rem 1.25rem;
+  .statNumber {
+    font-size: 2.2rem;
+  }
+
+  .chartInner {
+    padding: 1.25rem;
   }
 }

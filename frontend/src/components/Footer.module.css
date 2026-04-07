@@ -1,7 +1,9 @@
 .footer {
-  background: var(--color-deep-navy);
-  color: rgba(255, 255, 255, 0.7);
-  padding: 4rem 2rem 2rem;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(15, 143, 125, 0.2), transparent 35%),
+    linear-gradient(145deg, #0f1b2d 0%, #1f3148 100%);
+  color: rgba(255, 255, 255, 0.78);
+  padding: 4.5rem 1.5rem 2rem;
 }
 
 .inner {
@@ -12,35 +14,36 @@
 .top {
   display: flex;
   justify-content: space-between;
-  gap: 3rem;
+  gap: 2rem;
 }
 
 .brand {
-  max-width: 320px;
+  max-width: 350px;
 }
 
 .logoIcon {
-  color: var(--color-amber);
+  color: var(--color-amber-light);
   font-size: 1.2rem;
   margin-right: 0.5rem;
 }
 
 .logoText {
   font-family: var(--font-display);
-  font-size: 1.3rem;
+  font-size: 1.45rem;
   font-weight: 600;
   color: #fff;
 }
 
 .tagline {
   margin-top: 1rem;
-  font-size: 0.875rem;
+  font-size: 0.92rem;
   line-height: 1.65;
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .links {
   display: flex;
-  gap: 3.5rem;
+  gap: 2.75rem;
 }
 
 .linkGroup {
@@ -51,59 +54,64 @@
 
 .linkGroupTitle {
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.4);
-  margin-bottom: 0.25rem;
+  letter-spacing: 0.11em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.35rem;
 }
 
 .linkGroup a,
 .cookieBtn {
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.7);
-  transition: color 0.25s;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.78);
+  transition: color 0.25s, transform 0.25s;
   text-align: left;
   padding: 0;
   font-family: var(--font-body);
+  width: fit-content;
 }
 
 .linkGroup a:hover,
 .cookieBtn:hover {
-  color: var(--color-amber-light);
+  color: #fff;
+  transform: translateX(2px);
 }
 
 .divider {
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
-  margin: 2.5rem 0 1.5rem;
+  background: rgba(255, 255, 255, 0.17);
+  margin: 2.8rem 0 1.4rem;
 }
 
 .bottom {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
 }
 
 .copy {
-  font-size: 0.8rem;
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .madeWith {
-  font-size: 0.8rem;
+  font-size: 0.84rem;
   display: flex;
   align-items: center;
   gap: 0.3rem;
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .heart {
-  color: var(--color-rose);
-  fill: var(--color-rose);
+  color: #f07e8f;
+  fill: #f07e8f;
 }
 
 @media (max-width: 768px) {
   .footer {
-    padding: 3rem 1.25rem 1.5rem;
+    padding: 3.25rem 1.1rem 1.5rem;
   }
 
   .top {
@@ -117,11 +125,11 @@
 
   .links {
     flex-wrap: wrap;
-    gap: 2rem;
+    gap: 1.4rem 2rem;
   }
 
   .linkGroup {
-    min-width: 120px;
+    min-width: 135px;
   }
 
   .bottom {

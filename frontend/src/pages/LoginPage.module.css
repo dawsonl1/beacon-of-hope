@@ -3,12 +3,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(
-    160deg,
-    var(--color-cream) 0%,
-    var(--color-sand) 50%,
-    var(--color-cream) 100%
-  );
+  background:
+    radial-gradient(circle at 12% 18%, rgba(15, 143, 125, 0.12), transparent 38%),
+    radial-gradient(circle at 90% 72%, rgba(255, 159, 67, 0.1), transparent 42%),
+    var(--surface-2);
   padding: 2rem 1rem;
 }
 
@@ -18,13 +16,11 @@
 }
 
 .card {
-  background: var(--color-warm-white);
-  border-radius: 16px;
+  background: var(--surface-1);
+  border-radius: var(--radius-lg);
   padding: 2.5rem 2rem;
-  box-shadow:
-    0 4px 24px rgba(27, 40, 56, 0.06),
-    0 1px 4px rgba(27, 40, 56, 0.04);
-  border: 1px solid rgba(212, 168, 83, 0.12);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(15, 27, 45, 0.08);
 }
 
 .header {
@@ -35,7 +31,7 @@
 .logoIcon {
   display: inline-block;
   font-size: 2rem;
-  color: var(--color-amber);
+  color: var(--color-sage);
   margin-bottom: 0.5rem;
 }
 
@@ -43,7 +39,7 @@
   font-family: var(--font-display);
   font-size: 1.75rem;
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   margin-bottom: 0.25rem;
 }
 
@@ -51,7 +47,7 @@
   font-family: var(--font-display);
   font-size: 1rem;
   font-style: italic;
-  color: var(--color-slate);
+  color: var(--text-muted);
   margin-bottom: 0.25rem;
 }
 
@@ -60,7 +56,7 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
 }
 
 .errorBanner {
@@ -68,7 +64,7 @@
   border: 1px solid var(--color-rose);
   color: var(--color-rose);
   padding: 0.75rem 1rem;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 0.85rem;
   margin-bottom: 1.5rem;
   line-height: 1.4;
@@ -89,7 +85,7 @@
 .label {
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -98,21 +94,21 @@
   font-family: var(--font-body);
   font-size: 0.95rem;
   padding: 0.7rem 0.85rem;
-  border: 1px solid var(--color-light-gray);
-  border-radius: 8px;
-  background: var(--color-cream);
-  color: var(--color-deep-navy);
+  border: 1px solid rgba(15, 27, 45, 0.15);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text-strong);
   transition: border-color 0.2s, box-shadow 0.2s;
   outline: none;
 }
 
 .input::placeholder {
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
 }
 
 .input:focus {
-  border-color: var(--color-amber);
-  box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.15);
+  border-color: var(--color-sage);
+  box-shadow: 0 0 0 3px rgba(15, 143, 125, 0.15);
 }
 
 .inputError {
@@ -145,7 +141,7 @@
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
   cursor: pointer;
   padding: 0.25rem;
   display: flex;
@@ -154,7 +150,7 @@
 }
 
 .eyeBtn:hover {
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
 }
 
 .options {
@@ -168,12 +164,12 @@
   align-items: center;
   gap: 0.4rem;
   font-size: 0.85rem;
-  color: var(--color-slate);
+  color: var(--text-muted);
   cursor: pointer;
 }
 
 .rememberMe input {
-  accent-color: var(--color-amber);
+  accent-color: var(--color-sage);
   width: 15px;
   height: 15px;
 }
@@ -185,21 +181,21 @@
   gap: 0.5rem;
   font-family: var(--font-body);
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 0.8rem 1.5rem;
-  border-radius: 8px;
+  border-radius: 999px;
   border: none;
-  background: var(--color-deep-navy);
+  background: linear-gradient(120deg, var(--color-sage), #13a490);
   color: white;
   cursor: pointer;
-  transition: all 0.25s;
+  transition: transform 0.24s, filter 0.24s, box-shadow 0.24s;
   margin-top: 0.5rem;
+  box-shadow: 0 10px 24px rgba(15, 143, 125, 0.24);
 }
 
 .submitBtn:hover:not(:disabled) {
-  background: var(--color-navy-soft);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(27, 40, 56, 0.2);
+  filter: brightness(1.03);
 }
 
 .submitBtn:disabled {
@@ -217,18 +213,18 @@
   text-align: center;
   margin-top: 1.5rem;
   padding-top: 1.25rem;
-  border-top: 1px solid var(--color-light-gray);
+  border-top: 1px solid rgba(15, 27, 45, 0.08);
 }
 
 .backLink {
   font-size: 0.85rem;
-  color: var(--color-slate);
+  color: var(--text-muted);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .backLink:hover {
-  color: var(--color-amber-dark);
+  color: var(--color-sage);
 }
 
 @media (max-width: 480px) {

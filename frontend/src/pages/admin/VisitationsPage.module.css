@@ -1,6 +1,7 @@
 .page {
   padding: 2rem 2.5rem;
   max-width: 1120px;
+  background: transparent;
 }
 
 /* ── Header ───────────────────────────────────────────── */
@@ -27,13 +28,13 @@
   font-family: var(--font-display);
   font-size: 2rem;
   font-weight: 500;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   letter-spacing: -0.03em;
 }
 
 .subtitle {
   font-size: 0.82rem;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
 }
 
 .newBtn {
@@ -41,27 +42,29 @@
   align-items: center;
   gap: 0.4rem;
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #fff;
-  background: var(--color-deep-navy);
+  background: linear-gradient(120deg, var(--color-sage), #13a490);
   border: none;
   padding: 0.55rem 1.1rem;
-  border-radius: 8px;
+  border-radius: 999px;
   cursor: pointer;
   font-family: var(--font-body);
-  transition: all 0.2s;
+  transition: transform 0.22s, filter 0.22s, box-shadow 0.22s;
+  box-shadow: 0 8px 20px rgba(15, 143, 125, 0.22);
   text-decoration: none;
 }
 
 .newBtn:hover {
-  background: #2a3b4f;
+  transform: translateY(-1px);
+  filter: brightness(1.03);
 }
 
 /* ── Tabs ─────────────────────────────────────────────── */
 .tabs {
   display: flex;
   gap: 0;
-  border-bottom: 1px solid var(--color-sand);
+  border-bottom: 1px solid rgba(15, 27, 45, 0.08);
   margin-bottom: 1.5rem;
 }
 
@@ -72,7 +75,7 @@
   padding: 0.65rem 1.25rem;
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
@@ -82,21 +85,21 @@
 }
 
 .tab:hover {
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
 }
 
 .tabActive {
-  color: var(--color-deep-navy);
-  border-bottom-color: var(--color-amber);
+  color: var(--text-strong);
+  border-bottom-color: var(--color-sage);
 }
 
 .tabCount {
   font-size: 0.7rem;
   font-weight: 700;
-  background: rgba(212, 168, 83, 0.15);
-  color: var(--color-amber-dark, #A08030);
+  background: rgba(15, 143, 125, 0.15);
+  color: var(--color-sage);
   padding: 0.1rem 0.45rem;
-  border-radius: 10px;
+  border-radius: 999px;
 }
 
 /* ── Filters ──────────────────────────────────────────── */
@@ -110,10 +113,10 @@
 .filterSelect {
   font-size: 0.8rem;
   font-family: var(--font-body);
-  color: var(--color-slate);
+  color: var(--text-muted);
   background: #fff;
-  border: 1px solid var(--color-sand);
-  border-radius: 8px;
+  border: 1px solid rgba(15, 27, 45, 0.12);
+  border-radius: var(--radius-sm);
   padding: 0.45rem 0.75rem;
   cursor: pointer;
   transition: border-color 0.2s;
@@ -121,7 +124,7 @@
 
 .filterSelect:focus {
   outline: none;
-  border-color: var(--color-amber);
+  border-color: var(--color-sage);
 }
 
 .safetyToggle {
@@ -131,9 +134,9 @@
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--color-rose);
-  background: rgba(196, 117, 110, 0.08);
-  border: 1px solid rgba(196, 117, 110, 0.25);
-  border-radius: 8px;
+  background: rgba(203, 87, 104, 0.08);
+  border: 1px solid rgba(203, 87, 104, 0.25);
+  border-radius: var(--radius-sm);
   padding: 0.45rem 0.75rem;
   cursor: pointer;
   font-family: var(--font-body);
@@ -141,15 +144,16 @@
 }
 
 .safetyToggleActive {
-  background: rgba(196, 117, 110, 0.18);
-  border-color: rgba(196, 117, 110, 0.5);
+  background: rgba(203, 87, 104, 0.18);
+  border-color: rgba(203, 87, 104, 0.5);
 }
 
 /* ── Table Card ───────────────────────────────────────── */
 .tableCard {
-  background: #fff;
-  border: 1px solid var(--color-sand);
-  border-radius: 12px;
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 
@@ -168,17 +172,17 @@
   padding: 0.6rem 1rem;
   font-size: 0.7rem;
   font-weight: 700;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  background: #FAFAF7;
-  border-bottom: 1px solid var(--color-sand);
+  background: var(--surface-2);
+  border-bottom: 1px solid rgba(15, 27, 45, 0.08);
 }
 
 .table td {
   padding: 0.55rem 1rem;
-  color: var(--color-slate);
-  border-bottom: 1px solid #F7F5F0;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(15, 27, 45, 0.06);
 }
 
 .table tbody tr:last-child td {
@@ -191,15 +195,15 @@
 }
 
 .table tbody tr:hover {
-  background: #FDFCF9;
+  background: var(--surface-2);
 }
 
 .rowSafety {
-  background: rgba(196, 117, 110, 0.04);
+  background: rgba(203, 87, 104, 0.04);
 }
 
 .rowSafety:hover {
-  background: rgba(196, 117, 110, 0.08) !important;
+  background: rgba(203, 87, 104, 0.08) !important;
 }
 
 /* ── Badges ───────────────────────────────────────────── */
@@ -208,14 +212,14 @@
   font-size: 0.72rem;
   font-weight: 600;
   padding: 0.15rem 0.5rem;
-  border-radius: 20px;
+  border-radius: 999px;
   white-space: nowrap;
 }
 
 .typeInitial {
-  color: #4A7A4E;
-  background: rgba(122, 158, 126, 0.12);
-  border: 1px solid rgba(122, 158, 126, 0.3);
+  color: var(--color-sage);
+  background: rgba(15, 143, 125, 0.12);
+  border: 1px solid rgba(15, 143, 125, 0.3);
 }
 
 .typeRoutine {
@@ -225,9 +229,9 @@
 }
 
 .typeReintegration {
-  color: #A68B3A;
-  background: rgba(212, 168, 83, 0.12);
-  border: 1px solid rgba(212, 168, 83, 0.3);
+  color: var(--color-amber);
+  background: rgba(255, 159, 67, 0.12);
+  border: 1px solid rgba(255, 159, 67, 0.3);
 }
 
 .typePostPlacement {
@@ -237,9 +241,9 @@
 }
 
 .typeEmergency {
-  color: #A5524D;
-  background: rgba(196, 117, 110, 0.12);
-  border: 1px solid rgba(196, 117, 110, 0.3);
+  color: var(--color-rose);
+  background: rgba(203, 87, 104, 0.12);
+  border: 1px solid rgba(203, 87, 104, 0.3);
 }
 
 .safetyBadge {
@@ -248,11 +252,11 @@
   gap: 0.2rem;
   font-size: 0.72rem;
   font-weight: 700;
-  color: #A5524D;
-  background: rgba(196, 117, 110, 0.12);
-  border: 1px solid rgba(196, 117, 110, 0.3);
+  color: var(--color-rose);
+  background: rgba(203, 87, 104, 0.12);
+  border: 1px solid rgba(203, 87, 104, 0.3);
   padding: 0.15rem 0.5rem;
-  border-radius: 20px;
+  border-radius: 999px;
 }
 
 .cooperationBadge {
@@ -260,18 +264,18 @@
   font-size: 0.72rem;
   font-weight: 600;
   padding: 0.15rem 0.5rem;
-  border-radius: 20px;
+  border-radius: 999px;
   white-space: nowrap;
 }
 
 .coopCooperative {
-  color: #4A7A4E;
-  background: rgba(122, 158, 126, 0.12);
+  color: var(--color-sage);
+  background: rgba(15, 143, 125, 0.12);
 }
 
 .coopPartially {
-  color: #A68B3A;
-  background: rgba(212, 168, 83, 0.12);
+  color: var(--color-amber);
+  background: rgba(255, 159, 67, 0.12);
 }
 
 .coopUncooperative {
@@ -280,8 +284,8 @@
 }
 
 .coopHostile {
-  color: #A5524D;
-  background: rgba(196, 117, 110, 0.12);
+  color: var(--color-rose);
+  background: rgba(203, 87, 104, 0.12);
 }
 
 /* ── Pagination ───────────────────────────────────────── */
@@ -290,12 +294,12 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 1.25rem;
-  border-top: 1px solid #F4F1EB;
+  border-top: 1px solid rgba(15, 27, 45, 0.08);
 }
 
 .pageInfo {
   font-size: 0.78rem;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
 }
 
 .pageButtons {
@@ -306,9 +310,9 @@
 .pageBtn {
   font-size: 0.78rem;
   font-weight: 600;
-  color: var(--color-slate);
+  color: var(--text-muted);
   background: #fff;
-  border: 1px solid var(--color-sand);
+  border: 1px solid rgba(15, 27, 45, 0.08);
   border-radius: 6px;
   padding: 0.3rem 0.65rem;
   cursor: pointer;
@@ -317,8 +321,8 @@
 }
 
 .pageBtn:hover:not(:disabled) {
-  border-color: var(--color-amber);
-  background: rgba(212, 168, 83, 0.05);
+  border-color: var(--color-sage);
+  background: rgba(15, 143, 125, 0.05);
 }
 
 .pageBtn:disabled {
@@ -330,7 +334,7 @@
 .emptyState {
   text-align: center;
   padding: 3rem 1.5rem;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
 }
 
 .emptyIcon {
@@ -342,7 +346,7 @@
   font-family: var(--font-display);
   font-size: 1.15rem;
   font-weight: 600;
-  color: var(--color-slate);
+  color: var(--text-muted);
   margin-bottom: 0.3rem;
 }
 
@@ -360,14 +364,14 @@
   font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   margin-bottom: 0.85rem;
 }
 
 .sectionCount {
   font-size: 0.78rem;
   font-weight: 400;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
   margin-left: 0.5rem;
 }
 
@@ -378,41 +382,42 @@
 }
 
 .conferenceCard {
-  background: #fff;
-  border: 1px solid var(--color-sand);
-  border-radius: 12px;
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   padding: 1.1rem 1.25rem;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .conferenceCard:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-md);
 }
 
 .conferenceDate {
   font-family: var(--font-display);
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   margin-bottom: 0.35rem;
 }
 
 .conferenceResident {
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--color-slate);
+  color: var(--text-muted);
 }
 
 .conferenceCategory {
   font-size: 0.75rem;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
   margin-top: 0.2rem;
 }
 
 .conferenceDesc {
   font-size: 0.78rem;
-  color: var(--color-slate);
+  color: var(--text-muted);
   margin-top: 0.45rem;
   line-height: 1.5;
 }
@@ -422,19 +427,19 @@
   font-size: 0.7rem;
   font-weight: 600;
   padding: 0.12rem 0.45rem;
-  border-radius: 20px;
+  border-radius: 999px;
   margin-top: 0.5rem;
   color: var(--color-sage);
-  background: rgba(122, 158, 126, 0.12);
-  border: 1px solid rgba(122, 158, 126, 0.25);
+  background: rgba(15, 143, 125, 0.12);
+  border: 1px solid rgba(15, 143, 125, 0.25);
 }
 
 .conferenceUpcoming {
-  border-left: 3px solid var(--color-amber);
+  border-left: 3px solid var(--color-sage);
 }
 
 .conferencePast {
-  border-left: 3px solid var(--color-sand);
+  border-left: 3px solid rgba(15, 27, 45, 0.08);
   opacity: 0.85;
 }
 
@@ -443,7 +448,7 @@
   text-align: center;
   padding: 3rem;
   font-size: 0.85rem;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
 }
 
 /* ── Responsive ───────────────────────────────────────── */

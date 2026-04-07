@@ -1,6 +1,7 @@
 .page {
   padding: 2rem 2.5rem;
   max-width: 860px;
+  background: transparent;
 }
 
 /* ── Back link ────────────────────────────────────────── */
@@ -10,14 +11,14 @@
   gap: 0.3rem;
   font-size: 0.82rem;
   font-weight: 600;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
   text-decoration: none;
   margin-bottom: 1.25rem;
   transition: color 0.2s;
 }
 
 .backLink:hover {
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
 }
 
 /* ── Header ───────────────────────────────────────────── */
@@ -38,7 +39,7 @@
   font-family: var(--font-display);
   font-size: 1.65rem;
   font-weight: 500;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   letter-spacing: -0.02em;
 }
 
@@ -47,7 +48,7 @@
   align-items: center;
   gap: 0.65rem;
   font-size: 0.82rem;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
 }
 
 .headerActions {
@@ -61,11 +62,11 @@
   gap: 0.35rem;
   font-size: 0.78rem;
   font-weight: 600;
-  color: var(--color-deep-navy);
-  background: #fff;
-  border: 1px solid var(--color-sand);
+  color: var(--text-strong);
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
   padding: 0.45rem 0.85rem;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-family: var(--font-body);
   text-decoration: none;
@@ -73,8 +74,8 @@
 }
 
 .editBtn:hover {
-  border-color: var(--color-amber);
-  background: rgba(212, 168, 83, 0.05);
+  border-color: var(--color-sage);
+  background: rgba(15, 143, 125, 0.05);
 }
 
 .deleteBtn {
@@ -83,26 +84,27 @@
   gap: 0.35rem;
   font-size: 0.78rem;
   font-weight: 600;
-  color: #A5524D;
-  background: #fff;
-  border: 1px solid rgba(196, 117, 110, 0.3);
+  color: var(--color-rose);
+  background: var(--surface-1);
+  border: 1px solid rgba(203, 87, 104, 0.3);
   padding: 0.45rem 0.85rem;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-family: var(--font-body);
   transition: all 0.2s;
 }
 
 .deleteBtn:hover {
-  border-color: #A5524D;
-  background: rgba(196, 117, 110, 0.06);
+  border-color: var(--color-rose);
+  background: rgba(203, 87, 104, 0.06);
 }
 
 /* ── Cards ────────────────────────────────────────────── */
 .card {
-  background: #fff;
-  border: 1px solid var(--color-sand);
-  border-radius: 12px;
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   padding: 1.35rem 1.5rem;
   margin-bottom: 1rem;
 }
@@ -111,10 +113,10 @@
   font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid #F4F1EB;
+  border-bottom: 1px solid rgba(15, 27, 45, 0.08);
 }
 
 .fieldGrid {
@@ -132,14 +134,14 @@
 .fieldLabel {
   font-size: 0.7rem;
   font-weight: 700;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .fieldValue {
   font-size: 0.88rem;
-  color: var(--color-slate);
+  color: var(--text-muted);
   line-height: 1.5;
 }
 
@@ -149,8 +151,8 @@
 
 /* ── Safety concerns highlight ────────────────────────── */
 .safetyCard {
-  background: rgba(196, 117, 110, 0.04);
-  border-color: rgba(196, 117, 110, 0.25);
+  background: rgba(203, 87, 104, 0.04);
+  border-color: rgba(203, 87, 104, 0.25);
 }
 
 .safetyHeader {
@@ -160,10 +162,10 @@
   font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 600;
-  color: #A5524D;
+  color: var(--color-rose);
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(196, 117, 110, 0.2);
+  border-bottom: 1px solid rgba(203, 87, 104, 0.2);
 }
 
 .safetyBadgeLarge {
@@ -173,9 +175,9 @@
   font-size: 0.78rem;
   font-weight: 700;
   color: #fff;
-  background: #C4756E;
+  background: var(--color-rose);
   padding: 0.25rem 0.65rem;
-  border-radius: 6px;
+  border-radius: 999px;
 }
 
 .safeBadgeLarge {
@@ -185,15 +187,15 @@
   font-size: 0.78rem;
   font-weight: 600;
   color: var(--color-sage);
-  background: rgba(122, 158, 126, 0.12);
+  background: rgba(15, 143, 125, 0.12);
   padding: 0.25rem 0.65rem;
-  border-radius: 6px;
+  border-radius: 999px;
 }
 
 /* ── Follow-up highlight ──────────────────────────────── */
 .followUpCard {
-  background: rgba(212, 168, 83, 0.04);
-  border-color: rgba(212, 168, 83, 0.25);
+  background: rgba(15, 143, 125, 0.04);
+  border-color: rgba(15, 143, 125, 0.25);
 }
 
 .followUpHeader {
@@ -203,10 +205,10 @@
   font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 600;
-  color: var(--color-amber-dark, #A08030);
+  color: var(--color-sage);
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(212, 168, 83, 0.2);
+  border-bottom: 1px solid rgba(15, 143, 125, 0.2);
 }
 
 /* ── Visit type badge ─────────────────────────────────── */
@@ -215,13 +217,13 @@
   font-size: 0.78rem;
   font-weight: 600;
   padding: 0.2rem 0.6rem;
-  border-radius: 20px;
+  border-radius: 999px;
 }
 
 .typeInitial {
-  color: #4A7A4E;
-  background: rgba(122, 158, 126, 0.12);
-  border: 1px solid rgba(122, 158, 126, 0.3);
+  color: var(--color-sage);
+  background: rgba(15, 143, 125, 0.12);
+  border: 1px solid rgba(15, 143, 125, 0.3);
 }
 
 .typeRoutine {
@@ -231,9 +233,9 @@
 }
 
 .typeReintegration {
-  color: #A68B3A;
-  background: rgba(212, 168, 83, 0.12);
-  border: 1px solid rgba(212, 168, 83, 0.3);
+  color: var(--color-amber);
+  background: rgba(255, 159, 67, 0.12);
+  border: 1px solid rgba(255, 159, 67, 0.3);
 }
 
 .typePostPlacement {
@@ -243,9 +245,9 @@
 }
 
 .typeEmergency {
-  color: #A5524D;
-  background: rgba(196, 117, 110, 0.12);
-  border: 1px solid rgba(196, 117, 110, 0.3);
+  color: var(--color-rose);
+  background: rgba(203, 87, 104, 0.12);
+  border: 1px solid rgba(203, 87, 104, 0.3);
 }
 
 /* ── Loading / Error ──────────────────────────────────── */
@@ -253,7 +255,7 @@
   text-align: center;
   padding: 3rem;
   font-size: 0.85rem;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
 }
 
 /* ── Responsive ───────────────────────────────────────── */

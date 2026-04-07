@@ -1,5 +1,5 @@
 .page {
-  background: var(--color-cream);
+  background: var(--surface-2);
   min-height: 100vh;
   padding: 3rem 1.5rem 5rem;
 }
@@ -18,48 +18,49 @@
   font-family: var(--font-display);
   font-size: 2.5rem;
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   margin-bottom: 0.5rem;
 }
 
 .lastUpdated {
   font-size: 0.85rem;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
   margin-bottom: 1rem;
 }
 
 .printBtn {
   font-family: var(--font-body);
   font-size: 0.8rem;
-  font-weight: 500;
+  font-weight: 600;
   padding: 0.45rem 1rem;
-  border-radius: 6px;
-  border: 1px solid var(--color-light-gray);
-  background: var(--color-warm-white);
-  color: var(--color-slate);
+  border-radius: 999px;
+  border: 1px solid rgba(15, 27, 45, 0.15);
+  background: var(--surface-1);
+  color: var(--text-strong);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .printBtn:hover {
-  border-color: var(--color-amber);
-  color: var(--color-amber-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Table of Contents */
 .toc {
-  background: var(--color-warm-white);
-  border: 1px solid rgba(212, 168, 83, 0.15);
-  border-radius: 12px;
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-md);
   padding: 1.5rem 2rem;
   margin-bottom: 3rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .tocTitle {
   font-family: var(--font-display);
   font-size: 1.15rem;
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   margin-bottom: 0.75rem;
 }
 
@@ -73,14 +74,14 @@
 .tocLink {
   display: block;
   font-size: 0.85rem;
-  color: var(--color-slate);
+  color: var(--text-muted);
   text-decoration: none;
   padding: 0.3rem 0;
   transition: color 0.2s;
 }
 
 .tocLink:hover {
-  color: var(--color-amber-dark);
+  color: var(--color-sage);
 }
 
 /* Content */
@@ -93,17 +94,17 @@
   font-family: var(--font-display);
   font-size: 1.4rem;
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   margin-bottom: 0.75rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--color-light-gray);
+  border-bottom: 1px solid rgba(15, 27, 45, 0.08);
 }
 
 .subTitle {
   font-family: var(--font-body);
   font-size: 1rem;
   font-weight: 600;
-  color: var(--color-navy-soft);
+  color: var(--text-strong);
   margin-top: 1.25rem;
   margin-bottom: 0.4rem;
 }
@@ -111,18 +112,18 @@
 .content p {
   font-size: 0.92rem;
   line-height: 1.7;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   margin-bottom: 0.75rem;
 }
 
 .content a {
-  color: var(--color-amber-dark);
+  color: var(--color-sage);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .content a:hover {
-  color: var(--color-amber);
+  color: #13a490;
 }
 
 .list {
@@ -133,7 +134,7 @@
 .list li {
   font-size: 0.92rem;
   line-height: 1.7;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   margin-bottom: 0.4rem;
 }
 
@@ -145,7 +146,7 @@
 .contactList li {
   font-size: 0.92rem;
   line-height: 1.7;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   margin-bottom: 0.5rem;
   padding-left: 0;
 }
@@ -166,44 +167,46 @@
 .table td {
   padding: 0.65rem 0.85rem;
   text-align: left;
-  border: 1px solid var(--color-light-gray);
+  border: 1px solid rgba(15, 27, 45, 0.08);
 }
 
 .table th {
-  background: var(--color-sand);
+  background: var(--surface-2);
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
 
 .table td {
-  background: var(--color-warm-white);
-  color: var(--color-deep-navy);
+  background: var(--surface-1);
+  color: var(--text-strong);
 }
 
 .table a {
-  color: var(--color-amber-dark);
+  color: var(--color-sage);
 }
 
 /* Manage preferences button */
 .managePrefsBtn {
   font-family: var(--font-body);
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 0.6rem 1.25rem;
-  border-radius: 8px;
+  border-radius: 999px;
   border: none;
-  background: var(--color-amber);
-  color: var(--color-deep-navy);
+  background: linear-gradient(120deg, var(--color-sage), #13a490);
+  color: #fff;
   cursor: pointer;
-  transition: all 0.25s;
+  transition: transform 0.24s, filter 0.24s;
   margin-top: 0.5rem;
+  box-shadow: 0 10px 24px rgba(15, 143, 125, 0.24);
 }
 
 .managePrefsBtn:hover {
-  background: var(--color-amber-light);
+  transform: translateY(-1px);
+  filter: brightness(1.03);
 }
 
 /* Print styles */

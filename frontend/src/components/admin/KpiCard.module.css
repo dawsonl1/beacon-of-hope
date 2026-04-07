@@ -1,20 +1,21 @@
 .card {
-  background: #fff;
-  border: 1px solid var(--color-sand);
-  border-radius: 12px;
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   padding: 1.25rem 1.35rem;
   transition: transform 0.25s, box-shadow 0.25s;
 }
 
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-md);
 }
 
 .label {
   font-size: 0.73rem;
-  font-weight: 600;
-  color: var(--color-warm-gray);
+  font-weight: 700;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin-bottom: 0.5rem;
@@ -30,7 +31,7 @@
   font-family: var(--font-display);
   font-size: 2.1rem;
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   line-height: 1;
   letter-spacing: -0.03em;
 }
@@ -44,7 +45,7 @@
 .skeleton {
   height: 2.1rem;
   width: 80px;
-  background: linear-gradient(90deg, #f0ede6 25%, #f7f5f0 50%, #f0ede6 75%);
+  background: linear-gradient(90deg, var(--surface-2) 25%, rgba(15, 27, 45, 0.04) 50%, var(--surface-2) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
   border-radius: 6px;

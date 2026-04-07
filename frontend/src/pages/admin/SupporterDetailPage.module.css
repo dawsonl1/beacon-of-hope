@@ -1,6 +1,7 @@
 .page {
   padding: 2rem 2.5rem;
   max-width: 1120px;
+  background: transparent;
 }
 
 /* ── Back link ────────────────────────────────────────── */
@@ -10,7 +11,7 @@
   gap: 0.3rem;
   font-size: 0.78rem;
   font-weight: 600;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
   text-decoration: none;
   margin-bottom: 1.25rem;
   cursor: pointer;
@@ -22,14 +23,15 @@
 }
 
 .backLink:hover {
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
 }
 
 /* ── Profile card ─────────────────────────────────────── */
 .profileCard {
-  background: #fff;
-  border: 1px solid var(--color-sand);
-  border-radius: 12px;
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   padding: 1.5rem 1.75rem;
   margin-bottom: 1.5rem;
 }
@@ -45,14 +47,14 @@
   font-family: var(--font-display);
   font-size: 1.6rem;
   font-weight: 500;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   letter-spacing: -0.02em;
   margin: 0 0 0.25rem;
 }
 
 .profileOrg {
   font-size: 0.82rem;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
   margin: 0;
 }
 
@@ -67,19 +69,19 @@
   gap: 0.3rem;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--color-deep-navy);
-  background: #fff;
-  border: 1px solid var(--color-sand);
+  color: var(--text-strong);
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
   padding: 0.4rem 0.8rem;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-family: var(--font-body);
   transition: all 0.2s;
 }
 
 .editBtn:hover {
-  border-color: var(--color-amber);
-  background: rgba(212, 168, 83, 0.05);
+  border-color: var(--color-sage);
+  background: rgba(15, 143, 125, 0.05);
 }
 
 .deleteBtn {
@@ -89,17 +91,17 @@
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--color-rose);
-  background: #fff;
-  border: 1px solid rgba(196, 117, 110, 0.3);
+  background: var(--surface-1);
+  border: 1px solid rgba(203, 87, 104, 0.3);
   padding: 0.4rem 0.8rem;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-family: var(--font-body);
   transition: all 0.2s;
 }
 
 .deleteBtn:hover {
-  background: rgba(196, 117, 110, 0.05);
+  background: rgba(203, 87, 104, 0.05);
   border-color: var(--color-rose);
 }
 
@@ -114,7 +116,7 @@
   display: block;
   font-size: 0.68rem;
   font-weight: 700;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin-bottom: 0.2rem;
@@ -122,7 +124,7 @@
 
 .infoItem span {
   font-size: 0.85rem;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
 }
 
 .typeBadge {
@@ -130,10 +132,10 @@
   font-size: 0.7rem;
   font-weight: 600;
   padding: 0.15rem 0.5rem;
-  border-radius: 20px;
-  background: rgba(212, 168, 83, 0.1);
-  color: var(--color-amber-dark);
-  border: 1px solid rgba(212, 168, 83, 0.25);
+  border-radius: 999px;
+  background: rgba(15, 143, 125, 0.1);
+  color: var(--color-sage);
+  border: 1px solid rgba(15, 143, 125, 0.25);
 }
 
 .statusBadge {
@@ -141,32 +143,33 @@
   font-size: 0.7rem;
   font-weight: 600;
   padding: 0.15rem 0.5rem;
-  border-radius: 20px;
+  border-radius: 999px;
 }
 
 .statusActive {
-  background: rgba(122, 158, 126, 0.1);
+  background: rgba(15, 143, 125, 0.1);
   color: var(--color-sage);
-  border: 1px solid rgba(122, 158, 126, 0.25);
+  border: 1px solid rgba(15, 143, 125, 0.25);
 }
 
 .statusInactive {
-  background: rgba(138, 128, 120, 0.1);
-  color: var(--color-warm-gray);
-  border: 1px solid rgba(138, 128, 120, 0.25);
+  background: rgba(82, 97, 120, 0.1);
+  color: var(--text-muted);
+  border: 1px solid rgba(82, 97, 120, 0.25);
 }
 
 .statusLapsed {
-  background: rgba(196, 117, 110, 0.1);
+  background: rgba(203, 87, 104, 0.1);
   color: var(--color-rose);
-  border: 1px solid rgba(196, 117, 110, 0.25);
+  border: 1px solid rgba(203, 87, 104, 0.25);
 }
 
 /* ── Total donated highlight ──────────────────────────── */
 .totalCard {
-  background: linear-gradient(135deg, #FEFCF9, rgba(212, 168, 83, 0.06));
-  border: 1px solid var(--color-sand);
-  border-radius: 12px;
+  background: linear-gradient(135deg, var(--surface-2), rgba(15, 143, 125, 0.06));
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   padding: 1.25rem 1.5rem;
   margin-bottom: 1.5rem;
   display: flex;
@@ -179,20 +182,20 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
 }
 
 .totalAmount {
   font-family: var(--font-display);
   font-size: 2rem;
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   letter-spacing: -0.02em;
 }
 
 .totalCount {
   font-size: 0.82rem;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
 }
 
 /* ── Donations history ────────────────────────────────── */
@@ -200,14 +203,15 @@
   font-family: var(--font-display);
   font-size: 1.15rem;
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
   margin: 0 0 1rem;
 }
 
 .tableCard {
-  background: #fff;
-  border: 1px solid var(--color-sand);
-  border-radius: 12px;
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 
@@ -226,17 +230,17 @@
   padding: 0.6rem 1rem;
   font-size: 0.7rem;
   font-weight: 700;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  background: #FAFAF7;
-  border-bottom: 1px solid var(--color-sand);
+  background: var(--surface-2);
+  border-bottom: 1px solid rgba(15, 27, 45, 0.08);
 }
 
 .table td {
   padding: 0.55rem 1rem;
-  color: var(--color-slate);
-  border-bottom: 1px solid #F7F5F0;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(15, 27, 45, 0.06);
 }
 
 .table tbody tr:last-child td {
@@ -248,13 +252,13 @@
 }
 
 .table tbody tr:hover {
-  background: #FDFCF9;
+  background: var(--surface-2);
 }
 
 .amountCol {
   font-family: var(--font-display);
   font-weight: 600;
-  color: var(--color-deep-navy);
+  color: var(--text-strong);
 }
 
 .recurringBadge {
@@ -262,10 +266,10 @@
   font-size: 0.65rem;
   font-weight: 700;
   padding: 0.1rem 0.4rem;
-  border-radius: 20px;
-  background: rgba(122, 158, 126, 0.1);
+  border-radius: 999px;
+  background: rgba(15, 143, 125, 0.1);
   color: var(--color-sage);
-  border: 1px solid rgba(122, 158, 126, 0.25);
+  border: 1px solid rgba(15, 143, 125, 0.25);
 }
 
 /* ── Loading / Error ──────────────────────────────────── */
@@ -277,7 +281,7 @@
 
 .spinner {
   animation: spin 1s linear infinite;
-  color: var(--color-amber);
+  color: var(--color-sage);
 }
 
 @keyframes spin {
@@ -293,7 +297,7 @@
 .empty {
   text-align: center;
   padding: 2rem;
-  color: var(--color-warm-gray);
+  color: var(--text-muted);
 }
 
 @media (max-width: 768px) {
