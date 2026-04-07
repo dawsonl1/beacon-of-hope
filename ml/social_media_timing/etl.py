@@ -12,7 +12,15 @@ from ml.utils_db import fetch_table, get_client
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["build_training_frame"]
+__all__ = ["build_training_frame", "fetch_training_raw"]
+
+
+def fetch_training_raw() -> pd.DataFrame:
+    """Fetch the raw social media post table used by this pipeline."""
+    client = get_client()
+    raw = fetch_table(client, TABLE_SOCIAL_MEDIA_POSTS)
+    logger.info("Fetched %d social media posts", len(raw))
+    return raw
 
 
 def build_training_frame() -> tuple[pd.DataFrame, pd.Series]:
@@ -21,9 +29,7 @@ def build_training_frame() -> tuple[pd.DataFrame, pd.Series]:
 
     Implements the ETL job described in `pipeline-4b-social-media-timing.md`.
     """
-    client = get_client()
-    raw = fetch_table(client, TABLE_SOCIAL_MEDIA_POSTS)
-    logger.info("Fetched %d social media posts", len(raw))
+    raw = fetch_training_raw()
     X, y = build_features(raw)
     logger.info("Feature matrix: %d rows x %d cols", X.shape[0], X.shape[1])
     return X, y

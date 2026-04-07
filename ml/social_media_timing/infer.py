@@ -8,7 +8,7 @@ import pandas as pd
 
 from ml.config import MODEL_NAME_SOCIAL_TIMING
 from ml.social_media_timing.artifacts import load_metadata, load_model_bundle
-from ml.social_media_timing.features import build_features
+from ml.social_media_timing.features import FEATURE_COLUMNS, build_features
 from ml.utils_db import get_client, now_utc, write_predictions
 
 logger = logging.getLogger(__name__)
@@ -30,10 +30,23 @@ def _timing_grid() -> pd.DataFrame:
     stays consistent with the trained model.
     """
     bundle = load_model_bundle()
-    feature_list = bundle.get("feature_list") or []
-    platforms = sorted(
-        [c[len("platform_") :] for c in feature_list if isinstance(c, str) and c.startswith("platform_")]
-    )
+    model = bundle.get("model")
+    platforms: list[str] = []
+    if hasattr(model, "named_steps") and "prep" in model.named_steps:
+        prep = model.named_steps["prep"]
+        ohe = (
+            getattr(prep, "named_transformers_", {})
+            .get("cat", None)
+        )
+        if ohe is not None and hasattr(ohe, "named_steps") and "onehot" in ohe.named_steps:
+            encoder = ohe.named_steps["onehot"]
+            cat_features = getattr(prep, "transformers_", [])
+            for _, _, cols in cat_features:
+                if isinstance(cols, list) and "platform" in cols and hasattr(encoder, "categories_"):
+                    platform_idx = cols.index("platform")
+                    categories = encoder.categories_[platform_idx]
+                    platforms = sorted([str(v) for v in categories if pd.notna(v)])
+                    break
     if not platforms:
         platforms = ["Facebook", "Instagram", "TikTok", "Twitter", "WhatsApp", "YouTube", "Other"]
 
@@ -74,14 +87,17 @@ def run_inference() -> list[dict]:
         raise ValueError("Loaded timing model bundle is missing 'model'. Re-train and re-save artifacts.")
 
     grid = _timing_grid()
-    X_raw, _y_unused = build_features(grid.assign(engagement_rate=0.0))
-
-    X = X_raw.copy()
+    X = grid.copy()
+    X["is_weekend"] = X["day_of_week"].isin(["Saturday", "Sunday"]).astype(int)
+    X["engagement_rate"] = 0.0
+    X, _y_unused = build_features(X)
     if feature_list:
         for col in feature_list:
             if col not in X:
                 X[col] = 0
         X = X[feature_list]
+    else:
+        X = X[FEATURE_COLUMNS]
 
     preds = model.predict(X)
     preds = pd.to_numeric(pd.Series(preds), errors="coerce").fillna(0).astype(float).values

@@ -4,109 +4,270 @@
     {
       "model_name": "social-media-timing",
       "model_version": "20260407",
-      "trained_at_utc": "2026-04-07T18:41:56.601113+00:00",
-      "model_type": "GradientBoosting",
+      "trained_at_utc": "2026-04-07T19:29:30.035943+00:00",
+      "model_type": "RandomForest",
       "features": [
-        "is_boosted",
-        "has_call_to_action",
-        "is_weekend",
+        "platform",
         "post_hour",
+        "day_of_week",
+        "media_type",
+        "is_boosted",
         "boost_budget_php",
-        "platform_Facebook",
-        "platform_Instagram",
-        "platform_LinkedIn",
-        "platform_TikTok",
-        "platform_Twitter",
-        "platform_WhatsApp",
-        "platform_YouTube",
-        "day_of_week_Friday",
-        "day_of_week_Monday",
-        "day_of_week_Saturday",
-        "day_of_week_Sunday",
-        "day_of_week_Thursday",
-        "day_of_week_Tuesday",
-        "day_of_week_Wednesday",
-        "media_type_Carousel",
-        "media_type_Photo",
-        "media_type_Reel",
-        "media_type_Text",
-        "media_type_Video",
-        "post_type_Campaign",
-        "post_type_EducationalContent",
-        "post_type_EventPromotion",
-        "post_type_FundraisingAppeal",
-        "post_type_ImpactStory",
-        "post_type_ThankYou"
+        "has_call_to_action",
+        "post_type",
+        "is_weekend"
       ],
       "num_training_rows": 649,
       "num_test_rows": 163,
       "total_rows": 812,
-      "mae": 0.03164213801694636,
-      "rmse": 0.0017932181944333608,
-      "r2": 0.4746549212667266,
+      "mae": 0.025064198108384454,
+      "rmse": 0.0340399073190418,
+      "r2": 0.6032661564793054,
       "cv_results": [
         {
-          "model": "GradientBoosting",
-          "cv_mae_mean": 0.028670886360134568,
-          "cv_mae_std": 0.0023823487108167916,
-          "cv_r2_mean": 0.5221978052221005,
-          "cv_r2_std": 0.033335119659476616
-        },
-        {
-          "model": "Stacking",
-          "cv_mae_mean": 0.02890956954963992,
-          "cv_mae_std": 0.002678696668155359,
-          "cv_r2_mean": 0.5071030278146388,
-          "cv_r2_std": 0.03882325199408974
-        },
-        {
           "model": "RandomForest",
-          "cv_mae_mean": 0.029052720021050433,
-          "cv_mae_std": 0.0027232971270538847,
-          "cv_r2_mean": 0.5021178609130962,
-          "cv_r2_std": 0.0513009539193675
+          "cv_mae_mean": 0.03114416096560847,
+          "cv_mae_std": 0.0026241269841270555,
+          "cv_r2_mean": 0.44053430708496927,
+          "cv_r2_std": 0.03520749885126896,
+          "best_params": {
+            "model__max_depth": null,
+            "model__min_samples_leaf": 1,
+            "model__n_estimators": 200,
+            "select__k": "all"
+          }
         },
         {
-          "model": "ExtraTrees",
-          "cv_mae_mean": 0.031212088151460936,
-          "cv_mae_std": 0.0034614601316408,
-          "cv_r2_mean": 0.419138421202371,
-          "cv_r2_std": 0.06410010024948071
-        },
-        {
-          "model": "AdaBoost",
-          "cv_mae_mean": 0.03217659617134561,
-          "cv_mae_std": 0.001850459457829768,
-          "cv_r2_mean": 0.41633974200419643,
-          "cv_r2_std": 0.028182450521878264
+          "model": "GradientBoosting",
+          "cv_mae_mean": 0.032115594734971276,
+          "cv_mae_std": 0.003973751822110826,
+          "cv_r2_mean": 0.40355468126555305,
+          "cv_r2_std": 0.0599202467904956,
+          "best_params": {
+            "model__learning_rate": 0.05,
+            "model__max_depth": 3,
+            "model__n_estimators": 100,
+            "select__k": 5
+          }
         },
         {
           "model": "DecisionTree",
-          "cv_mae_mean": 0.03774572331544425,
-          "cv_mae_std": 0.004962515503701987,
-          "cv_r2_mean": 0.10992250136909228,
-          "cv_r2_std": 0.1561331239561326
+          "cv_mae_mean": 0.03226959150682577,
+          "cv_mae_std": 0.0037665863703265703,
+          "cv_r2_mean": 0.3750231835416134,
+          "cv_r2_std": 0.0740721807758358,
+          "best_params": {
+            "model__max_depth": 8,
+            "model__min_samples_leaf": 5,
+            "select__k": 5
+          }
         },
         {
-          "model": "LinearRegression",
-          "cv_mae_mean": 0.03897046042114989,
-          "cv_mae_std": 0.0036521418547966855,
-          "cv_r2_mean": 0.1993314135705225,
-          "cv_r2_std": 0.06349406485883534
+          "model": "Stacking",
+          "cv_mae_mean": 0.032672944912021475,
+          "cv_mae_std": 0.0028526819542683992,
+          "cv_r2_mean": 0.41679256064323356,
+          "cv_r2_std": 0.030677290140412775,
+          "best_params": {
+            "model__final_estimator__alpha": 0.1,
+            "select__k": "all"
+          }
         },
         {
-          "model": "KNN",
-          "cv_mae_mean": 0.046500703160405485,
-          "cv_mae_std": 0.0041800410765225815,
-          "cv_r2_mean": -0.09551475987898125,
-          "cv_r2_std": 0.07692701119134683
+          "model": "ExtraTrees",
+          "cv_mae_mean": 0.03300208453339645,
+          "cv_mae_std": 0.003144572452921713,
+          "cv_r2_mean": 0.4033621110579701,
+          "cv_r2_std": 0.015508043862088854,
+          "best_params": {
+            "model__max_depth": 10,
+            "model__min_samples_leaf": 3,
+            "model__n_estimators": 300,
+            "select__k": "all"
+          }
         },
         {
           "model": "SVR",
-          "cv_mae_mean": 0.05291481454284456,
-          "cv_mae_std": 0.003375879145862034,
-          "cv_r2_mean": -0.2803499804637604,
-          "cv_r2_std": 0.10820712303740464
+          "cv_mae_mean": 0.03380481818451706,
+          "cv_mae_std": 0.004120030131388775,
+          "cv_r2_mean": 0.3432308288101871,
+          "cv_r2_std": 0.06395232654050541,
+          "best_params": {
+            "model__C": 5.0,
+            "model__epsilon": 0.01,
+            "model__gamma": "scale",
+            "select__k": 5
+          }
+        },
+        {
+          "model": "AdaBoost",
+          "cv_mae_mean": 0.033919852157414505,
+          "cv_mae_std": 0.0038689173239239974,
+          "cv_r2_mean": 0.37289212911901604,
+          "cv_r2_std": 0.043000735638664155,
+          "best_params": {
+            "model__learning_rate": 0.05,
+            "model__n_estimators": 100,
+            "select__k": 5
+          }
+        },
+        {
+          "model": "KNN",
+          "cv_mae_mean": 0.03521935653373614,
+          "cv_mae_std": 0.005000786769174019,
+          "cv_r2_mean": 0.30532794463269186,
+          "cv_r2_std": 0.11140778278937159,
+          "best_params": {
+            "model__n_neighbors": 15,
+            "model__weights": "distance",
+            "select__k": 5
+          }
+        },
+        {
+          "model": "LinearRegression",
+          "cv_mae_mean": 0.040630119499467925,
+          "cv_mae_std": 0.0023409484637023723,
+          "cv_r2_mean": 0.14742345749185237,
+          "cv_r2_std": 0.09539430566662602,
+          "best_params": {
+            "select__k": 5
+          }
+        }
+      ]
+    },
+    {
+      "model_name": "social-media-timing",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T20:34:37.113342+00:00",
+      "model_type": "GradientBoosting",
+      "features": [
+        "platform",
+        "post_hour",
+        "day_of_week",
+        "media_type",
+        "is_boosted",
+        "boost_budget_php",
+        "has_call_to_action",
+        "post_type",
+        "is_weekend"
+      ],
+      "num_training_rows": 649,
+      "num_test_rows": 163,
+      "total_rows": 812,
+      "mae": 0.03005429776854204,
+      "rmse": 0.039801723443562226,
+      "r2": 0.4575917740035016,
+      "cv_results": [
+        {
+          "model": "GradientBoosting",
+          "cv_mae_mean": 0.032115594734971276,
+          "cv_mae_std": 0.003973751822110826,
+          "cv_r2_mean": 0.40355468126555305,
+          "cv_r2_std": 0.0599202467904956,
+          "best_params": {
+            "model__learning_rate": 0.05,
+            "model__max_depth": 3,
+            "model__n_estimators": 100,
+            "select__k": 5
+          }
+        },
+        {
+          "model": "RandomForest",
+          "cv_mae_mean": 0.032261625346568276,
+          "cv_mae_std": 0.0032112839545314275,
+          "cv_r2_mean": 0.42037954075106204,
+          "cv_r2_std": 0.03143042308930348,
+          "best_params": {
+            "model__max_depth": null,
+            "model__max_features": 0.5,
+            "model__min_samples_leaf": 3,
+            "model__min_samples_split": 2,
+            "model__n_estimators": 300,
+            "select__k": "all"
+          }
+        },
+        {
+          "model": "DecisionTree",
+          "cv_mae_mean": 0.03226959150682577,
+          "cv_mae_std": 0.0037665863703265703,
+          "cv_r2_mean": 0.3750231835416134,
+          "cv_r2_std": 0.0740721807758358,
+          "best_params": {
+            "model__max_depth": 8,
+            "model__min_samples_leaf": 5,
+            "select__k": 5
+          }
+        },
+        {
+          "model": "Stacking",
+          "cv_mae_mean": 0.032672944912021475,
+          "cv_mae_std": 0.0028526819542683992,
+          "cv_r2_mean": 0.41679256064323356,
+          "cv_r2_std": 0.030677290140412775,
+          "best_params": {
+            "model__final_estimator__alpha": 0.1,
+            "select__k": "all"
+          }
+        },
+        {
+          "model": "ExtraTrees",
+          "cv_mae_mean": 0.03300208453339645,
+          "cv_mae_std": 0.003144572452921713,
+          "cv_r2_mean": 0.4033621110579701,
+          "cv_r2_std": 0.015508043862088854,
+          "best_params": {
+            "model__max_depth": 10,
+            "model__min_samples_leaf": 3,
+            "model__n_estimators": 300,
+            "select__k": "all"
+          }
+        },
+        {
+          "model": "SVR",
+          "cv_mae_mean": 0.03380481818451706,
+          "cv_mae_std": 0.004120030131388775,
+          "cv_r2_mean": 0.3432308288101871,
+          "cv_r2_std": 0.06395232654050541,
+          "best_params": {
+            "model__C": 5.0,
+            "model__epsilon": 0.01,
+            "model__gamma": "scale",
+            "select__k": 5
+          }
+        },
+        {
+          "model": "AdaBoost",
+          "cv_mae_mean": 0.033919852157414505,
+          "cv_mae_std": 0.0038689173239239974,
+          "cv_r2_mean": 0.37289212911901604,
+          "cv_r2_std": 0.043000735638664155,
+          "best_params": {
+            "model__learning_rate": 0.05,
+            "model__n_estimators": 100,
+            "select__k": 5
+          }
+        },
+        {
+          "model": "KNN",
+          "cv_mae_mean": 0.03521935653373614,
+          "cv_mae_std": 0.005000786769174019,
+          "cv_r2_mean": 0.30532794463269186,
+          "cv_r2_std": 0.11140778278937159,
+          "best_params": {
+            "model__n_neighbors": 15,
+            "model__weights": "distance",
+            "select__k": 5
+          }
+        },
+        {
+          "model": "LinearRegression",
+          "cv_mae_mean": 0.040630119499467925,
+          "cv_mae_std": 0.0023409484637023723,
+          "cv_r2_mean": 0.14742345749185237,
+          "cv_r2_std": 0.09539430566662602,
+          "best_params": {
+            "select__k": 5
+          }
         }
       ]
     }

@@ -3,6 +3,11 @@
 This pipeline deliberately uses only *timing and format* features (before-post only)
 to predict `engagement_rate`. Content features (sentiment, topic, etc.) are excluded
 by design (see `pipeline-4b-social-media-timing.md`).
+
+Important:
+- This module returns *raw* modeling columns, not one-hot encoded columns.
+- Encoding now belongs inside sklearn pipelines so preprocessing is learned from
+  training folds only and does not leak across validation/test boundaries.
 """
 
 from __future__ import annotations
@@ -10,6 +15,18 @@ from __future__ import annotations
 import pandas as pd
 
 TARGET = "engagement_rate"
+
+FEATURE_COLUMNS = [
+    "platform",
+    "post_hour",
+    "day_of_week",
+    "media_type",
+    "is_boosted",
+    "boost_budget_php",
+    "has_call_to_action",
+    "post_type",
+    "is_weekend",
+]
 
 # Categorical columns to one-hot encode.
 _CATEGORICAL = [
@@ -72,7 +89,10 @@ def build_features(raw: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
     df = raw.copy()
 
     # ── Target ────────────────────────────────────────────────────────────────
-    y = pd.to_numeric(df.get(TARGET), errors="coerce").fillna(0).astype(float)
+    y = pd.to_numeric(df.get(TARGET), errors="coerce")
+    labeled_mask = y.notna()
+    df = df.loc[labeled_mask].copy()
+    y = y.loc[labeled_mask].astype(float)
 
     # ── Numeric features ──────────────────────────────────────────────────────
     for col in _NUMERIC:
@@ -97,14 +117,7 @@ def build_features(raw: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
         else:
             df[col] = "None"
 
-    dummies = pd.get_dummies(
-        df[_CATEGORICAL],
-        drop_first=False,
-    )
-
-    bool_cols = _BOOLEAN
-    num_cols = _NUMERIC
-    X = pd.concat([df[bool_cols + num_cols], dummies], axis=1)
+    X = df[FEATURE_COLUMNS].copy()
 
     return X, y
 

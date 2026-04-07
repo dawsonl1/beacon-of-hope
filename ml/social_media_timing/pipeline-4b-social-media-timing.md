@@ -31,7 +31,7 @@
 
 **Why this is different from Pipeline 4:** Pipeline 4 answers "what to post" using before-post content features and OLS for interpretability. This pipeline answers "when and where to post" using timing and format features and an ensemble model for accuracy. Different question, different features, different algorithm.
 
-**Key finding:** `post_hour` alone explains 19.7% of variance in engagement (r=0.444). It is the dominant feature by far (57% of Gradient Boosting feature importance). Platform and sentiment tone are secondary.
+**Key finding:** `post_hour` alone explains 19.7% of variance in engagement (r=0.444). It is the dominant feature by far. Platform and timing interactions are secondary.
 
 ---
 
@@ -48,14 +48,14 @@ Same table as Pipeline 4. No joins required.
 ## Features to Engineer
 
 **X variables — timing and format (before-post only):**
-- `platform` — one-hot encode
+- `platform` — categorical, one-hot encode inside the sklearn pipeline
 - `post_hour` — numeric (0–23)
-- `day_of_week` — one-hot encode
-- `media_type` — one-hot encode
+- `day_of_week` — categorical, one-hot encode inside the sklearn pipeline
+- `media_type` — categorical, one-hot encode inside the sklearn pipeline
 - `is_boosted` — boolean, cast to int
 - `boost_budget_php` — numeric, fill null with 0
 - `has_call_to_action` — boolean, cast to int
-- `post_type` — one-hot encode
+- `post_type` — categorical, one-hot encode inside the sklearn pipeline
 - `is_weekend` — engineered: True if day_of_week is Saturday or Sunday
 
 **Note:** Do NOT include content features like `sentiment_tone`, `features_resident_story`, or `content_topic` as primary features here. This pipeline deliberately separates timing/format from content decisions. Staff use Pipeline 4 for content guidance and this pipeline for timing guidance.
@@ -84,7 +84,7 @@ Follow the full Ch. 1–16 textbook pipeline.
 - Best platform + hour combos by donation referrals: WhatsApp 10am (87.0 avg), WhatsApp 6pm (82.2), YouTube 5pm (74.8), TikTok 11pm (55.0)
 - Best days by engagement: Saturday (0.1057), Friday (0.1046), Sunday (0.1029)
 - Best platform + day combos: WhatsApp Tuesday (42.5 avg referrals), YouTube Tuesday (35.7), TikTok Friday (33.4)
-- Confirmed feature importances from Gradient Boosting: post_hour (57%), sentiment_tone (26%), platform (6%), has_call_to_action (5%)
+- Confirmed timing signal from exploration: `post_hour` is the dominant single predictor, with platform and timing interactions providing additional lift
 
 **Feature selection — follow Ch. 16:**
 - Variance threshold filter
@@ -126,8 +126,8 @@ Import from `config.py`, `utils_db.py`, and `social_timing_features.py`.
 1. Fetch `social_media_posts` table
 2. Cast numeric columns
 3. Engineer `is_weekend`
-4. One-hot encode categorical features
-5. Return clean modeling-ready DataFrame
+4. Return raw modeling columns
+5. Let sklearn pipelines handle one-hot encoding during training/inference
 
 ---
 
