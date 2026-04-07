@@ -51,31 +51,6 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
     {
         base.OnModelCreating(modelBuilder);
 
-        // Postgres-specific enums and extensions are only needed when running against
-        // real PostgreSQL (Supabase). Skip them for SQLite (used in tests).
-        if (Database.ProviderName != "Microsoft.EntityFrameworkCore.Sqlite")
-        {
-            modelBuilder
-                .HasPostgresEnum("auth", "aal_level", new[] { "aal1", "aal2", "aal3" })
-                .HasPostgresEnum("auth", "code_challenge_method", new[] { "s256", "plain" })
-                .HasPostgresEnum("auth", "factor_status", new[] { "unverified", "verified" })
-                .HasPostgresEnum("auth", "factor_type", new[] { "totp", "webauthn", "phone" })
-                .HasPostgresEnum("auth", "oauth_authorization_status", new[] { "pending", "approved", "denied", "expired" })
-                .HasPostgresEnum("auth", "oauth_client_type", new[] { "public", "confidential" })
-                .HasPostgresEnum("auth", "oauth_registration_type", new[] { "dynamic", "manual" })
-                .HasPostgresEnum("auth", "oauth_response_type", new[] { "code" })
-                .HasPostgresEnum("auth", "one_time_token_type", new[] { "confirmation_token", "reauthentication_token", "recovery_token", "email_change_token_new", "email_change_token_current", "phone_change_token" })
-                .HasPostgresEnum("net", "request_status", new[] { "PENDING", "SUCCESS", "ERROR" })
-                .HasPostgresEnum("realtime", "action", new[] { "INSERT", "UPDATE", "DELETE", "TRUNCATE", "ERROR" })
-                .HasPostgresEnum("realtime", "equality_op", new[] { "eq", "neq", "lt", "lte", "gt", "gte", "in" })
-                .HasPostgresEnum("storage", "buckettype", new[] { "STANDARD", "ANALYTICS", "VECTOR" })
-                .HasPostgresExtension("extensions", "pg_net")
-                .HasPostgresExtension("extensions", "pg_stat_statements")
-                .HasPostgresExtension("extensions", "pgcrypto")
-                .HasPostgresExtension("extensions", "uuid-ossp")
-                .HasPostgresExtension("graphql", "pg_graphql")
-                .HasPostgresExtension("vault", "supabase_vault");
-        }
 
         modelBuilder.Entity<Donation>(entity =>
         {

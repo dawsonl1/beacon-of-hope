@@ -20,25 +20,6 @@ namespace backend.Migrations
                 .HasAnnotation("ProductVersion", "10.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "auth", "aal_level", new[] { "aal1", "aal2", "aal3" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "auth", "code_challenge_method", new[] { "s256", "plain" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "auth", "factor_status", new[] { "unverified", "verified" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "auth", "factor_type", new[] { "totp", "webauthn", "phone" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "auth", "oauth_authorization_status", new[] { "pending", "approved", "denied", "expired" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "auth", "oauth_client_type", new[] { "public", "confidential" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "auth", "oauth_registration_type", new[] { "dynamic", "manual" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "auth", "oauth_response_type", new[] { "code" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "auth", "one_time_token_type", new[] { "confirmation_token", "reauthentication_token", "recovery_token", "email_change_token_new", "email_change_token_current", "phone_change_token" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "net", "request_status", new[] { "PENDING", "SUCCESS", "ERROR" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "realtime", "action", new[] { "INSERT", "UPDATE", "DELETE", "TRUNCATE", "ERROR" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "realtime", "equality_op", new[] { "eq", "neq", "lt", "lte", "gt", "gte", "in" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "storage", "buckettype", new[] { "STANDARD", "ANALYTICS", "VECTOR" });
-            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "extensions", "pg_net");
-            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "extensions", "pg_stat_statements");
-            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "extensions", "pgcrypto");
-            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "extensions", "uuid-ossp");
-            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "graphql", "pg_graphql");
-            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "vault", "supabase_vault");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
