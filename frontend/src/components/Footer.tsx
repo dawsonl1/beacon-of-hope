@@ -38,6 +38,7 @@ export default function Footer() {
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a>
               <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              <p className={styles.dataNote}>*Data as of February 15, 2026</p>
             </div>
           </div>
         </div>
@@ -47,9 +48,6 @@ export default function Footer() {
         <div className={styles.bottom}>
           <p className={styles.copy}>
             &copy; {new Date().getFullYear()} Beacon of Hope. All rights reserved.
-          </p>
-          <p className={styles.dataNote}>
-            *Data as of February 15, 2026
           </p>
           <p className={styles.madeWith}>
             Made with <Heart size={12} className={styles.heart} /> for those who need it most

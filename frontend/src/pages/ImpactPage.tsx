@@ -78,20 +78,20 @@ export default function ImpactPage() {
           </div>
           {error && <ApiError />}
           {summary && (
-            <div className={`${styles.statsGrid} reveal-stagger`}>
-              <div className={`${styles.statItem} reveal`}>
+            <div className={styles.statsGrid}>
+              <div className={styles.statItem}>
                 <span className={styles.statNumber}>{summary.totalResidents}</span>
                 <span className={styles.statDesc}>Girls served</span>
               </div>
-              <div className={`${styles.statItem} reveal`}>
+              <div className={styles.statItem}>
                 <span className={styles.statNumber}>{summary.reintegrationRate}%</span>
                 <span className={styles.statDesc}>Successfully reintegrated</span>
               </div>
-              <div className={`${styles.statItem} reveal`}>
+              <div className={styles.statItem}>
                 <span className={styles.statNumber}>₱{(Number(summary.totalDonations) / 1000000).toFixed(1)}M</span>
                 <span className={styles.statDesc}>Total donations</span>
               </div>
-              <div className={`${styles.statItem} reveal`}>
+              <div className={styles.statItem}>
                 <span className={styles.statNumber}>{summary.activeSafehouses}</span>
                 <span className={styles.statDesc}>Active safehouses</span>
               </div>
