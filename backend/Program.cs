@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using backend.Data;
 
-var test = "Hello world!";
-// Deploy test 2 I am making this very significant change wowowoww
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
