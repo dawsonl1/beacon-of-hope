@@ -32,12 +32,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opts =>
 builder.Services.ConfigureApplicationCookie(opts =>
 {
     opts.Cookie.HttpOnly = true;
-    opts.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
-        ? CookieSecurePolicy.SameAsRequest
-        : CookieSecurePolicy.Always;
-    opts.Cookie.SameSite = builder.Environment.IsDevelopment()
-        ? SameSiteMode.Lax
-        : SameSiteMode.None;
+    opts.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    opts.Cookie.SameSite = SameSiteMode.None;
     opts.Cookie.Name = "BeaconAuth";
     opts.ExpireTimeSpan = TimeSpan.FromHours(8);
     opts.SlidingExpiration = true;
