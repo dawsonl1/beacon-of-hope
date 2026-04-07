@@ -1488,7 +1488,7 @@ app.Run();
 
 // ── Entity mapping helpers ─────────────────────────────────
 
-static class EntityMapper
+public static class EntityMapper
 {
     public static void MapResident(Resident entity, ResidentRequest body)
     {
@@ -1716,3 +1716,5 @@ public class DonationRequest
     public string? CampaignName { get; set; }
     public string? Notes { get; set; }
 }
+
+public partial class Program { }
