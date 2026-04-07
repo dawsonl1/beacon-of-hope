@@ -40,7 +40,7 @@ METADATA_FIELDS = [
 def _load_model_version() -> str:
     metadata = load_metadata()
     if metadata:
-        return str(metadata.get("training_date", "unknown"))
+        return str(metadata.get("model_version") or metadata.get("training_date") or "unknown")
     return "unknown"
 
 

@@ -72,6 +72,10 @@ METRICS_SOCIAL_CONTENT          = MODELS_DIR / "social-media-content"    / "metr
 METRICS_SOCIAL_TIMING           = MODELS_DIR / "social-media-timing"     / "metrics.json"
 METRICS_INCIDENT_WARNING        = MODELS_DIR / "incident-early-warning"  / "metrics.json"
 
+# combined per-pipeline model run files (metadata + metrics, append-only runs)
+MODEL_RUNS_REINTEGRATION_READINESS = MODELS_DIR / "reintegration-readiness" / "model.json"
+MODEL_RUNS_REINTEGRATION_DRIVERS   = MODELS_DIR / "reintegration-drivers"   / "model.json"
+
 # ── Model name constants ───────────────────────────────────────────────────────
 # These are the values written to the model_name column in ml_predictions.
 # Must match exactly what the infer jobs write — never hardcode these strings elsewhere.
