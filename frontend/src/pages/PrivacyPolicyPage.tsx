@@ -102,15 +102,9 @@ export default function PrivacyPolicyPage() {
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Supabase</td>
-                    <td>Database hosting</td>
-                    <td>All stored application data</td>
-                    <td><a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer">Link</a></td>
-                  </tr>
-                  <tr>
                     <td>Microsoft Azure</td>
-                    <td>Backend hosting</td>
-                    <td>Server-side data and logs</td>
+                    <td>Backend hosting & database</td>
+                    <td>All stored application data, server-side logs</td>
                     <td><a href="https://privacy.microsoft.com/en-us/privacystatement" target="_blank" rel="noopener noreferrer">Link</a></td>
                   </tr>
                   <tr>
@@ -129,7 +123,7 @@ export default function PrivacyPolicyPage() {
           <section id="international-transfers">
             <h2 className={styles.sectionTitle}>5. International Data Transfers</h2>
             <ul className={styles.list}>
-              <li>Primary data storage: Supabase cloud infrastructure.</li>
+              <li>Primary data storage: Microsoft Azure (PostgreSQL).</li>
               <li>Backend hosted on Microsoft Azure (West US 2 region).</li>
               <li>Frontend hosted on Vercel (global CDN).</li>
               <li>Legal mechanism for cross-border transfers: Standard Contractual Clauses (SCCs) where applicable.</li>
