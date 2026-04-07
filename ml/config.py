@@ -54,31 +54,39 @@ TABLE_ML_PREDICTION_HISTORY  = "ml_prediction_history"   # all scores ever — a
 MODEL_REINTEGRATION_READINESS = MODELS_DIR / "reintegration-readiness" / "model.sav"
 MODEL_REINTEGRATION_DRIVERS   = MODELS_DIR / "reintegration-drivers"   / "model.sav"
 MODEL_DONOR_CHURN             = MODELS_DIR / "donor-churn"             / "model.sav"
+MODEL_DONOR_CHURN_DRIVERS     = MODELS_DIR / "donor-churn-drivers"     / "model.sav"
 MODEL_SOCIAL_CONTENT          = MODELS_DIR / "social-media-content"    / "model.sav"
 MODEL_SOCIAL_TIMING           = MODELS_DIR / "social-media-timing"     / "model.sav"
 MODEL_INCIDENT_WARNING        = MODELS_DIR / "incident-early-warning"  / "model.sav"
+MODEL_INCIDENT_RISK_DRIVERS   = MODELS_DIR / "incident-risk-drivers"   / "model.sav"
 
 META_REINTEGRATION_READINESS  = MODELS_DIR / "reintegration-readiness" / "metadata.json"
 META_REINTEGRATION_DRIVERS    = MODELS_DIR / "reintegration-drivers"   / "metadata.json"
 META_DONOR_CHURN              = MODELS_DIR / "donor-churn"             / "metadata.json"
+META_DONOR_CHURN_DRIVERS      = MODELS_DIR / "donor-churn-drivers"     / "metadata.json"
 META_SOCIAL_CONTENT           = MODELS_DIR / "social-media-content"    / "metadata.json"
 META_SOCIAL_TIMING            = MODELS_DIR / "social-media-timing"     / "metadata.json"
 META_INCIDENT_WARNING         = MODELS_DIR / "incident-early-warning"  / "metadata.json"
+META_INCIDENT_RISK_DRIVERS    = MODELS_DIR / "incident-risk-drivers"   / "metadata.json"
 
 METRICS_REINTEGRATION_READINESS = MODELS_DIR / "reintegration-readiness" / "metrics.json"
 METRICS_REINTEGRATION_DRIVERS   = MODELS_DIR / "reintegration-drivers"   / "metrics.json"
 METRICS_DONOR_CHURN             = MODELS_DIR / "donor-churn"             / "metrics.json"
+METRICS_DONOR_CHURN_DRIVERS     = MODELS_DIR / "donor-churn-drivers"     / "metrics.json"
 METRICS_SOCIAL_CONTENT          = MODELS_DIR / "social-media-content"    / "metrics.json"
 METRICS_SOCIAL_TIMING           = MODELS_DIR / "social-media-timing"     / "metrics.json"
 METRICS_INCIDENT_WARNING        = MODELS_DIR / "incident-early-warning"  / "metrics.json"
+METRICS_INCIDENT_RISK_DRIVERS   = MODELS_DIR / "incident-risk-drivers"   / "metrics.json"
 
 # combined per-pipeline model run files (metadata + metrics, append-only runs)
 MODEL_RUNS_REINTEGRATION_READINESS = MODELS_DIR / "reintegration-readiness" / "model.json"
 MODEL_RUNS_REINTEGRATION_DRIVERS   = MODELS_DIR / "reintegration-drivers"   / "model.json"
 MODEL_RUNS_DONOR_CHURN             = MODELS_DIR / "donor-churn"             / "model.json"
+MODEL_RUNS_DONOR_CHURN_DRIVERS     = MODELS_DIR / "donor-churn-drivers"     / "model.json"
 MODEL_RUNS_SOCIAL_CONTENT          = MODELS_DIR / "social-media-content"    / "model.json"
 MODEL_RUNS_SOCIAL_TIMING           = MODELS_DIR / "social-media-timing"     / "model.json"
 MODEL_RUNS_INCIDENT_WARNING        = MODELS_DIR / "incident-early-warning"  / "model.json"
+MODEL_RUNS_INCIDENT_RISK_DRIVERS   = MODELS_DIR / "incident-risk-drivers"   / "model.json"
 
 # ── Model name constants ───────────────────────────────────────────────────────
 # These are the values written to the model_name column in ml_predictions.
@@ -87,11 +95,13 @@ MODEL_RUNS_INCIDENT_WARNING        = MODELS_DIR / "incident-early-warning"  / "m
 MODEL_NAME_REINTEGRATION_READINESS = "reintegration-readiness"
 MODEL_NAME_REINTEGRATION_DRIVERS   = "reintegration-drivers"
 MODEL_NAME_DONOR_CHURN             = "donor-churn"
+MODEL_NAME_DONOR_CHURN_DRIVERS     = "donor-churn-drivers"
 MODEL_NAME_SOCIAL_CONTENT          = "social-media-content"
 MODEL_NAME_SOCIAL_TIMING           = "social-media-timing"
 MODEL_NAME_INCIDENT_WARNING        = "incident-early-warning"
 MODEL_NAME_INCIDENT_WARNING_SELFHARM = "incident-early-warning-selfharm"
 MODEL_NAME_INCIDENT_WARNING_RUNAWAY  = "incident-early-warning-runaway"
+MODEL_NAME_INCIDENT_RISK_DRIVERS     = "incident-risk-drivers"
 
 # ── Score label thresholds ─────────────────────────────────────────────────────
 # Used by infer jobs to convert raw 0-100 scores to human-readable labels.
