@@ -8,9 +8,11 @@ from __future__ import annotations
 
 import logging
 
-from reintegration_readiness.etl import build_training_frame
-from social_media_content.etl import build_training_frame as build_social_content_frame
-from social_media_timing.etl import build_training_frame as build_social_timing_frame
+from ml.donor_churn.etl import build_training_frame as build_donor_churn_frame
+from ml.incident_early_warning.etl import build_training_frame as build_incident_warning_frame
+from ml.reintegration_readiness.etl import build_training_frame
+from ml.social_media_content.etl import build_training_frame as build_social_content_frame
+from ml.social_media_timing.etl import build_training_frame as build_social_timing_frame
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +32,12 @@ def main() -> None:
 
     X_t, y_t = build_social_timing_frame()
     logger.info("Social media timing training frame built: %s rows x %s cols", X_t.shape[0], X_t.shape[1])
+
+    donor_df = build_donor_churn_frame()
+    logger.info("Donor churn training frame built: %s rows x %s cols", donor_df.shape[0], donor_df.shape[1])
+
+    incident_df = build_incident_warning_frame()
+    logger.info("Incident early warning training frame built: %s rows x %s cols", incident_df.shape[0], incident_df.shape[1])
 
 
 if __name__ == "__main__":

@@ -6,9 +6,9 @@ import logging
 
 import pandas as pd
 
-from config import TABLE_SOCIAL_MEDIA_POSTS
-from social_media_content.features import build_features
-from utils_db import get_client, fetch_table
+from ml.config import TABLE_SOCIAL_MEDIA_POSTS
+from ml.social_media_content.features import build_features
+from ml.utils_db import get_client, fetch_table
 
 logger = logging.getLogger(__name__)
 

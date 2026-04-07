@@ -5,9 +5,9 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from config import MODEL_NAME_SOCIAL_CONTENT, MODEL_SOCIAL_CONTENT
-from social_media_content.artifacts import load_metadata, load_model_bundle, load_metrics
-from utils_db import get_client, now_utc, write_predictions
+from ml.config import MODEL_NAME_SOCIAL_CONTENT, MODEL_SOCIAL_CONTENT
+from ml.social_media_content.artifacts import load_metadata, load_model_bundle, load_metrics
+from ml.utils_db import get_client, now_utc, write_predictions
 
 logger = logging.getLogger(__name__)
 

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from config import (
+from ml.config import (
     TABLE_EDUCATION,
     TABLE_HEALTH,
     TABLE_HOME_VISITATIONS,
@@ -15,11 +15,11 @@ from config import (
     TABLE_PROCESS_RECORDINGS,
     TABLE_RESIDENTS,
 )
-from reintegration_readiness.features import (
+from ml.reintegration_readiness.features import (
     build_reintegration_feature_frame,
     build_target,
 )
-from utils_db import fetch_table, get_client
+from ml.utils_db import fetch_table, get_client
 
 logger = logging.getLogger(__name__)
 

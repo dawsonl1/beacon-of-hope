@@ -8,7 +8,7 @@ from typing import Any
 
 import joblib
 
-from config import (
+from ml.config import (
     MODEL_RUNS_REINTEGRATION_DRIVERS,
     MODEL_NAME_REINTEGRATION_DRIVERS,
     MODEL_REINTEGRATION_DRIVERS,

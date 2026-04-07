@@ -1,0 +1,785 @@
+{
+  "model_name": "incident-early-warning",
+  "runs": [
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:05:04.368021+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:05:15.893446+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:08:59.148575+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:09:03.791621+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:09:08.379439+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:09:13.115158+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:09:17.720644+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:10:08.604575+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:10:13.261108+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:10:17.985610+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:10:28.461882+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:10:33.431119+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:10:37.987459+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:12:12.491433+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:12:12.524510+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:12:17.787769+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:12:17.873162+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:12:22.701928+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:12:22.813369+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260407",
+      "trained_at_utc": "2026-04-07T19:13:29.894533+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "sub_cat_osaec",
+        "sub_cat_physical_abuse",
+        "has_special_needs",
+        "is_pwd",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "total_rows": 60,
+      "selfharm_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9
+      },
+      "runaway_metrics": {
+        "selected_model": "logreg",
+        "recall": 1.0,
+        "precision": 0.4,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.5625
+      }
+    }
+  ]
+}

@@ -75,8 +75,10 @@ METRICS_INCIDENT_WARNING        = MODELS_DIR / "incident-early-warning"  / "metr
 # combined per-pipeline model run files (metadata + metrics, append-only runs)
 MODEL_RUNS_REINTEGRATION_READINESS = MODELS_DIR / "reintegration-readiness" / "model.json"
 MODEL_RUNS_REINTEGRATION_DRIVERS   = MODELS_DIR / "reintegration-drivers"   / "model.json"
+MODEL_RUNS_DONOR_CHURN             = MODELS_DIR / "donor-churn"             / "model.json"
 MODEL_RUNS_SOCIAL_CONTENT          = MODELS_DIR / "social-media-content"    / "model.json"
 MODEL_RUNS_SOCIAL_TIMING           = MODELS_DIR / "social-media-timing"     / "model.json"
+MODEL_RUNS_INCIDENT_WARNING        = MODELS_DIR / "incident-early-warning"  / "model.json"
 
 # ── Model name constants ───────────────────────────────────────────────────────
 # These are the values written to the model_name column in ml_predictions.
@@ -88,6 +90,8 @@ MODEL_NAME_DONOR_CHURN             = "donor-churn"
 MODEL_NAME_SOCIAL_CONTENT          = "social-media-content"
 MODEL_NAME_SOCIAL_TIMING           = "social-media-timing"
 MODEL_NAME_INCIDENT_WARNING        = "incident-early-warning"
+MODEL_NAME_INCIDENT_WARNING_SELFHARM = "incident-early-warning-selfharm"
+MODEL_NAME_INCIDENT_WARNING_RUNAWAY  = "incident-early-warning-runaway"
 
 # ── Score label thresholds ─────────────────────────────────────────────────────
 # Used by infer jobs to convert raw 0-100 scores to human-readable labels.

@@ -7,7 +7,7 @@ import logging
 import numpy as np
 import pandas as pd
 
-from config import (
+from ml.config import (
     MODEL_NAME_REINTEGRATION_READINESS,
     REINTEGRATION_LABELS,
     TABLE_EDUCATION,
@@ -17,9 +17,9 @@ from config import (
     TABLE_PROCESS_RECORDINGS,
     TABLE_RESIDENTS,
 )
-from reintegration_readiness.features import build_reintegration_feature_frame
-from reintegration_readiness.artifacts import load_metadata, load_model_bundle
-from utils_db import fetch_table, get_client, now_utc, score_to_label, write_predictions
+from ml.reintegration_readiness.features import build_reintegration_feature_frame
+from ml.reintegration_readiness.artifacts import load_metadata, load_model_bundle
+from ml.utils_db import fetch_table, get_client, now_utc, score_to_label, write_predictions
 
 logger = logging.getLogger(__name__)
 

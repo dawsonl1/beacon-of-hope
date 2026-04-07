@@ -1,4 +1,4 @@
-"""Artifact helpers for reintegration readiness model."""
+"""Artifact helpers for donor churn model."""
 
 from __future__ import annotations
 
@@ -8,24 +8,17 @@ from typing import Any
 
 import joblib
 
-from ml.config import (
-    MODEL_RUNS_REINTEGRATION_READINESS,
-    MODEL_NAME_REINTEGRATION_READINESS,
-    MODEL_REINTEGRATION_READINESS,
-)
+from ml.config import MODEL_DONOR_CHURN, MODEL_NAME_DONOR_CHURN, MODEL_RUNS_DONOR_CHURN
 
 
 def save_model_bundle(model: Any, scaler: Any, feature_list: list[str]) -> None:
-    bundle = {
-        "model": model,
-        "scaler": scaler,
-        "feature_list": feature_list,
-    }
-    joblib.dump(bundle, MODEL_REINTEGRATION_READINESS)
+    bundle = {"model": model, "scaler": scaler, "feature_list": feature_list}
+    MODEL_DONOR_CHURN.parent.mkdir(parents=True, exist_ok=True)
+    joblib.dump(bundle, MODEL_DONOR_CHURN)
 
 
 def load_model_bundle() -> dict:
-    loaded = joblib.load(MODEL_REINTEGRATION_READINESS)
+    loaded = joblib.load(MODEL_DONOR_CHURN)
     if isinstance(loaded, dict):
         loaded.setdefault("scaler", None)
         loaded.setdefault("feature_list", None)
@@ -41,19 +34,20 @@ _PENDING_METADATA: dict[str, Any] | None = None
 
 
 def _load_combined() -> dict[str, Any]:
-    if MODEL_RUNS_REINTEGRATION_READINESS.exists():
-        with open(MODEL_RUNS_REINTEGRATION_READINESS, "r", encoding="utf-8") as f:
+    if MODEL_RUNS_DONOR_CHURN.exists():
+        with open(MODEL_RUNS_DONOR_CHURN, "r", encoding="utf-8") as f:
             data = json.load(f)
         if isinstance(data, dict) and isinstance(data.get("runs"), list):
-            data.setdefault("model_name", MODEL_NAME_REINTEGRATION_READINESS)
+            data.setdefault("model_name", MODEL_NAME_DONOR_CHURN)
             return data
-    return {"model_name": MODEL_NAME_REINTEGRATION_READINESS, "runs": []}
+    return {"model_name": MODEL_NAME_DONOR_CHURN, "runs": []}
 
 
 def _append_run(run: dict[str, Any]) -> dict[str, Any]:
     combined = _load_combined()
     combined["runs"].append(run)
-    with open(MODEL_RUNS_REINTEGRATION_READINESS, "w", encoding="utf-8") as f:
+    MODEL_RUNS_DONOR_CHURN.parent.mkdir(parents=True, exist_ok=True)
+    with open(MODEL_RUNS_DONOR_CHURN, "w", encoding="utf-8") as f:
         json.dump(combined, f, indent=2)
     return run
 
@@ -61,10 +55,8 @@ def _append_run(run: dict[str, Any]) -> dict[str, Any]:
 def _latest_run() -> dict[str, Any]:
     combined = _load_combined()
     runs = combined.get("runs", [])
-    if runs:
-        latest = runs[-1]
-        if isinstance(latest, dict):
-            return latest
+    if runs and isinstance(runs[-1], dict):
+        return runs[-1]
     return {}
 
 
@@ -72,13 +64,12 @@ def save_metadata(model_type: str, feature_list: list[str], train_rows: int, tes
     global _PENDING_METADATA
     now = datetime.now(timezone.utc)
     metadata = {
-        "model_name": MODEL_NAME_REINTEGRATION_READINESS,
+        "model_name": MODEL_NAME_DONOR_CHURN,
         "model_version": _version_from_utc(now),
         "trained_at_utc": now.isoformat(),
         "features": feature_list,
         "num_training_rows": int(train_rows),
         "num_test_rows": int(test_rows),
-        # Transitional/compatibility fields:
         "training_date": _version_from_utc(now),
         "model_type": model_type,
         "feature_list": feature_list,
@@ -86,21 +77,19 @@ def save_metadata(model_type: str, feature_list: list[str], train_rows: int, tes
         "test_rows": int(test_rows),
         "total_rows": int(total_rows),
     }
-    # Hold metadata until save_metrics appends one merged run record.
     _PENDING_METADATA = metadata
     return metadata
 
 
 def load_metadata() -> dict:
-    latest = _latest_run()
-    return latest if latest else {}
+    return _latest_run()
 
 
 def save_metrics(roc_auc: float, f1: float, accuracy: float, classification_report: dict[str, Any] | None = None) -> dict:
     global _PENDING_METADATA
     now = datetime.now(timezone.utc)
     metrics = {
-        "model_name": MODEL_NAME_REINTEGRATION_READINESS,
+        "model_name": MODEL_NAME_DONOR_CHURN,
         "model_version": _version_from_utc(now),
         "trained_at_utc": now.isoformat(),
         "accuracy": float(accuracy),
@@ -111,9 +100,8 @@ def save_metrics(roc_auc: float, f1: float, accuracy: float, classification_repo
     if _PENDING_METADATA:
         run = {**_PENDING_METADATA, **metrics}
     else:
-        # Backfill minimum metadata if metrics saved standalone.
         run = {
-            "model_name": MODEL_NAME_REINTEGRATION_READINESS,
+            "model_name": MODEL_NAME_DONOR_CHURN,
             "model_version": metrics["model_version"],
             "trained_at_utc": metrics["trained_at_utc"],
             "features": [],

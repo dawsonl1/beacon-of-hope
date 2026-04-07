@@ -8,7 +8,7 @@ from typing import Any
 
 import joblib
 
-from config import (
+from ml.config import (
     MODEL_RUNS_SOCIAL_CONTENT,
     MODEL_NAME_SOCIAL_CONTENT,
     MODEL_SOCIAL_CONTENT,

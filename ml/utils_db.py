@@ -151,7 +151,7 @@ def score_to_label(score: float, thresholds: dict) -> str:
         score_to_label(73.2, thresholds)  →  "Progressing"
 
     Usage:
-        from config import REINTEGRATION_LABELS
+        from ml.config import REINTEGRATION_LABELS
         label = score_to_label(score, REINTEGRATION_LABELS)
     """
     for threshold in sorted(thresholds.keys(), reverse=True):

@@ -71,7 +71,7 @@ def _load_env() -> None:
 _load_env()
 
 # Import after env is loaded.
-from utils_db import get_client, now_utc, write_predictions  # noqa: E402
+from ml.utils_db import get_client, now_utc, write_predictions  # noqa: E402
 
 
 TABLE_PREDICTIONS = "ml_predictions"
