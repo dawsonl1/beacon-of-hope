@@ -59,9 +59,7 @@ intex2/
 │   ├── utils_db.py   # DB utilities for ML scripts
 │   └── requirements.txt
 ├── models/           # Trained model artifacts (.sav files) — planned move to ml/models/
-├── data/             # CSV seed/import data — planned move to supabase/data/
-├── scripts/          # Utility shell scripts (setup-env.sh, etc.)
-├── supabase/         # Database migrations and seed SQL
+├── data/             # CSV seed/import data
 ├── INTEX/            # Project documentation, rubric, audit notes
 ├── .github/          # CI/CD workflows (GitHub Actions)
 └── CLAUDE.md         # This file — agent instructions and rules
