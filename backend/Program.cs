@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using backend.Data;
 
-// Deploy test
+// Deploy test 2
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
