@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useReveal } from '../hooks/useReveal';
 import { Heart, ArrowUpRight } from 'lucide-react';
 import { apiFetch } from '../api';
@@ -286,10 +287,10 @@ export default function ImpactPage() {
           <h2 className={styles.ctaTitle}>
             Inspired by what you've seen? Help us do more.
           </h2>
-          <a href="https://www.paypal.com/donate" target="_blank" rel="noopener noreferrer" className={styles.ctaButton}>
+          <Link to="/donate" className={styles.ctaButton}>
             <Heart size={16} />
             Donate Now
-          </a>
+          </Link>
         </div>
       </section>
     </main>
