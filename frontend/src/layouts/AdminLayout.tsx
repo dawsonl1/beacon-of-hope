@@ -57,21 +57,54 @@ class PageErrorBoundary extends Component<{ children: ReactNode; resetKey: strin
   }
 }
 
-const navItems = [
-  { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
-  { to: '/admin/tasks', icon: CheckSquare, label: 'To-Do' },
-  { to: '/admin/calendar', icon: Calendar, label: 'Calendar' },
-  { to: '/admin/queue', icon: Inbox, label: 'Queue' },
-  { to: '/admin/caseload', icon: Users, label: 'Caseload' },
-  { to: '/admin/recordings', icon: AudioLines, label: 'Recordings' },
-  { to: '/admin/incidents', icon: AlertTriangle, label: 'Incidents' },
-  { to: '/admin/conferences', icon: MessageSquare, label: 'Conferences' },
-  { to: '/admin/visitations', icon: Eye, label: 'Visitations' },
-  { to: '/admin/post-placement', icon: HomeIcon, label: 'Placed' },
-  { to: '/admin/donors', icon: HandHeart, label: 'Donors' },
-  { to: '/admin/reports', icon: BarChart3, label: 'Reports' },
-  { to: '/admin/users', icon: Shield, label: 'Users' },
+interface NavItem {
+  to: string;
+  icon: React.ComponentType<{ size: number }>;
+  label: string;
+  end?: boolean;
+}
+
+interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
+const navGroups: NavGroup[] = [
+  {
+    label: 'Work',
+    items: [
+      { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
+      { to: '/admin/tasks', icon: CheckSquare, label: 'To-Do' },
+      { to: '/admin/calendar', icon: Calendar, label: 'Calendar' },
+      { to: '/admin/queue', icon: Inbox, label: 'Queue' },
+    ],
+  },
+  {
+    label: 'Cases',
+    items: [
+      { to: '/admin/caseload', icon: Users, label: 'Caseload' },
+      { to: '/admin/incidents', icon: AlertTriangle, label: 'Incidents' },
+      { to: '/admin/conferences', icon: MessageSquare, label: 'Conferences' },
+      { to: '/admin/post-placement', icon: HomeIcon, label: 'Placed' },
+    ],
+  },
+  {
+    label: 'Records',
+    items: [
+      { to: '/admin/recordings', icon: AudioLines, label: 'Recordings' },
+      { to: '/admin/visitations', icon: Eye, label: 'Visitations' },
+      { to: '/admin/donors', icon: HandHeart, label: 'Donors' },
+    ],
+  },
+  {
+    label: 'Admin',
+    items: [
+      { to: '/admin/reports', icon: BarChart3, label: 'Reports' },
+      { to: '/admin/users', icon: Shield, label: 'Users' },
+    ],
+  },
 ];
+
 
 function AdminLayoutInner() {
   const { user, logout } = useAuth();
@@ -96,21 +129,35 @@ function AdminLayoutInner() {
             <span className={styles.logoText}>Beacon of Hope</span>
           </NavLink>
 
-          <nav className={`${styles.nav} ${menuOpen ? styles.navOpen : ''}`}>
-            {navItems.map(({ to, icon: Icon, label, end }) => (
-              <NavLink
-                key={to}
-                to={to}
-                end={end}
-                className={({ isActive }) =>
-                  `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
-                }
-                onClick={() => setMenuOpen(false)}
-              >
-                <Icon size={16} />
-                <span>{label}</span>
-              </NavLink>
-            ))}
+          {/* Desktop nav: category hover dropdowns */}
+          <nav className={styles.nav}>
+            {navGroups.map(group => {
+              const groupActive = group.items.some(item =>
+                item.end ? location.pathname === item.to : location.pathname.startsWith(item.to)
+              );
+              return (
+                <div key={group.label} className={styles.navGroup}>
+                  <span className={`${styles.navGroupLabel} ${groupActive ? styles.navGroupLabelActive : ''}`}>
+                    {group.label}
+                  </span>
+                  <div className={styles.navDropdown}>
+                    {group.items.map(({ to, icon: Icon, label, end }) => (
+                      <NavLink
+                        key={to}
+                        to={to}
+                        end={end}
+                        className={({ isActive }) =>
+                          `${styles.dropdownItem} ${isActive ? styles.dropdownItemActive : ''}`
+                        }
+                      >
+                        <Icon size={15} />
+                        <span>{label}</span>
+                      </NavLink>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
           </nav>
 
           <div className={styles.actions}>
@@ -143,6 +190,30 @@ function AdminLayoutInner() {
           </div>
         </div>
       </header>
+
+      {/* Mobile nav: grouped sections — placed outside header to avoid backdrop-filter containment */}
+      <nav className={`${styles.mobileNav} ${menuOpen ? styles.navOpen : ''}`}>
+        {navGroups.map(group => (
+          <div key={group.label} className={styles.mobileNavSection}>
+            <span className={styles.mobileNavLabel}>{group.label}</span>
+            {group.items.map(({ to, icon: Icon, label, end }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={end}
+                className={({ isActive }) =>
+                  `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
+                }
+                onClick={() => setMenuOpen(false)}
+              >
+                <Icon size={16} />
+                <span>{label}</span>
+              </NavLink>
+            ))}
+          </div>
+        ))}
+      </nav>
+
       <main className={styles.content}>
         <PageErrorBoundary resetKey={location.pathname}>
           <Suspense fallback={

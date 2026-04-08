@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader2, Users } from 'lucide-react';
 import { apiFetch } from '../../api';
+import Pagination from '../../components/admin/Pagination';
 import styles from './IncidentsPage.module.css';
 
 interface ConferenceItem {
@@ -22,6 +23,8 @@ export default function CaseConferencesPage() {
   const [plans, setPlans] = useState<ConferenceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
 
   const fetchPlans = useCallback(async () => {
     setLoading(true);
@@ -38,7 +41,8 @@ export default function CaseConferencesPage() {
   useEffect(() => { fetchPlans(); }, [fetchPlans]);
 
   const upcoming = plans.filter(p => p.caseConferenceDate && new Date(p.caseConferenceDate) >= new Date());
-  const past = plans.filter(p => !p.caseConferenceDate || new Date(p.caseConferenceDate) < new Date());
+  const allPast = plans.filter(p => !p.caseConferenceDate || new Date(p.caseConferenceDate) < new Date());
+  const past = allPast.slice((page - 1) * pageSize, page * pageSize);
 
   const STATUS_COLORS: Record<string, string> = {
     Open: '#3498db', 'In Progress': '#f39c12', Achieved: '#27ae60', Closed: '#95a5a6',
@@ -107,41 +111,44 @@ export default function CaseConferencesPage() {
 
           <div>
             <h2 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-strong)', marginBottom: '0.75rem' }}>
-              All Intervention Plans ({past.length})
+              All Intervention Plans ({allPast.length})
             </h2>
-            {past.length === 0 ? (
+            {allPast.length === 0 ? (
               <div className={styles.empty}>No intervention plans found.</div>
             ) : (
-              <div className={styles.tableCard}>
-                <table className={styles.table}>
-                  <thead>
-                    <tr>
-                      <th>Resident</th>
-                      <th>Category</th>
-                      <th>Description</th>
-                      <th>Status</th>
-                      <th>Target</th>
-                      <th>Conference Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {past.map(p => (
-                      <tr key={p.planId} onClick={() => navigate(`/admin/caseload/${p.residentId}`)}>
-                        <td style={{ fontWeight: 600, color: 'var(--color-sage)' }}>{p.residentCode || '-'}</td>
-                        <td>{p.planCategory || '-'}</td>
-                        <td>{p.planDescription ? (p.planDescription.length > 60 ? p.planDescription.slice(0, 60) + '...' : p.planDescription) : '-'}</td>
-                        <td>
-                          <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '0.15rem 0.45rem', borderRadius: '4px', background: `${STATUS_COLORS[p.status || ''] || '#95a5a6'}18`, color: STATUS_COLORS[p.status || ''] || '#95a5a6', textTransform: 'uppercase' }}>
-                            {p.status || '-'}
-                          </span>
-                        </td>
-                        <td>{p.targetValue != null ? p.targetValue : '-'}</td>
-                        <td>{p.caseConferenceDate || '-'}</td>
+              <>
+                <div className={styles.tableCard}>
+                  <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th>Resident</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Target</th>
+                        <th>Conference Date</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {past.map(p => (
+                        <tr key={p.planId} onClick={() => navigate(`/admin/caseload/${p.residentId}`)}>
+                          <td style={{ fontWeight: 600, color: 'var(--color-sage)' }}>{p.residentCode || '-'}</td>
+                          <td>{p.planCategory || '-'}</td>
+                          <td>{p.planDescription ? (p.planDescription.length > 60 ? p.planDescription.slice(0, 60) + '...' : p.planDescription) : '-'}</td>
+                          <td>
+                            <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '0.15rem 0.45rem', borderRadius: '4px', background: `${STATUS_COLORS[p.status || ''] || '#95a5a6'}18`, color: STATUS_COLORS[p.status || ''] || '#95a5a6', textTransform: 'uppercase' }}>
+                              {p.status || '-'}
+                            </span>
+                          </td>
+                          <td>{p.targetValue != null ? p.targetValue : '-'}</td>
+                          <td>{p.caseConferenceDate || '-'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <Pagination page={page} pageSize={pageSize} totalCount={allPast.length} onPageChange={setPage} />
+              </>
             )}
           </div>
         </>

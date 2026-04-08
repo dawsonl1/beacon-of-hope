@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../helpers/renderWithProviders';
@@ -60,13 +60,6 @@ describe('CalendarPage — Interactions', () => {
 
   it('navigates to next day when right arrow clicked', async () => {
     renderWithProviders(<CalendarPage />);
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowStr = tomorrow.toLocaleDateString('en-US', {
-      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
-    });
-
     // Click the right arrow (next day)
     const buttons = screen.getAllByRole('button');
     const nextBtn = buttons.find(b => b.querySelector('svg') && b.textContent === '');
