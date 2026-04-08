@@ -98,10 +98,12 @@ export default function VisitationDetailPage() {
           </div>
         </div>
         <div className={styles.headerActions}>
-          <Link to={`/admin/visitations/${id}/edit`} className={styles.editBtn}>
-            <Pencil size={14} />
-            Edit
-          </Link>
+          {isAdmin && (
+            <Link to={`/admin/visitations/${id}/edit`} className={styles.editBtn}>
+              <Pencil size={14} />
+              Edit
+            </Link>
+          )}
           {isAdmin && (
             <button
               className={styles.deleteBtn}

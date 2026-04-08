@@ -75,8 +75,18 @@ export default function SupporterFormPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSaving(true);
     setError(null);
+
+    if (!form.supporterType) {
+      setError('Please select a supporter type.');
+      return;
+    }
+    if (!form.displayName && !form.firstName) {
+      setError('Please provide a display name or first name.');
+      return;
+    }
+
+    setSaving(true);
     try {
       const body = {
         ...form,

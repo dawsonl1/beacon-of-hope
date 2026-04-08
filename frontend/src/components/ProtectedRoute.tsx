@@ -10,9 +10,8 @@ export default function ProtectedRoute({ allowedRoles, children }: ProtectedRout
   const { isAuthenticated, isLoading, user } = useAuth();
   const location = useLocation();
 
-  // If loading but we have a cached user, render children immediately
-  // (the background auth check will correct if session expired)
-  if (isLoading && !user) {
+  // Always show spinner while auth state is being verified
+  if (isLoading) {
     return (
       <div style={{
         display: 'flex',

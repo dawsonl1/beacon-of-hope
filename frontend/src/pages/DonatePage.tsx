@@ -37,6 +37,7 @@ export default function DonatePage() {
         cadence: mode === 'recurring' ? cadence : undefined,
         amountCents,
         donorEmail: donorEmail || undefined,
+        newsletter,
       };
       const { url } = await apiFetch<{ url: string }>('/api/donate/create-checkout-session', {
         method: 'POST',

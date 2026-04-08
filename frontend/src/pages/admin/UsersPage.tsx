@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { UserPlus, Trash2, Loader2, Shield, User } from 'lucide-react';
 import { apiFetch } from '../../api';
+import { useAuth } from '../../contexts/AuthContext';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
 import styles from './UsersPage.module.css';
 
@@ -13,9 +14,13 @@ interface AppUser {
 }
 
 export default function UsersPage() {
+  const { user: currentUser } = useAuth();
+  const isAdmin = currentUser?.roles?.includes('Admin') ?? false;
+
   const [users, setUsers] = useState<AppUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   // Create form
   const [showForm, setShowForm] = useState(false);
@@ -30,6 +35,14 @@ export default function UsersPage() {
   // Delete
   const [deleteTarget, setDeleteTarget] = useState<AppUser | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  if (!isAdmin) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.error}>Access denied. Admin role required.</div>
+      </div>
+    );
+  }
 
   async function fetchUsers() {
     setLoading(true);
@@ -85,7 +98,8 @@ export default function UsersPage() {
       await apiFetch(`/api/admin/users/${deleteTarget.id}`, { method: 'DELETE' });
       setDeleteTarget(null);
       fetchUsers();
-    } catch {
+    } catch (e) {
+      setDeleteError(e instanceof Error ? e.message : 'Failed to delete user.');
       setDeleteTarget(null);
     } finally {
       setDeleting(false);
@@ -147,6 +161,8 @@ export default function UsersPage() {
         </div>
       )}
 
+      {deleteError && <div className={styles.error}>{deleteError}</div>}
+
       {/* Users list */}
       {loading ? (
         <div className={styles.loading}><Loader2 size={24} className={styles.spinner} /> Loading users...</div>
@@ -177,9 +193,11 @@ export default function UsersPage() {
                     </span>
                   </td>
                   <td>
-                    <button className={styles.deleteBtn} onClick={() => setDeleteTarget(u)} title="Delete user">
-                      <Trash2 size={14} />
-                    </button>
+                    {u.email !== currentUser?.email && (
+                      <button className={styles.deleteBtn} onClick={() => setDeleteTarget(u)} title="Delete user">
+                        <Trash2 size={14} />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

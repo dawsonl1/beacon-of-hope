@@ -127,12 +127,14 @@ export default function RecordingDetailPage() {
           </div>
         </div>
         <div className={styles.headerActions}>
-          <button
-            className={styles.editBtn}
-            onClick={() => navigate(`/admin/recordings/${id}/edit`)}
-          >
-            <Edit3 size={14} /> Edit
-          </button>
+          {isAdmin && (
+            <button
+              className={styles.editBtn}
+              onClick={() => navigate(`/admin/recordings/${id}/edit`)}
+            >
+              <Edit3 size={14} /> Edit
+            </button>
+          )}
           {isAdmin && (
             <button className={styles.deleteBtn} onClick={() => setShowDeleteConfirm(true)}>
               <Trash2 size={14} /> Delete

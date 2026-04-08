@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5001' : '');
 
 export function getApiUrl() {
   return API_URL;
@@ -6,7 +6,7 @@ export function getApiUrl() {
 
 export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const url = `${API_URL}${path}`;
-  console.log(`[API] Fetching: ${url}`);
+  if (import.meta.env.DEV) console.log(`[API] Fetching: ${url}`);
   const res = await fetch(url, {
     ...options,
     credentials: 'include',

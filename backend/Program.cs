@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
@@ -119,7 +120,7 @@ app.Use(async (context, next) =>
         "script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com; " +
         "style-src 'self' 'unsafe-inline'; " +
         "img-src 'self' data: https:; " +
-        "connect-src 'self' https://www.google-analytics.com; " +
+        "connect-src 'self' https://www.google-analytics.com https://generativelanguage.googleapis.com; " +
         "font-src 'self' https://fonts.gstatic.com; " +
         "frame-ancestors 'none'; " +
         "form-action 'self'; " +
@@ -293,37 +294,11 @@ app.MapGet("/api/health", async (AppDbContext db) =>
     }
     catch { }
 
-    var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-    var buildDate = System.IO.File.GetLastWriteTimeUtc(assembly.Location).ToString("yyyy-MM-dd HH:mm:ss UTC");
-
     return new
     {
         status = canConnect ? "ok" : "degraded",
         database = canConnect ? "connected" : "unreachable",
-        environment = app.Environment.EnvironmentName,
-        version = assembly.GetName().Version?.ToString() ?? "unknown",
-        buildDate,
-        endpoints = new[] {
-            "/api/health",
-            "/api/auth/login",
-            "/api/auth/logout",
-            "/api/auth/me",
-            "/api/impact/summary",
-            "/api/impact/donations-by-month",
-            "/api/impact/allocations-by-program",
-            "/api/impact/education-trends",
-            "/api/impact/health-trends",
-            "/api/impact/safehouses",
-            "/api/impact/snapshots",
-            "/api/admin/metrics",
-            "/api/admin/residents",
-            "/api/admin/residents/{id}",
-            "/api/admin/residents/filter-options",
-            "/api/admin/recent-donations",
-            "/api/admin/donations-by-channel",
-            "/api/admin/active-residents-trend",
-            "/api/admin/flagged-cases-trend"
-        }
+        timestamp = DateTime.UtcNow.ToString("o")
     };
 });
 
@@ -390,8 +365,13 @@ app.MapPost("/api/admin/users", async (
 
 app.MapDelete("/api/admin/users/{id}", async (
     string id,
+    HttpContext context,
     UserManager<ApplicationUser> userManager) =>
 {
+    var currentUserId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (id == currentUserId)
+        return Results.BadRequest(new { error = "Cannot delete your own account." });
+
     var user = await userManager.FindByIdAsync(id);
     if (user == null) return Results.NotFound();
     await userManager.DeleteAsync(user);
@@ -607,7 +587,7 @@ app.MapGet("/api/admin/metrics", async (AppDbContext db) =>
         nextConference,
         dataAsOf = refDate.ToString("MMMM d, yyyy")
     };
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/residents", async (
     AppDbContext db,
@@ -683,7 +663,7 @@ app.MapGet("/api/admin/residents", async (
         .ToListAsync();
 
     return new { items, totalCount, page, pageSize };
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/residents/filter-options", async (AppDbContext db) =>
 {
@@ -713,7 +693,7 @@ app.MapGet("/api/admin/residents/filter-options", async (AppDbContext db) =>
         .Distinct().OrderBy(x => x).ToListAsync();
 
     return new { caseStatuses, safehouses, categories, riskLevels, socialWorkers };
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/residents/{id:int}", async (int id, AppDbContext db) =>
 {
@@ -745,7 +725,7 @@ app.MapGet("/api/admin/residents/{id:int}", async (int id, AppDbContext db) =>
         .FirstOrDefaultAsync();
 
     return r is null ? Results.NotFound(new { error = "Resident not found." }) : Results.Ok(r);
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPost("/api/admin/residents", async (HttpContext httpContext, AppDbContext db) =>
 {
@@ -787,9 +767,16 @@ app.MapDelete("/api/admin/residents/{id:int}", async (int id, AppDbContext db) =
     if (resident == null)
         return Results.NotFound(new { error = "Resident not found." });
 
-    db.Residents.Remove(resident);
-    await db.SaveChangesAsync();
-    return Results.Ok(new { message = "Resident deleted." });
+    try
+    {
+        db.Residents.Remove(resident);
+        await db.SaveChangesAsync();
+        return Results.Ok(new { message = "Resident deleted." });
+    }
+    catch (Microsoft.EntityFrameworkCore.DbUpdateException)
+    {
+        return Results.Conflict(new { error = "Cannot delete this resident because they have associated records (education, visitations, recordings, etc.). Remove those records first." });
+    }
 }).RequireAuthorization("AdminOnly");
 
 app.MapGet("/api/admin/recent-donations", async (AppDbContext db) =>
@@ -813,7 +800,7 @@ app.MapGet("/api/admin/recent-donations", async (AppDbContext db) =>
         .ToListAsync();
 
     return data;
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/donations-by-channel", async (AppDbContext db) =>
 {
@@ -829,7 +816,7 @@ app.MapGet("/api/admin/donations-by-channel", async (AppDbContext db) =>
         .ToListAsync();
 
     return data;
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/active-residents-trend", async (AppDbContext db) =>
 {
@@ -846,7 +833,7 @@ app.MapGet("/api/admin/active-residents-trend", async (AppDbContext db) =>
         .ToListAsync();
 
     return data;
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/flagged-cases-trend", async (AppDbContext db) =>
 {
@@ -863,7 +850,7 @@ app.MapGet("/api/admin/flagged-cases-trend", async (AppDbContext db) =>
         .ToListAsync();
 
     return data;
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 // ── Visitations endpoints ─────────────────────────────────
 
@@ -875,6 +862,8 @@ app.MapGet("/api/admin/visitations", async (
     int page = 1,
     int pageSize = 20) =>
 {
+    if (pageSize > 100) pageSize = 100;
+
     var query = db.HomeVisitations.AsQueryable();
 
     if (residentId.HasValue)
@@ -910,7 +899,7 @@ app.MapGet("/api/admin/visitations", async (
         .ToListAsync();
 
     return new { items, totalCount, page, pageSize };
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/visitations/{id}", async (AppDbContext db, int id) =>
 {
@@ -940,14 +929,15 @@ app.MapGet("/api/admin/visitations/{id}", async (AppDbContext db, int id) =>
         .FirstOrDefaultAsync();
 
     return v is null ? Results.NotFound() : Results.Ok(v);
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPost("/api/admin/visitations", async (AppDbContext db, HomeVisitation body) =>
 {
+    body.VisitationId = 0;
     db.HomeVisitations.Add(body);
     await db.SaveChangesAsync();
     return Results.Created($"/api/admin/visitations/{body.VisitationId}", new { body.VisitationId });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPut("/api/admin/visitations/{id}", async (AppDbContext db, int id, HomeVisitation body) =>
 {
@@ -958,7 +948,7 @@ app.MapPut("/api/admin/visitations/{id}", async (AppDbContext db, int id, HomeVi
 
     await db.SaveChangesAsync();
     return Results.Ok(new { id });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapDelete("/api/admin/visitations/{id}", async (AppDbContext db, int id) =>
 {
@@ -977,6 +967,7 @@ app.MapGet("/api/admin/conferences", async (AppDbContext db) =>
     var upcoming = await db.InterventionPlans
         .Where(p => p.CaseConferenceDate != null && p.CaseConferenceDate > now)
         .OrderBy(p => p.CaseConferenceDate)
+        .Take(50)
         .Select(p => new
         {
             p.PlanId,
@@ -1012,7 +1003,7 @@ app.MapGet("/api/admin/conferences", async (AppDbContext db) =>
         .ToListAsync();
 
     return new { upcoming, past };
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/residents-list", async (AppDbContext db) =>
 {
@@ -1027,7 +1018,7 @@ app.MapGet("/api/admin/residents-list", async (AppDbContext db) =>
         .ToListAsync();
 
     return data;
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 // ── Reports & Analytics endpoints ──────────────────────
 
@@ -1047,7 +1038,7 @@ app.MapGet("/api/admin/reports/donations-by-source", async (AppDbContext db) =>
         .ToListAsync();
 
     return data;
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/reports/donations-by-campaign", async (AppDbContext db) =>
 {
@@ -1064,7 +1055,7 @@ app.MapGet("/api/admin/reports/donations-by-campaign", async (AppDbContext db) =
         .ToListAsync();
 
     return data;
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/reports/resident-outcomes", async (AppDbContext db) =>
 {
@@ -1099,7 +1090,7 @@ app.MapGet("/api/admin/reports/resident-outcomes", async (AppDbContext db) =>
         avgLengthOfStayDays = Math.Round(avgLengthOfStay, 0),
         byType
     };
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 
 app.MapGet("/api/admin/reports/safehouse-comparison", async (AppDbContext db) =>
@@ -1180,7 +1171,7 @@ app.MapGet("/api/admin/reports/safehouse-comparison", async (AppDbContext db) =>
     }).ToList();
 
     return result;
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/reports/reintegration-rates", async (AppDbContext db) =>
 {
@@ -1211,7 +1202,7 @@ app.MapGet("/api/admin/reports/reintegration-rates", async (AppDbContext db) =>
         .ToListAsync();
 
     return new { byTypeAndSafehouse, totalBySafehouse };
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 // ── Process Recordings endpoints ──────────────────────────
 
@@ -1266,7 +1257,7 @@ app.MapGet("/api/admin/recordings", async (
         .ToListAsync();
 
     return new { items, totalCount, page, pageSize };
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/recordings/emotional-trends", async (int residentId, AppDbContext db) =>
 {
@@ -1283,7 +1274,7 @@ app.MapGet("/api/admin/recordings/emotional-trends", async (int residentId, AppD
         .ToListAsync();
 
     return data;
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/recordings/{id:int}", async (int id, AppDbContext db) =>
 {
@@ -1314,7 +1305,7 @@ app.MapGet("/api/admin/recordings/{id:int}", async (int id, AppDbContext db) =>
         .FirstOrDefaultAsync();
 
     return r is null ? Results.NotFound(new { error = "Recording not found." }) : Results.Ok(r);
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPost("/api/admin/recordings", async (HttpContext httpContext, AppDbContext db) =>
 {
@@ -1353,7 +1344,7 @@ app.MapPut("/api/admin/recordings/{id:int}", async (int id, HttpContext httpCont
 
     await db.SaveChangesAsync();
     return Results.Ok(new { recording.RecordingId });
-}).RequireAuthorization();
+}).RequireAuthorization(policy => policy.RequireRole("Admin", "Staff"));
 
 app.MapDelete("/api/admin/recordings/{id:int}", async (int id, AppDbContext db) =>
 {
@@ -1377,6 +1368,8 @@ app.MapGet("/api/admin/supporters", async (
     int page = 1,
     int pageSize = 20) =>
 {
+    if (pageSize > 100) pageSize = 100;
+
     var q = db.Supporters.AsQueryable();
 
     if (!string.IsNullOrWhiteSpace(supporterType))
@@ -1429,7 +1422,7 @@ app.MapGet("/api/admin/supporters", async (
         .ToListAsync();
 
     return new { totalCount, page, pageSize, items };
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/supporters/{id:int}", async (int id, AppDbContext db) =>
 {
@@ -1479,7 +1472,7 @@ app.MapGet("/api/admin/supporters/{id:int}", async (int id, AppDbContext db) =>
         .ToListAsync();
 
     return Results.Ok(new { supporter = s, donations });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPost("/api/admin/supporters", async (AppDbContext db, HttpContext httpContext) =>
 {
@@ -1534,6 +1527,8 @@ app.MapGet("/api/admin/donations", async (
     int page = 1,
     int pageSize = 20) =>
 {
+    if (pageSize > 100) pageSize = 100;
+
     var q = db.Donations.AsQueryable();
 
     if (supporterId.HasValue)
@@ -1566,12 +1561,13 @@ app.MapGet("/api/admin/donations", async (
             d.ImpactUnit,
             d.IsRecurring,
             d.CampaignName,
-            d.Notes
+            d.Notes,
+            channelSource = d.ChannelSource
         })
         .ToListAsync();
 
     return new { totalCount, page, pageSize, items };
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPost("/api/admin/donations", async (AppDbContext db, HttpContext httpContext) =>
 {
@@ -1609,9 +1605,16 @@ app.MapDelete("/api/admin/donations/{id:int}", async (int id, AppDbContext db) =
     var donation = await db.Donations.FindAsync(id);
     if (donation == null) return Results.NotFound();
 
-    db.Donations.Remove(donation);
-    await db.SaveChangesAsync();
-    return Results.Ok(new { deleted = true });
+    try
+    {
+        db.Donations.Remove(donation);
+        await db.SaveChangesAsync();
+        return Results.Ok(new { deleted = true });
+    }
+    catch (Microsoft.EntityFrameworkCore.DbUpdateException)
+    {
+        return Results.Conflict(new { error = "Cannot delete this donation because it has associated allocations or in-kind items. Remove those records first." });
+    }
 }).RequireAuthorization("AdminOnly");
 
 // ── Allocation reports ──────────────────────────────────────
@@ -1631,7 +1634,7 @@ app.MapGet("/api/admin/allocations/by-program", async (AppDbContext db) =>
         .ToListAsync();
 
     return data;
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/allocations/by-safehouse", async (AppDbContext db) =>
 {
@@ -1652,7 +1655,7 @@ app.MapGet("/api/admin/allocations/by-safehouse", async (AppDbContext db) =>
         .ToListAsync();
 
     return data;
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 // ── Donor portal endpoints ──────────────────────────────────
 app.MapGet("/api/donor/my-donations", async (
@@ -2124,7 +2127,7 @@ public class CreateCheckoutRequest
     public string Mode { get; set; } = "one-time";
     [RegularExpression("monthly|quarterly|yearly", ErrorMessage = "Cadence must be 'monthly', 'quarterly', or 'yearly'.")]
     public string? Cadence { get; set; }
-    [Required, Range(100, 100_000_000, ErrorMessage = "Amount must be at least 100 cents (₱1).")]
+    [Required, Range(100, 100_000_000, ErrorMessage = "Amount must be at least 100 cents ($1).")]
     public long? AmountCents { get; set; }
     [EmailAddress]
     public string? DonorEmail { get; set; }

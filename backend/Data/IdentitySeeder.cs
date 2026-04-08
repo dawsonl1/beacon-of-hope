@@ -1,5 +1,7 @@
 using backend.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Hosting;
 
 namespace backend.Data;
 
@@ -9,6 +11,7 @@ public static class IdentitySeeder
     {
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+        var env = services.GetRequiredService<IWebHostEnvironment>();
 
         string[] roles = { "Admin", "Staff", "Donor" };
         foreach (var role in roles)
@@ -17,12 +20,15 @@ public static class IdentitySeeder
                 await roleManager.CreateAsync(new IdentityRole(role));
         }
 
-        await CreateUserIfNotExists(userManager, "admin@beaconofhope.org", "Admin",
-            "Director", "Reyes", "Test1234!@#$", null);
-        await CreateUserIfNotExists(userManager, "staff@beaconofhope.org", "Staff",
-            "Elena", "Reyes", "Test1234!@#$", null);
-        await CreateUserIfNotExists(userManager, "donor@beaconofhope.org", "Donor",
-            "Maria", "Chen", "Test1234!@#$", 1);
+        if (env.IsDevelopment())
+        {
+            await CreateUserIfNotExists(userManager, "admin@beaconofhope.org", "Admin",
+                "Director", "Reyes", "Test1234!@#$", null);
+            await CreateUserIfNotExists(userManager, "staff@beaconofhope.org", "Staff",
+                "Elena", "Reyes", "Test1234!@#$", null);
+            await CreateUserIfNotExists(userManager, "donor@beaconofhope.org", "Donor",
+                "Maria", "Chen", "Test1234!@#$", 1);
+        }
     }
 
     private static async Task CreateUserIfNotExists(

@@ -46,6 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           firstName: data.firstName ?? '',
           lastName: data.lastName ?? '',
           roles: data.roles ?? [],
+          supporterId: data.supporterId ?? null,
         };
         try { sessionStorage.setItem('auth_user', JSON.stringify(user)); } catch { /* ignore */ }
         setState({ user, isAuthenticated: true, isLoading: false });
@@ -86,6 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       firstName: data.firstName,
       lastName: data.lastName,
       roles: data.roles,
+      supporterId: data.supporterId ?? null,
     };
     try { sessionStorage.setItem('auth_user', JSON.stringify(user)); } catch { /* ignore */ }
     setState({ user, isAuthenticated: true, isLoading: false });

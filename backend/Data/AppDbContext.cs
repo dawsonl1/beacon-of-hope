@@ -128,13 +128,13 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
                 .HasDatabaseName("donations_campaign_name_idx");
 
             entity.Property(e => e.DonationId).HasColumnName("donation_id");
-            entity.Property(e => e.Amount).HasColumnName("amount");
+            entity.Property(e => e.Amount).HasColumnName("amount").HasColumnType("numeric(12,2)");
             entity.Property(e => e.CampaignName).HasColumnName("campaign_name");
             entity.Property(e => e.ChannelSource).HasColumnName("channel_source");
             entity.Property(e => e.CurrencyCode).HasColumnName("currency_code");
             entity.Property(e => e.DonationDate).HasColumnName("donation_date");
             entity.Property(e => e.DonationType).HasColumnName("donation_type");
-            entity.Property(e => e.EstimatedValue).HasColumnName("estimated_value");
+            entity.Property(e => e.EstimatedValue).HasColumnName("estimated_value").HasColumnType("numeric(12,2)");
             entity.Property(e => e.ImpactUnit).HasColumnName("impact_unit");
             entity.Property(e => e.IsRecurring).HasColumnName("is_recurring");
             entity.Property(e => e.Notes).HasColumnName("notes");
@@ -165,13 +165,14 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(e => e.AllocationId).HasColumnName("allocation_id");
             entity.Property(e => e.AllocationDate).HasColumnName("allocation_date");
             entity.Property(e => e.AllocationNotes).HasColumnName("allocation_notes");
-            entity.Property(e => e.AmountAllocated).HasColumnName("amount_allocated");
+            entity.Property(e => e.AmountAllocated).HasColumnName("amount_allocated").HasColumnType("numeric(12,2)");
             entity.Property(e => e.DonationId).HasColumnName("donation_id");
             entity.Property(e => e.ProgramArea).HasColumnName("program_area");
             entity.Property(e => e.SafehouseId).HasColumnName("safehouse_id");
 
             entity.HasOne(d => d.Donation).WithMany(p => p.DonationAllocations)
                 .HasForeignKey(d => d.DonationId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("donation_allocations_donation_id_fkey");
 
             entity.HasOne(d => d.Safehouse).WithMany(p => p.DonationAllocations)
@@ -201,6 +202,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Resident).WithMany(p => p.EducationRecords)
                 .HasForeignKey(d => d.ResidentId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("education_records_resident_id_fkey");
         });
 
@@ -229,6 +231,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Resident).WithMany(p => p.HealthWellbeingRecords)
                 .HasForeignKey(d => d.ResidentId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("health_wellbeing_records_resident_id_fkey");
         });
 
@@ -257,6 +260,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Resident).WithMany(p => p.HomeVisitations)
                 .HasForeignKey(d => d.ResidentId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("home_visitations_resident_id_fkey");
         });
 
@@ -270,7 +274,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
 
             entity.Property(e => e.ItemId).HasColumnName("item_id");
             entity.Property(e => e.DonationId).HasColumnName("donation_id");
-            entity.Property(e => e.EstimatedUnitValue).HasColumnName("estimated_unit_value");
+            entity.Property(e => e.EstimatedUnitValue).HasColumnName("estimated_unit_value").HasColumnType("numeric(12,2)");
             entity.Property(e => e.IntendedUse).HasColumnName("intended_use");
             entity.Property(e => e.ItemCategory).HasColumnName("item_category");
             entity.Property(e => e.ItemName).HasColumnName("item_name");
@@ -280,6 +284,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Donation).WithMany(p => p.InKindDonationItems)
                 .HasForeignKey(d => d.DonationId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("in_kind_donation_items_donation_id_fkey");
         });
 
@@ -339,6 +344,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Resident).WithMany(p => p.InterventionPlans)
                 .HasForeignKey(d => d.ResidentId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("intervention_plans_resident_id_fkey");
         });
 
@@ -419,6 +425,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Resident).WithMany(p => p.ProcessRecordings)
                 .HasForeignKey(d => d.ResidentId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("process_recordings_resident_id_fkey");
         });
 
@@ -558,7 +565,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
 
             entity.Property(e => e.PostId).HasColumnName("post_id");
             entity.Property(e => e.AvgViewDurationSeconds).HasColumnName("avg_view_duration_seconds");
-            entity.Property(e => e.BoostBudgetPhp).HasColumnName("boost_budget_php");
+            entity.Property(e => e.BoostBudgetPhp).HasColumnName("boost_budget_php").HasColumnType("numeric(12,2)");
             entity.Property(e => e.CallToActionType).HasColumnName("call_to_action_type");
             entity.Property(e => e.CampaignName).HasColumnName("campaign_name");
             entity.Property(e => e.Caption).HasColumnName("caption");
@@ -570,7 +577,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(e => e.DayOfWeek).HasColumnName("day_of_week");
             entity.Property(e => e.DonationReferrals).HasColumnName("donation_referrals");
             entity.Property(e => e.EngagementRate).HasColumnName("engagement_rate");
-            entity.Property(e => e.EstimatedDonationValuePhp).HasColumnName("estimated_donation_value_php");
+            entity.Property(e => e.EstimatedDonationValuePhp).HasColumnName("estimated_donation_value_php").HasColumnType("numeric(12,2)");
             entity.Property(e => e.FeaturesResidentStory).HasColumnName("features_resident_story");
             entity.Property(e => e.FollowerCountAtPost).HasColumnName("follower_count_at_post");
             entity.Property(e => e.Forwards).HasColumnName("forwards");
@@ -618,6 +625,14 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(e => e.RelationshipType).HasColumnName("relationship_type");
             entity.Property(e => e.Status).HasColumnName("status");
             entity.Property(e => e.SupporterType).HasColumnName("supporter_type");
+        });
+
+        modelBuilder.Entity<ApplicationUser>(entity =>
+        {
+            entity.HasOne(u => u.Supporter)
+                .WithMany()
+                .HasForeignKey(u => u.SupporterId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         OnModelCreatingPartial(modelBuilder);
