@@ -71,33 +71,54 @@ export default function ImpactPage() {
 
   return (
     <main className={styles.page}>
-      {/* ── Stats Banner ───────────────────────────────── */}
+      {/* ── Hero Stats ──────────────────────────────────── */}
       <section className={styles.statsBanner} ref={statsRef}>
         <div className={`${styles.statsInner} reveal`}>
-          <div className={styles.statsLabel}>
-            <h1 className={styles.statsHeadline}>Our impact, by the numbers</h1>
-            <p className={styles.statsUpdated}>Live data</p>
-          </div>
+          <h1 className={styles.statsHeadline}>Our impact, by the numbers</h1>
+          <p className={styles.statsUpdated}>Live data as of February 15, 2026</p>
           {error && <ApiError />}
           {summary && (
-            <div className={styles.statsGrid}>
-              <div className={styles.statItem}>
-                <span className={styles.statNumber}>{summary.totalResidents}</span>
-                <span className={styles.statDesc}>Girls served</span>
+            <>
+              <div className={styles.statsGrid}>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>{summary.totalResidents}</span>
+                  <span className={styles.statDesc}>Girls served</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>${Math.round(Number(summary.totalDonations) / 1000)}K</span>
+                  <span className={styles.statDesc}>Total donations</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>{summary.activeSafehouses}</span>
+                  <span className={styles.statDesc}>Active safehouses</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>{summary.activeResidents}</span>
+                  <span className={styles.statDesc}>Currently in care</span>
+                </div>
               </div>
-              <div className={styles.statItem}>
-                <span className={styles.statNumber}>{summary.reintegrationRate}%</span>
-                <span className={styles.statDesc}>Successfully reintegrated</span>
+
+              {/* Key metric — absolute reintegrations */}
+              <div className={styles.okrCard}>
+                <div className={styles.okrLeft}>
+                  <div className={styles.okrLabel}>Our North Star</div>
+                  <div className={styles.okrValue}>{summary.completedReintegrations}</div>
+                  <div className={styles.okrTitle}>Girls Reintegrated</div>
+                </div>
+                <div className={styles.okrRight}>
+                  <p className={styles.okrDesc}>
+                    {summary.completedReintegrations} girls have completed their journey — reunified with
+                    family, placed in foster care, or transitioned to independent living.
+                    Our goal is to reintegrate 40 girls by end of 2026, giving each one
+                    a real chance at a new life.
+                  </p>
+                  <div className={styles.okrBar}>
+                    <div className={styles.okrFill} style={{ width: `${Math.min(100, (summary.completedReintegrations / 40) * 100)}%` }} />
+                  </div>
+                  <div className={styles.okrTarget}>{summary.completedReintegrations} of 40 — {Math.round((summary.completedReintegrations / 40) * 100)}% to goal</div>
+                </div>
               </div>
-              <div className={styles.statItem}>
-                <span className={styles.statNumber}>${Math.round(Number(summary.totalDonations) / 1000)}K</span>
-                <span className={styles.statDesc}>Total donations</span>
-              </div>
-              <div className={styles.statItem}>
-                <span className={styles.statNumber}>{summary.activeSafehouses}</span>
-                <span className={styles.statDesc}>Active safehouses</span>
-              </div>
-            </div>
+            </>
           )}
         </div>
       </section>
