@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/api/:path*", "destination": "https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
