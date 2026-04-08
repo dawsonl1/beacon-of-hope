@@ -146,6 +146,57 @@ app.Use(async (context, next) =>
 app.UseAuthentication();
 app.UseAuthorization();
 
+// ── One-time data fix: update safehouses to Guam and fix donor name ──
+app.MapPost("/api/internal/fix-guam-data/{key}", async (string key, AppDbContext db) =>
+{
+    if (key != "beacon-fix-2026-04-08") return Results.NotFound();
+
+    // Update safehouses to Guam villages
+    var guamData = new Dictionary<int, (string Region, string City, string Province, string Country)>
+    {
+        { 1, ("Northern", "Dededo", "Guam", "USA") },
+        { 2, ("Central", "Tamuning", "Guam", "USA") },
+        { 3, ("Southern", "Inarajan", "Guam", "USA") },
+        { 4, ("Central", "Mangilao", "Guam", "USA") },
+        { 5, ("Northern", "Yigo", "Guam", "USA") },
+        { 6, ("Central", "Barrigada", "Guam", "USA") },
+        { 7, ("Southern", "Agat", "Guam", "USA") },
+        { 8, ("Northern", "Hagatna", "Guam", "USA") },
+        { 9, ("Southern", "Santa Rita", "Guam", "USA") },
+    };
+
+    var safehouses = await db.Safehouses.ToListAsync();
+    foreach (var sh in safehouses)
+    {
+        if (guamData.TryGetValue(sh.SafehouseId, out var g))
+        {
+            sh.Region = g.Region;
+            sh.City = g.City;
+            sh.Province = g.Province;
+            sh.Country = g.Country;
+        }
+    }
+
+    // Fix supporter 1 to match donor auth user (Maria Chen)
+    var supporter = await db.Supporters.FindAsync(1);
+    if (supporter != null)
+    {
+        supporter.SupporterType = "MonetaryDonor";
+        supporter.DisplayName = "Maria Chen";
+        supporter.FirstName = "Maria";
+        supporter.LastName = "Chen";
+        supporter.Email = "donor@beaconofhope.org";
+        supporter.Phone = "+1 (671) 555-0142";
+        supporter.Region = "Northern";
+        supporter.Country = "USA";
+        supporter.RelationshipType = "International";
+        supporter.AcquisitionChannel = "Website";
+    }
+
+    await db.SaveChangesAsync();
+    return Results.Ok(new { updated = safehouses.Count, supporterFixed = supporter != null });
+});
+
 // ── Auth endpoints ──────────────────────────────────────────
 
 app.MapPost("/api/auth/login", async (
