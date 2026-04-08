@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
-import { formatEnumLabel } from '../../constants';
+import { formatEnumLabel, APP_TODAY_STR } from '../../constants';
 import { DONATION_TYPES } from '../../domain';
 import styles from './DonationFormPage.module.css';
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'AUD', 'CAD'];
@@ -29,7 +29,7 @@ interface FormData {
 const blank: FormData = {
   supporterId: '',
   donationType: 'Monetary',
-  donationDate: new Date().toISOString().slice(0, 10),
+  donationDate: APP_TODAY_STR,
   currencyCode: 'USD',
   amount: '',
   estimatedValue: '',

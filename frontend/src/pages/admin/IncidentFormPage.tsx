@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { apiFetch } from '../../api';
+import { APP_TODAY_STR } from '../../constants';
 import { INCIDENT_TYPES, SEVERITY_LEVELS } from '../../domain';
 import { useSafehouse } from '../../contexts/SafehouseContext';
 import styles from './VisitationFormPage.module.css';
@@ -28,7 +29,7 @@ interface FormData {
 const emptyForm: FormData = {
   residentId: '',
   safehouseId: '',
-  incidentDate: new Date().toISOString().split('T')[0],
+  incidentDate: APP_TODAY_STR,
   incidentType: '',
   severity: 'Medium',
   description: '',

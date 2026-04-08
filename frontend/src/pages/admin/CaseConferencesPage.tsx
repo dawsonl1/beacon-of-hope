@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader2, Users } from 'lucide-react';
 import { apiFetch } from '../../api';
+import { APP_TODAY } from '../../constants';
 import Pagination from '../../components/admin/Pagination';
 import styles from './IncidentsPage.module.css';
 
@@ -40,8 +41,8 @@ export default function CaseConferencesPage() {
 
   useEffect(() => { fetchPlans(); }, [fetchPlans]);
 
-  const upcoming = plans.filter(p => p.caseConferenceDate && new Date(p.caseConferenceDate) >= new Date());
-  const allPast = plans.filter(p => !p.caseConferenceDate || new Date(p.caseConferenceDate) < new Date());
+  const upcoming = plans.filter(p => p.caseConferenceDate && new Date(p.caseConferenceDate) >= APP_TODAY);
+  const allPast = plans.filter(p => !p.caseConferenceDate || new Date(p.caseConferenceDate) < APP_TODAY);
   const past = allPast.slice((page - 1) * pageSize, page * pageSize);
 
   const STATUS_COLORS: Record<string, string> = {
