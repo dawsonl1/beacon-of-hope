@@ -47,15 +47,8 @@ export default function UsersPage() {
   const [deleteTarget, setDeleteTarget] = useState<AppUser | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  if (!isAdmin) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.error}>Access denied. Admin role required.</div>
-      </div>
-    );
-  }
-
   async function fetchUsers() {
+    if (!isAdmin) return;
     setLoading(true);
     try {
       const data = await apiFetch<AppUser[]>('/api/admin/users');
@@ -67,13 +60,22 @@ export default function UsersPage() {
     }
   }
 
-  useEffect(() => { fetchUsers(); }, []);
+  useEffect(() => { fetchUsers(); }, [isAdmin]);
 
   useEffect(() => {
+    if (!isAdmin) return;
     apiFetch<{ safehouseId: number; safehouseCode: string; name: string }[]>('/api/impact/safehouses')
       .then(data => setAllSafehouses(data.map(s => ({ safehouseId: s.safehouseId, safehouseCode: s.safehouseCode ?? '', name: s.name ?? '' }))))
       .catch(() => {});
-  }, []);
+  }, [isAdmin]);
+
+  if (!isAdmin) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.error}>Access denied. Admin role required.</div>
+      </div>
+    );
+  }
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
