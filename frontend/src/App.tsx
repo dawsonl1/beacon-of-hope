@@ -31,6 +31,8 @@ const SupporterDetailPage = lazy(() => import('./pages/admin/SupporterDetailPage
 const SupporterFormPage = lazy(() => import('./pages/admin/SupporterFormPage'));
 const DonationFormPage = lazy(() => import('./pages/admin/DonationFormPage'));
 const DonorPortal = lazy(() => import('./pages/DonorPortal'));
+const DonatePage = lazy(() => import('./pages/DonatePage'));
+const DonateSuccessPage = lazy(() => import('./pages/DonateSuccessPage'));
 
 function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -54,6 +56,8 @@ function App() {
             <Route path="/login" element={<PublicLayout><LoginPage /></PublicLayout>} />
             <Route path="/privacy-policy" element={<PublicLayout><PrivacyPolicyPage /></PublicLayout>} />
             <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
+            <Route path="/donate" element={<PublicLayout><Suspense fallback={<div>Loading...</div>}><DonatePage /></Suspense></PublicLayout>} />
+            <Route path="/donate/success" element={<PublicLayout><Suspense fallback={<div>Loading...</div>}><DonateSuccessPage /></Suspense></PublicLayout>} />
 
             {/* Donor portal */}
             <Route path="/donor" element={

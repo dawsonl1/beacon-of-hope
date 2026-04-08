@@ -90,10 +90,10 @@ export default function HomePage() {
             and a path to a new life.
           </p>
           <div className={styles.heroCtas}>
-            <a href="https://www.paypal.com/donate" target="_blank" rel="noopener noreferrer" className={styles.btnPrimary}>
+            <Link to="/donate" className={styles.btnPrimary}>
               <Heart size={16} />
               Donate Now
-            </a>
+            </Link>
             <a href="#impact" className={styles.btnSecondary}>
               See Our Impact
               <ArrowRight size={16} />
@@ -236,11 +236,11 @@ export default function HomePage() {
           </p>
 
           <div className={`${styles.involvedGrid} reveal-stagger`}>
-            <a href="https://www.paypal.com/donate" target="_blank" rel="noopener noreferrer" className={`${styles.involvedCard} reveal`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Link to="/donate" className={`${styles.involvedCard} reveal`} style={{ textDecoration: 'none', color: 'inherit' }}>
               <Heart size={28} className={styles.involvedIcon} />
               <h3>Donate</h3>
               <p>Your financial support funds shelter, education, counseling, and care.</p>
-            </a>
+            </Link>
             <div className={`${styles.involvedCard} reveal`}>
               <Users size={28} className={styles.involvedIcon} />
               <h3>Volunteer</h3>
@@ -278,10 +278,10 @@ export default function HomePage() {
               <span className={styles.donateDesc}>Full month of care for one girl</span>
             </div>
           </div>
-          <a href="https://www.paypal.com/donate" target="_blank" rel="noopener noreferrer" className={styles.btnPrimary} style={{ marginTop: '1.5rem' }}>
+          <Link to="/donate" className={styles.btnPrimary} style={{ marginTop: '1.5rem' }}>
             <Heart size={16} />
             Give Today
-          </a>
+          </Link>
         </div>
       </section>
     </main>

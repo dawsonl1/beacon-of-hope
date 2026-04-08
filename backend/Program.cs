@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
+using Stripe.Checkout;
 using backend.Data;
 using backend.Models;
 
@@ -68,6 +70,8 @@ builder.Services.AddCors(options =>
               .AllowCredentials();
     });
 });
+
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
 var app = builder.Build();
 
@@ -1560,6 +1564,120 @@ app.MapGet("/api/donor/my-donations", async (
     return Results.Ok(new { supporter, donations, allocations });
 }).RequireAuthorization();
 
+// ── Stripe donation endpoints ──────────────────────────────
+
+app.MapPost("/api/donate/create-checkout-session", async (HttpContext httpContext) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<CreateCheckoutRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    var (valid, err) = DtoValidator.Validate(body);
+    if (!valid) return Results.BadRequest(new { error = err });
+
+    var origin = httpContext.Request.Headers.Origin.FirstOrDefault()
+              ?? "https://intex2-1.vercel.app";
+
+    var options = new SessionCreateOptions
+    {
+        SuccessUrl = $"{origin}/donate/success?session_id={{CHECKOUT_SESSION_ID}}",
+        CancelUrl = $"{origin}/donate",
+        CustomerEmail = body.DonorEmail,
+    };
+
+    if (body.Mode == "one-time")
+    {
+        options.Mode = "payment";
+        options.LineItems = new List<SessionLineItemOptions>
+        {
+            new()
+            {
+                PriceData = new SessionLineItemPriceDataOptions
+                {
+                    Currency = "php",
+                    UnitAmount = body.AmountCents,
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    {
+                        Name = "One-Time Donation to Beacon of Hope"
+                    }
+                },
+                Quantity = 1
+            }
+        };
+    }
+    else
+    {
+        var interval = body.Cadence switch
+        {
+            "quarterly" => "month",
+            "yearly" => "year",
+            _ => "month"
+        };
+        var intervalCount = body.Cadence == "quarterly" ? 3L : 1L;
+
+        options.Mode = "subscription";
+        options.LineItems = new List<SessionLineItemOptions>
+        {
+            new()
+            {
+                PriceData = new SessionLineItemPriceDataOptions
+                {
+                    Currency = "php",
+                    UnitAmount = body.AmountCents,
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    {
+                        Name = "Recurring Donation to Beacon of Hope"
+                    },
+                    Recurring = new SessionLineItemPriceDataRecurringOptions
+                    {
+                        Interval = interval,
+                        IntervalCount = intervalCount
+                    }
+                },
+                Quantity = 1
+            }
+        };
+    }
+
+    var service = new SessionService();
+    var session = await service.CreateAsync(options);
+
+    return Results.Ok(new { url = session.Url });
+});
+
+app.MapGet("/api/donate/success", async (string session_id, AppDbContext db) =>
+{
+    var service = new SessionService();
+    var session = await service.GetAsync(session_id);
+
+    if (session.PaymentStatus != "paid" && session.Status != "complete")
+        return Results.BadRequest(new { error = "Payment not completed." });
+
+    // Idempotency: don't double-record
+    var existing = await db.Donations.AnyAsync(d => d.Notes != null && d.Notes.Contains(session_id));
+    if (!existing)
+    {
+        var donation = new backend.Models.Donation
+        {
+            DonationType = "Monetary",
+            DonationDate = DateOnly.FromDateTime(DateTime.UtcNow),
+            ChannelSource = "Stripe",
+            CurrencyCode = "PHP",
+            Amount = (session.AmountTotal ?? 0) / 100m,
+            IsRecurring = session.Mode == "subscription",
+            Notes = $"Stripe Session: {session_id}"
+        };
+        db.Donations.Add(donation);
+        await db.SaveChangesAsync();
+    }
+
+    return Results.Ok(new
+    {
+        amount = (session.AmountTotal ?? 0) / 100m,
+        currency = session.Currency?.ToUpper(),
+        isRecurring = session.Mode == "subscription",
+        email = session.CustomerEmail
+    });
+});
+
 app.Run();
 
 // ── Entity mapping helpers ─────────────────────────────────
@@ -1834,6 +1952,18 @@ public class DonationRequest
     [StringLength(200)]
     public string? CampaignName { get; set; }
     public string? Notes { get; set; }
+}
+
+public class CreateCheckoutRequest
+{
+    [Required, RegularExpression("one-time|recurring", ErrorMessage = "Mode must be 'one-time' or 'recurring'.")]
+    public string Mode { get; set; } = "one-time";
+    [RegularExpression("monthly|quarterly|yearly", ErrorMessage = "Cadence must be 'monthly', 'quarterly', or 'yearly'.")]
+    public string? Cadence { get; set; }
+    [Required, Range(100, 100_000_000, ErrorMessage = "Amount must be at least 100 cents (₱1).")]
+    public long? AmountCents { get; set; }
+    [EmailAddress]
+    public string? DonorEmail { get; set; }
 }
 
 public partial class Program { }
