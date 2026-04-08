@@ -68,6 +68,10 @@ const CalendarPage = lazy(() => import('./pages/admin/CalendarPage'));
 const IncidentsPage = lazy(() => import('./pages/admin/IncidentsPage'));
 const IncidentFormPage = lazy(() => import('./pages/admin/IncidentFormPage'));
 const IncidentDetailPage = lazy(() => import('./pages/admin/IncidentDetailPage'));
+const CaseQueuePage = lazy(() => import('./pages/admin/CaseQueuePage'));
+const CaseConferencesPage = lazy(() => import('./pages/admin/CaseConferencesPage'));
+const EducationRecordFormPage = lazy(() => import('./pages/admin/EducationRecordFormPage'));
+const HealthRecordFormPage = lazy(() => import('./pages/admin/HealthRecordFormPage'));
 const DonorPortal = lazy(() => import('./pages/DonorPortal'));
 const DonatePage = lazy(() => import('./pages/DonatePage'));
 const DonateSuccessPage = lazy(() => import('./pages/DonateSuccessPage'));
@@ -132,10 +136,14 @@ function App() {
               <Route path="incidents/new" element={<IncidentFormPage />} />
               <Route path="incidents/:id" element={<IncidentDetailPage />} />
               <Route path="incidents/:id/edit" element={<IncidentFormPage />} />
+              <Route path="queue" element={<CaseQueuePage />} />
+              <Route path="conferences" element={<CaseConferencesPage />} />
               <Route path="caseload" element={<CaseloadPage />} />
               <Route path="caseload/new" element={<ResidentFormPage />} />
               <Route path="caseload/:id" element={<ResidentDetailPage />} />
               <Route path="caseload/:id/edit" element={<ResidentFormPage />} />
+              <Route path="caseload/:id/education/new" element={<EducationRecordFormPage />} />
+              <Route path="caseload/:id/health/new" element={<HealthRecordFormPage />} />
               <Route path="reports" element={<ReportsPage />} />
               <Route path="visitations" element={<VisitationsPage />} />
               <Route path="visitations/new" element={<VisitationFormPage />} />

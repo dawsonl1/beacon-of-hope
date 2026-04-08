@@ -15,6 +15,8 @@ import {
   CheckSquare,
   Calendar,
   AlertTriangle,
+  Inbox,
+  MessageSquare,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { SafehouseProvider, useSafehouse } from '../contexts/SafehouseContext';
@@ -58,9 +60,11 @@ const navItems = [
   { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
   { to: '/admin/tasks', icon: CheckSquare, label: 'To-Do' },
   { to: '/admin/calendar', icon: Calendar, label: 'Calendar' },
+  { to: '/admin/queue', icon: Inbox, label: 'Queue' },
   { to: '/admin/caseload', icon: Users, label: 'Caseload' },
   { to: '/admin/recordings', icon: AudioLines, label: 'Recordings' },
   { to: '/admin/incidents', icon: AlertTriangle, label: 'Incidents' },
+  { to: '/admin/conferences', icon: MessageSquare, label: 'Conferences' },
   { to: '/admin/visitations', icon: Eye, label: 'Visitations' },
   { to: '/admin/donors', icon: HandHeart, label: 'Donors' },
   { to: '/admin/reports', icon: BarChart3, label: 'Reports' },

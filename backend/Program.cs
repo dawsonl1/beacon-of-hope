@@ -494,6 +494,140 @@ app.MapGet("/api/ml/predictions/{entityType}/{entityId}/history", async (string 
     return Results.Ok(history);
 }).RequireAuthorization();
 
+// ── Case Claiming ───────────────────────────────────────────
+
+app.MapPost("/api/admin/residents/{id}/claim", async (int id, HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db) =>
+{
+    var user = await userManager.GetUserAsync(httpContext.User);
+    if (user == null) return Results.Unauthorized();
+    var resident = await db.Residents.FindAsync(id);
+    if (resident == null) return Results.NotFound();
+    resident.AssignedSocialWorker = $"{user.FirstName} {user.LastName}";
+    await db.SaveChangesAsync();
+    // Auto-generate initial home visit to-do
+    db.StaffTasks.Add(new StaffTask { StaffUserId = user.Id, ResidentId = id, SafehouseId = resident.SafehouseId ?? 1, TaskType = "ScheduleHomeVisit", Title = $"Schedule initial home visit for {resident.InternalCode}", Description = "Initial assessment visit after claiming case", Status = "Pending" });
+    await db.SaveChangesAsync();
+    return Results.Ok(new { claimed = true });
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/residents/unclaimed", async (AppDbContext db, int? safehouseId) =>
+{
+    var query = db.Residents.Where(r => r.AssignedSocialWorker == null || r.AssignedSocialWorker == "").Where(r => r.CaseStatus == "Active");
+    if (safehouseId.HasValue) query = query.Where(r => r.SafehouseId == safehouseId.Value);
+    var items = await query.OrderByDescending(r => r.DateOfAdmission)
+        .Select(r => new { r.ResidentId, r.InternalCode, r.CaseControlNo, r.SafehouseId, safehouse = r.Safehouse != null ? r.Safehouse.Name : null, r.CaseCategory, r.CurrentRiskLevel, r.DateOfAdmission })
+        .ToListAsync();
+    return Results.Ok(items);
+}).RequireAuthorization();
+
+// ── Education Records ───────────────────────────────────────
+
+app.MapGet("/api/admin/education-records", async (AppDbContext db, int? residentId) =>
+{
+    var query = db.EducationRecords.AsQueryable();
+    if (residentId.HasValue) query = query.Where(e => e.ResidentId == residentId.Value);
+    var items = await query.OrderByDescending(e => e.RecordDate)
+        .Select(e => new { e.EducationRecordId, e.ResidentId, residentCode = e.Resident.InternalCode, e.RecordDate, e.EducationLevel, e.AttendanceRate, e.ProgressPercent, e.CompletionStatus, e.Notes, e.SchoolName, e.EnrollmentStatus })
+        .ToListAsync();
+    return Results.Ok(items);
+}).RequireAuthorization();
+
+app.MapPost("/api/admin/education-records", async (HttpContext httpContext, AppDbContext db) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<EducationRecordRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    var record = new EducationRecord { ResidentId = body.ResidentId, RecordDate = body.RecordDate, EducationLevel = body.EducationLevel, AttendanceRate = body.AttendanceRate, ProgressPercent = body.ProgressPercent, CompletionStatus = body.CompletionStatus, Notes = body.Notes, SchoolName = body.SchoolName, EnrollmentStatus = body.EnrollmentStatus };
+    db.EducationRecords.Add(record);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { record.EducationRecordId });
+}).RequireAuthorization();
+
+app.MapPut("/api/admin/education-records/{id}", async (int id, HttpContext httpContext, AppDbContext db) =>
+{
+    var record = await db.EducationRecords.FindAsync(id);
+    if (record == null) return Results.NotFound();
+    var body = await httpContext.Request.ReadFromJsonAsync<EducationRecordRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    record.RecordDate = body.RecordDate; record.EducationLevel = body.EducationLevel; record.AttendanceRate = body.AttendanceRate; record.ProgressPercent = body.ProgressPercent; record.CompletionStatus = body.CompletionStatus; record.Notes = body.Notes; record.SchoolName = body.SchoolName; record.EnrollmentStatus = body.EnrollmentStatus;
+    await db.SaveChangesAsync();
+    return Results.Ok(new { updated = true });
+}).RequireAuthorization();
+
+// ── Health Records ──────────────────────────────────────────
+
+app.MapGet("/api/admin/health-records", async (AppDbContext db, int? residentId) =>
+{
+    var query = db.HealthWellbeingRecords.AsQueryable();
+    if (residentId.HasValue) query = query.Where(h => h.ResidentId == residentId.Value);
+    var items = await query.OrderByDescending(h => h.RecordDate)
+        .Select(h => new { h.HealthRecordId, h.ResidentId, residentCode = h.Resident.InternalCode, h.RecordDate, h.WeightKg, h.HeightCm, h.Bmi, h.NutritionScore, h.SleepQualityScore, h.EnergyLevelScore, h.GeneralHealthScore, h.MedicalCheckupDone, h.DentalCheckupDone, h.PsychologicalCheckupDone, h.Notes })
+        .ToListAsync();
+    return Results.Ok(items);
+}).RequireAuthorization();
+
+app.MapPost("/api/admin/health-records", async (HttpContext httpContext, AppDbContext db) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<HealthRecordRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    var record = new HealthWellbeingRecord { ResidentId = body.ResidentId, RecordDate = body.RecordDate, WeightKg = body.WeightKg, HeightCm = body.HeightCm, Bmi = body.Bmi, NutritionScore = body.NutritionScore, SleepQualityScore = body.SleepQualityScore, EnergyLevelScore = body.EnergyLevelScore, GeneralHealthScore = body.GeneralHealthScore, MedicalCheckupDone = body.MedicalCheckupDone, DentalCheckupDone = body.DentalCheckupDone, PsychologicalCheckupDone = body.PsychologicalCheckupDone, Notes = body.Notes };
+    db.HealthWellbeingRecords.Add(record);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { record.HealthRecordId });
+}).RequireAuthorization();
+
+app.MapPut("/api/admin/health-records/{id}", async (int id, HttpContext httpContext, AppDbContext db) =>
+{
+    var record = await db.HealthWellbeingRecords.FindAsync(id);
+    if (record == null) return Results.NotFound();
+    var body = await httpContext.Request.ReadFromJsonAsync<HealthRecordRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    record.RecordDate = body.RecordDate; record.WeightKg = body.WeightKg; record.HeightCm = body.HeightCm; record.Bmi = body.Bmi; record.NutritionScore = body.NutritionScore; record.SleepQualityScore = body.SleepQualityScore; record.EnergyLevelScore = body.EnergyLevelScore; record.GeneralHealthScore = body.GeneralHealthScore; record.MedicalCheckupDone = body.MedicalCheckupDone; record.DentalCheckupDone = body.DentalCheckupDone; record.PsychologicalCheckupDone = body.PsychologicalCheckupDone; record.Notes = body.Notes;
+    await db.SaveChangesAsync();
+    return Results.Ok(new { updated = true });
+}).RequireAuthorization();
+
+// ── Intervention Plans ──────────────────────────────────────
+
+app.MapGet("/api/admin/intervention-plans", async (AppDbContext db, int? residentId) =>
+{
+    var query = db.InterventionPlans.AsQueryable();
+    if (residentId.HasValue) query = query.Where(p => p.ResidentId == residentId.Value);
+    var items = await query.OrderByDescending(p => p.CreatedAt)
+        .Select(p => new { p.PlanId, p.ResidentId, residentCode = p.Resident.InternalCode, p.PlanCategory, p.PlanDescription, p.ServicesProvided, p.TargetValue, p.TargetDate, p.Status, p.CaseConferenceDate, p.CreatedAt, p.UpdatedAt })
+        .ToListAsync();
+    return Results.Ok(items);
+}).RequireAuthorization();
+
+app.MapPost("/api/admin/intervention-plans", async (HttpContext httpContext, AppDbContext db) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<InterventionPlanRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    var plan = new InterventionPlan { ResidentId = body.ResidentId, PlanCategory = body.PlanCategory, PlanDescription = body.PlanDescription, ServicesProvided = body.ServicesProvided, TargetValue = body.TargetValue, TargetDate = body.TargetDate, Status = body.Status ?? "Open", CaseConferenceDate = body.CaseConferenceDate, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow };
+    db.InterventionPlans.Add(plan);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { plan.PlanId });
+}).RequireAuthorization();
+
+app.MapPut("/api/admin/intervention-plans/{id}", async (int id, HttpContext httpContext, AppDbContext db) =>
+{
+    var plan = await db.InterventionPlans.FindAsync(id);
+    if (plan == null) return Results.NotFound();
+    var body = await httpContext.Request.ReadFromJsonAsync<InterventionPlanRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    plan.PlanCategory = body.PlanCategory; plan.PlanDescription = body.PlanDescription; plan.ServicesProvided = body.ServicesProvided; plan.TargetValue = body.TargetValue; plan.TargetDate = body.TargetDate; plan.Status = body.Status ?? plan.Status; plan.CaseConferenceDate = body.CaseConferenceDate; plan.UpdatedAt = DateTime.UtcNow;
+    await db.SaveChangesAsync();
+    return Results.Ok(new { updated = true });
+}).RequireAuthorization();
+
+app.MapDelete("/api/admin/intervention-plans/{id}", async (int id, AppDbContext db) =>
+{
+    var plan = await db.InterventionPlans.FindAsync(id);
+    if (plan == null) return Results.NotFound();
+    db.InterventionPlans.Remove(plan);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { deleted = true });
+}).RequireAuthorization("AdminOnly");
+
 // ── Health endpoint ─────────────────────────────────────────
 
 app.MapGet("/api/health", async (AppDbContext db) =>
@@ -2385,5 +2519,11 @@ public class CreateCalendarEventRequest { public int SafehouseId { get; set; } p
 public class UpdateCalendarEventRequest { public string? Status { get; set; } public string? StartTime { get; set; } public string? EndTime { get; set; } public string? EventDate { get; set; } public string? Title { get; set; } public string? Description { get; set; } }
 
 public class IncidentRequest { public int? ResidentId { get; set; } public int? SafehouseId { get; set; } public DateOnly? IncidentDate { get; set; } public string? IncidentType { get; set; } public string? Severity { get; set; } public string? Description { get; set; } public string? ResponseTaken { get; set; } public string? ReportedBy { get; set; } public bool? Resolved { get; set; } public DateOnly? ResolutionDate { get; set; } public bool? FollowUpRequired { get; set; } }
+
+public class EducationRecordRequest { public int ResidentId { get; set; } public DateOnly? RecordDate { get; set; } public string? EducationLevel { get; set; } public decimal? AttendanceRate { get; set; } public decimal? ProgressPercent { get; set; } public string? CompletionStatus { get; set; } public string? Notes { get; set; } public string? SchoolName { get; set; } public string? EnrollmentStatus { get; set; } }
+
+public class HealthRecordRequest { public int ResidentId { get; set; } public DateOnly? RecordDate { get; set; } public decimal? WeightKg { get; set; } public decimal? HeightCm { get; set; } public decimal? Bmi { get; set; } public decimal? NutritionScore { get; set; } public decimal? SleepQualityScore { get; set; } public decimal? EnergyLevelScore { get; set; } public decimal? GeneralHealthScore { get; set; } public bool? MedicalCheckupDone { get; set; } public bool? DentalCheckupDone { get; set; } public bool? PsychologicalCheckupDone { get; set; } public string? Notes { get; set; } }
+
+public class InterventionPlanRequest { public int ResidentId { get; set; } public string? PlanCategory { get; set; } public string? PlanDescription { get; set; } public string? ServicesProvided { get; set; } public decimal? TargetValue { get; set; } public DateOnly? TargetDate { get; set; } public string? Status { get; set; } public DateOnly? CaseConferenceDate { get; set; } }
 
 public partial class Program { }
