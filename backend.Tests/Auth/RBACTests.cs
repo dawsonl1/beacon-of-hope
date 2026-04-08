@@ -91,14 +91,12 @@ public class RBACTests : IClassFixture<TestWebApplicationFactory>
     [InlineData("/api/admin/allocations/by-program")]
     [InlineData("/api/admin/allocations/by-safehouse")]
     [InlineData("/api/admin/residents-list")]
-    public async Task AdminReadEndpoints_DonorRole_Returns200(string url)
+    public async Task AdminReadEndpoints_DonorRole_Returns403(string url)
     {
-        // Donor has RequireAuthorization() (authenticated) for read endpoints.
-        // The app uses RequireAuthorization() (not RequireRole) for read endpoints,
-        // so any authenticated user can read.
+        // Admin endpoints require Admin or Staff role — Donor should be forbidden.
         var client = await AuthHelper.GetDonorClientAsync(_factory);
         var response = await client.GetAsync(url);
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     // ── Admin CUD (Create/Update/Delete) endpoints — AdminOnly ──
