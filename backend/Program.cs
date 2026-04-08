@@ -767,9 +767,16 @@ app.MapDelete("/api/admin/residents/{id:int}", async (int id, AppDbContext db) =
     if (resident == null)
         return Results.NotFound(new { error = "Resident not found." });
 
-    db.Residents.Remove(resident);
-    await db.SaveChangesAsync();
-    return Results.Ok(new { message = "Resident deleted." });
+    try
+    {
+        db.Residents.Remove(resident);
+        await db.SaveChangesAsync();
+        return Results.Ok(new { message = "Resident deleted." });
+    }
+    catch (Microsoft.EntityFrameworkCore.DbUpdateException)
+    {
+        return Results.Conflict(new { error = "Cannot delete this resident because they have associated records (education, visitations, recordings, etc.). Remove those records first." });
+    }
 }).RequireAuthorization("AdminOnly");
 
 app.MapGet("/api/admin/recent-donations", async (AppDbContext db) =>
@@ -1598,9 +1605,16 @@ app.MapDelete("/api/admin/donations/{id:int}", async (int id, AppDbContext db) =
     var donation = await db.Donations.FindAsync(id);
     if (donation == null) return Results.NotFound();
 
-    db.Donations.Remove(donation);
-    await db.SaveChangesAsync();
-    return Results.Ok(new { deleted = true });
+    try
+    {
+        db.Donations.Remove(donation);
+        await db.SaveChangesAsync();
+        return Results.Ok(new { deleted = true });
+    }
+    catch (Microsoft.EntityFrameworkCore.DbUpdateException)
+    {
+        return Results.Conflict(new { error = "Cannot delete this donation because it has associated allocations or in-kind items. Remove those records first." });
+    }
 }).RequireAuthorization("AdminOnly");
 
 // ── Allocation reports ──────────────────────────────────────
