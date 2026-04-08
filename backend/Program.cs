@@ -324,7 +324,7 @@ app.MapGet("/api/staff/tasks", async (HttpContext httpContext, UserManager<Appli
         .Select(t => new { t.StaffTaskId, t.StaffUserId, t.ResidentId, residentCode = t.Resident != null ? t.Resident.InternalCode : null, t.SafehouseId, t.TaskType, t.Title, t.Description, t.ContextJson, t.Status, t.SnoozeUntil, t.DueTriggerDate, t.CreatedAt, t.SourceEntityType, t.SourceEntityId })
         .ToListAsync();
     return Results.Ok(tasks);
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPost("/api/staff/tasks", async (HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db) =>
 {
@@ -336,7 +336,7 @@ app.MapPost("/api/staff/tasks", async (HttpContext httpContext, UserManager<Appl
     db.StaffTasks.Add(task);
     await db.SaveChangesAsync();
     return Results.Ok(new { task.StaffTaskId });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPut("/api/staff/tasks/{id}", async (int id, HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db) =>
 {
@@ -350,7 +350,7 @@ app.MapPut("/api/staff/tasks/{id}", async (int id, HttpContext httpContext, User
     if (body.SnoozeUntil.HasValue) { task.SnoozeUntil = body.SnoozeUntil.Value; task.Status = "Snoozed"; }
     await db.SaveChangesAsync();
     return Results.Ok(new { updated = true });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 // ── Calendar Events ─────────────────────────────────────────
 
@@ -366,7 +366,7 @@ app.MapGet("/api/staff/calendar", async (HttpContext httpContext, UserManager<Ap
         .Select(e => new { e.CalendarEventId, e.StaffUserId, e.SafehouseId, e.ResidentId, residentCode = e.Resident != null ? e.Resident.InternalCode : null, e.EventType, e.Title, e.Description, eventDate = e.EventDate.ToString("yyyy-MM-dd"), startTime = e.StartTime.HasValue ? e.StartTime.Value.ToString("HH:mm") : null, endTime = e.EndTime.HasValue ? e.EndTime.Value.ToString("HH:mm") : null, e.RecurrenceRule, e.SourceTaskId, e.Status, e.CreatedAt })
         .ToListAsync();
     return Results.Ok(events);
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPost("/api/staff/calendar", async (HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db) =>
 {
@@ -379,7 +379,7 @@ app.MapPost("/api/staff/calendar", async (HttpContext httpContext, UserManager<A
     if (body.SourceTaskId.HasValue) { var task = await db.StaffTasks.FirstOrDefaultAsync(t => t.StaffTaskId == body.SourceTaskId.Value); if (task != null) { task.Status = "Completed"; task.CompletedAt = DateTime.UtcNow; } }
     await db.SaveChangesAsync();
     return Results.Ok(new { evt.CalendarEventId });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPut("/api/staff/calendar/{id}", async (int id, HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db) =>
 {
@@ -397,7 +397,7 @@ app.MapPut("/api/staff/calendar/{id}", async (int id, HttpContext httpContext, U
     if (body.Description != null) evt.Description = body.Description;
     await db.SaveChangesAsync();
     return Results.Ok(new { updated = true });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapDelete("/api/staff/calendar/{id}", async (int id, HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db) =>
 {
@@ -408,7 +408,7 @@ app.MapDelete("/api/staff/calendar/{id}", async (int id, HttpContext httpContext
     evt.Status = "Cancelled";
     await db.SaveChangesAsync();
     return Results.Ok(new { cancelled = true });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 // ── Incident Management ─────────────────────────────────────
 
@@ -424,7 +424,7 @@ app.MapGet("/api/admin/incidents", async (AppDbContext db, int? safehouseId, int
         .Select(i => new { i.IncidentId, i.ResidentId, residentCode = i.Resident != null ? i.Resident.InternalCode : null, i.SafehouseId, i.IncidentDate, i.IncidentType, i.Severity, i.Description, i.ResponseTaken, i.ReportedBy, i.Resolved, i.ResolutionDate, i.FollowUpRequired })
         .ToListAsync();
     return Results.Ok(new { total, page, pageSize, items });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/incidents/{id}", async (int id, AppDbContext db) =>
 {
@@ -432,7 +432,7 @@ app.MapGet("/api/admin/incidents/{id}", async (int id, AppDbContext db) =>
         .Select(x => new { x.IncidentId, x.ResidentId, residentCode = x.Resident != null ? x.Resident.InternalCode : null, x.SafehouseId, x.IncidentDate, x.IncidentType, x.Severity, x.Description, x.ResponseTaken, x.ReportedBy, x.Resolved, x.ResolutionDate, x.FollowUpRequired })
         .FirstOrDefaultAsync();
     return i == null ? Results.NotFound() : Results.Ok(i);
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPost("/api/admin/incidents", async (HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db) =>
 {
@@ -455,7 +455,7 @@ app.MapPost("/api/admin/incidents", async (HttpContext httpContext, UserManager<
         }
     }
     return Results.Ok(new { incident.IncidentId });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPut("/api/admin/incidents/{id}", async (int id, HttpContext httpContext, AppDbContext db) =>
 {
@@ -466,7 +466,7 @@ app.MapPut("/api/admin/incidents/{id}", async (int id, HttpContext httpContext, 
     incident.ResidentId = body.ResidentId; incident.SafehouseId = body.SafehouseId; incident.IncidentDate = body.IncidentDate; incident.IncidentType = body.IncidentType; incident.Severity = body.Severity; incident.Description = body.Description; incident.ResponseTaken = body.ResponseTaken; incident.ReportedBy = body.ReportedBy; incident.Resolved = body.Resolved ?? incident.Resolved; incident.ResolutionDate = body.ResolutionDate; incident.FollowUpRequired = body.FollowUpRequired ?? incident.FollowUpRequired;
     await db.SaveChangesAsync();
     return Results.Ok(new { updated = true });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapDelete("/api/admin/incidents/{id}", async (int id, AppDbContext db) =>
 {
@@ -485,7 +485,7 @@ app.MapGet("/api/ml/predictions/{entityType}/{entityId}", async (string entityTy
         .Select(p => new { p.Id, p.EntityType, p.EntityId, p.ModelName, p.ModelVersion, p.Score, p.ScoreLabel, p.PredictedAt, p.Metadata })
         .ToListAsync();
     return Results.Ok(predictions);
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/ml/predictions/{entityType}/{entityId}/history", async (string entityType, int entityId, string? model, AppDbContext db) =>
 {
@@ -495,7 +495,7 @@ app.MapGet("/api/ml/predictions/{entityType}/{entityId}/history", async (string 
         .Select(p => new { p.Id, p.ModelName, p.Score, p.ScoreLabel, p.PredictedAt })
         .ToListAsync();
     return Results.Ok(history);
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 // ── Case Claiming ───────────────────────────────────────────
 
@@ -511,7 +511,7 @@ app.MapPost("/api/admin/residents/{id}/claim", async (int id, HttpContext httpCo
     db.StaffTasks.Add(new StaffTask { StaffUserId = user.Id, ResidentId = id, SafehouseId = resident.SafehouseId ?? 1, TaskType = "ScheduleHomeVisit", Title = $"Schedule initial home visit for {resident.InternalCode}", Description = "Initial assessment visit after claiming case", Status = "Pending" });
     await db.SaveChangesAsync();
     return Results.Ok(new { claimed = true });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/residents/unclaimed", async (AppDbContext db, int? safehouseId) =>
 {
@@ -521,7 +521,7 @@ app.MapGet("/api/admin/residents/unclaimed", async (AppDbContext db, int? safeho
         .Select(r => new { r.ResidentId, r.InternalCode, r.CaseControlNo, r.SafehouseId, safehouse = r.Safehouse != null ? r.Safehouse.Name : null, r.CaseCategory, r.CurrentRiskLevel, r.DateOfAdmission })
         .ToListAsync();
     return Results.Ok(items);
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 // ── Education Records ───────────────────────────────────────
 
@@ -533,7 +533,7 @@ app.MapGet("/api/admin/education-records", async (AppDbContext db, int? resident
         .Select(e => new { e.EducationRecordId, e.ResidentId, residentCode = e.Resident.InternalCode, e.RecordDate, e.EducationLevel, e.AttendanceRate, e.ProgressPercent, e.CompletionStatus, e.Notes, e.SchoolName, e.EnrollmentStatus })
         .ToListAsync();
     return Results.Ok(items);
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPost("/api/admin/education-records", async (HttpContext httpContext, AppDbContext db) =>
 {
@@ -543,7 +543,7 @@ app.MapPost("/api/admin/education-records", async (HttpContext httpContext, AppD
     db.EducationRecords.Add(record);
     await db.SaveChangesAsync();
     return Results.Ok(new { record.EducationRecordId });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPut("/api/admin/education-records/{id}", async (int id, HttpContext httpContext, AppDbContext db) =>
 {
@@ -554,7 +554,7 @@ app.MapPut("/api/admin/education-records/{id}", async (int id, HttpContext httpC
     record.RecordDate = body.RecordDate; record.EducationLevel = body.EducationLevel; record.AttendanceRate = body.AttendanceRate; record.ProgressPercent = body.ProgressPercent; record.CompletionStatus = body.CompletionStatus; record.Notes = body.Notes; record.SchoolName = body.SchoolName; record.EnrollmentStatus = body.EnrollmentStatus;
     await db.SaveChangesAsync();
     return Results.Ok(new { updated = true });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 // ── Health Records ──────────────────────────────────────────
 
@@ -566,7 +566,7 @@ app.MapGet("/api/admin/health-records", async (AppDbContext db, int? residentId)
         .Select(h => new { h.HealthRecordId, h.ResidentId, residentCode = h.Resident.InternalCode, h.RecordDate, h.WeightKg, h.HeightCm, h.Bmi, h.NutritionScore, h.SleepQualityScore, h.EnergyLevelScore, h.GeneralHealthScore, h.MedicalCheckupDone, h.DentalCheckupDone, h.PsychologicalCheckupDone, h.Notes })
         .ToListAsync();
     return Results.Ok(items);
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPost("/api/admin/health-records", async (HttpContext httpContext, AppDbContext db) =>
 {
@@ -576,7 +576,7 @@ app.MapPost("/api/admin/health-records", async (HttpContext httpContext, AppDbCo
     db.HealthWellbeingRecords.Add(record);
     await db.SaveChangesAsync();
     return Results.Ok(new { record.HealthRecordId });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPut("/api/admin/health-records/{id}", async (int id, HttpContext httpContext, AppDbContext db) =>
 {
@@ -587,7 +587,7 @@ app.MapPut("/api/admin/health-records/{id}", async (int id, HttpContext httpCont
     record.RecordDate = body.RecordDate; record.WeightKg = body.WeightKg; record.HeightCm = body.HeightCm; record.Bmi = body.Bmi; record.NutritionScore = body.NutritionScore; record.SleepQualityScore = body.SleepQualityScore; record.EnergyLevelScore = body.EnergyLevelScore; record.GeneralHealthScore = body.GeneralHealthScore; record.MedicalCheckupDone = body.MedicalCheckupDone; record.DentalCheckupDone = body.DentalCheckupDone; record.PsychologicalCheckupDone = body.PsychologicalCheckupDone; record.Notes = body.Notes;
     await db.SaveChangesAsync();
     return Results.Ok(new { updated = true });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 // ── Intervention Plans ──────────────────────────────────────
 
@@ -599,7 +599,7 @@ app.MapGet("/api/admin/intervention-plans", async (AppDbContext db, int? residen
         .Select(p => new { p.PlanId, p.ResidentId, residentCode = p.Resident.InternalCode, p.PlanCategory, p.PlanDescription, p.ServicesProvided, p.TargetValue, p.TargetDate, p.Status, p.CaseConferenceDate, p.CreatedAt, p.UpdatedAt })
         .ToListAsync();
     return Results.Ok(items);
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPost("/api/admin/intervention-plans", async (HttpContext httpContext, AppDbContext db) =>
 {
@@ -609,7 +609,7 @@ app.MapPost("/api/admin/intervention-plans", async (HttpContext httpContext, App
     db.InterventionPlans.Add(plan);
     await db.SaveChangesAsync();
     return Results.Ok(new { plan.PlanId });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapPut("/api/admin/intervention-plans/{id}", async (int id, HttpContext httpContext, AppDbContext db) =>
 {
@@ -620,7 +620,7 @@ app.MapPut("/api/admin/intervention-plans/{id}", async (int id, HttpContext http
     plan.PlanCategory = body.PlanCategory; plan.PlanDescription = body.PlanDescription; plan.ServicesProvided = body.ServicesProvided; plan.TargetValue = body.TargetValue; plan.TargetDate = body.TargetDate; plan.Status = body.Status ?? plan.Status; plan.CaseConferenceDate = body.CaseConferenceDate; plan.UpdatedAt = DateTime.UtcNow;
     await db.SaveChangesAsync();
     return Results.Ok(new { updated = true });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapDelete("/api/admin/intervention-plans/{id}", async (int id, AppDbContext db) =>
 {
@@ -662,7 +662,7 @@ app.MapGet("/api/admin/post-placement", async (AppDbContext db, int? safehouseId
         .ToListAsync();
 
     return Results.Ok(residents);
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 app.MapGet("/api/admin/post-placement/summary", async (AppDbContext db, int? safehouseId) =>
 {
@@ -674,7 +674,7 @@ app.MapGet("/api/admin/post-placement/summary", async (AppDbContext db, int? saf
     var byStatus = await query.GroupBy(r => r.CaseStatus).Select(g => new { status = g.Key, count = g.Count() }).ToListAsync();
 
     return Results.Ok(new { total, byType, byStatus });
-}).RequireAuthorization();
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
 // ── Health endpoint ─────────────────────────────────────────
 
