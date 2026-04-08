@@ -67,9 +67,11 @@ interface FormData {
   notesRestricted: string;
 }
 
+const today = new Date().toISOString().slice(0, 10);
+
 const EMPTY_FORM: FormData = {
-  caseControlNo: '', internalCode: '', safehouseId: '', caseStatus: '',
-  sex: '', dateOfBirth: '', birthStatus: '', placeOfBirth: '', religion: '',
+  caseControlNo: '', internalCode: '', safehouseId: '', caseStatus: 'Active',
+  sex: 'Female', dateOfBirth: '', birthStatus: '', placeOfBirth: '', religion: '',
   caseCategory: '',
   subCatOrphaned: false, subCatTrafficked: false, subCatChildLabor: false,
   subCatPhysicalAbuse: false, subCatSexualAbuse: false, subCatOsaec: false,
@@ -77,13 +79,13 @@ const EMPTY_FORM: FormData = {
   isPwd: false, pwdType: '', hasSpecialNeeds: false, specialNeedsDiagnosis: '',
   familyIs4ps: false, familySoloParent: false, familyIndigenous: false,
   familyParentPwd: false, familyInformalSettler: false,
-  dateOfAdmission: '', ageUponAdmission: '', presentAge: '', lengthOfStay: '',
+  dateOfAdmission: today, ageUponAdmission: '', presentAge: '', lengthOfStay: '',
   referralSource: '', referringAgencyPerson: '',
   dateColbRegistered: '', dateColbObtained: '',
   assignedSocialWorker: '', initialCaseAssessment: '', dateCaseStudyPrepared: '',
   reintegrationType: '', reintegrationStatus: '',
   initialRiskLevel: '', currentRiskLevel: '',
-  dateEnrolled: '', dateClosed: '', notesRestricted: '',
+  dateEnrolled: today, dateClosed: '', notesRestricted: '',
 };
 
 const SUB_CAT_FIELDS = [
@@ -276,47 +278,83 @@ export default function ResidentFormPage() {
       {error && <div className={styles.errorBanner}>{error}</div>}
 
       <form onSubmit={handleSubmit} className={styles.form}>
-        {/* Identity */}
+        {/* ── Essential Info (always visible, quick entry) ── */}
         <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Identity</legend>
+          <legend className={styles.legend}>Admission</legend>
+          <p className={styles.sectionHint}>Start here — codes are auto-generated on save.</p>
           <div className={styles.fieldGrid}>
             <label className={styles.label}>
-              Internal Code
-              <input className={styles.input} value={form.internalCode} onChange={(e) => updateField('internalCode', e.target.value)} />
-            </label>
-            <label className={styles.label}>
-              Case Control No.
-              <input className={styles.input} value={form.caseControlNo} onChange={(e) => updateField('caseControlNo', e.target.value)} />
-            </label>
-            <label className={styles.label}>
-              Safehouse
-              <select className={styles.select} value={form.safehouseId} onChange={(e) => updateField('safehouseId', e.target.value)}>
-                <option value="">-- Select --</option>
+              Safehouse *
+              <select className={styles.select} value={form.safehouseId} onChange={(e) => updateField('safehouseId', e.target.value)} required>
+                <option value="">Select safehouse</option>
                 {options?.safehouses.map((s) => (
                   <option key={s.safehouseId} value={String(s.safehouseId)}>{s.label}</option>
                 ))}
               </select>
             </label>
             <label className={styles.label}>
+              Case Category *
+              <select className={styles.select} value={form.caseCategory} onChange={(e) => updateField('caseCategory', e.target.value)} required>
+                <option value="">Select category</option>
+                {options?.categories.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </label>
+            <label className={styles.label}>
+              Risk Level *
+              <select className={styles.select} value={form.currentRiskLevel} onChange={(e) => { updateField('currentRiskLevel', e.target.value); if (!form.initialRiskLevel) updateField('initialRiskLevel', e.target.value); }} required>
+                <option value="">Select risk level</option>
+                {options?.riskLevels.map((r) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+            </label>
+            <label className={styles.label}>
+              Assigned Social Worker *
+              <select className={styles.select} value={form.assignedSocialWorker} onChange={(e) => updateField('assignedSocialWorker', e.target.value)} required>
+                <option value="">Select social worker</option>
+                {options?.socialWorkers.map((sw) => (
+                  <option key={sw} value={sw}>{sw}</option>
+                ))}
+              </select>
+            </label>
+            <label className={styles.label}>
+              Date of Admission
+              <input type="date" className={styles.input} value={form.dateOfAdmission} onChange={(e) => updateField('dateOfAdmission', e.target.value)} />
+            </label>
+            <label className={styles.label}>
               Case Status
               <select className={styles.select} value={form.caseStatus} onChange={(e) => updateField('caseStatus', e.target.value)}>
-                <option value="">-- Select --</option>
+                <option value="">Select status</option>
                 {options?.caseStatuses.map((s) => (
                   <option key={s} value={s}>{s}</option>
                 ))}
               </select>
             </label>
           </div>
+          {isEdit && (
+            <div className={styles.fieldGrid} style={{ marginTop: '0.75rem' }}>
+              <label className={styles.label}>
+                Internal Code
+                <input className={styles.input} value={form.internalCode} readOnly style={{ background: '#f5f5f5' }} />
+              </label>
+              <label className={styles.label}>
+                Case Control No.
+                <input className={styles.input} value={form.caseControlNo} readOnly style={{ background: '#f5f5f5' }} />
+              </label>
+            </div>
+          )}
         </fieldset>
 
-        {/* Demographics */}
+        {/* ── About the Resident ── */}
         <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Demographics</legend>
+          <legend className={styles.legend}>About the Resident</legend>
           <div className={styles.fieldGrid}>
             <label className={styles.label}>
               Sex
               <select className={styles.select} value={form.sex} onChange={(e) => updateField('sex', e.target.value)}>
-                <option value="">-- Select --</option>
+                <option value="">Select</option>
                 <option value="Female">Female</option>
                 <option value="Male">Male</option>
               </select>
@@ -326,48 +364,81 @@ export default function ResidentFormPage() {
               <input type="date" className={styles.input} value={form.dateOfBirth} onChange={(e) => updateField('dateOfBirth', e.target.value)} />
             </label>
             <label className={styles.label}>
-              Birth Status
-              <input className={styles.input} value={form.birthStatus} onChange={(e) => updateField('birthStatus', e.target.value)} />
+              Age upon Admission
+              <input className={styles.input} type="number" min="0" max="18" value={form.ageUponAdmission} onChange={(e) => updateField('ageUponAdmission', e.target.value)} placeholder="e.g. 14" />
             </label>
             <label className={styles.label}>
               Place of Birth
-              <input className={styles.input} value={form.placeOfBirth} onChange={(e) => updateField('placeOfBirth', e.target.value)} />
+              <input className={styles.input} value={form.placeOfBirth} onChange={(e) => updateField('placeOfBirth', e.target.value)} placeholder="Village or city" />
             </label>
             <label className={styles.label}>
               Religion
-              <input className={styles.input} value={form.religion} onChange={(e) => updateField('religion', e.target.value)} />
+              <input className={styles.input} value={form.religion} onChange={(e) => updateField('religion', e.target.value)} placeholder="e.g. Catholic" />
             </label>
             <label className={styles.label}>
-              Present Age
-              <input className={styles.input} value={form.presentAge} onChange={(e) => updateField('presentAge', e.target.value)} />
+              Birth Status
+              <input className={styles.input} value={form.birthStatus} onChange={(e) => updateField('birthStatus', e.target.value)} placeholder="e.g. Legitimate" />
             </label>
           </div>
         </fieldset>
 
-        {/* Case Info */}
+        {/* ── Case Details ── */}
         <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Case Information</legend>
-          <div className={styles.fieldGrid}>
-            <label className={styles.label}>
-              Case Category
-              <select className={styles.select} value={form.caseCategory} onChange={(e) => updateField('caseCategory', e.target.value)}>
-                <option value="">-- Select --</option>
-                {options?.categories.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-            </label>
-          </div>
+          <legend className={styles.legend}>Case Details</legend>
           <div className={styles.checkboxSection}>
-            <span className={styles.checkboxLabel}>Sub-Categories</span>
+            <span className={styles.checkboxLabel}>Sub-Categories (select all that apply)</span>
             <div className={styles.checkboxGrid}>
               {SUB_CAT_FIELDS.map(({ key, label }) => (
                 <label key={key} className={styles.checkbox}>
-                  <input
-                    type="checkbox"
-                    checked={form[key]}
-                    onChange={(e) => updateField(key, e.target.checked)}
-                  />
+                  <input type="checkbox" checked={form[key]} onChange={(e) => updateField(key, e.target.checked)} />
+                  <span>{label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className={styles.fieldGrid} style={{ marginTop: '1rem' }}>
+            <label className={styles.label}>
+              Referral Source
+              <input className={styles.input} value={form.referralSource} onChange={(e) => updateField('referralSource', e.target.value)} placeholder="e.g. DSWD, Court Order" />
+            </label>
+            <label className={styles.label}>
+              Referring Agency/Person
+              <input className={styles.input} value={form.referringAgencyPerson} onChange={(e) => updateField('referringAgencyPerson', e.target.value)} placeholder="Name of referring person or agency" />
+            </label>
+          </div>
+        </fieldset>
+
+        {/* ── Health & Family ── */}
+        <fieldset className={styles.fieldset}>
+          <legend className={styles.legend}>Health & Family</legend>
+          <div className={styles.fieldGrid}>
+            <label className={styles.checkbox}>
+              <input type="checkbox" checked={form.isPwd} onChange={(e) => updateField('isPwd', e.target.checked)} />
+              <span>Person with Disability (PWD)</span>
+            </label>
+            {form.isPwd && (
+              <label className={styles.label}>
+                PWD Type
+                <input className={styles.input} value={form.pwdType} onChange={(e) => updateField('pwdType', e.target.value)} placeholder="Type of disability" />
+              </label>
+            )}
+            <label className={styles.checkbox}>
+              <input type="checkbox" checked={form.hasSpecialNeeds} onChange={(e) => updateField('hasSpecialNeeds', e.target.checked)} />
+              <span>Has Special Needs</span>
+            </label>
+            {form.hasSpecialNeeds && (
+              <label className={styles.label}>
+                Diagnosis
+                <input className={styles.input} value={form.specialNeedsDiagnosis} onChange={(e) => updateField('specialNeedsDiagnosis', e.target.value)} placeholder="Diagnosis details" />
+              </label>
+            )}
+          </div>
+          <div className={styles.checkboxSection}>
+            <span className={styles.checkboxLabel}>Family Background</span>
+            <div className={styles.checkboxGrid}>
+              {FAMILY_FIELDS.map(({ key, label }) => (
+                <label key={key} className={styles.checkbox}>
+                  <input type="checkbox" checked={form[key]} onChange={(e) => updateField(key, e.target.checked)} />
                   <span>{label}</span>
                 </label>
               ))}
@@ -375,149 +446,37 @@ export default function ResidentFormPage() {
           </div>
         </fieldset>
 
-        {/* Disability / Special Needs */}
+        {/* ── Assessment & Notes ── */}
         <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Disability / Special Needs</legend>
-          <div className={styles.fieldGrid}>
-            <label className={styles.checkbox}>
-              <input type="checkbox" checked={form.isPwd} onChange={(e) => updateField('isPwd', e.target.checked)} />
-              <span>Person with Disability (PWD)</span>
-            </label>
-            <label className={styles.label}>
-              PWD Type
-              <input className={styles.input} value={form.pwdType} onChange={(e) => updateField('pwdType', e.target.value)} />
-            </label>
-            <label className={styles.checkbox}>
-              <input type="checkbox" checked={form.hasSpecialNeeds} onChange={(e) => updateField('hasSpecialNeeds', e.target.checked)} />
-              <span>Has Special Needs</span>
-            </label>
-            <label className={styles.label}>
-              Diagnosis
-              <input className={styles.input} value={form.specialNeedsDiagnosis} onChange={(e) => updateField('specialNeedsDiagnosis', e.target.value)} />
-            </label>
-          </div>
-        </fieldset>
-
-        {/* Family Profile */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Family Profile</legend>
-          <div className={styles.checkboxGrid}>
-            {FAMILY_FIELDS.map(({ key, label }) => (
-              <label key={key} className={styles.checkbox}>
-                <input
-                  type="checkbox"
-                  checked={form[key]}
-                  onChange={(e) => updateField(key, e.target.checked)}
-                />
-                <span>{label}</span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
-
-        {/* Admission & Referral */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Admission & Referral</legend>
-          <div className={styles.fieldGrid}>
-            <label className={styles.label}>
-              Date of Admission
-              <input type="date" className={styles.input} value={form.dateOfAdmission} onChange={(e) => updateField('dateOfAdmission', e.target.value)} />
-            </label>
-            <label className={styles.label}>
-              Age upon Admission
-              <input className={styles.input} value={form.ageUponAdmission} onChange={(e) => updateField('ageUponAdmission', e.target.value)} />
-            </label>
-            <label className={styles.label}>
-              Length of Stay
-              <input className={styles.input} value={form.lengthOfStay} onChange={(e) => updateField('lengthOfStay', e.target.value)} />
-            </label>
-            <label className={styles.label}>
-              Referral Source
-              <input className={styles.input} value={form.referralSource} onChange={(e) => updateField('referralSource', e.target.value)} />
-            </label>
-            <label className={styles.label}>
-              Referring Agency/Person
-              <input className={styles.input} value={form.referringAgencyPerson} onChange={(e) => updateField('referringAgencyPerson', e.target.value)} />
-            </label>
-            <label className={styles.label}>
-              COLB Registered
-              <input type="date" className={styles.input} value={form.dateColbRegistered} onChange={(e) => updateField('dateColbRegistered', e.target.value)} />
-            </label>
-            <label className={styles.label}>
-              COLB Obtained
-              <input type="date" className={styles.input} value={form.dateColbObtained} onChange={(e) => updateField('dateColbObtained', e.target.value)} />
-            </label>
-          </div>
-        </fieldset>
-
-        {/* Social Worker & Assessment */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Social Worker & Assessment</legend>
-          <div className={styles.fieldGrid}>
-            <label className={styles.label}>
-              Assigned Social Worker
-              <input className={styles.input} value={form.assignedSocialWorker} onChange={(e) => updateField('assignedSocialWorker', e.target.value)} />
-            </label>
-            <label className={styles.label}>
-              Case Study Prepared
-              <input type="date" className={styles.input} value={form.dateCaseStudyPrepared} onChange={(e) => updateField('dateCaseStudyPrepared', e.target.value)} />
-            </label>
-          </div>
-          <label className={styles.label} style={{ marginTop: '0.75rem' }}>
+          <legend className={styles.legend}>Assessment & Notes</legend>
+          <label className={styles.label}>
             Initial Case Assessment
-            <textarea
-              className={styles.textarea}
-              value={form.initialCaseAssessment}
-              onChange={(e) => updateField('initialCaseAssessment', e.target.value)}
-              rows={3}
-            />
+            <textarea className={styles.textarea} value={form.initialCaseAssessment} onChange={(e) => updateField('initialCaseAssessment', e.target.value)} rows={3} placeholder="Brief assessment of the resident's situation..." />
           </label>
-        </fieldset>
-
-        {/* Reintegration */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Reintegration</legend>
-          <div className={styles.fieldGrid}>
+          <label className={styles.label} style={{ marginTop: '0.75rem' }}>
+            Confidential Notes
+            <textarea className={styles.textarea} value={form.notesRestricted} onChange={(e) => updateField('notesRestricted', e.target.value)} rows={3} placeholder="Restricted notes — only visible to authorized staff" />
+          </label>
+          <div className={styles.fieldGrid} style={{ marginTop: '0.75rem' }}>
             <label className={styles.label}>
-              Type
-              <input className={styles.input} value={form.reintegrationType} onChange={(e) => updateField('reintegrationType', e.target.value)} />
-            </label>
-            <label className={styles.label}>
-              Status
-              <input className={styles.input} value={form.reintegrationStatus} onChange={(e) => updateField('reintegrationStatus', e.target.value)} />
-            </label>
-          </div>
-        </fieldset>
-
-        {/* Risk */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Risk Assessment</legend>
-          <div className={styles.fieldGrid}>
-            <label className={styles.label}>
-              Initial Risk Level
-              <select className={styles.select} value={form.initialRiskLevel} onChange={(e) => updateField('initialRiskLevel', e.target.value)}>
-                <option value="">-- Select --</option>
-                {options?.riskLevels.map((r) => (
-                  <option key={r} value={r}>{r}</option>
-                ))}
+              Reintegration Type
+              <select className={styles.select} value={form.reintegrationType} onChange={(e) => updateField('reintegrationType', e.target.value)}>
+                <option value="">Not applicable</option>
+                <option value="Family Reunification">Family Reunification</option>
+                <option value="Foster Care">Foster Care</option>
+                <option value="Independent Living">Independent Living</option>
               </select>
             </label>
             <label className={styles.label}>
-              Current Risk Level
-              <select className={styles.select} value={form.currentRiskLevel} onChange={(e) => updateField('currentRiskLevel', e.target.value)}>
-                <option value="">-- Select --</option>
-                {options?.riskLevels.map((r) => (
-                  <option key={r} value={r}>{r}</option>
-                ))}
+              Reintegration Status
+              <select className={styles.select} value={form.reintegrationStatus} onChange={(e) => updateField('reintegrationStatus', e.target.value)}>
+                <option value="">Not started</option>
+                <option value="Not Started">Not Started</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+                <option value="On Hold">On Hold</option>
               </select>
             </label>
-          </div>
-        </fieldset>
-
-        {/* Dates & Notes */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Enrollment & Notes</legend>
-          <div className={styles.fieldGrid}>
             <label className={styles.label}>
               Date Enrolled
               <input type="date" className={styles.input} value={form.dateEnrolled} onChange={(e) => updateField('dateEnrolled', e.target.value)} />
@@ -527,15 +486,6 @@ export default function ResidentFormPage() {
               <input type="date" className={styles.input} value={form.dateClosed} onChange={(e) => updateField('dateClosed', e.target.value)} />
             </label>
           </div>
-          <label className={styles.label} style={{ marginTop: '0.75rem' }}>
-            Notes (Restricted)
-            <textarea
-              className={styles.textarea}
-              value={form.notesRestricted}
-              onChange={(e) => updateField('notesRestricted', e.target.value)}
-              rows={3}
-            />
-          </label>
         </fieldset>
 
         {/* Actions */}

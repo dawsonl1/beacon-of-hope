@@ -5,6 +5,7 @@ import {
   Loader2, User, Briefcase, Heart, Home, Shield, ClipboardList, RefreshCw,
 } from 'lucide-react';
 import { apiFetch } from '../../api';
+import { formatDate } from '../../constants';
 import { useAuth } from '../../contexts/AuthContext';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
 import styles from './ResidentDetailPage.module.css';
@@ -230,16 +231,16 @@ export default function ResidentDetailPage() {
           <InfoField label="Internal Code" value={resident.internalCode} />
           <InfoField label="Case Control No." value={resident.caseControlNo} />
           <InfoField label="Safehouse" value={resident.safehouse} />
-          <InfoField label="Date Enrolled" value={resident.dateEnrolled} />
-          <InfoField label="Date Closed" value={resident.dateClosed} />
-          <InfoField label="Created" value={resident.createdAt ? new Date(resident.createdAt).toLocaleDateString() : null} />
+          <InfoField label="Date Enrolled" value={formatDate(resident.dateEnrolled)} />
+          <InfoField label="Date Closed" value={formatDate(resident.dateClosed)} />
+          <InfoField label="Created" value={formatDate(resident.createdAt)} />
         </div>
       </Section>
 
       <Section title="Demographics" icon={User}>
         <div className={styles.fieldGrid}>
           <InfoField label="Sex" value={resident.sex} />
-          <InfoField label="Date of Birth" value={resident.dateOfBirth} />
+          <InfoField label="Date of Birth" value={formatDate(resident.dateOfBirth)} />
           <InfoField label="Birth Status" value={resident.birthStatus} />
           <InfoField label="Place of Birth" value={resident.placeOfBirth} />
           <InfoField label="Religion" value={resident.religion} />
@@ -289,13 +290,13 @@ export default function ResidentDetailPage() {
 
       <Section title="Admission & Referral" icon={ClipboardList}>
         <div className={styles.fieldGrid}>
-          <InfoField label="Date of Admission" value={resident.dateOfAdmission} />
+          <InfoField label="Date of Admission" value={formatDate(resident.dateOfAdmission)} />
           <InfoField label="Age upon Admission" value={resident.ageUponAdmission} />
           <InfoField label="Length of Stay" value={resident.lengthOfStay} />
           <InfoField label="Referral Source" value={resident.referralSource} />
           <InfoField label="Referring Agency/Person" value={resident.referringAgencyPerson} />
-          <InfoField label="COLB Registered" value={resident.dateColbRegistered} />
-          <InfoField label="COLB Obtained" value={resident.dateColbObtained} />
+          <InfoField label="COLB Registered" value={formatDate(resident.dateColbRegistered)} />
+          <InfoField label="COLB Obtained" value={formatDate(resident.dateColbObtained)} />
         </div>
       </Section>
 
@@ -303,7 +304,7 @@ export default function ResidentDetailPage() {
         <div className={styles.fieldGrid}>
           <InfoField label="Assigned Social Worker" value={resident.assignedSocialWorker} />
           <InfoField label="Initial Assessment" value={resident.initialCaseAssessment} />
-          <InfoField label="Case Study Prepared" value={resident.dateCaseStudyPrepared} />
+          <InfoField label="Case Study Prepared" value={formatDate(resident.dateCaseStudyPrepared)} />
         </div>
       </Section>
 

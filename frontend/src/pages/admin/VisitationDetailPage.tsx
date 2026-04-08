@@ -4,6 +4,7 @@ import { ArrowLeft, Pencil, Trash2, AlertTriangle, Clock } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import { formatDate } from '../../constants';
+import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
 import styles from './VisitationDetailPage.module.css';
 
 interface VisitationDetail {
@@ -41,6 +42,7 @@ export default function VisitationDetailPage() {
   const [visitation, setVisitation] = useState<VisitationDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const isAdmin = user?.roles?.includes('Admin');
 
@@ -52,15 +54,14 @@ export default function VisitationDetailPage() {
   }, [id]);
 
   async function handleDelete() {
-    if (!confirm('Are you sure you want to delete this visitation record? This cannot be undone.')) return;
     setDeleting(true);
     try {
       await apiFetch(`/api/admin/visitations/${id}`, { method: 'DELETE' });
       navigate('/admin/visitations', { replace: true });
     } catch (err) {
       console.error(err);
-      alert('Failed to delete visitation.');
       setDeleting(false);
+      setShowDeleteDialog(false);
     }
   }
 
@@ -104,15 +105,25 @@ export default function VisitationDetailPage() {
           {isAdmin && (
             <button
               className={styles.deleteBtn}
-              onClick={handleDelete}
+              onClick={() => setShowDeleteDialog(true)}
               disabled={deleting}
             >
               <Trash2 size={14} />
-              {deleting ? 'Deleting...' : 'Delete'}
+              Delete
             </button>
           )}
         </div>
       </header>
+
+      {showDeleteDialog && (
+        <DeleteConfirmDialog
+          title="Delete Visitation?"
+          message="This visitation record will be permanently deleted. This action cannot be undone."
+          onConfirm={handleDelete}
+          onCancel={() => setShowDeleteDialog(false)}
+          isDeleting={deleting}
+        />
+      )}
 
       {/* ── Visit Info ───────────────────────────────── */}
       <div className={styles.card}>

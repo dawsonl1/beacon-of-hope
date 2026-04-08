@@ -16,6 +16,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
+  ReferenceLine,
 } from 'recharts';
 import styles from './ImpactPage.module.css';
 
@@ -70,33 +71,54 @@ export default function ImpactPage() {
 
   return (
     <main className={styles.page}>
-      {/* ── Stats Banner ───────────────────────────────── */}
+      {/* ── Hero Stats ──────────────────────────────────── */}
       <section className={styles.statsBanner} ref={statsRef}>
         <div className={`${styles.statsInner} reveal`}>
-          <div className={styles.statsLabel}>
-            <h1 className={styles.statsHeadline}>Our impact, by the numbers</h1>
-            <p className={styles.statsUpdated}>Live data</p>
-          </div>
+          <h1 className={styles.statsHeadline}>Our impact, by the numbers</h1>
+          <p className={styles.statsUpdated}>Live data as of February 15, 2026</p>
           {error && <ApiError />}
           {summary && (
-            <div className={styles.statsGrid}>
-              <div className={styles.statItem}>
-                <span className={styles.statNumber}>{summary.totalResidents}</span>
-                <span className={styles.statDesc}>Girls served</span>
+            <>
+              <div className={styles.statsGrid}>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>{summary.totalResidents}</span>
+                  <span className={styles.statDesc}>Girls served</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>${Math.round(Number(summary.totalDonations) / 1000)}K</span>
+                  <span className={styles.statDesc}>Total donations</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>{summary.activeSafehouses}</span>
+                  <span className={styles.statDesc}>Active safehouses</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>{summary.activeResidents}</span>
+                  <span className={styles.statDesc}>Currently in care</span>
+                </div>
               </div>
-              <div className={styles.statItem}>
-                <span className={styles.statNumber}>{summary.reintegrationRate}%</span>
-                <span className={styles.statDesc}>Successfully reintegrated</span>
+
+              {/* Key metric — absolute reintegrations */}
+              <div className={styles.okrCard}>
+                <div className={styles.okrLeft}>
+                  <div className={styles.okrLabel}>Our North Star</div>
+                  <div className={styles.okrValue}>{summary.completedReintegrations}</div>
+                  <div className={styles.okrTitle}>Girls Reintegrated</div>
+                </div>
+                <div className={styles.okrRight}>
+                  <p className={styles.okrDesc}>
+                    Of {summary.totalResidents} girls served, {summary.activeResidents} are currently
+                    receiving care and {summary.completedReintegrations} have completed their
+                    journey — reunified with family, placed in foster care, or transitioned to
+                    independent living. Our goal is 40 successful reintegrations by end of 2026.
+                  </p>
+                  <div className={styles.okrBar}>
+                    <div className={styles.okrFill} style={{ width: `${Math.min(100, (summary.completedReintegrations / 40) * 100)}%` }} />
+                  </div>
+                  <div className={styles.okrTarget}>{summary.completedReintegrations} of 40 — {Math.round((summary.completedReintegrations / 40) * 100)}% to goal</div>
+                </div>
               </div>
-              <div className={styles.statItem}>
-                <span className={styles.statNumber}>${(Number(summary.totalDonations) / 1000000).toFixed(1)}M</span>
-                <span className={styles.statDesc}>Total donations</span>
-              </div>
-              <div className={styles.statItem}>
-                <span className={styles.statNumber}>{summary.activeSafehouses}</span>
-                <span className={styles.statDesc}>Active safehouses</span>
-              </div>
-            </div>
+            </>
           )}
         </div>
       </section>
@@ -110,6 +132,8 @@ export default function ImpactPage() {
               {latestDonation && (
                 <div className={styles.chartHighlight}>
                   <span className={styles.chartBigNumber}>${(latestDonation.total / 1000).toFixed(1)}k</span>
+                  <span className={styles.chartSubtext}> raised this month</span>
+                  <span className={styles.chartGoalText}> &middot; $15k goal</span>
                 </div>
               )}
             </div>
@@ -135,6 +159,13 @@ export default function ImpactPage() {
                   tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`}
                 />
                 <Tooltip content={<ChartTooltip prefix="$" />} cursor={{ fill: 'rgba(212, 168, 83, 0.08)' }} />
+                <ReferenceLine
+                  y={15000}
+                  stroke="#0F8F7D"
+                  strokeDasharray="6 4"
+                  strokeWidth={2}
+                  label={{ value: 'Monthly Goal', position: 'right', fill: '#0F8F7D', fontSize: 12, fontWeight: 600 }}
+                />
                 <Bar dataKey="total" radius={[4, 4, 0, 0]}>
                   {monthlyDonations.map((_, i) => (
                     <Cell
@@ -155,40 +186,42 @@ export default function ImpactPage() {
       <section className={styles.metricsSection} ref={metricsRef}>
         <div className={`${styles.metricsInner} reveal`}>
           <p className={styles.chartLabel}>Program outcomes</p>
-          <div className={`${styles.metricsGrid} reveal-stagger`}>
-            <div className={`${styles.metricCard} reveal`}>
-              <span className={styles.metricNumber}>$12.4k</span>
-              <span className={styles.metricLabel}>Avg monthly donations</span>
+          {summary && (
+          <div className={styles.metricsGrid}>
+            <div className={styles.metricCard}>
+              <span className={styles.metricNumber}>{summary.completedReintegrations}</span>
+              <span className={styles.metricLabel}>Girls reunified with families</span>
               <span className={styles.metricChange}>
                 <ArrowUpRight size={12} />
-                +10.7% last mo
+                {summary.reintegrationRate}% reintegrated into families
               </span>
             </div>
-            <div className={`${styles.metricCard} reveal`}>
-              <span className={styles.metricNumber}>81%</span>
-              <span className={styles.metricLabel}>Avg education progress</span>
+            <div className={styles.metricCard}>
+              <span className={styles.metricNumber}>{summary.activeResidents}</span>
+              <span className={styles.metricLabel}>Girls currently in our care</span>
               <span className={styles.metricChange}>
                 <ArrowUpRight size={12} />
-                +4.2% last mo
+                Receiving shelter, education &amp; counseling
               </span>
             </div>
-            <div className={`${styles.metricCard} reveal`}>
-              <span className={styles.metricNumber}>89%</span>
-              <span className={styles.metricLabel}>Avg health score</span>
+            <div className={styles.metricCard}>
+              <span className={styles.metricNumber}>${(summary.totalDonations / 1000).toFixed(0)}k</span>
+              <span className={styles.metricLabel}>Total donations to date</span>
               <span className={styles.metricChange}>
                 <ArrowUpRight size={12} />
-                +1.8% last mo
+                Every dollar transforms a life
               </span>
             </div>
-            <div className={`${styles.metricCard} reveal`}>
-              <span className={styles.metricNumber}>94%</span>
-              <span className={styles.metricLabel}>Safehouse occupancy</span>
+            <div className={styles.metricCard}>
+              <span className={styles.metricNumber}>{summary.activeSafehouses}</span>
+              <span className={styles.metricLabel}>Active safehouses</span>
               <span className={styles.metricChange}>
                 <ArrowUpRight size={12} />
-                +2.1% last mo
+                Operating across Guam
               </span>
             </div>
           </div>
+          )}
         </div>
       </section>
 
@@ -199,7 +232,7 @@ export default function ImpactPage() {
             <div>
               <p className={styles.chartLabel}>Where your donations go</p>
               <div className={styles.chartHighlight}>
-                <span className={styles.chartBigNumber}>$177k</span>
+                <span className={styles.chartBigNumber}>${Math.round(allocationData.reduce((sum, d) => sum + d.amount, 0) / 1000)}k</span>
                 <span className={styles.chartSubtext}>total allocated</span>
               </div>
             </div>
@@ -245,10 +278,11 @@ export default function ImpactPage() {
               <span className={styles.storyTag}>Education</span>
               <h2 className={styles.storyTitle}>Stories of hope</h2>
               <p className={styles.storyBody}>
-                A 15-year-old referred through a government agency arrived with no
-                formal schooling. After 18 months in our education program, she
-                completed her elementary equivalency and is now enrolled in
-                secondary school with an 87% attendance rate.
+                A 15-year-old arrived at our safehouse with no formal schooling and
+                little hope for the future. After 18 months in our education program,
+                she completed her elementary equivalency, discovered a passion for
+                science, and now dreams of becoming a nurse. &ldquo;For the first time,
+                I believe my life can be different,&rdquo; she told her social worker.
               </p>
               <p className={styles.storyNote}>
                 Names and identifying details have been changed to protect privacy.
@@ -284,8 +318,18 @@ export default function ImpactPage() {
       {/* ── Bottom CTA ──────────────────────────────────── */}
       <section className={styles.bottomCta} ref={ctaRef}>
         <div className={`${styles.ctaInner} reveal`}>
+          {latestDonation && (
+            <div className={styles.goalProgress}>
+              <div className={styles.goalBar}>
+                <div className={styles.goalFill} style={{ width: `${Math.min(100, (latestDonation.total / 15000) * 100)}%` }} />
+              </div>
+              <p className={styles.goalText}>
+                ${(latestDonation.total / 1000).toFixed(1)}k of $15k monthly goal — {Math.round((latestDonation.total / 15000) * 100)}% there
+              </p>
+            </div>
+          )}
           <h2 className={styles.ctaTitle}>
-            Inspired by what you've seen? Help us do more.
+            Help us reach our goal this month.
           </h2>
           <Link to="/donate" className={styles.ctaButton}>
             <Heart size={16} />

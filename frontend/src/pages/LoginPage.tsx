@@ -81,7 +81,7 @@ export default function LoginPage() {
             <span className={styles.logoIcon}>&#9670;</span>
             <h1 className={styles.title}>Beacon of Hope</h1>
             <p className={styles.subtitle}>Safe homes for girls in Guam</p>
-            <p className={styles.nonprofit}>501(c)(3) Nonprofit Organization</p>
+            <p className={styles.nonprofit}>Beacon of Hope Foundation</p>
           </div>
 
           {error && (
@@ -167,6 +167,9 @@ export default function LoginPage() {
           </form>
 
           <div className={styles.footer}>
+            <p className={styles.switchText}>
+              Want to support our mission? <Link to="/donate" className={styles.backLink}>Make a donation</Link>
+            </p>
             <Link to="/" className={styles.backLink}>
               Back to homepage
             </Link>

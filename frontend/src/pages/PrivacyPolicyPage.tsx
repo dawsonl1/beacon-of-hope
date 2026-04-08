@@ -113,6 +113,12 @@ export default function PrivacyPolicyPage() {
                     <td>Static assets, access logs</td>
                     <td><a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">Link</a></td>
                   </tr>
+                  <tr>
+                    <td>Stripe</td>
+                    <td>Payment processing</td>
+                    <td>Donor email, donation amount, payment details</td>
+                    <td><a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer">Link</a></td>
+                  </tr>
                 </tbody>
               </table>
             </div>

@@ -325,7 +325,7 @@ export default function DonorsPage() {
                           <span className={styles.supporterName}>{s.displayName || `${s.firstName ?? ''} ${s.lastName ?? ''}`.trim() || 'Unnamed'}</span>
                           {s.organizationName && <span className={styles.supporterOrg}>{s.organizationName}</span>}
                         </td>
-                        <td>{s.supporterType ? <span className={styles.typeBadge}>{s.supporterType}</span> : '--'}</td>
+                        <td>{s.supporterType ? <span className={styles.typeBadge}>{formatEnumLabel(s.supporterType)}</span> : '--'}</td>
                         <td><span className={statusClassName(s.status)}>{s.status ?? '--'}</span></td>
                         <td>{s.email ?? '--'}</td>
                         <td>{[s.region, s.country].filter(Boolean).join(', ') || '--'}</td>

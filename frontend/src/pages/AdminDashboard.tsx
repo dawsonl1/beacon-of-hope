@@ -60,6 +60,7 @@ interface Metrics {
   donationChange: number;
   upcomingConferences: number;
   nextConference: string | null;
+  dataAsOf: string | null;
 }
 
 interface ApiResident {
@@ -84,12 +85,12 @@ interface ApiDonation {
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const today = new Date();
-  const dateStr = today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [residents, setResidents] = useState<ResidentRow[]>([]);
+  const [totalResidents, setTotalResidents] = useState(0);
   const [donations, setDonations] = useState<RecentDonation[]>([]);
+  const dataDateStr = 'Data as of February 15, 2026';
   const [activeResidentsChart, setActiveResidentsChart] = useState<Array<{ month: string; count: number }>>([]);
   const [flaggedChart, setFlaggedChart] = useState<Array<{ month: string; count: number }>>([]);
   const [channels, setChannels] = useState<Array<{ channel: string; amount: number }>>([]);
@@ -101,8 +102,9 @@ export default function AdminDashboard() {
 
     apiFetch<Metrics>('/api/admin/metrics').then(setMetrics).catch(onCriticalErr);
 
-    apiFetch<{ items: ApiResident[] }>('/api/admin/residents').then(resp => {
+    apiFetch<{ items: ApiResident[]; totalCount: number }>('/api/admin/residents').then(resp => {
       const data = resp.items ?? [];
+      setTotalResidents(resp.totalCount ?? data.length);
       setResidents(data.map(r => {
         let lastSessionStr = 'Unknown';
         if (r.lastSession) {
@@ -156,7 +158,7 @@ export default function AdminDashboard() {
             <h1 className={styles.title}>Dashboard</h1>
             <span className={styles.roleBadge}>Admin</span>
           </div>
-          <p className={styles.dateText}>{dateStr}</p>
+          <p className={styles.dateText}>{dataDateStr}</p>
         </div>
         <div className={styles.quickActions}>
           <button className={styles.actionBtn} onClick={() => navigate('/admin/caseload/new')}>
@@ -242,7 +244,7 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {residents.map((r, i) => (
+                {residents.slice(0, 8).map((r, i) => (
                   <tr key={`${r.code}-${i}`} className={r.riskLevel === 'Critical' ? styles.rowCritical : ''}>
                     <td>
                       <span className={styles.residentCode}>{r.code}</span>
@@ -271,6 +273,13 @@ export default function AdminDashboard() {
               </tbody>
             </table>
           </div>
+          {totalResidents > 8 && (
+            <div className={styles.viewAllRow}>
+              <button className={styles.viewAllBtn} onClick={() => navigate('/admin/caseload')}>
+                View all {totalResidents} residents
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Right column: Recent Donations + Channel breakdown */}
@@ -301,10 +310,10 @@ export default function AdminDashboard() {
               <h2 className={styles.cardTitle}>By Channel</h2>
               <span className={styles.cardSubtitle}>Acquisition source</span>
             </div>
-            <ResponsiveContainer width="100%" height={160}>
+            <ResponsiveContainer width="100%" height={220}>
               <BarChart data={channels} layout="vertical" barCategoryGap="25%">
                 <XAxis type="number" hide />
-                <YAxis dataKey="channel" type="category" tick={{ fontSize: 12, fill: '#8A8078' }} axisLine={false} tickLine={false} width={55} />
+                <YAxis dataKey="channel" type="category" tick={{ fontSize: 11, fill: '#8A8078' }} axisLine={false} tickLine={false} width={85} />
                 <Tooltip content={<ChartTooltip prefix="$" />} cursor={{ fill: 'rgba(212, 168, 83, 0.06)' }} />
                 <Bar dataKey="amount" radius={[0, 4, 4, 0]}>
                   {channels.map((_, i) => (

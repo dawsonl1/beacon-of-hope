@@ -82,7 +82,7 @@ export default function HomePage() {
           <p className={styles.heroLabel}>Beacon of Hope Foundation</p>
           <h1 className={styles.heroHeadline}>
             Restoring hope,<br />
-            <em>one child at a time</em>
+            <em>one life at a time</em>
           </h1>
           <p className={styles.heroSub}>
             We operate safe homes in Guam for girls who are survivors
@@ -114,26 +114,26 @@ export default function HomePage() {
           </div>
           {error && <ApiError />}
           {impact && (
-            <div className={`${styles.impactGrid} reveal-stagger`}>
-              <div className={`${styles.statCard} reveal`}>
+            <div className={styles.impactGrid}>
+              <div className={styles.statCard}>
                 <span className={styles.statNumber}>
                   <Counter end={impact.totalResidents} />
                 </span>
-                <span className={styles.statDesc}>Girls served since founding</span>
+                <span className={styles.statDesc}>Lives transformed</span>
               </div>
-              <div className={`${styles.statCard} reveal`}>
+              <div className={styles.statCard}>
                 <span className={styles.statNumber}>
                   <Counter end={impact.reintegrationRate} suffix="%" />
                 </span>
                 <span className={styles.statDesc}>Successfully reintegrated</span>
               </div>
-              <div className={`${styles.statCard} reveal`}>
+              <div className={styles.statCard}>
                 <span className={styles.statNumber}>
                   <Counter end={Math.round(impact.totalDonations / 1000)} prefix="$" suffix="K" />
                 </span>
                 <span className={styles.statDesc}>Donations received</span>
               </div>
-              <div className={`${styles.statCard} reveal`}>
+              <div className={styles.statCard}>
                 <span className={styles.statNumber}>
                   <Counter end={impact.activeSafehouses} />
                 </span>
@@ -241,21 +241,21 @@ export default function HomePage() {
               <h3>Donate</h3>
               <p>Your financial support funds shelter, education, counseling, and care.</p>
             </Link>
-            <div className={`${styles.involvedCard} reveal`}>
+            <Link to="/donate" className={`${styles.involvedCard} reveal`} style={{ textDecoration: 'none', color: 'inherit' }}>
               <Users size={28} className={styles.involvedIcon} />
               <h3>Volunteer</h3>
               <p>Give your time and skills to help our team on the ground.</p>
-            </div>
-            <Link to="/login" className={`${styles.involvedCard} reveal`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            </Link>
+            <Link to="/donate" className={`${styles.involvedCard} reveal`} style={{ textDecoration: 'none', color: 'inherit' }}>
               <HandHeart size={28} className={styles.involvedIcon} />
               <h3>Partner</h3>
               <p>Bring your church, company, or community alongside our mission.</p>
             </Link>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className={`${styles.involvedCard} reveal`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Link to="/newsletter" className={`${styles.involvedCard} reveal`} style={{ textDecoration: 'none', color: 'inherit' }}>
               <Megaphone size={28} className={styles.involvedIcon} />
               <h3>Advocate</h3>
               <p>Amplify our voice on social media and raise awareness.</p>
-            </a>
+            </Link>
           </div>
         </div>
       </section>

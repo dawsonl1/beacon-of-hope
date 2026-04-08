@@ -5,7 +5,7 @@ import { apiFetch } from '../../api';
 import { formatEnumLabel } from '../../constants';
 import { DONATION_TYPES } from '../../domain';
 import styles from './DonationFormPage.module.css';
-const CURRENCIES = ['PHP', 'USD', 'EUR', 'GBP', 'AUD', 'CAD'];
+const CURRENCIES = ['USD', 'EUR', 'GBP', 'AUD', 'CAD'];
 
 interface SupporterOption {
   supporterId: number;
@@ -30,7 +30,7 @@ const blank: FormData = {
   supporterId: '',
   donationType: 'Monetary',
   donationDate: new Date().toISOString().slice(0, 10),
-  currencyCode: 'PHP',
+  currencyCode: 'USD',
   amount: '',
   estimatedValue: '',
   impactUnit: '',
@@ -76,7 +76,7 @@ export default function DonationFormPage() {
             supporterId: d.supporterId != null ? String(d.supporterId) : '',
             donationType: (d.donationType as string) ?? 'Monetary',
             donationDate: d.donationDate ? String(d.donationDate).slice(0, 10) : '',
-            currencyCode: (d.currencyCode as string) ?? 'PHP',
+            currencyCode: (d.currencyCode as string) ?? 'USD',
             amount: d.amount != null ? String(d.amount) : '',
             estimatedValue: d.estimatedValue != null ? String(d.estimatedValue) : '',
             impactUnit: (d.impactUnit as string) ?? '',
@@ -112,7 +112,7 @@ export default function DonationFormPage() {
 
       // Type-specific fields
       if (form.donationType === 'Monetary') {
-        body.currencyCode = form.currencyCode || 'PHP';
+        body.currencyCode = form.currencyCode || 'USD';
         body.amount = form.amount ? parseFloat(form.amount) : null;
       } else if (form.donationType === 'InKind') {
         body.estimatedValue = form.estimatedValue ? parseFloat(form.estimatedValue) : null;

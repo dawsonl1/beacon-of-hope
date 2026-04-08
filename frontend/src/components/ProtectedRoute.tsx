@@ -10,7 +10,9 @@ export default function ProtectedRoute({ allowedRoles, children }: ProtectedRout
   const { isAuthenticated, isLoading, user } = useAuth();
   const location = useLocation();
 
-  if (isLoading) {
+  // If loading but we have a cached user, render children immediately
+  // (the background auth check will correct if session expired)
+  if (isLoading && !user) {
     return (
       <div style={{
         display: 'flex',

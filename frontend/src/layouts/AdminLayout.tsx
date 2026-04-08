@@ -1,3 +1,4 @@
+import { useState, Suspense } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -6,77 +7,86 @@ import {
   Eye,
   HandHeart,
   BarChart3,
+  Shield,
   LogOut,
-  UserCircle,
+  Menu,
+  X,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './AdminLayout.module.css';
 
 const navItems = [
-  { to: '/admin', icon: LayoutDashboard, label: 'Admin Dashboard', end: true },
-  { to: '/admin/caseload', icon: Users, label: 'Residents & Caseload' },
-  { to: '/admin/recordings', icon: AudioLines, label: 'Process Recordings' },
-  { to: '/admin/visitations', icon: Eye, label: 'Home Visitations' },
-  { to: '/admin/donors', icon: HandHeart, label: 'Donors & Contributions' },
-  { to: '/admin/reports', icon: BarChart3, label: 'Reports & Analytics' },
+  { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
+  { to: '/admin/caseload', icon: Users, label: 'Caseload' },
+  { to: '/admin/recordings', icon: AudioLines, label: 'Recordings' },
+  { to: '/admin/visitations', icon: Eye, label: 'Visitations' },
+  { to: '/admin/donors', icon: HandHeart, label: 'Donors' },
+  { to: '/admin/reports', icon: BarChart3, label: 'Reports' },
+  { to: '/admin/users', icon: Shield, label: 'Users' },
 ];
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   async function handleLogout() {
     await logout();
     navigate('/login', { replace: true });
   }
 
-  const displayName = user
-    ? `${user.firstName} ${user.lastName}`
-    : 'User';
   const displayRole = user?.roles?.[0] ?? 'Staff';
 
   return (
     <div className={styles.layout}>
-      <aside className={styles.sidebar}>
-        <div className={styles.sidebarHeader}>
+      <header className={styles.header}>
+        <div className={styles.headerInner}>
           <NavLink to="/" className={styles.logo}>
             <span className={styles.logoIcon}>&#9670;</span>
             <span className={styles.logoText}>Beacon of Hope</span>
           </NavLink>
-        </div>
 
-        <nav className={styles.nav}>
-          {navItems.map(({ to, icon: Icon, label, end }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={end}
-              className={({ isActive }) =>
-                `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
-              }
+          <nav className={`${styles.nav} ${menuOpen ? styles.navOpen : ''}`}>
+            {navItems.map(({ to, icon: Icon, label, end }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={end}
+                className={({ isActive }) =>
+                  `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
+                }
+                onClick={() => setMenuOpen(false)}
+              >
+                <Icon size={16} />
+                <span>{label}</span>
+              </NavLink>
+            ))}
+          </nav>
+
+          <div className={styles.actions}>
+            <span className={styles.roleBadge}>{displayRole}</span>
+            <button onClick={handleLogout} className={styles.logoutBtn}>
+              <LogOut size={16} />
+              <span>Logout</span>
+            </button>
+            <button
+              className={styles.menuToggle}
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             >
-              <Icon size={18} />
-              <span>{label}</span>
-            </NavLink>
-          ))}
-          <div className={styles.navDivider} />
-          <button onClick={handleLogout} className={styles.navItem} style={{ border: 'none', background: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}>
-            <LogOut size={18} />
-            <span>Logout</span>
-          </button>
-        </nav>
-
-        <div className={styles.userProfile}>
-          <div className={styles.userAvatar}>
-            <UserCircle size={56} strokeWidth={1} />
+              {menuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
           </div>
-          <p className={styles.userName}>{displayName}</p>
-          <p className={styles.userRole}>{displayRole}</p>
-          <button className={styles.editProfileBtn} onClick={() => navigate('/admin')}>Dashboard</button>
         </div>
-      </aside>
+      </header>
       <main className={styles.content}>
-        <Outlet />
+        <Suspense fallback={
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', color: 'var(--text-muted)', fontFamily: 'var(--font-body)' }}>
+            Loading...
+          </div>
+        }>
+          <Outlet />
+        </Suspense>
       </main>
     </div>
   );

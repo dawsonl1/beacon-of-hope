@@ -23,32 +23,44 @@ interface AuthContextValue extends AuthState {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+function getCachedAuth(): AuthState {
+  try {
+    const cached = sessionStorage.getItem('auth_user');
+    if (cached) {
+      const user = JSON.parse(cached) as AuthUser;
+      return { user, isAuthenticated: true, isLoading: true };
+    }
+  } catch { /* ignore */ }
+  return { user: null, isAuthenticated: false, isLoading: true };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AuthState>({
-    user: null,
-    isAuthenticated: false,
-    isLoading: true,
-  });
+  const [state, setState] = useState<AuthState>(getCachedAuth);
 
   const checkAuth = useCallback(async () => {
     try {
       const data = await apiFetch<{ isAuthenticated: boolean } & Partial<AuthUser>>('/api/auth/me');
       if (data.isAuthenticated && data.email) {
-        setState({
-          user: {
-            email: data.email,
-            firstName: data.firstName ?? '',
-            lastName: data.lastName ?? '',
-            roles: data.roles ?? [],
-          },
-          isAuthenticated: true,
-          isLoading: false,
-        });
+        const user: AuthUser = {
+          email: data.email,
+          firstName: data.firstName ?? '',
+          lastName: data.lastName ?? '',
+          roles: data.roles ?? [],
+        };
+        try { sessionStorage.setItem('auth_user', JSON.stringify(user)); } catch { /* ignore */ }
+        setState({ user, isAuthenticated: true, isLoading: false });
       } else {
+        sessionStorage.removeItem('auth_user');
         setState({ user: null, isAuthenticated: false, isLoading: false });
       }
     } catch {
-      setState({ user: null, isAuthenticated: false, isLoading: false });
+      // Network error — keep cached auth if we have one rather than logging out
+      const cached = sessionStorage.getItem('auth_user');
+      if (cached) {
+        setState(prev => ({ ...prev, isLoading: false }));
+      } else {
+        setState({ user: null, isAuthenticated: false, isLoading: false });
+      }
     }
   }, []);
 
@@ -75,6 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       lastName: data.lastName,
       roles: data.roles,
     };
+    try { sessionStorage.setItem('auth_user', JSON.stringify(user)); } catch { /* ignore */ }
     setState({ user, isAuthenticated: true, isLoading: false });
     return user;
   };
@@ -85,6 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       // ignore errors on logout
     }
+    sessionStorage.removeItem('auth_user');
     setState({ user: null, isAuthenticated: false, isLoading: false });
   };
 

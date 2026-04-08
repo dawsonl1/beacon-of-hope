@@ -11,7 +11,7 @@ describe('Footer', () => {
 
   it('renders the nonprofit tagline', () => {
     renderWithProviders(<Footer />);
-    expect(screen.getByText(/501\(c\)\(3\) nonprofit/)).toBeInTheDocument();
+    expect(screen.getByText(/Restoring hope and rebuilding lives/)).toBeInTheDocument();
   });
 
   it('renders Privacy Policy link', () => {

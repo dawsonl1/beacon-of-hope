@@ -92,6 +92,24 @@ app.UseHttpsRedirection();
 app.UseHsts();
 app.UseCors("AllowFrontend");
 
+// ── Global error handler (ensures CORS headers on errors) ──
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (Exception ex)
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+        var logger = context.RequestServices.GetRequiredService<ILoggerFactory>()
+            .CreateLogger("GlobalErrorHandler");
+        logger.LogError(ex, "Unhandled exception on {Method} {Path}", context.Request.Method, context.Request.Path);
+        await context.Response.WriteAsJsonAsync(new { error = "An internal error occurred." });
+    }
+});
+
 // ── Security headers ────────────────────────────────────────
 app.Use(async (context, next) =>
 {
@@ -177,6 +195,68 @@ app.MapPost("/api/auth/logout", async (SignInManager<ApplicationUser> signInMana
     return Results.Ok(new { message = "Logged out" });
 }).RequireAuthorization();
 
+app.MapPost("/api/auth/register", async (
+    UserManager<ApplicationUser> userManager,
+    SignInManager<ApplicationUser> signInManager,
+    AppDbContext db,
+    HttpContext httpContext) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<RegisterRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    var (valid, err) = DtoValidator.Validate(body);
+    if (!valid) return Results.BadRequest(new { error = err });
+
+    var existing = await userManager.FindByEmailAsync(body.Email);
+    if (existing != null)
+        return Results.BadRequest(new { error = "An account with this email already exists. Please log in instead." });
+
+    // Create supporter record
+    var supporter = new backend.Models.Supporter
+    {
+        FirstName = body.FirstName,
+        LastName = body.LastName,
+        Email = body.Email,
+        DisplayName = $"{body.FirstName} {body.LastName}",
+        SupporterType = "Individual",
+        Status = "Active",
+        CreatedAt = DateTime.UtcNow,
+    };
+    db.Supporters.Add(supporter);
+    await db.SaveChangesAsync();
+
+    // Create user account linked to supporter
+    var user = new ApplicationUser
+    {
+        UserName = body.Email,
+        Email = body.Email,
+        FirstName = body.FirstName,
+        LastName = body.LastName,
+        SupporterId = supporter.SupporterId,
+        EmailConfirmed = true,
+    };
+
+    var result = await userManager.CreateAsync(user, body.Password);
+    if (!result.Succeeded)
+    {
+        db.Supporters.Remove(supporter);
+        await db.SaveChangesAsync();
+        var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+        return Results.BadRequest(new { error = errors });
+    }
+
+    await userManager.AddToRoleAsync(user, "Donor");
+    await signInManager.SignInAsync(user, isPersistent: false);
+
+    return Results.Ok(new
+    {
+        email = user.Email,
+        firstName = user.FirstName,
+        lastName = user.LastName,
+        roles = new[] { "Donor" },
+        supporterId = supporter.SupporterId,
+    });
+});
+
 app.MapGet("/api/auth/me", async (
     HttpContext httpContext,
     UserManager<ApplicationUser> userManager) =>
@@ -254,6 +334,74 @@ app.MapGet("/api/health", async (AppDbContext db) =>
 // var x = await db.Table1.CountAsync();
 //    var y = await db.Table2.CountAsync();
 
+// ── User Management (Admin only) ────────────────────────────
+
+app.MapGet("/api/admin/users", async (UserManager<ApplicationUser> userManager) =>
+{
+    var users = userManager.Users.ToList();
+    var result = new List<object>();
+    foreach (var u in users)
+    {
+        var roles = await userManager.GetRolesAsync(u);
+        result.Add(new
+        {
+            id = u.Id,
+            email = u.Email,
+            firstName = u.FirstName,
+            lastName = u.LastName,
+            roles = roles.ToList(),
+            supporterId = u.SupporterId
+        });
+    }
+    return result;
+}).RequireAuthorization("AdminOnly");
+
+app.MapPost("/api/admin/users", async (
+    UserManager<ApplicationUser> userManager,
+    HttpContext httpContext) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<CreateUserRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    if (string.IsNullOrWhiteSpace(body.Email) || string.IsNullOrWhiteSpace(body.Password))
+        return Results.BadRequest(new { error = "Email and password are required." });
+    if (string.IsNullOrWhiteSpace(body.Role))
+        return Results.BadRequest(new { error = "Role is required." });
+
+    var existing = await userManager.FindByEmailAsync(body.Email);
+    if (existing != null)
+        return Results.BadRequest(new { error = "A user with this email already exists." });
+
+    var user = new ApplicationUser
+    {
+        UserName = body.Email,
+        Email = body.Email,
+        FirstName = body.FirstName ?? "",
+        LastName = body.LastName ?? "",
+        EmailConfirmed = true,
+    };
+    var result = await userManager.CreateAsync(user, body.Password);
+    if (!result.Succeeded)
+        return Results.BadRequest(new { error = string.Join("; ", result.Errors.Select(e => e.Description)) });
+
+    await userManager.AddToRoleAsync(user, body.Role);
+
+    return Results.Ok(new { id = user.Id, email = user.Email, role = body.Role });
+}).RequireAuthorization("AdminOnly");
+
+app.MapDelete("/api/admin/users/{id}", async (
+    string id,
+    UserManager<ApplicationUser> userManager) =>
+{
+    var user = await userManager.FindByIdAsync(id);
+    if (user == null) return Results.NotFound();
+    await userManager.DeleteAsync(user);
+    return Results.Ok(new { deleted = true });
+}).RequireAuthorization("AdminOnly");
+
+// ── Global data reference date ──────────────────────────────
+// All queries should treat this as "today" so dashboards are consistent
+var DATA_CUTOFF = new DateOnly(2026, 2, 15);
+
 // ── Public endpoints (Impact page, Home page) ──────────────
 
 app.MapGet("/api/impact/summary", async (AppDbContext db) =>
@@ -269,7 +417,9 @@ app.MapGet("/api/impact/summary", async (AppDbContext db) =>
         .FirstOrDefaultAsync() ?? new { total = 0, active = 0, completed = 0 };
 
     var activeSafehouses = await db.Safehouses.CountAsync(s => s.Status == "Active");
-    var totalDonations = await db.Donations.SumAsync(d => (decimal?)d.Amount ?? 0);
+    var totalDonations = await db.Donations
+        .Where(d => d.DonationDate <= DATA_CUTOFF)
+        .SumAsync(d => (decimal?)d.Amount ?? 0);
 
     return new
     {
@@ -285,7 +435,7 @@ app.MapGet("/api/impact/summary", async (AppDbContext db) =>
 app.MapGet("/api/impact/donations-by-month", async (AppDbContext db) =>
 {
     var data = await db.Donations
-        .Where(d => d.DonationDate != null && d.Amount != null)
+        .Where(d => d.DonationDate != null && d.Amount != null && d.DonationDate <= DATA_CUTOFF)
         .GroupBy(d => new { d.DonationDate!.Value.Year, d.DonationDate!.Value.Month })
         .Select(g => new
         {
@@ -303,7 +453,7 @@ app.MapGet("/api/impact/donations-by-month", async (AppDbContext db) =>
 app.MapGet("/api/impact/allocations-by-program", async (AppDbContext db) =>
 {
     var data = await db.DonationAllocations
-        .Where(a => a.ProgramArea != null)
+        .Where(a => a.ProgramArea != null && (a.AllocationDate == null || a.AllocationDate <= DATA_CUTOFF))
         .GroupBy(a => a.ProgramArea)
         .Select(g => new
         {
@@ -319,7 +469,7 @@ app.MapGet("/api/impact/allocations-by-program", async (AppDbContext db) =>
 app.MapGet("/api/impact/education-trends", async (AppDbContext db) =>
 {
     var data = await db.EducationRecords
-        .Where(e => e.RecordDate != null && e.ProgressPercent != null)
+        .Where(e => e.RecordDate != null && e.ProgressPercent != null && e.RecordDate <= DATA_CUTOFF)
         .GroupBy(e => new { e.RecordDate!.Value.Year, e.RecordDate!.Value.Month })
         .Select(g => new
         {
@@ -336,7 +486,7 @@ app.MapGet("/api/impact/education-trends", async (AppDbContext db) =>
 app.MapGet("/api/impact/health-trends", async (AppDbContext db) =>
 {
     var data = await db.HealthWellbeingRecords
-        .Where(h => h.RecordDate != null && h.GeneralHealthScore != null)
+        .Where(h => h.RecordDate != null && h.GeneralHealthScore != null && h.RecordDate <= DATA_CUTOFF)
         .GroupBy(h => new { h.RecordDate!.Value.Year, h.RecordDate!.Value.Month })
         .Select(g => new
         {
@@ -394,8 +544,8 @@ app.MapGet("/api/impact/snapshots", async (AppDbContext db) =>
 
 app.MapGet("/api/admin/metrics", async (AppDbContext db) =>
 {
-    var now = DateTime.UtcNow;
-    var startOfMonth = new DateOnly(now.Year, now.Month, 1);
+    var refDate = DATA_CUTOFF;
+    var startOfMonth = new DateOnly(refDate.Year, refDate.Month, 1);
     var startOfLastMonth = startOfMonth.AddMonths(-1);
 
     var activeResidents = await db.Residents.CountAsync(r => r.CaseStatus == "Active");
@@ -426,13 +576,13 @@ app.MapGet("/api/admin/metrics", async (AppDbContext db) =>
         .SumAsync(d => (decimal?)d.Amount ?? 0);
 
     var nextConference = await db.InterventionPlans
-        .Where(p => p.CaseConferenceDate > DateOnly.FromDateTime(now))
+        .Where(p => p.CaseConferenceDate > refDate)
         .OrderBy(p => p.CaseConferenceDate)
         .Select(p => p.CaseConferenceDate)
         .FirstOrDefaultAsync();
 
     var upcomingConferences = await db.InterventionPlans
-        .CountAsync(p => p.CaseConferenceDate > DateOnly.FromDateTime(now));
+        .CountAsync(p => p.CaseConferenceDate > refDate);
 
     var donationChange = lastMonthDonations > 0
         ? Math.Round((double)(currentMonth.total - lastMonthDonations) / (double)lastMonthDonations * 100, 1)
@@ -454,7 +604,8 @@ app.MapGet("/api/admin/metrics", async (AppDbContext db) =>
         monthlyDonationCount,
         donationChange,
         upcomingConferences,
-        nextConference
+        nextConference,
+        dataAsOf = refDate.ToString("MMMM d, yyyy")
     };
 }).RequireAuthorization();
 
@@ -644,6 +795,7 @@ app.MapDelete("/api/admin/residents/{id:int}", async (int id, AppDbContext db) =
 app.MapGet("/api/admin/recent-donations", async (AppDbContext db) =>
 {
     var data = await db.Donations
+        .Where(d => d.DonationDate <= DATA_CUTOFF)
         .OrderByDescending(d => d.DonationDate)
         .Take(5)
         .Select(d => new
@@ -682,7 +834,7 @@ app.MapGet("/api/admin/donations-by-channel", async (AppDbContext db) =>
 app.MapGet("/api/admin/active-residents-trend", async (AppDbContext db) =>
 {
     var data = await db.SafehouseMonthlyMetrics
-        .Where(m => m.MonthStart != null)
+        .Where(m => m.MonthStart != null && m.MonthStart <= DATA_CUTOFF)
         .GroupBy(m => new { m.MonthStart!.Value.Year, m.MonthStart!.Value.Month })
         .Select(g => new
         {
@@ -699,7 +851,7 @@ app.MapGet("/api/admin/active-residents-trend", async (AppDbContext db) =>
 app.MapGet("/api/admin/flagged-cases-trend", async (AppDbContext db) =>
 {
     var data = await db.SafehouseMonthlyMetrics
-        .Where(m => m.MonthStart != null)
+        .Where(m => m.MonthStart != null && m.MonthStart <= DATA_CUTOFF)
         .GroupBy(m => new { m.MonthStart!.Value.Year, m.MonthStart!.Value.Month })
         .Select(g => new
         {
@@ -820,7 +972,7 @@ app.MapDelete("/api/admin/visitations/{id}", async (AppDbContext db, int id) =>
 
 app.MapGet("/api/admin/conferences", async (AppDbContext db) =>
 {
-    var now = DateOnly.FromDateTime(DateTime.UtcNow);
+    var now = DATA_CUTOFF;
 
     var upcoming = await db.InterventionPlans
         .Where(p => p.CaseConferenceDate != null && p.CaseConferenceDate > now)
@@ -883,7 +1035,7 @@ app.MapGet("/api/admin/residents-list", async (AppDbContext db) =>
 app.MapGet("/api/admin/reports/donations-by-source", async (AppDbContext db) =>
 {
     var data = await db.Donations
-        .Where(d => d.ChannelSource != null && d.Amount != null)
+        .Where(d => d.ChannelSource != null && d.Amount != null && d.DonationDate <= DATA_CUTOFF)
         .GroupBy(d => d.ChannelSource)
         .Select(g => new
         {
@@ -900,7 +1052,7 @@ app.MapGet("/api/admin/reports/donations-by-source", async (AppDbContext db) =>
 app.MapGet("/api/admin/reports/donations-by-campaign", async (AppDbContext db) =>
 {
     var data = await db.Donations
-        .Where(d => d.CampaignName != null && d.Amount != null)
+        .Where(d => d.CampaignName != null && d.Amount != null && d.DonationDate <= DATA_CUTOFF)
         .GroupBy(d => d.CampaignName)
         .Select(g => new
         {
@@ -1467,7 +1619,7 @@ app.MapDelete("/api/admin/donations/{id:int}", async (int id, AppDbContext db) =
 app.MapGet("/api/admin/allocations/by-program", async (AppDbContext db) =>
 {
     var data = await db.DonationAllocations
-        .Where(a => a.ProgramArea != null)
+        .Where(a => a.ProgramArea != null && (a.AllocationDate == null || a.AllocationDate <= DATA_CUTOFF))
         .GroupBy(a => a.ProgramArea)
         .Select(g => new
         {
@@ -1484,7 +1636,7 @@ app.MapGet("/api/admin/allocations/by-program", async (AppDbContext db) =>
 app.MapGet("/api/admin/allocations/by-safehouse", async (AppDbContext db) =>
 {
     var data = await db.DonationAllocations
-        .Where(a => a.SafehouseId != null)
+        .Where(a => a.SafehouseId != null && (a.AllocationDate == null || a.AllocationDate <= DATA_CUTOFF))
         .GroupBy(a => a.SafehouseId)
         .Select(g => new
         {
@@ -1592,7 +1744,7 @@ app.MapPost("/api/donate/create-checkout-session", async (HttpContext httpContex
             {
                 PriceData = new SessionLineItemPriceDataOptions
                 {
-                    Currency = "php",
+                    Currency = "usd",
                     UnitAmount = body.AmountCents,
                     ProductData = new SessionLineItemPriceDataProductDataOptions
                     {
@@ -1620,7 +1772,7 @@ app.MapPost("/api/donate/create-checkout-session", async (HttpContext httpContex
             {
                 PriceData = new SessionLineItemPriceDataOptions
                 {
-                    Currency = "php",
+                    Currency = "usd",
                     UnitAmount = body.AmountCents,
                     ProductData = new SessionLineItemPriceDataProductDataOptions
                     {
@@ -1660,7 +1812,7 @@ app.MapGet("/api/donate/success", async (string session_id, AppDbContext db) =>
             DonationType = "Monetary",
             DonationDate = DateOnly.FromDateTime(DateTime.UtcNow),
             ChannelSource = "Stripe",
-            CurrencyCode = "PHP",
+            CurrencyCode = "USD",
             Amount = (session.AmountTotal ?? 0) / 100m,
             IsRecurring = session.Mode == "subscription",
             Notes = $"Stripe Session: {session_id}"
@@ -1954,6 +2106,18 @@ public class DonationRequest
     public string? Notes { get; set; }
 }
 
+public class RegisterRequest
+{
+    [Required, StringLength(100)]
+    public string FirstName { get; set; } = string.Empty;
+    [Required, StringLength(100)]
+    public string LastName { get; set; } = string.Empty;
+    [Required, EmailAddress]
+    public string Email { get; set; } = string.Empty;
+    [Required, MinLength(12)]
+    public string Password { get; set; } = string.Empty;
+}
+
 public class CreateCheckoutRequest
 {
     [Required, RegularExpression("one-time|recurring", ErrorMessage = "Mode must be 'one-time' or 'recurring'.")]
@@ -1964,6 +2128,18 @@ public class CreateCheckoutRequest
     public long? AmountCents { get; set; }
     [EmailAddress]
     public string? DonorEmail { get; set; }
+}
+
+public class CreateUserRequest
+{
+    [Required, EmailAddress]
+    public string Email { get; set; } = "";
+    [Required]
+    public string Password { get; set; } = "";
+    [Required]
+    public string Role { get; set; } = "Staff";
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
 }
 
 public partial class Program { }

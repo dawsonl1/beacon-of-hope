@@ -11,7 +11,7 @@ export function formatDate(dateStr: string | null | undefined): string {
 
 export function formatAmount(amount: number | null | undefined): string {
   if (amount == null) return '—';
-  return `$${Number(amount).toLocaleString()}`;
+  return Number(amount).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 }
 
 /** Convert CamelCase or PascalCase enum values to human-readable labels.

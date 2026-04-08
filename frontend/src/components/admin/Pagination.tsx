@@ -32,7 +32,7 @@ export default function Pagination({ page, pageSize, totalCount, onPageChange }:
   return (
     <div className={styles.pagination}>
       <span className={styles.info}>
-        Showing {start}--{end} of {totalCount}
+        Showing {start}–{end} of {totalCount}
       </span>
       <div className={styles.controls}>
         <button

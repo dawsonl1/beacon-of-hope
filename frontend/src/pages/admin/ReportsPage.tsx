@@ -100,7 +100,7 @@ function OverviewTab() {
         <KpiCard
           label="Total Donations"
           value={summary ? `$${summary.totalDonations.toLocaleString()}` : '--'}
-          sub={`${summary?.activeSafehouses ?? 0} active safehouses`}
+          sub="All-time contributions received"
           loading={loading}
         />
         <KpiCard
