@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, Calendar, TrendingUp, Loader2, Users, GraduationCap, Shield, Settings, ArrowRight } from 'lucide-react';
+import { Heart, Loader2, Users, GraduationCap, Shield, Settings, ArrowRight } from 'lucide-react';
 import { apiFetch } from '../api';
 import { useAuth } from '../contexts/AuthContext';
 import { formatDate, formatAmount, formatEnumLabel } from '../constants';
