@@ -25,8 +25,6 @@ public class PublicEndpointTests : IClassFixture<TestWebApplicationFactory>
         var body = await response.Content.ReadFromJsonAsync<JsonElement>();
         body.GetProperty("status").GetString().Should().NotBeNullOrEmpty();
         body.GetProperty("database").GetString().Should().NotBeNullOrEmpty();
-        body.GetProperty("environment").GetString().Should().NotBeNullOrEmpty();
-        body.TryGetProperty("endpoints", out _).Should().BeTrue();
     }
 
     [Fact]

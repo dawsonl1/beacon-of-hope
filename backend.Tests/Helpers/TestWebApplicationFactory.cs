@@ -1,5 +1,6 @@
 using backend.Data;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +19,9 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 
         builder.ConfigureServices(services =>
         {
-            // Remove ALL DbContext-related registrations (options + provider services)
+            // Remove ALL DbContext-related registrations
             services.RemoveAll(typeof(DbContextOptions<AppDbContext>));
             services.RemoveAll(typeof(DbContextOptions));
-
-            // Remove any existing AppDbContext registrations
             var dbContextDescriptors = services
                 .Where(d => d.ServiceType == typeof(AppDbContext)
                          || d.ServiceType.FullName?.Contains("EntityFrameworkCore") == true)
@@ -30,21 +29,34 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
             foreach (var d in dbContextDescriptors)
                 services.Remove(d);
 
-            // Keep a persistent in-memory SQLite connection open for the test lifetime.
+            // Persistent in-memory SQLite connection
             _connection = new SqliteConnection("Data Source=:memory:");
             _connection.Open();
 
+            // Disable FK enforcement — SQLite doesn't handle all PG FK patterns
+            using (var cmd = _connection.CreateCommand())
+            {
+                cmd.CommandText = "PRAGMA foreign_keys = OFF;";
+                cmd.ExecuteNonQuery();
+            }
+
             services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlite(_connection));
+            {
+                options.UseSqlite(_connection);
+                options.ConfigureWarnings(w =>
+                    w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+            });
 
-            // Build a temporary service provider to create the schema and seed identity
-            var sp = services.BuildServiceProvider();
-            using var scope = sp.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            db.Database.EnsureCreated();
+            // Override cookie policy so the test client (HTTP) can send Secure cookies
+            services.PostConfigure<Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationOptions>(
+                Microsoft.AspNetCore.Identity.IdentityConstants.ApplicationScheme,
+                opts =>
+                {
+                    opts.Cookie.SecurePolicy = CookieSecurePolicy.None;
+                });
 
-            // Seed identity roles and users (same seeder the real app uses)
-            IdentitySeeder.SeedAsync(scope.ServiceProvider).GetAwaiter().GetResult();
+            // Program.cs startup will detect SQLite and call EnsureCreated + IdentitySeeder
+            // automatically, so we don't need to do it here.
         });
     }
 
