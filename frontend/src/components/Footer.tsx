@@ -14,8 +14,8 @@ export default function Footer() {
             <span className={styles.logoIcon}>&#9670;</span>
             <span className={styles.logoText}>Beacon of Hope</span>
             <p className={styles.tagline}>
-              A 501(c)(3) nonprofit restoring hope and rebuilding lives
-              for survivors of abuse and trafficking in Guam.
+              Restoring hope and rebuilding lives for survivors of abuse
+              and trafficking in Guam.
             </p>
           </div>
 

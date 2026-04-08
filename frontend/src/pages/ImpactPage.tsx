@@ -16,6 +16,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
+  ReferenceLine,
 } from 'recharts';
 import styles from './ImpactPage.module.css';
 
@@ -109,7 +110,9 @@ export default function ImpactPage() {
               <p className={styles.chartLabel}>Monthly donations over time</p>
               {latestDonation && (
                 <div className={styles.chartHighlight}>
-                  <span className={styles.chartBigNumber}>${(latestDonation.total / 1000).toFixed(1)}k</span>
+                  <span className={styles.chartBigNumber}>&#8369;{(latestDonation.total / 1000).toFixed(1)}k</span>
+                  <span className={styles.chartSubtext}> raised this month</span>
+                  <span className={styles.chartGoalText}> &middot; &#8369;15k goal</span>
                 </div>
               )}
             </div>
@@ -132,9 +135,16 @@ export default function ImpactPage() {
                   tick={{ fontSize: 12, fill: CHART_COLORS.text }}
                   axisLine={false}
                   tickLine={false}
-                  tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`}
+                  tickFormatter={(v: number) => `₱${(v / 1000).toFixed(0)}k`}
                 />
-                <Tooltip content={<ChartTooltip prefix="$" />} cursor={{ fill: 'rgba(212, 168, 83, 0.08)' }} />
+                <Tooltip content={<ChartTooltip prefix="₱" />} cursor={{ fill: 'rgba(212, 168, 83, 0.08)' }} />
+                <ReferenceLine
+                  y={15000}
+                  stroke="#0F8F7D"
+                  strokeDasharray="6 4"
+                  strokeWidth={2}
+                  label={{ value: 'Monthly Goal', position: 'right', fill: '#0F8F7D', fontSize: 12, fontWeight: 600 }}
+                />
                 <Bar dataKey="total" radius={[4, 4, 0, 0]}>
                   {monthlyDonations.map((_, i) => (
                     <Cell
@@ -155,40 +165,42 @@ export default function ImpactPage() {
       <section className={styles.metricsSection} ref={metricsRef}>
         <div className={`${styles.metricsInner} reveal`}>
           <p className={styles.chartLabel}>Program outcomes</p>
-          <div className={`${styles.metricsGrid} reveal-stagger`}>
-            <div className={`${styles.metricCard} reveal`}>
-              <span className={styles.metricNumber}>$12.4k</span>
-              <span className={styles.metricLabel}>Avg monthly donations</span>
+          {summary && (
+          <div className={styles.metricsGrid}>
+            <div className={styles.metricCard}>
+              <span className={styles.metricNumber}>{summary.completedReintegrations}</span>
+              <span className={styles.metricLabel}>Girls reunified with families</span>
               <span className={styles.metricChange}>
                 <ArrowUpRight size={12} />
-                +10.7% last mo
+                {summary.reintegrationRate}% success rate
               </span>
             </div>
-            <div className={`${styles.metricCard} reveal`}>
-              <span className={styles.metricNumber}>81%</span>
-              <span className={styles.metricLabel}>Avg education progress</span>
+            <div className={styles.metricCard}>
+              <span className={styles.metricNumber}>{summary.activeResidents}</span>
+              <span className={styles.metricLabel}>Girls currently in our care</span>
               <span className={styles.metricChange}>
                 <ArrowUpRight size={12} />
-                +4.2% last mo
+                Receiving shelter, education &amp; counseling
               </span>
             </div>
-            <div className={`${styles.metricCard} reveal`}>
-              <span className={styles.metricNumber}>89%</span>
-              <span className={styles.metricLabel}>Avg health score</span>
+            <div className={styles.metricCard}>
+              <span className={styles.metricNumber}>&#8369;{(summary.totalDonations / 1000).toFixed(0)}k</span>
+              <span className={styles.metricLabel}>Total donations to date</span>
               <span className={styles.metricChange}>
                 <ArrowUpRight size={12} />
-                +1.8% last mo
+                Every peso transforms a life
               </span>
             </div>
-            <div className={`${styles.metricCard} reveal`}>
-              <span className={styles.metricNumber}>94%</span>
+            <div className={styles.metricCard}>
+              <span className={styles.metricNumber}>{summary.activeSafehouses}</span>
               <span className={styles.metricLabel}>Safehouse occupancy</span>
               <span className={styles.metricChange}>
                 <ArrowUpRight size={12} />
-                +2.1% last mo
+                Active safehouses across Guam
               </span>
             </div>
           </div>
+          )}
         </div>
       </section>
 
@@ -199,7 +211,7 @@ export default function ImpactPage() {
             <div>
               <p className={styles.chartLabel}>Where your donations go</p>
               <div className={styles.chartHighlight}>
-                <span className={styles.chartBigNumber}>$177k</span>
+                <span className={styles.chartBigNumber}>&#8369;177k</span>
                 <span className={styles.chartSubtext}>total allocated</span>
               </div>
             </div>
@@ -222,9 +234,9 @@ export default function ImpactPage() {
                   tick={{ fontSize: 12, fill: CHART_COLORS.text }}
                   axisLine={false}
                   tickLine={false}
-                  tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`}
+                  tickFormatter={(v: number) => `₱${(v / 1000).toFixed(0)}k`}
                 />
-                <Tooltip content={<ChartTooltip prefix="$" />} cursor={{ fill: 'rgba(212, 168, 83, 0.08)' }} />
+                <Tooltip content={<ChartTooltip prefix="₱" />} cursor={{ fill: 'rgba(212, 168, 83, 0.08)' }} />
                 <Bar dataKey="amount" radius={[4, 4, 0, 0]}>
                   {allocationData.map((_, i) => (
                     <Cell key={i} fill={allocationColors[i % allocationColors.length]} />
@@ -245,10 +257,11 @@ export default function ImpactPage() {
               <span className={styles.storyTag}>Education</span>
               <h2 className={styles.storyTitle}>Stories of hope</h2>
               <p className={styles.storyBody}>
-                A 15-year-old referred through a government agency arrived with no
-                formal schooling. After 18 months in our education program, she
-                completed her elementary equivalency and is now enrolled in
-                secondary school with an 87% attendance rate.
+                A 15-year-old arrived at our safehouse with no formal schooling and
+                little hope for the future. After 18 months in our education program,
+                she completed her elementary equivalency, discovered a passion for
+                science, and now dreams of becoming a nurse. &ldquo;For the first time,
+                I believe my life can be different,&rdquo; she told her social worker.
               </p>
               <p className={styles.storyNote}>
                 Names and identifying details have been changed to protect privacy.
