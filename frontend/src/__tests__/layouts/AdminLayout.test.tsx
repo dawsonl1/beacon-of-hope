@@ -19,17 +19,6 @@ vi.mock('recharts', () => ({
   Area: () => <div />,
 }));
 
-import App from '../../App';
-
-function renderApp(route: string) {
-  return render(
-    <MemoryRouter initialEntries={[route]}>
-      {/* We can't easily render the full App with MemoryRouter since App has BrowserRouter,
-          so we test the layout components directly */}
-    </MemoryRouter>
-  );
-}
-
 describe('AdminLayout Navigation', () => {
   it('renders all nav items when authenticated as admin', async () => {
     render(

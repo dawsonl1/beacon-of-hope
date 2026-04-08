@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useSafehouse } from '../../contexts/SafehouseContext';
+import Pagination from '../../components/admin/Pagination';
 import styles from './IncidentsPage.module.css';
 
 interface PostPlacementResident {
@@ -41,6 +42,8 @@ export default function PostPlacementPage() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -96,42 +99,45 @@ export default function PostPlacementPage() {
           {residents.length === 0 ? (
             <div className={styles.empty}>No reintegrated residents found.</div>
           ) : (
-            <div className={styles.tableCard}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>Resident</th>
-                    <th>Safehouse</th>
-                    <th>Pathway</th>
-                    <th>Status</th>
-                    <th>Date Closed</th>
-                    <th>Social Worker</th>
-                    <th>Last Visit</th>
-                    <th>Visits</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {residents.map(r => (
-                    <tr key={r.residentId} onClick={() => navigate(`/admin/caseload/${r.residentId}`)}>
-                      <td style={{ fontWeight: 600, color: 'var(--color-sage)' }}>{r.internalCode || '-'}</td>
-                      <td>{r.safehouse || '-'}</td>
-                      <td>
-                        {r.reintegrationType && (
-                          <span style={{ fontSize: '0.75rem', fontWeight: 600, padding: '0.15rem 0.4rem', borderRadius: '4px', background: `${TYPE_COLORS[r.reintegrationType] || '#95a5a6'}18`, color: TYPE_COLORS[r.reintegrationType] || '#95a5a6' }}>
-                            {r.reintegrationType}
-                          </span>
-                        )}
-                      </td>
-                      <td>{r.caseStatus || '-'}</td>
-                      <td>{r.dateClosed || '-'}</td>
-                      <td>{r.assignedSocialWorker || '-'}</td>
-                      <td>{r.lastVisit || 'None'}</td>
-                      <td>{r.totalVisits}</td>
+            <>
+              <div className={styles.tableCard}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Resident</th>
+                      <th>Safehouse</th>
+                      <th>Pathway</th>
+                      <th>Status</th>
+                      <th>Date Closed</th>
+                      <th>Social Worker</th>
+                      <th>Last Visit</th>
+                      <th>Visits</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {residents.slice((page - 1) * pageSize, page * pageSize).map(r => (
+                      <tr key={r.residentId} onClick={() => navigate(`/admin/caseload/${r.residentId}`)}>
+                        <td style={{ fontWeight: 600, color: 'var(--color-sage)' }}>{r.internalCode || '-'}</td>
+                        <td>{r.safehouse || '-'}</td>
+                        <td>
+                          {r.reintegrationType && (
+                            <span style={{ fontSize: '0.75rem', fontWeight: 600, padding: '0.15rem 0.4rem', borderRadius: '4px', background: `${TYPE_COLORS[r.reintegrationType] || '#95a5a6'}18`, color: TYPE_COLORS[r.reintegrationType] || '#95a5a6' }}>
+                              {r.reintegrationType}
+                            </span>
+                          )}
+                        </td>
+                        <td>{r.caseStatus || '-'}</td>
+                        <td>{r.dateClosed || '-'}</td>
+                        <td>{r.assignedSocialWorker || '-'}</td>
+                        <td>{r.lastVisit || 'None'}</td>
+                        <td>{r.totalVisits}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <Pagination page={page} pageSize={pageSize} totalCount={residents.length} onPageChange={setPage} />
+            </>
           )}
         </>
       )}
