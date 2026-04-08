@@ -14,6 +14,7 @@ export default function DonatePage() {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(1000);
   const [customAmount, setCustomAmount] = useState('');
   const [donorEmail, setDonorEmail] = useState('');
+  const [newsletter, setNewsletter] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -137,6 +138,22 @@ export default function DonatePage() {
               onChange={e => setDonorEmail(e.target.value)}
             />
           </div>
+
+          {/* Newsletter opt-in */}
+          <label className={styles.checkboxRow}>
+            <input
+              type="checkbox"
+              checked={newsletter}
+              onChange={e => setNewsletter(e.target.checked)}
+            />
+            <span>Sign me up for the monthly newsletter with impact updates</span>
+          </label>
+
+          {/* Post-donation info */}
+          <p className={styles.infoNote}>
+            After donating, you'll receive an email with login credentials so you can
+            track your impact and manage your giving in your personal donor portal.
+          </p>
 
           {/* Summary */}
           <div className={styles.summary}>
