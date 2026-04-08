@@ -110,9 +110,9 @@ export default function ImpactPage() {
               <p className={styles.chartLabel}>Monthly donations over time</p>
               {latestDonation && (
                 <div className={styles.chartHighlight}>
-                  <span className={styles.chartBigNumber}>&#8369;{(latestDonation.total / 1000).toFixed(1)}k</span>
+                  <span className={styles.chartBigNumber}>${(latestDonation.total / 1000).toFixed(1)}k</span>
                   <span className={styles.chartSubtext}> raised this month</span>
-                  <span className={styles.chartGoalText}> &middot; &#8369;15k goal</span>
+                  <span className={styles.chartGoalText}> &middot; $15k goal</span>
                 </div>
               )}
             </div>
@@ -135,9 +135,9 @@ export default function ImpactPage() {
                   tick={{ fontSize: 12, fill: CHART_COLORS.text }}
                   axisLine={false}
                   tickLine={false}
-                  tickFormatter={(v: number) => `₱${(v / 1000).toFixed(0)}k`}
+                  tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`}
                 />
-                <Tooltip content={<ChartTooltip prefix="₱" />} cursor={{ fill: 'rgba(212, 168, 83, 0.08)' }} />
+                <Tooltip content={<ChartTooltip prefix="$" />} cursor={{ fill: 'rgba(212, 168, 83, 0.08)' }} />
                 <ReferenceLine
                   y={15000}
                   stroke="#0F8F7D"
@@ -184,11 +184,11 @@ export default function ImpactPage() {
               </span>
             </div>
             <div className={styles.metricCard}>
-              <span className={styles.metricNumber}>&#8369;{(summary.totalDonations / 1000).toFixed(0)}k</span>
+              <span className={styles.metricNumber}>${(summary.totalDonations / 1000).toFixed(0)}k</span>
               <span className={styles.metricLabel}>Total donations to date</span>
               <span className={styles.metricChange}>
                 <ArrowUpRight size={12} />
-                Every peso transforms a life
+                Every dollar transforms a life
               </span>
             </div>
             <div className={styles.metricCard}>
@@ -211,7 +211,7 @@ export default function ImpactPage() {
             <div>
               <p className={styles.chartLabel}>Where your donations go</p>
               <div className={styles.chartHighlight}>
-                <span className={styles.chartBigNumber}>&#8369;177k</span>
+                <span className={styles.chartBigNumber}>$177k</span>
                 <span className={styles.chartSubtext}>total allocated</span>
               </div>
             </div>
@@ -234,9 +234,9 @@ export default function ImpactPage() {
                   tick={{ fontSize: 12, fill: CHART_COLORS.text }}
                   axisLine={false}
                   tickLine={false}
-                  tickFormatter={(v: number) => `₱${(v / 1000).toFixed(0)}k`}
+                  tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`}
                 />
-                <Tooltip content={<ChartTooltip prefix="₱" />} cursor={{ fill: 'rgba(212, 168, 83, 0.08)' }} />
+                <Tooltip content={<ChartTooltip prefix="$" />} cursor={{ fill: 'rgba(212, 168, 83, 0.08)' }} />
                 <Bar dataKey="amount" radius={[4, 4, 0, 0]}>
                   {allocationData.map((_, i) => (
                     <Cell key={i} fill={allocationColors[i % allocationColors.length]} />

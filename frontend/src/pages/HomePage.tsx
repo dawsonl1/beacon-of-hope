@@ -129,7 +129,7 @@ export default function HomePage() {
               </div>
               <div className={styles.statCard}>
                 <span className={styles.statNumber}>
-                  <Counter end={Math.round(impact.totalDonations / 1000)} prefix="₱" suffix="K" />
+                  <Counter end={Math.round(impact.totalDonations / 1000)} prefix="$" suffix="K" />
                 </span>
                 <span className={styles.statDesc}>Donations received</span>
               </div>

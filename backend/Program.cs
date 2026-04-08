@@ -1654,7 +1654,7 @@ app.MapPost("/api/donate/create-checkout-session", async (HttpContext httpContex
             {
                 PriceData = new SessionLineItemPriceDataOptions
                 {
-                    Currency = "php",
+                    Currency = "usd",
                     UnitAmount = body.AmountCents,
                     ProductData = new SessionLineItemPriceDataProductDataOptions
                     {
@@ -1682,7 +1682,7 @@ app.MapPost("/api/donate/create-checkout-session", async (HttpContext httpContex
             {
                 PriceData = new SessionLineItemPriceDataOptions
                 {
-                    Currency = "php",
+                    Currency = "usd",
                     UnitAmount = body.AmountCents,
                     ProductData = new SessionLineItemPriceDataProductDataOptions
                     {
@@ -1722,7 +1722,7 @@ app.MapGet("/api/donate/success", async (string session_id, AppDbContext db) =>
             DonationType = "Monetary",
             DonationDate = DateOnly.FromDateTime(DateTime.UtcNow),
             ChannelSource = "Stripe",
-            CurrencyCode = "PHP",
+            CurrencyCode = "USD",
             Amount = (session.AmountTotal ?? 0) / 100m,
             IsRecurring = session.Mode == "subscription",
             Notes = $"Stripe Session: {session_id}"

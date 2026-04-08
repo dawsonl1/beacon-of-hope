@@ -26,7 +26,7 @@ export default function DonatePage() {
 
   const handleSubmit = async () => {
     if (amountCents < 100) {
-      setError('Please enter an amount of at least 1 PHP.');
+      setError('Please enter an amount of at least $1.');
       return;
     }
     setError('');
@@ -61,7 +61,7 @@ export default function DonatePage() {
           <h1 className={styles.title}>Make a Difference Today</h1>
           <p className={styles.subtitle}>
             Your donation helps provide safe shelter, education, counseling, and a path to
-            reintegration for survivors of abuse and trafficking in the Philippines.
+            reintegration for survivors of abuse and trafficking in Guam.
           </p>
         </div>
       </section>
@@ -107,11 +107,11 @@ export default function DonatePage() {
                 className={`${styles.amountBtn} ${selectedAmount === amt && !customAmount ? styles.amountBtnActive : ''}`}
                 onClick={() => { setSelectedAmount(amt); setCustomAmount(''); }}
               >
-                &#8369;{amt.toLocaleString()}
+                ${amt.toLocaleString()}
               </button>
             ))}
             <div className={styles.customAmountWrap}>
-              <span className={styles.currencyPrefix}>&#8369;</span>
+              <span className={styles.currencyPrefix}>$</span>
               <input
                 type="number"
                 className={styles.customInput}
@@ -158,7 +158,7 @@ export default function DonatePage() {
           {/* Summary */}
           <div className={styles.summary}>
             <span className={styles.summaryAmount}>
-              &#8369;{displayAmount.toLocaleString()}
+              ${displayAmount.toLocaleString()}
               {mode === 'recurring' && <span className={styles.summaryFreq}>{cadenceLabel}</span>}
             </span>
             <span className={styles.summaryLabel}>
