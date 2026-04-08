@@ -628,6 +628,51 @@ app.MapDelete("/api/admin/intervention-plans/{id}", async (int id, AppDbContext 
     return Results.Ok(new { deleted = true });
 }).RequireAuthorization("AdminOnly");
 
+// ── Post-Placement Monitoring ────────────────────────────────
+
+app.MapGet("/api/admin/post-placement", async (AppDbContext db, int? safehouseId) =>
+{
+    var query = db.Residents.Where(r => r.ReintegrationStatus == "Completed" || r.CaseStatus == "Closed" || r.CaseStatus == "Discharged");
+    if (safehouseId.HasValue) query = query.Where(r => r.SafehouseId == safehouseId.Value);
+
+    var residents = await query.OrderByDescending(r => r.DateClosed)
+        .Select(r => new
+        {
+            r.ResidentId,
+            r.InternalCode,
+            r.CaseControlNo,
+            r.SafehouseId,
+            safehouse = r.Safehouse != null ? r.Safehouse.Name : null,
+            r.CaseStatus,
+            r.ReintegrationType,
+            r.ReintegrationStatus,
+            r.DateClosed,
+            r.AssignedSocialWorker,
+            r.CurrentRiskLevel,
+            lastVisit = r.HomeVisitations
+                .Where(v => v.VisitType == "Post-Placement Monitoring")
+                .OrderByDescending(v => v.VisitDate)
+                .Select(v => v.VisitDate)
+                .FirstOrDefault(),
+            totalVisits = r.HomeVisitations.Count(v => v.VisitType == "Post-Placement Monitoring"),
+        })
+        .ToListAsync();
+
+    return Results.Ok(residents);
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/post-placement/summary", async (AppDbContext db, int? safehouseId) =>
+{
+    var query = db.Residents.Where(r => r.ReintegrationStatus == "Completed" || r.CaseStatus == "Closed" || r.CaseStatus == "Discharged");
+    if (safehouseId.HasValue) query = query.Where(r => r.SafehouseId == safehouseId.Value);
+
+    var total = await query.CountAsync();
+    var byType = await query.GroupBy(r => r.ReintegrationType).Select(g => new { type = g.Key, count = g.Count() }).ToListAsync();
+    var byStatus = await query.GroupBy(r => r.CaseStatus).Select(g => new { status = g.Key, count = g.Count() }).ToListAsync();
+
+    return Results.Ok(new { total, byType, byStatus });
+}).RequireAuthorization();
+
 // ── Health endpoint ─────────────────────────────────────────
 
 app.MapGet("/api/health", async (AppDbContext db) =>

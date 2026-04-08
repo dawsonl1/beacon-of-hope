@@ -72,6 +72,7 @@ const CaseQueuePage = lazy(() => import('./pages/admin/CaseQueuePage'));
 const CaseConferencesPage = lazy(() => import('./pages/admin/CaseConferencesPage'));
 const EducationRecordFormPage = lazy(() => import('./pages/admin/EducationRecordFormPage'));
 const HealthRecordFormPage = lazy(() => import('./pages/admin/HealthRecordFormPage'));
+const PostPlacementPage = lazy(() => import('./pages/admin/PostPlacementPage'));
 const DonorPortal = lazy(() => import('./pages/DonorPortal'));
 const DonatePage = lazy(() => import('./pages/DonatePage'));
 const DonateSuccessPage = lazy(() => import('./pages/DonateSuccessPage'));
@@ -138,6 +139,7 @@ function App() {
               <Route path="incidents/:id/edit" element={<IncidentFormPage />} />
               <Route path="queue" element={<CaseQueuePage />} />
               <Route path="conferences" element={<CaseConferencesPage />} />
+              <Route path="post-placement" element={<PostPlacementPage />} />
               <Route path="caseload" element={<CaseloadPage />} />
               <Route path="caseload/new" element={<ResidentFormPage />} />
               <Route path="caseload/:id" element={<ResidentDetailPage />} />

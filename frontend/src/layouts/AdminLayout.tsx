@@ -17,6 +17,7 @@ import {
   AlertTriangle,
   Inbox,
   MessageSquare,
+  HomeIcon,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { SafehouseProvider, useSafehouse } from '../contexts/SafehouseContext';
@@ -66,6 +67,7 @@ const navItems = [
   { to: '/admin/incidents', icon: AlertTriangle, label: 'Incidents' },
   { to: '/admin/conferences', icon: MessageSquare, label: 'Conferences' },
   { to: '/admin/visitations', icon: Eye, label: 'Visitations' },
+  { to: '/admin/post-placement', icon: HomeIcon, label: 'Placed' },
   { to: '/admin/donors', icon: HandHeart, label: 'Donors' },
   { to: '/admin/reports', icon: BarChart3, label: 'Reports' },
   { to: '/admin/users', icon: Shield, label: 'Users' },
