@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -78,7 +78,13 @@ export default function AdminLayout() {
         </div>
       </header>
       <main className={styles.content}>
-        <Outlet />
+        <Suspense fallback={
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', color: 'var(--text-muted)', fontFamily: 'var(--font-body)' }}>
+            Loading...
+          </div>
+        }>
+          <Outlet />
+        </Suspense>
       </main>
     </div>
   );

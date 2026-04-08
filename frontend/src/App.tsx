@@ -36,11 +36,21 @@ const DonorPortal = lazy(() => import('./pages/DonorPortal'));
 const DonatePage = lazy(() => import('./pages/DonatePage'));
 const DonateSuccessPage = lazy(() => import('./pages/DonateSuccessPage'));
 
+function LoadingFallback() {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', color: 'var(--text-muted)', fontFamily: 'var(--font-body)' }}>
+      Loading...
+    </div>
+  );
+}
+
 function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Header />
-      {children}
+      <Suspense fallback={<LoadingFallback />}>
+        {children}
+      </Suspense>
       <Footer />
     </>
   );
@@ -59,23 +69,21 @@ function App() {
             <Route path="/privacy-policy" element={<PublicLayout><PrivacyPolicyPage /></PublicLayout>} />
             <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
             <Route path="/signup" element={<PublicLayout><SignupPage /></PublicLayout>} />
-            <Route path="/newsletter" element={<PublicLayout><Suspense fallback={<div>Loading...</div>}><NewsletterPage /></Suspense></PublicLayout>} />
-            <Route path="/donate" element={<PublicLayout><Suspense fallback={<div>Loading...</div>}><DonatePage /></Suspense></PublicLayout>} />
-            <Route path="/donate/success" element={<PublicLayout><Suspense fallback={<div>Loading...</div>}><DonateSuccessPage /></Suspense></PublicLayout>} />
+            <Route path="/newsletter" element={<PublicLayout><NewsletterPage /></PublicLayout>} />
+            <Route path="/donate" element={<PublicLayout><DonatePage /></PublicLayout>} />
+            <Route path="/donate/success" element={<PublicLayout><DonateSuccessPage /></PublicLayout>} />
 
             {/* Donor portal */}
             <Route path="/donor" element={
               <ProtectedRoute allowedRoles={['Donor']}>
-                <Suspense fallback={<div>Loading...</div>}>
-                  <PublicLayout><DonorPortal /></PublicLayout>
-                </Suspense>
+                <PublicLayout><DonorPortal /></PublicLayout>
               </ProtectedRoute>
             } />
 
             {/* Admin portal — lazy-loaded with Suspense */}
             <Route path="/admin" element={
               <ProtectedRoute allowedRoles={['Admin', 'Staff']}>
-                <Suspense fallback={<div>Loading...</div>}>
+                <Suspense fallback={<LoadingFallback />}>
                   <AdminLayout />
                 </Suspense>
               </ProtectedRoute>
