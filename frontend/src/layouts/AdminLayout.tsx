@@ -1,5 +1,6 @@
-import { useState, Suspense } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useState, Suspense, Component } from 'react';
+import type { ReactNode, ErrorInfo } from 'react';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
@@ -15,6 +16,40 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import styles from './AdminLayout.module.css';
 
+class PageErrorBoundary extends Component<{ children: ReactNode; resetKey: string }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode; resetKey: string }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidUpdate(prevProps: { resetKey: string }) {
+    if (prevProps.resetKey !== this.props.resetKey && this.state.hasError) {
+      this.setState({ hasError: false });
+    }
+  }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error('Admin page error:', error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', fontFamily: 'var(--font-body)', gap: '1rem' }}>
+          <p style={{ color: 'var(--color-slate)', fontSize: '1.1rem' }}>This page failed to load.</p>
+          <button
+            onClick={() => window.location.reload()}
+            style={{ padding: '0.5rem 1.5rem', borderRadius: '6px', border: '1px solid #ccc', background: '#fff', cursor: 'pointer', fontSize: '0.95rem' }}
+          >
+            Reload page
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 const navItems = [
   { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
   { to: '/admin/caseload', icon: Users, label: 'Caseload' },
@@ -28,6 +63,7 @@ const navItems = [
 export default function AdminLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
   async function handleLogout() {
@@ -80,13 +116,15 @@ export default function AdminLayout() {
         </div>
       </header>
       <main className={styles.content}>
-        <Suspense fallback={
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', color: 'var(--text-muted)', fontFamily: 'var(--font-body)' }}>
-            Loading...
-          </div>
-        }>
-          <Outlet />
-        </Suspense>
+        <PageErrorBoundary resetKey={location.pathname}>
+          <Suspense fallback={
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', color: 'var(--text-muted)', fontFamily: 'var(--font-body)' }}>
+              Loading...
+            </div>
+          }>
+            <Outlet />
+          </Suspense>
+        </PageErrorBoundary>
       </main>
     </div>
   );
