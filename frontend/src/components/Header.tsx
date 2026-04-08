@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, User, LogOut } from 'lucide-react';
+import { Menu, X, User, UserPlus, LogOut } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './Header.module.css';
 
@@ -48,10 +48,16 @@ export default function Header() {
               </button>
             </>
           ) : (
-            <Link to="/login" className={styles.loginBtn}>
-              <User size={16} />
-              <span>Login</span>
-            </Link>
+            <>
+              <Link to="/signup" className={styles.signupBtn}>
+                <UserPlus size={16} />
+                <span>Become a Donor</span>
+              </Link>
+              <Link to="/login" className={styles.loginBtn}>
+                <User size={16} />
+                <span>Login</span>
+              </Link>
+            </>
           )}
           <button
             className={styles.menuToggle}

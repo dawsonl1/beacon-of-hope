@@ -167,6 +167,9 @@ export default function LoginPage() {
           </form>
 
           <div className={styles.footer}>
+            <p className={styles.switchText}>
+              Want to become a donor? <Link to="/signup" className={styles.backLink}>Create an account</Link>
+            </p>
             <Link to="/" className={styles.backLink}>
               Back to homepage
             </Link>

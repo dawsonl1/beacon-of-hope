@@ -13,6 +13,7 @@ import HomePage from './pages/HomePage';
 import ImpactPage from './pages/ImpactPage';
 import LoginPage from './pages/LoginPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import SignupPage from './pages/SignupPage';
 // Admin pages — lazy loaded (code-split)
 const AdminLayout = lazy(() => import('./layouts/AdminLayout'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
@@ -56,6 +57,7 @@ function App() {
             <Route path="/login" element={<PublicLayout><LoginPage /></PublicLayout>} />
             <Route path="/privacy-policy" element={<PublicLayout><PrivacyPolicyPage /></PublicLayout>} />
             <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
+            <Route path="/signup" element={<PublicLayout><SignupPage /></PublicLayout>} />
             <Route path="/donate" element={<PublicLayout><Suspense fallback={<div>Loading...</div>}><DonatePage /></Suspense></PublicLayout>} />
             <Route path="/donate/success" element={<PublicLayout><Suspense fallback={<div>Loading...</div>}><DonateSuccessPage /></Suspense></PublicLayout>} />
 
