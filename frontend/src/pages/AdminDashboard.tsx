@@ -88,6 +88,7 @@ export default function AdminDashboard() {
 
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [residents, setResidents] = useState<ResidentRow[]>([]);
+  const [totalResidents, setTotalResidents] = useState(0);
   const [donations, setDonations] = useState<RecentDonation[]>([]);
   const dataDateStr = 'Data as of February 15, 2026';
   const [activeResidentsChart, setActiveResidentsChart] = useState<Array<{ month: string; count: number }>>([]);
@@ -101,8 +102,9 @@ export default function AdminDashboard() {
 
     apiFetch<Metrics>('/api/admin/metrics').then(setMetrics).catch(onCriticalErr);
 
-    apiFetch<{ items: ApiResident[] }>('/api/admin/residents').then(resp => {
+    apiFetch<{ items: ApiResident[]; totalCount: number }>('/api/admin/residents').then(resp => {
       const data = resp.items ?? [];
+      setTotalResidents(resp.totalCount ?? data.length);
       setResidents(data.map(r => {
         let lastSessionStr = 'Unknown';
         if (r.lastSession) {
@@ -271,10 +273,10 @@ export default function AdminDashboard() {
               </tbody>
             </table>
           </div>
-          {residents.length > 8 && (
+          {totalResidents > 8 && (
             <div className={styles.viewAllRow}>
               <button className={styles.viewAllBtn} onClick={() => navigate('/admin/caseload')}>
-                View all {residents.length} residents
+                View all {totalResidents} residents
               </button>
             </div>
           )}
