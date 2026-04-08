@@ -313,6 +313,12 @@
   gap: 0.75rem;
 }
 
+.viewAllRow {
+  padding: 0.65rem 1rem;
+  text-align: center;
+  border-top: 1px solid rgba(15, 27, 45, 0.06);
+}
+
 .viewAllBtn {
   font-size: 0.74rem;
   font-weight: 700;

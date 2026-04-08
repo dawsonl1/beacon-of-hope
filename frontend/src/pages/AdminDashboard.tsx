@@ -88,7 +88,7 @@ export default function AdminDashboard() {
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [residents, setResidents] = useState<ResidentRow[]>([]);
   const [donations, setDonations] = useState<RecentDonation[]>([]);
-  const [latestDataDate, setLatestDataDate] = useState<string | null>(null);
+  const dataDateStr = 'Data as of February 15, 2026';
   const [activeResidentsChart, setActiveResidentsChart] = useState<Array<{ month: string; count: number }>>([]);
   const [flaggedChart, setFlaggedChart] = useState<Array<{ month: string; count: number }>>([]);
   const [channels, setChannels] = useState<Array<{ channel: string; amount: number }>>([]);
@@ -121,9 +121,6 @@ export default function AdminDashboard() {
     }).catch(onErr);
 
     apiFetch<ApiDonation[]>('/api/admin/recent-donations').then(data => {
-      if (data.length > 0 && data[0].donationDate) {
-        setLatestDataDate(new Date(data[0].donationDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }));
-      }
       setDonations(data.map(d => ({
         supporter: d.supporter ?? 'Anonymous',
         type: formatEnumLabel(d.donationType ?? ''),
@@ -158,7 +155,7 @@ export default function AdminDashboard() {
             <h1 className={styles.title}>Dashboard</h1>
             <span className={styles.roleBadge}>Admin</span>
           </div>
-          <p className={styles.dateText}>{latestDataDate ? `Data as of ${latestDataDate}` : 'Loading data...'}</p>
+          <p className={styles.dateText}>{dataDateStr}</p>
         </div>
         <div className={styles.quickActions}>
           <button className={styles.actionBtn} onClick={() => navigate('/admin/caseload/new')}>
@@ -244,7 +241,7 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {residents.map((r, i) => (
+                {residents.slice(0, 8).map((r, i) => (
                   <tr key={`${r.code}-${i}`} className={r.riskLevel === 'Critical' ? styles.rowCritical : ''}>
                     <td>
                       <span className={styles.residentCode}>{r.code}</span>
@@ -273,6 +270,13 @@ export default function AdminDashboard() {
               </tbody>
             </table>
           </div>
+          {residents.length > 8 && (
+            <div className={styles.viewAllRow}>
+              <button className={styles.viewAllBtn} onClick={() => navigate('/admin/caseload')}>
+                View all {residents.length} residents
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Right column: Recent Donations + Channel breakdown */}
