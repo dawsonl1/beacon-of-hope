@@ -231,4 +231,100 @@ export const adminHandlers = [
   ),
 ];
 
-export const handlers = [...authHandlers, ...publicHandlers, ...adminHandlers];
+/* ── New Phase 1-4 handlers ─────────────────────────────── */
+export const newFeatureHandlers = [
+  http.get(`${API}/api/staff/tasks`, () =>
+    HttpResponse.json([]),
+  ),
+  http.post(`${API}/api/staff/tasks`, () =>
+    HttpResponse.json({ staffTaskId: 1 }),
+  ),
+  http.put(`${API}/api/staff/tasks/:id`, () =>
+    HttpResponse.json({ updated: true }),
+  ),
+  http.get(`${API}/api/staff/calendar`, () =>
+    HttpResponse.json([]),
+  ),
+  http.post(`${API}/api/staff/calendar`, () =>
+    HttpResponse.json({ calendarEventId: 1 }),
+  ),
+  http.put(`${API}/api/staff/calendar/:id`, () =>
+    HttpResponse.json({ updated: true }),
+  ),
+  http.delete(`${API}/api/staff/calendar/:id`, () =>
+    HttpResponse.json({ cancelled: true }),
+  ),
+  http.get(`${API}/api/admin/incidents`, () =>
+    HttpResponse.json({ total: 2, page: 1, pageSize: 20, items: [
+      { incidentId: 1, residentId: 1, residentCode: 'LS-0001', incidentDate: '2026-04-08', incidentType: 'Behavioral', severity: 'Medium', resolved: false, followUpRequired: true },
+      { incidentId: 2, residentId: 2, residentCode: 'LS-0002', incidentDate: '2026-04-07', incidentType: 'Security', severity: 'High', resolved: true, followUpRequired: false },
+    ]}),
+  ),
+  http.get(`${API}/api/admin/incidents/:id`, () =>
+    HttpResponse.json({ incidentId: 1, residentId: 1, residentCode: 'LS-0001', incidentDate: '2026-04-08', incidentType: 'Behavioral', severity: 'Medium', description: 'Test incident', resolved: false, followUpRequired: true }),
+  ),
+  http.post(`${API}/api/admin/incidents`, () =>
+    HttpResponse.json({ incidentId: 99 }),
+  ),
+  http.put(`${API}/api/admin/incidents/:id`, () =>
+    HttpResponse.json({ updated: true }),
+  ),
+  http.delete(`${API}/api/admin/incidents/:id`, () =>
+    HttpResponse.json({ deleted: true }),
+  ),
+  http.get(`${API}/api/admin/education-records`, () =>
+    HttpResponse.json([]),
+  ),
+  http.post(`${API}/api/admin/education-records`, () =>
+    HttpResponse.json({ educationRecordId: 1 }),
+  ),
+  http.get(`${API}/api/admin/health-records`, () =>
+    HttpResponse.json([]),
+  ),
+  http.post(`${API}/api/admin/health-records`, () =>
+    HttpResponse.json({ healthRecordId: 1 }),
+  ),
+  http.get(`${API}/api/admin/intervention-plans`, () =>
+    HttpResponse.json([
+      { planId: 1, residentId: 1, residentCode: 'LS-0001', planCategory: 'Education', planDescription: 'Test plan', status: 'Open', caseConferenceDate: '2026-04-15' },
+    ]),
+  ),
+  http.get(`${API}/api/admin/post-placement`, () =>
+    HttpResponse.json([
+      { residentId: 1, internalCode: 'LS-0001', reintegrationType: 'Family Reunification', caseStatus: 'Closed', totalVisits: 3 },
+    ]),
+  ),
+  http.get(`${API}/api/admin/post-placement/summary`, () =>
+    HttpResponse.json({ total: 5, byType: [{ type: 'Family Reunification', count: 3 }], byStatus: [{ status: 'Closed', count: 5 }] }),
+  ),
+  http.get(`${API}/api/admin/residents/unclaimed`, () =>
+    HttpResponse.json([]),
+  ),
+  http.get(`${API}/api/admin/residents-list`, () =>
+    HttpResponse.json([
+      { residentId: 1, internalCode: 'LS-0001', caseStatus: 'Active' },
+      { residentId: 2, internalCode: 'LS-0002', caseStatus: 'Active' },
+    ]),
+  ),
+  http.get(`${API}/api/ml/predictions/:entityType/:entityId`, () =>
+    HttpResponse.json([
+      { id: 1, modelName: 'incident-early-warning-selfharm', score: 31, scoreLabel: 'Medium', predictedAt: '2026-04-08' },
+      { id: 2, modelName: 'incident-early-warning-runaway', score: 27, scoreLabel: 'Medium', predictedAt: '2026-04-08' },
+      { id: 3, modelName: 'reintegration-readiness', score: 3, scoreLabel: 'Not Ready', predictedAt: '2026-04-08' },
+    ]),
+  ),
+  http.get(`${API}/api/admin/recordings/emotional-trends`, () =>
+    HttpResponse.json([
+      { sessionDate: '2026-01-01', emotionalStateObserved: 'Angry', emotionalStateEnd: 'Hopeful' },
+      { sessionDate: '2026-02-01', emotionalStateObserved: 'Sad', emotionalStateEnd: 'Calm' },
+    ]),
+  ),
+  http.get(`${API}/api/admin/users`, () =>
+    HttpResponse.json([
+      { id: '1', email: 'admin@beaconofhope.org', firstName: 'Director', lastName: 'Reyes', roles: ['Admin'], safehouses: [] },
+      { id: '2', email: 'staff@beaconofhope.org', firstName: 'Elena', lastName: 'Reyes', roles: ['Staff'], safehouses: [] },
+    ]),
+  ),
+];
+
+export const handlers = [...authHandlers, ...publicHandlers, ...adminHandlers, ...newFeatureHandlers];

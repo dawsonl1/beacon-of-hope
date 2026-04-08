@@ -1,0 +1,169 @@
+.page {
+  padding: 2rem 2.5rem;
+  max-width: 1200px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--text-strong);
+  letter-spacing: -0.03em;
+  margin: 0 0 0.15rem;
+}
+
+.subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.loading, .error, .empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+}
+
+.error { color: #c0392b; }
+
+.spinner { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.taskCard {
+  background: #fff;
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: box-shadow 0.2s;
+}
+
+.taskCard:hover {
+  box-shadow: 0 4px 16px rgba(15, 27, 45, 0.06);
+}
+
+.taskIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.taskIconDoctor { background: rgba(52, 152, 219, 0.1); color: #3498db; }
+.taskIconDentist { background: rgba(155, 89, 182, 0.1); color: #9b59b6; }
+.taskIconEducation { background: rgba(46, 204, 113, 0.1); color: #2ecc71; }
+.taskIconHealth { background: rgba(230, 126, 34, 0.1); color: #e67e22; }
+.taskIconIncident { background: rgba(231, 76, 60, 0.1); color: #e74c3c; }
+.taskIconVisit { background: rgba(15, 143, 125, 0.1); color: var(--color-sage); }
+.taskIconDefault { background: rgba(149, 165, 166, 0.1); color: #95a5a6; }
+
+.taskBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.taskTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  margin: 0 0 0.2rem;
+}
+
+.taskMeta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.taskContext {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0.2rem 0 0;
+  font-style: italic;
+}
+
+.taskActions {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid rgba(15, 27, 45, 0.1);
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.actionBtn:hover {
+  background: rgba(15, 27, 45, 0.03);
+  border-color: rgba(15, 27, 45, 0.18);
+}
+
+.completeBtn {
+  composes: actionBtn;
+  color: var(--color-sage);
+  border-color: rgba(15, 143, 125, 0.2);
+}
+
+.completeBtn:hover {
+  background: rgba(15, 143, 125, 0.06);
+}
+
+.snoozeBtn {
+  composes: actionBtn;
+  color: #e67e22;
+  border-color: rgba(230, 126, 34, 0.2);
+}
+
+.dismissBtn {
+  composes: actionBtn;
+  color: #95a5a6;
+}
+
+.residentLink {
+  font-size: 0.78rem;
+  color: var(--color-sage);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.residentLink:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 700px) {
+  .page { padding: 1rem; }
+  .taskCard { flex-direction: column; align-items: flex-start; }
+  .taskActions { width: 100%; }
+}

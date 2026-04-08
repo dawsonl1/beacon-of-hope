@@ -55,6 +55,7 @@ export default function SupporterDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [showDelete, setShowDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -71,7 +72,8 @@ export default function SupporterDetailPage() {
     try {
       await apiFetch(`/api/admin/supporters/${id}`, { method: 'DELETE' });
       navigate('/admin/donors', { replace: true });
-    } catch {
+    } catch (e) {
+      setDeleteError(e instanceof Error ? e.message : 'Failed to delete supporter.');
       setDeleting(false);
       setShowDelete(false);
     }
@@ -106,6 +108,8 @@ export default function SupporterDetailPage() {
       <button className={styles.backLink} onClick={() => navigate('/admin/donors')}>
         <ArrowLeft size={16} /> Back to Donors
       </button>
+
+      {deleteError && <div className={styles.error}>{deleteError}</div>}
 
       {/* Profile Card */}
       <div className={styles.profileCard}>

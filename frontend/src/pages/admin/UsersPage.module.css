@@ -1,0 +1,267 @@
+.page {
+  padding: 2rem 2.5rem;
+  max-width: 900px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--text-strong);
+  letter-spacing: -0.03em;
+  margin: 0 0 0.15rem;
+}
+
+.subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.addBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  color: #fff;
+  background: linear-gradient(120deg, var(--color-sage), #13a490);
+  border: none;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.22s, filter 0.22s;
+  box-shadow: 0 8px 20px rgba(15, 143, 125, 0.22);
+}
+
+.addBtn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+}
+
+/* ── Create Form ───────────────────────────────────────── */
+.formCard {
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.formTitle {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  margin: 0 0 1rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.85rem;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.input,
+.select {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(15, 27, 45, 0.12);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  font-family: var(--font-body);
+  color: var(--text-strong);
+  background: #fff;
+  transition: border-color 0.15s;
+}
+
+.select {
+  appearance: none;
+  padding-right: 2rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23526178' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--color-sage);
+}
+
+.formError {
+  color: var(--color-rose);
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.65rem;
+}
+
+.cancelBtn {
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-sm);
+  background: var(--surface-1);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.saveBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(120deg, var(--color-sage), #13a490);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.saveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Users Table ───────────────────────────────────────── */
+.tableCard {
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(15, 27, 45, 0.08);
+}
+
+.table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(15, 27, 45, 0.04);
+  color: var(--text-strong);
+}
+
+.nameCell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+}
+
+.nameCell span {
+  color: var(--text-strong);
+  font-weight: 600;
+}
+
+.roleBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.18rem 0.5rem;
+  border-radius: 999px;
+}
+
+.roleAdmin {
+  color: var(--color-amber-dark);
+  background: rgba(212, 111, 21, 0.1);
+}
+
+.roleStaff {
+  color: var(--color-sage);
+  background: rgba(15, 143, 125, 0.1);
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: var(--color-light-gray);
+  cursor: pointer;
+  padding: 0.3rem;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.deleteBtn:hover {
+  color: var(--color-rose);
+  background: rgba(203, 87, 104, 0.08);
+}
+
+/* ── States ────────────────────────────────────────────── */
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.error {
+  padding: 1rem;
+  color: var(--color-rose);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.spinner {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

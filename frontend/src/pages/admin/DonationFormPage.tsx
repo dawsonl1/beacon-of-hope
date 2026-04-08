@@ -97,8 +97,22 @@ export default function DonationFormPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSaving(true);
     setError(null);
+
+    if (!form.supporterId) {
+      setError('Please select a supporter.');
+      return;
+    }
+    if (!form.donationDate) {
+      setError('Please enter a donation date.');
+      return;
+    }
+    if (form.donationType === 'Monetary' && (!form.amount || parseFloat(form.amount) <= 0)) {
+      setError('Please enter an amount greater than zero for monetary donations.');
+      return;
+    }
+
+    setSaving(true);
     try {
       const body: Record<string, unknown> = {
         supporterId: form.supporterId ? parseInt(form.supporterId) : null,

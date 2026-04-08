@@ -16,7 +16,9 @@
       "Bash(curl -s https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/Movie/AllMovies?pageSize=1)",
       "Bash(curl -s \"https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/Movie/AllMovies?pageSize=1\")",
       "Bash(git checkout:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(ls \"/Users/brytongustin/Downloads/Winter_Junior_Core/INTEX II/intex2/frontend/\"*.local)",
+      "Bash(ls \"/Users/brytongustin/Downloads/Winter_Junior_Core/INTEX II/intex2/\"*.local)"
     ]
   }
 }

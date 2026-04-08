@@ -1,3 +1,7 @@
+/** The app's reference date — all data is as of this date */
+export const APP_TODAY = new Date(2026, 1, 16); // Feb 16, 2026 (month is 0-indexed)
+export const APP_TODAY_STR = '2026-02-16';
+
 export const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 export function formatMonthLabel(year: number, month: number): string {

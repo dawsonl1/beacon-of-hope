@@ -1,5 +1,6 @@
-import { useState, Suspense } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useState, Suspense, Component } from 'react';
+import type { ReactNode, ErrorInfo } from 'react';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
@@ -7,26 +8,77 @@ import {
   Eye,
   HandHeart,
   BarChart3,
+  Shield,
   LogOut,
   Menu,
   X,
+  CheckSquare,
+  Calendar,
+  AlertTriangle,
+  Inbox,
+  MessageSquare,
+  HomeIcon,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { SafehouseProvider, useSafehouse } from '../contexts/SafehouseContext';
 import styles from './AdminLayout.module.css';
+
+class PageErrorBoundary extends Component<{ children: ReactNode; resetKey: string }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode; resetKey: string }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidUpdate(prevProps: { resetKey: string }) {
+    if (prevProps.resetKey !== this.props.resetKey && this.state.hasError) {
+      this.setState({ hasError: false });
+    }
+  }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error('Admin page error:', error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', fontFamily: 'var(--font-body)', gap: '1rem' }}>
+          <p style={{ color: 'var(--color-slate)', fontSize: '1.1rem' }}>This page failed to load.</p>
+          <button
+            onClick={() => window.location.reload()}
+            style={{ padding: '0.5rem 1.5rem', borderRadius: '6px', border: '1px solid #ccc', background: '#fff', cursor: 'pointer', fontSize: '0.95rem' }}
+          >
+            Reload page
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const navItems = [
   { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
+  { to: '/admin/tasks', icon: CheckSquare, label: 'To-Do' },
+  { to: '/admin/calendar', icon: Calendar, label: 'Calendar' },
+  { to: '/admin/queue', icon: Inbox, label: 'Queue' },
   { to: '/admin/caseload', icon: Users, label: 'Caseload' },
   { to: '/admin/recordings', icon: AudioLines, label: 'Recordings' },
+  { to: '/admin/incidents', icon: AlertTriangle, label: 'Incidents' },
+  { to: '/admin/conferences', icon: MessageSquare, label: 'Conferences' },
   { to: '/admin/visitations', icon: Eye, label: 'Visitations' },
+  { to: '/admin/post-placement', icon: HomeIcon, label: 'Placed' },
   { to: '/admin/donors', icon: HandHeart, label: 'Donors' },
   { to: '/admin/reports', icon: BarChart3, label: 'Reports' },
+  { to: '/admin/users', icon: Shield, label: 'Users' },
 ];
 
-export default function AdminLayout() {
+function AdminLayoutInner() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { safehouses, activeSafehouseId, setActiveSafehouseId, isAdmin } = useSafehouse();
 
   async function handleLogout() {
     await logout();
@@ -62,6 +114,20 @@ export default function AdminLayout() {
           </nav>
 
           <div className={styles.actions}>
+            {safehouses.length > 0 && (
+              <select
+                className={styles.safehouseSelect}
+                value={activeSafehouseId ?? ''}
+                onChange={e => setActiveSafehouseId(e.target.value ? Number(e.target.value) : null)}
+              >
+                {isAdmin && <option value="">All Safehouses</option>}
+                {safehouses.map(s => (
+                  <option key={s.safehouseId} value={s.safehouseId}>
+                    {s.safehouseCode} - {s.name}
+                  </option>
+                ))}
+              </select>
+            )}
             <span className={styles.roleBadge}>{displayRole}</span>
             <button onClick={handleLogout} className={styles.logoutBtn}>
               <LogOut size={16} />
@@ -78,14 +144,24 @@ export default function AdminLayout() {
         </div>
       </header>
       <main className={styles.content}>
-        <Suspense fallback={
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', color: 'var(--text-muted)', fontFamily: 'var(--font-body)' }}>
-            Loading...
-          </div>
-        }>
-          <Outlet />
-        </Suspense>
+        <PageErrorBoundary resetKey={location.pathname}>
+          <Suspense fallback={
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', color: 'var(--text-muted)', fontFamily: 'var(--font-body)' }}>
+              Loading...
+            </div>
+          }>
+            <Outlet />
+          </Suspense>
+        </PageErrorBoundary>
       </main>
     </div>
+  );
+}
+
+export default function AdminLayout() {
+  return (
+    <SafehouseProvider>
+      <AdminLayoutInner />
+    </SafehouseProvider>
   );
 }

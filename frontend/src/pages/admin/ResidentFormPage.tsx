@@ -470,7 +470,7 @@ export default function ResidentFormPage() {
             <label className={styles.label}>
               Reintegration Status
               <select className={styles.select} value={form.reintegrationStatus} onChange={(e) => updateField('reintegrationStatus', e.target.value)}>
-                <option value="">Not started</option>
+                <option value="">Select status...</option>
                 <option value="Not Started">Not Started</option>
                 <option value="In Progress">In Progress</option>
                 <option value="Completed">Completed</option>

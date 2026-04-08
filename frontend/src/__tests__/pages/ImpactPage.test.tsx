@@ -20,6 +20,7 @@ vi.mock('recharts', () => {
     CartesianGrid: () => <div />,
     Tooltip: () => <div />,
     Cell: () => <div />,
+    ReferenceLine: () => <div />,
   };
 });
 
@@ -31,7 +32,7 @@ describe('ImpactPage', () => {
 
   it('renders live data label', () => {
     renderWithProviders(<ImpactPage />);
-    expect(screen.getByText('Live data')).toBeInTheDocument();
+    expect(screen.getByText(/Live data/)).toBeInTheDocument();
   });
 
   it('loads and shows impact summary stats', async () => {
@@ -48,6 +49,6 @@ describe('ImpactPage', () => {
 
   it('renders donate CTA', () => {
     renderWithProviders(<ImpactPage />);
-    expect(screen.getByText(/Inspired by what you've seen/)).toBeInTheDocument();
+    expect(screen.getByText(/Donate Now/)).toBeInTheDocument();
   });
 });

@@ -51,6 +51,10 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
 
     public virtual DbSet<MlPredictionHistory> MlPredictionHistory { get; set; }
 
+    public virtual DbSet<UserSafehouse> UserSafehouses { get; set; }
+    public virtual DbSet<StaffTask> StaffTasks { get; set; }
+    public virtual DbSet<CalendarEvent> CalendarEvents { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -128,13 +132,13 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
                 .HasDatabaseName("donations_campaign_name_idx");
 
             entity.Property(e => e.DonationId).HasColumnName("donation_id");
-            entity.Property(e => e.Amount).HasColumnName("amount");
+            entity.Property(e => e.Amount).HasColumnName("amount").HasColumnType("numeric(12,2)");
             entity.Property(e => e.CampaignName).HasColumnName("campaign_name");
             entity.Property(e => e.ChannelSource).HasColumnName("channel_source");
             entity.Property(e => e.CurrencyCode).HasColumnName("currency_code");
             entity.Property(e => e.DonationDate).HasColumnName("donation_date");
             entity.Property(e => e.DonationType).HasColumnName("donation_type");
-            entity.Property(e => e.EstimatedValue).HasColumnName("estimated_value");
+            entity.Property(e => e.EstimatedValue).HasColumnName("estimated_value").HasColumnType("numeric(12,2)");
             entity.Property(e => e.ImpactUnit).HasColumnName("impact_unit");
             entity.Property(e => e.IsRecurring).HasColumnName("is_recurring");
             entity.Property(e => e.Notes).HasColumnName("notes");
@@ -165,13 +169,14 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(e => e.AllocationId).HasColumnName("allocation_id");
             entity.Property(e => e.AllocationDate).HasColumnName("allocation_date");
             entity.Property(e => e.AllocationNotes).HasColumnName("allocation_notes");
-            entity.Property(e => e.AmountAllocated).HasColumnName("amount_allocated");
+            entity.Property(e => e.AmountAllocated).HasColumnName("amount_allocated").HasColumnType("numeric(12,2)");
             entity.Property(e => e.DonationId).HasColumnName("donation_id");
             entity.Property(e => e.ProgramArea).HasColumnName("program_area");
             entity.Property(e => e.SafehouseId).HasColumnName("safehouse_id");
 
             entity.HasOne(d => d.Donation).WithMany(p => p.DonationAllocations)
                 .HasForeignKey(d => d.DonationId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("donation_allocations_donation_id_fkey");
 
             entity.HasOne(d => d.Safehouse).WithMany(p => p.DonationAllocations)
@@ -201,6 +206,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Resident).WithMany(p => p.EducationRecords)
                 .HasForeignKey(d => d.ResidentId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("education_records_resident_id_fkey");
         });
 
@@ -229,6 +235,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Resident).WithMany(p => p.HealthWellbeingRecords)
                 .HasForeignKey(d => d.ResidentId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("health_wellbeing_records_resident_id_fkey");
         });
 
@@ -257,6 +264,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Resident).WithMany(p => p.HomeVisitations)
                 .HasForeignKey(d => d.ResidentId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("home_visitations_resident_id_fkey");
         });
 
@@ -270,7 +278,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
 
             entity.Property(e => e.ItemId).HasColumnName("item_id");
             entity.Property(e => e.DonationId).HasColumnName("donation_id");
-            entity.Property(e => e.EstimatedUnitValue).HasColumnName("estimated_unit_value");
+            entity.Property(e => e.EstimatedUnitValue).HasColumnName("estimated_unit_value").HasColumnType("numeric(12,2)");
             entity.Property(e => e.IntendedUse).HasColumnName("intended_use");
             entity.Property(e => e.ItemCategory).HasColumnName("item_category");
             entity.Property(e => e.ItemName).HasColumnName("item_name");
@@ -280,6 +288,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Donation).WithMany(p => p.InKindDonationItems)
                 .HasForeignKey(d => d.DonationId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("in_kind_donation_items_donation_id_fkey");
         });
 
@@ -339,6 +348,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Resident).WithMany(p => p.InterventionPlans)
                 .HasForeignKey(d => d.ResidentId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("intervention_plans_resident_id_fkey");
         });
 
@@ -419,6 +429,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
 
             entity.HasOne(d => d.Resident).WithMany(p => p.ProcessRecordings)
                 .HasForeignKey(d => d.ResidentId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("process_recordings_resident_id_fkey");
         });
 
@@ -558,7 +569,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
 
             entity.Property(e => e.PostId).HasColumnName("post_id");
             entity.Property(e => e.AvgViewDurationSeconds).HasColumnName("avg_view_duration_seconds");
-            entity.Property(e => e.BoostBudgetPhp).HasColumnName("boost_budget_php");
+            entity.Property(e => e.BoostBudgetPhp).HasColumnName("boost_budget_php").HasColumnType("numeric(12,2)");
             entity.Property(e => e.CallToActionType).HasColumnName("call_to_action_type");
             entity.Property(e => e.CampaignName).HasColumnName("campaign_name");
             entity.Property(e => e.Caption).HasColumnName("caption");
@@ -570,7 +581,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(e => e.DayOfWeek).HasColumnName("day_of_week");
             entity.Property(e => e.DonationReferrals).HasColumnName("donation_referrals");
             entity.Property(e => e.EngagementRate).HasColumnName("engagement_rate");
-            entity.Property(e => e.EstimatedDonationValuePhp).HasColumnName("estimated_donation_value_php");
+            entity.Property(e => e.EstimatedDonationValuePhp).HasColumnName("estimated_donation_value_php").HasColumnType("numeric(12,2)");
             entity.Property(e => e.FeaturesResidentStory).HasColumnName("features_resident_story");
             entity.Property(e => e.FollowerCountAtPost).HasColumnName("follower_count_at_post");
             entity.Property(e => e.Forwards).HasColumnName("forwards");
@@ -618,6 +629,80 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(e => e.RelationshipType).HasColumnName("relationship_type");
             entity.Property(e => e.Status).HasColumnName("status");
             entity.Property(e => e.SupporterType).HasColumnName("supporter_type");
+        });
+
+        modelBuilder.Entity<ApplicationUser>(entity =>
+        {
+            entity.HasOne(u => u.Supporter)
+                .WithMany()
+                .HasForeignKey(u => u.SupporterId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<UserSafehouse>(entity =>
+        {
+            entity.HasKey(e => e.UserSafehouseId).HasName("user_safehouses_pkey");
+            entity.ToTable("user_safehouses");
+            entity.HasIndex(e => new { e.UserId, e.SafehouseId }).IsUnique().HasDatabaseName("user_safehouses_user_safehouse_idx");
+            entity.Property(e => e.UserSafehouseId).HasColumnName("user_safehouse_id");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.SafehouseId).HasColumnName("safehouse_id");
+            entity.HasOne(e => e.User).WithMany(u => u.UserSafehouses).HasForeignKey(e => e.UserId).OnDelete(DeleteBehavior.Cascade).HasConstraintName("user_safehouses_user_id_fkey");
+            entity.HasOne(e => e.Safehouse).WithMany(s => s.UserSafehouses).HasForeignKey(e => e.SafehouseId).OnDelete(DeleteBehavior.Cascade).HasConstraintName("user_safehouses_safehouse_id_fkey");
+        });
+
+        modelBuilder.Entity<StaffTask>(entity =>
+        {
+            entity.HasKey(e => e.StaffTaskId).HasName("staff_tasks_pkey");
+            entity.ToTable("staff_tasks");
+            entity.HasIndex(e => e.StaffUserId).HasDatabaseName("staff_tasks_staff_user_id_idx");
+            entity.HasIndex(e => new { e.StaffUserId, e.Status }).HasDatabaseName("staff_tasks_user_status_idx");
+            entity.HasIndex(e => e.SafehouseId).HasDatabaseName("staff_tasks_safehouse_id_idx");
+            entity.Property(e => e.StaffTaskId).HasColumnName("staff_task_id");
+            entity.Property(e => e.StaffUserId).HasColumnName("staff_user_id");
+            entity.Property(e => e.ResidentId).HasColumnName("resident_id");
+            entity.Property(e => e.SafehouseId).HasColumnName("safehouse_id");
+            entity.Property(e => e.TaskType).HasColumnName("task_type");
+            entity.Property(e => e.Title).HasColumnName("title");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.ContextJson).HasColumnName("context_json").HasColumnType("jsonb");
+            entity.Property(e => e.Status).HasColumnName("status");
+            entity.Property(e => e.SnoozeUntil).HasColumnName("snooze_until");
+            entity.Property(e => e.DueTriggerDate).HasColumnName("due_trigger_date");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("now()");
+            entity.Property(e => e.CompletedAt).HasColumnName("completed_at");
+            entity.Property(e => e.SourceEntityType).HasColumnName("source_entity_type");
+            entity.Property(e => e.SourceEntityId).HasColumnName("source_entity_id");
+            entity.HasOne(e => e.StaffUser).WithMany(u => u.StaffTasks).HasForeignKey(e => e.StaffUserId).OnDelete(DeleteBehavior.Cascade).HasConstraintName("staff_tasks_staff_user_id_fkey");
+            entity.HasOne(e => e.Resident).WithMany(r => r.StaffTasks).HasForeignKey(e => e.ResidentId).OnDelete(DeleteBehavior.SetNull).HasConstraintName("staff_tasks_resident_id_fkey");
+            entity.HasOne(e => e.Safehouse).WithMany(s => s.StaffTasks).HasForeignKey(e => e.SafehouseId).OnDelete(DeleteBehavior.Cascade).HasConstraintName("staff_tasks_safehouse_id_fkey");
+        });
+
+        modelBuilder.Entity<CalendarEvent>(entity =>
+        {
+            entity.HasKey(e => e.CalendarEventId).HasName("calendar_events_pkey");
+            entity.ToTable("calendar_events");
+            entity.HasIndex(e => e.StaffUserId).HasDatabaseName("calendar_events_staff_user_id_idx");
+            entity.HasIndex(e => new { e.StaffUserId, e.EventDate }).HasDatabaseName("calendar_events_user_date_idx");
+            entity.HasIndex(e => e.SafehouseId).HasDatabaseName("calendar_events_safehouse_id_idx");
+            entity.Property(e => e.CalendarEventId).HasColumnName("calendar_event_id");
+            entity.Property(e => e.StaffUserId).HasColumnName("staff_user_id");
+            entity.Property(e => e.SafehouseId).HasColumnName("safehouse_id");
+            entity.Property(e => e.ResidentId).HasColumnName("resident_id");
+            entity.Property(e => e.EventType).HasColumnName("event_type");
+            entity.Property(e => e.Title).HasColumnName("title");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.EventDate).HasColumnName("event_date");
+            entity.Property(e => e.StartTime).HasColumnName("start_time");
+            entity.Property(e => e.EndTime).HasColumnName("end_time");
+            entity.Property(e => e.RecurrenceRule).HasColumnName("recurrence_rule");
+            entity.Property(e => e.SourceTaskId).HasColumnName("source_task_id");
+            entity.Property(e => e.Status).HasColumnName("status");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("now()");
+            entity.HasOne(e => e.StaffUser).WithMany(u => u.CalendarEvents).HasForeignKey(e => e.StaffUserId).OnDelete(DeleteBehavior.Cascade).HasConstraintName("calendar_events_staff_user_id_fkey");
+            entity.HasOne(e => e.Safehouse).WithMany(s => s.CalendarEvents).HasForeignKey(e => e.SafehouseId).OnDelete(DeleteBehavior.Cascade).HasConstraintName("calendar_events_safehouse_id_fkey");
+            entity.HasOne(e => e.Resident).WithMany(r => r.CalendarEvents).HasForeignKey(e => e.ResidentId).OnDelete(DeleteBehavior.SetNull).HasConstraintName("calendar_events_resident_id_fkey");
+            entity.HasOne(e => e.SourceTask).WithMany().HasForeignKey(e => e.SourceTaskId).OnDelete(DeleteBehavior.SetNull).HasConstraintName("calendar_events_source_task_id_fkey");
         });
 
         OnModelCreatingPartial(modelBuilder);

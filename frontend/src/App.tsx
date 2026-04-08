@@ -1,4 +1,5 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, Component } from 'react';
+import type { ReactNode, ErrorInfo } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { CookieConsentProvider } from './contexts/CookieConsentContext';
@@ -8,6 +9,35 @@ import CookieConsent from './components/CookieConsent';
 import CookiePreferencesModal from './components/CookiePreferencesModal';
 import AnalyticsLoader from './components/AnalyticsLoader';
 import ProtectedRoute from './components/ProtectedRoute';
+
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error('React error boundary caught:', error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', fontFamily: 'var(--font-body)', gap: '1rem' }}>
+          <p style={{ color: 'var(--color-slate)', fontSize: '1.1rem' }}>Something went wrong.</p>
+          <button
+            onClick={() => { this.setState({ hasError: false }); window.location.reload(); }}
+            style={{ padding: '0.5rem 1.5rem', borderRadius: '6px', border: '1px solid #ccc', background: '#fff', cursor: 'pointer', fontSize: '0.95rem' }}
+          >
+            Reload page
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 // Public pages — eagerly loaded (common entry points)
 import HomePage from './pages/HomePage';
 import ImpactPage from './pages/ImpactPage';
@@ -32,6 +62,17 @@ const DonorsPage = lazy(() => import('./pages/admin/DonorsPage'));
 const SupporterDetailPage = lazy(() => import('./pages/admin/SupporterDetailPage'));
 const SupporterFormPage = lazy(() => import('./pages/admin/SupporterFormPage'));
 const DonationFormPage = lazy(() => import('./pages/admin/DonationFormPage'));
+const UsersPage = lazy(() => import('./pages/admin/UsersPage'));
+const StaffTasksPage = lazy(() => import('./pages/admin/StaffTasksPage'));
+const CalendarPage = lazy(() => import('./pages/admin/CalendarPage'));
+const IncidentsPage = lazy(() => import('./pages/admin/IncidentsPage'));
+const IncidentFormPage = lazy(() => import('./pages/admin/IncidentFormPage'));
+const IncidentDetailPage = lazy(() => import('./pages/admin/IncidentDetailPage'));
+const CaseQueuePage = lazy(() => import('./pages/admin/CaseQueuePage'));
+const CaseConferencesPage = lazy(() => import('./pages/admin/CaseConferencesPage'));
+const EducationRecordFormPage = lazy(() => import('./pages/admin/EducationRecordFormPage'));
+const HealthRecordFormPage = lazy(() => import('./pages/admin/HealthRecordFormPage'));
+const PostPlacementPage = lazy(() => import('./pages/admin/PostPlacementPage'));
 const DonorPortal = lazy(() => import('./pages/DonorPortal'));
 const DonatePage = lazy(() => import('./pages/DonatePage'));
 const DonateSuccessPage = lazy(() => import('./pages/DonateSuccessPage'));
@@ -58,6 +99,7 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
 
 function App() {
   return (
+    <ErrorBoundary>
     <AuthProvider>
       <CookieConsentProvider>
         <BrowserRouter>
@@ -89,10 +131,21 @@ function App() {
               </ProtectedRoute>
             }>
               <Route index element={<AdminDashboard />} />
+              <Route path="tasks" element={<StaffTasksPage />} />
+              <Route path="calendar" element={<CalendarPage />} />
+              <Route path="incidents" element={<IncidentsPage />} />
+              <Route path="incidents/new" element={<IncidentFormPage />} />
+              <Route path="incidents/:id" element={<IncidentDetailPage />} />
+              <Route path="incidents/:id/edit" element={<IncidentFormPage />} />
+              <Route path="queue" element={<CaseQueuePage />} />
+              <Route path="conferences" element={<CaseConferencesPage />} />
+              <Route path="post-placement" element={<PostPlacementPage />} />
               <Route path="caseload" element={<CaseloadPage />} />
               <Route path="caseload/new" element={<ResidentFormPage />} />
               <Route path="caseload/:id" element={<ResidentDetailPage />} />
               <Route path="caseload/:id/edit" element={<ResidentFormPage />} />
+              <Route path="caseload/:id/education/new" element={<EducationRecordFormPage />} />
+              <Route path="caseload/:id/health/new" element={<HealthRecordFormPage />} />
               <Route path="reports" element={<ReportsPage />} />
               <Route path="visitations" element={<VisitationsPage />} />
               <Route path="visitations/new" element={<VisitationFormPage />} />
@@ -108,6 +161,7 @@ function App() {
               <Route path="donors/:id/edit" element={<SupporterFormPage />} />
               <Route path="donations/new" element={<DonationFormPage />} />
               <Route path="donations/:id/edit" element={<DonationFormPage />} />
+              <Route path="users" element={<UsersPage />} />
             </Route>
           </Routes>
           <CookieConsent />
@@ -116,6 +170,7 @@ function App() {
         <AnalyticsLoader />
       </CookieConsentProvider>
     </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

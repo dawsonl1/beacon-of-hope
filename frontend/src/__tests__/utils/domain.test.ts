@@ -69,9 +69,10 @@ describe('Domain constants', () => {
   });
 
   it('REINTEGRATION_TYPES contains expected values', () => {
-    expect(REINTEGRATION_TYPES).toHaveLength(4);
+    expect(REINTEGRATION_TYPES).toHaveLength(5);
     expect(REINTEGRATION_TYPES).toContain('Family Reunification');
     expect(REINTEGRATION_TYPES).toContain('Foster Care');
+    expect(REINTEGRATION_TYPES).toContain('Adoption');
   });
 
   it('REINTEGRATION_STATUSES contains expected values', () => {

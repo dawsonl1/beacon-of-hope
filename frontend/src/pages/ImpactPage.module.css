@@ -4,20 +4,12 @@
 }
 
 .statsBanner {
-  padding: 3.5rem 1.25rem 2rem;
+  padding: 3rem 1.25rem 2rem;
 }
 
 .statsInner {
   max-width: var(--max-width);
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: minmax(260px, 1fr) minmax(0, 1.2fr);
-  gap: 2rem;
-  align-items: center;
-}
-
-.statsLabel {
-  flex-shrink: 0;
 }
 
 .statsHeadline {
@@ -27,18 +19,22 @@
   color: var(--text-strong);
   letter-spacing: -0.02em;
   line-height: 1.1;
-  margin-bottom: 0.45rem;
+  text-align: center;
+  margin-bottom: 0.35rem;
 }
 
 .statsUpdated {
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .statItem {
@@ -50,13 +46,12 @@
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
-  min-width: 140px;
 }
 
 .statNumber {
   display: block;
   font-family: var(--font-display);
-  font-size: clamp(2rem, 3.2vw, 2.8rem);
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
   font-weight: 600;
   color: var(--text-strong);
   line-height: 1;
@@ -66,10 +61,85 @@
 .statDesc {
   display: block;
   margin-top: 0.45rem;
-  font-size: 0.86rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
   padding-top: 0.2rem;
   border-top: 2px solid var(--color-sage);
+}
+
+/* ── Key Metric Card ─────────────────────────────────── */
+.okrCard {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2rem;
+  align-items: center;
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem 2rem;
+}
+
+.okrLeft {
+  text-align: center;
+  min-width: 140px;
+}
+
+.okrLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-sage);
+  margin-bottom: 0.25rem;
+}
+
+.okrValue {
+  font-family: var(--font-display);
+  font-size: 3.2rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.okrTitle {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+.okrRight {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.okrDesc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.okrBar {
+  height: 8px;
+  background: rgba(15, 27, 45, 0.06);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.okrFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-sage), #13a490);
+  border-radius: 999px;
+  transition: width 0.8s ease;
+}
+
+.okrTarget {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
 /* ── Chart Sections ───────────────────────────────────── */
@@ -400,8 +470,13 @@
     padding: 3.8rem 1rem 1.8rem;
   }
 
-  .statsInner {
+  .statsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .okrCard {
     grid-template-columns: 1fr;
+    text-align: center;
   }
 
   .chartSection,
@@ -413,7 +488,6 @@
   }
 
   .metricsGrid,
-  .statsGrid,
   .storyRow {
     grid-template-columns: 1fr;
   }
