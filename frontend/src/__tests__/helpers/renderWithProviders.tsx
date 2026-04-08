@@ -2,6 +2,7 @@ import { render, type RenderOptions } from '@testing-library/react';
 import { BrowserRouter, MemoryRouter } from 'react-router-dom';
 import { AuthProvider } from '../../contexts/AuthContext';
 import { CookieConsentProvider } from '../../contexts/CookieConsentContext';
+import { SafehouseProvider } from '../../contexts/SafehouseContext';
 import type { ReactElement } from 'react';
 
 interface Options extends Omit<RenderOptions, 'wrapper'> {
@@ -13,7 +14,9 @@ function AllProviders({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
       <CookieConsentProvider>
-        <BrowserRouter>{children}</BrowserRouter>
+        <SafehouseProvider>
+          <BrowserRouter>{children}</BrowserRouter>
+        </SafehouseProvider>
       </CookieConsentProvider>
     </AuthProvider>
   );
@@ -24,7 +27,9 @@ function AllProvidersWithMemoryRouter(initialEntries: string[]) {
     return (
       <AuthProvider>
         <CookieConsentProvider>
-          <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
+          <SafehouseProvider>
+            <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
+          </SafehouseProvider>
         </CookieConsentProvider>
       </AuthProvider>
     );

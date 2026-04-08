@@ -22,7 +22,7 @@ describe('HomePage', () => {
   it('loads and displays impact stats', async () => {
     renderWithProviders(<HomePage />);
     await waitFor(() => {
-      expect(screen.getByText('Girls served since founding')).toBeInTheDocument();
+      expect(screen.getByText('Lives transformed')).toBeInTheDocument();
     });
   });
 
