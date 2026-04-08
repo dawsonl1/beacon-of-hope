@@ -39,7 +39,7 @@ export default function Footer() {
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a>
               <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
               <Link to="/newsletter">Monthly Newsletter</Link>
-              <p className={styles.dataNote}>*Data as of February 15, 2026</p>
+              <p className={styles.dataNote}>*Data as of February 16, 2026</p>
             </div>
           </div>
         </div>

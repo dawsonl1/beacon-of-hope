@@ -75,7 +75,7 @@ export default function ImpactPage() {
       <section className={styles.statsBanner} ref={statsRef}>
         <div className={`${styles.statsInner} reveal`}>
           <h1 className={styles.statsHeadline}>Our impact, by the numbers</h1>
-          <p className={styles.statsUpdated}>Live data as of February 15, 2026</p>
+          <p className={styles.statsUpdated}>Live data as of February 16, 2026</p>
           {error && <ApiError />}
           {summary && (
             <>

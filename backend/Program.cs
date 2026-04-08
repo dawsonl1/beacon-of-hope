@@ -683,9 +683,9 @@ app.MapPost("/api/admin/seed-workflow-data", async (
     AppDbContext db) =>
 {
     var results = new List<string>();
-    // "Today" is February 15, 2026 — matching DATA_CUTOFF
-    var today = new DateOnly(2026, 2, 15);
-    var todayDt = new DateTime(2026, 2, 15, 0, 0, 0, DateTimeKind.Utc);
+    // "Today" is February 16, 2026 — matching DATA_CUTOFF
+    var today = new DateOnly(2026, 2, 16);
+    var todayDt = new DateTime(2026, 2, 16, 0, 0, 0, DateTimeKind.Utc);
 
     // ── 0. Clear old seeded workflow data so we can re-seed ──
     var oldTasks = await db.StaffTasks.ToListAsync();
@@ -886,7 +886,7 @@ app.MapPost("/api/admin/seed-workflow-data", async (
     await db.SaveChangesAsync();
     results.Add($"Created {taskCount} to-do tasks");
 
-    // ── 4. Create dense calendar events around Feb 15 ──
+    // ── 4. Create dense calendar events around Feb 16 ──
     var eventCount = 0;
     var eventTypes = new[] { "Counseling", "Counseling", "Counseling", "HomeVisit", "DoctorApt", "DentistApt", "GroupTherapy" };
     var timeSlots = new[] { "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00" };
@@ -898,12 +898,14 @@ app.MapPost("/api/admin/seed-workflow-data", async (
         var userId = staffUserIds[sw];
         var shId = r.SafehouseId ?? 1;
 
-        // 4-8 events per resident over 2 weeks around Feb 15
+        // 4-8 events per resident over 2 weeks around Feb 16
         var numEvents = random.Next(4, 9);
         for (int i = 0; i < numEvents; i++)
         {
-            // Spread from Feb 9 (Mon) to Feb 27 (Fri), with more density near Feb 15
-            var daysOffset = random.Next(-5, 13);
+            // Spread from Feb 10 (Tue) to Feb 27 (Fri), biased toward Feb 16-20
+            var daysOffset = random.Next(-4, 12);
+            // Bias: 40% chance of being on today (Feb 16) or tomorrow
+            if (random.Next(5) < 2) daysOffset = random.Next(0, 2);
             var eventDate = today.AddDays(daysOffset);
             if (eventDate.DayOfWeek == DayOfWeek.Saturday || eventDate.DayOfWeek == DayOfWeek.Sunday) continue;
 
@@ -936,8 +938,8 @@ app.MapPost("/api/admin/seed-workflow-data", async (
         }
     }
 
-    // Monday case conferences — Feb 16 is a Monday
-    var confMonday = new DateOnly(2026, 2, 16);
+    // Monday case conferences — Feb 16 is DATA_CUTOFF and a Monday
+    var confMonday = today; // 2026-02-16
     for (int shId = 1; shId <= 9; shId++)
     {
         var shStaff = swToSafehouse.FirstOrDefault(kv => kv.Value.Contains(shId));
@@ -1094,7 +1096,7 @@ app.MapDelete("/api/admin/users/{id}", async (
 
 // ── Global data reference date ──────────────────────────────
 // All queries should treat this as "today" so dashboards are consistent
-var DATA_CUTOFF = new DateOnly(2026, 2, 15);
+var DATA_CUTOFF = new DateOnly(2026, 2, 16);
 
 // ── Public endpoints (Impact page, Home page) ──────────────
 

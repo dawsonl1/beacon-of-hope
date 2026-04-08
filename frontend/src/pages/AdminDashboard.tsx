@@ -90,7 +90,7 @@ export default function AdminDashboard() {
   const [residents, setResidents] = useState<ResidentRow[]>([]);
   const [totalResidents, setTotalResidents] = useState(0);
   const [donations, setDonations] = useState<RecentDonation[]>([]);
-  const dataDateStr = 'Data as of February 15, 2026';
+  const dataDateStr = 'Data as of February 16, 2026';
   const [activeResidentsChart, setActiveResidentsChart] = useState<Array<{ month: string; count: number }>>([]);
   const [flaggedChart, setFlaggedChart] = useState<Array<{ month: string; count: number }>>([]);
   const [channels, setChannels] = useState<Array<{ channel: string; amount: number }>>([]);

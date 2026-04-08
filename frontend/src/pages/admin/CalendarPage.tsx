@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Loader2, Plus } from 'lucide-react';
 import { apiFetch } from '../../api';
+import { APP_TODAY, APP_TODAY_STR } from '../../constants';
 import { useSafehouse } from '../../contexts/SafehouseContext';
 import styles from './CalendarPage.module.css';
 
@@ -71,7 +72,7 @@ export default function CalendarPage() {
   const navigate = useNavigate();
   const { activeSafehouseId, safehouses } = useSafehouse();
   const [view, setView] = useState<'day' | 'week'>('day');
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date(APP_TODAY));
   const [events, setEvents] = useState<CalendarEventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -81,7 +82,7 @@ export default function CalendarPage() {
     eventType: 'Counseling',
     title: '',
     description: '',
-    eventDate: formatDate(new Date()),
+    eventDate: APP_TODAY_STR,
     startTime: '',
     endTime: '',
     residentId: '',
@@ -175,7 +176,7 @@ export default function CalendarPage() {
     );
   }
 
-  const todayStr = formatDate(new Date());
+  const todayStr = APP_TODAY_STR;
   const unscheduled = events.filter(e => !e.startTime && e.status !== 'Completed');
   const scheduled = events.filter(e => e.startTime);
 
@@ -199,7 +200,7 @@ export default function CalendarPage() {
 
       <div className={styles.controls}>
         <button className={styles.navBtn} onClick={() => navigate_date(-1)}><ChevronLeft size={18} /></button>
-        <button className={styles.todayBtn} onClick={() => setCurrentDate(new Date())}>Today</button>
+        <button className={styles.todayBtn} onClick={() => setCurrentDate(new Date(APP_TODAY))}>Today</button>
         <span className={styles.dateLabel}>
           {view === 'day' ? formatDateDisplay(currentDate) :
             `${formatDate(getWeekStart(currentDate))} - ${formatDate(addDays(getWeekStart(currentDate), 6))}`}
