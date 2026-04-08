@@ -79,7 +79,6 @@ Each staff account is assigned to 1-2 safehouses and has to-do tasks and calenda
 | `sw19@beaconofhope.org` | `Test1234!@#$` | Alma Pascual | SH09 |
 | `sw20@beaconofhope.org` | `Test1234!@#$` | Nina Cortez | SH01, SH03 |
 
-> Note: SW-12 and SW-18 do not exist (not referenced in resident data).
 
 ### Important: App Date
 
