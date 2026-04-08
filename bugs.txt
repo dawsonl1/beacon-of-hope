@@ -1,0 +1,13 @@
+Bug Report - Beacon of Hope Website
+- Donate now button on the first page just takes you to the 'Get Involved' portion of the home page. It should redirect to the actual donation link.
+- Log out button appears as white on white text. We need it to match the styling of the admin button
+- The admin button is labeled "Director". We want it to be Labeled something like "Admin Dashboard"
+- The "Total Given" row font is really hard to read on the admin/donors page. Make it more legible.
+- The admin/reports outcomes page has no data. What is the source of the data supposed to be? 
+- Reports and Analytics could use some more data in the overview tab. 
+- Donate button in the 'Get Involved' Page does not link to anything.
+- The 'Advocate' Button should link to the organization's Instagram Profile (see the footer for the link)
+- The 'Partner' Card should redirect to the login (or create account) page. (Note: the create account thing isn't made yet) 
+- Convert any/all monetary amounts to USD. (You can also just put a $ instead) 
+- The case document that we are building off of says this organization is in the Philippines, but our organization is for Guam. Change any references anywhere on the website to the Philippines to reference Guam instead.
+
