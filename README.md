@@ -46,11 +46,11 @@ All accounts use password: **`Test1234!@#$`**
 
 ### Core Accounts
 
-| Role  | Email                      | Notes |
-|-------|----------------------------|-------|
-| Admin | `admin@beaconofhope.org`   | Full access to all safehouses, user management, delete operations |
-| Staff | `staff@beaconofhope.org`   | Assigned to safehouses 1 & 2 |
-| Donor | `donor@beaconofhope.org`   | Donor portal only — no admin access |
+| Role  | Email                      | Password       | Notes |
+|-------|----------------------------|----------------|-------|
+| Admin | `admin@beaconofhope.org`   | `Test1234!@#$` | Full access to all safehouses, user management, delete operations |
+| Staff | `staff@beaconofhope.org`   | `Test1234!@#$` | Assigned to safehouses 1 & 2 |
+| Donor | `donor@beaconofhope.org`   | `Test1234!@#$` | Donor portal only — no admin access |
 
 ### Staff Social Worker Accounts
 
@@ -58,26 +58,26 @@ Each staff account is assigned to 1-2 safehouses and has to-do tasks and calenda
 
 **Best for demo: `sw07@beaconofhope.org`** (8 tasks, 5+ events on Feb 16)
 
-| Account | Name | Safehouses |
-|---------|------|------------|
-| `sw01@beaconofhope.org` | Maria Santos | SH01, SH02 |
-| `sw02@beaconofhope.org` | Elena Cruz | SH01 |
-| `sw03@beaconofhope.org` | Rosa Garcia | SH02 |
-| `sw04@beaconofhope.org` | Ana Reyes | SH03 |
-| `sw05@beaconofhope.org` | Carmen Bautista | SH03, SH04 |
-| `sw06@beaconofhope.org` | Linda Perez | SH04 |
-| `sw07@beaconofhope.org` | Grace Flores | SH05, SH06 |
-| `sw08@beaconofhope.org` | Joy Rivera | SH01 |
-| `sw09@beaconofhope.org` | Faith Torres | SH05 |
-| `sw10@beaconofhope.org` | Hope Ramos | SH06 |
-| `sw11@beaconofhope.org` | Liza Mendoza | SH07 |
-| `sw13@beaconofhope.org` | Diana Castro | SH07, SH08 |
-| `sw14@beaconofhope.org` | Sarah Aquino | SH08 |
-| `sw15@beaconofhope.org` | Ruth Villanueva | SH09 |
-| `sw16@beaconofhope.org` | Esther Soriano | SH02, SH07 |
-| `sw17@beaconofhope.org` | Mercy Dela Cruz | SH07, SH08 |
-| `sw19@beaconofhope.org` | Alma Pascual | SH09 |
-| `sw20@beaconofhope.org` | Nina Cortez | SH01, SH03 |
+| Account | Password | Name | Safehouses |
+|---------|----------|------|------------|
+| `sw01@beaconofhope.org` | `Test1234!@#$` | Maria Santos | SH01, SH02 |
+| `sw02@beaconofhope.org` | `Test1234!@#$` | Elena Cruz | SH01 |
+| `sw03@beaconofhope.org` | `Test1234!@#$` | Rosa Garcia | SH02 |
+| `sw04@beaconofhope.org` | `Test1234!@#$` | Ana Reyes | SH03 |
+| `sw05@beaconofhope.org` | `Test1234!@#$` | Carmen Bautista | SH03, SH04 |
+| `sw06@beaconofhope.org` | `Test1234!@#$` | Linda Perez | SH04 |
+| `sw07@beaconofhope.org` | `Test1234!@#$` | Grace Flores | SH05, SH06 |
+| `sw08@beaconofhope.org` | `Test1234!@#$` | Joy Rivera | SH01 |
+| `sw09@beaconofhope.org` | `Test1234!@#$` | Faith Torres | SH05 |
+| `sw10@beaconofhope.org` | `Test1234!@#$` | Hope Ramos | SH06 |
+| `sw11@beaconofhope.org` | `Test1234!@#$` | Liza Mendoza | SH07 |
+| `sw13@beaconofhope.org` | `Test1234!@#$` | Diana Castro | SH07, SH08 |
+| `sw14@beaconofhope.org` | `Test1234!@#$` | Sarah Aquino | SH08 |
+| `sw15@beaconofhope.org` | `Test1234!@#$` | Ruth Villanueva | SH09 |
+| `sw16@beaconofhope.org` | `Test1234!@#$` | Esther Soriano | SH02, SH07 |
+| `sw17@beaconofhope.org` | `Test1234!@#$` | Mercy Dela Cruz | SH07, SH08 |
+| `sw19@beaconofhope.org` | `Test1234!@#$` | Alma Pascual | SH09 |
+| `sw20@beaconofhope.org` | `Test1234!@#$` | Nina Cortez | SH01, SH03 |
 
 > Note: SW-12 and SW-18 do not exist (not referenced in resident data).
 
