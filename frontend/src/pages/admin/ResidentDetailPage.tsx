@@ -152,6 +152,7 @@ export default function ResidentDetailPage() {
   const [educationRecords, setEducationRecords] = useState<any[]>([]);
   const [healthRecords, setHealthRecords] = useState<any[]>([]);
   const [incidents, setIncidents] = useState<any[]>([]);
+  const [emotionalTrends, setEmotionalTrends] = useState<{ sessionDate: string; emotionalStateObserved: string; emotionalStateEnd: string }[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -167,6 +168,7 @@ export default function ResidentDetailPage() {
       apiFetch<any[]>(`/api/admin/education-records?residentId=${id}`).then(setEducationRecords).catch(() => {});
       apiFetch<any[]>(`/api/admin/health-records?residentId=${id}`).then(setHealthRecords).catch(() => {});
       apiFetch<{ items: any[] }>(`/api/admin/incidents?residentId=${id}`).then(d => setIncidents(d.items || [])).catch(() => {});
+      apiFetch<any[]>(`/api/admin/recordings/emotional-trends?residentId=${id}`).then(setEmotionalTrends).catch(() => {});
     }
   }, [id]);
 
@@ -416,6 +418,40 @@ export default function ResidentDetailPage() {
           <InfoField label="Current Risk Level" value={resident.currentRiskLevel} />
         </div>
       </Section>
+
+      {emotionalTrends.length > 0 && (
+        <Section title="Emotional Trajectory" icon={Activity} defaultOpen>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', padding: '0.5rem 0' }}>
+            {(() => {
+              const EMOTIONAL_ORDER = ['Severe Distress', 'Distressed', 'Struggling', 'Unsettled', 'Neutral', 'Coping', 'Stable', 'Good', 'Thriving'];
+              const getIndex = (s: string) => EMOTIONAL_ORDER.indexOf(s);
+              const getColor = (idx: number) => {
+                if (idx <= 1) return '#c0392b';
+                if (idx <= 3) return '#e67e22';
+                if (idx === 4) return '#95a5a6';
+                if (idx <= 6) return '#3498db';
+                return '#27ae60';
+              };
+              return emotionalTrends.slice(-12).map((t, i) => {
+                const startIdx = getIndex(t.emotionalStateObserved);
+                const endIdx = getIndex(t.emotionalStateEnd);
+                const improved = endIdx > startIdx;
+                const declined = endIdx < startIdx;
+                return (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.82rem' }}>
+                    <span style={{ minWidth: '80px', color: 'var(--text-muted)', fontWeight: 600 }}>{t.sessionDate}</span>
+                    <span style={{ minWidth: '100px', color: getColor(startIdx) }}>{t.emotionalStateObserved || '-'}</span>
+                    <span style={{ color: 'var(--text-muted)' }}>&rarr;</span>
+                    <span style={{ minWidth: '100px', color: getColor(endIdx), fontWeight: 600 }}>{t.emotionalStateEnd || '-'}</span>
+                    {improved && <span style={{ color: '#27ae60', fontSize: '0.75rem' }}>+improved</span>}
+                    {declined && <span style={{ color: '#c0392b', fontSize: '0.75rem' }}>-declined</span>}
+                  </div>
+                );
+              });
+            })()}
+          </div>
+        </Section>
+      )}
 
       <Section title="Education Records" icon={GraduationCap}>
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.75rem' }}>

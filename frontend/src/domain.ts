@@ -22,7 +22,7 @@ export type CooperationLevel = typeof COOPERATION_LEVELS[number];
 export const SESSION_TYPES = ['Individual', 'Group', 'Family', 'Crisis', 'Assessment', 'Follow-Up', 'Discharge'] as const;
 export type SessionType = typeof SESSION_TYPES[number];
 
-export const REINTEGRATION_TYPES = ['Family Reunification', 'Foster Care', 'Independent Living', 'None'] as const;
+export const REINTEGRATION_TYPES = ['Family Reunification', 'Foster Care', 'Adoption', 'Independent Living', 'None'] as const;
 export type ReintegrationType = typeof REINTEGRATION_TYPES[number];
 
 export const REINTEGRATION_STATUSES = ['Not Started', 'In Progress', 'Completed', 'On Hold'] as const;

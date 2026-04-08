@@ -142,6 +142,9 @@ export default function RecordingFormPage() {
   const [progressNoted, setProgressNoted] = useState(false);
   const [concernsFlagged, setConcernsFlagged] = useState(false);
   const [referralMade, setReferralMade] = useState(false);
+  const [notesRestricted, setNotesRestricted] = useState('');
+  const [needsCaseConference, setNeedsCaseConference] = useState(false);
+  const [readyForReintegration, setReadyForReintegration] = useState(false);
 
   // Voice memo state
   const [memoState, setMemoState] = useState<'idle' | 'requesting_mic' | 'recording' | 'processing' | 'done'>('idle');
@@ -427,6 +430,7 @@ export default function RecordingFormPage() {
       setProgressNoted(r.progressNoted ?? false);
       setConcernsFlagged(r.concernsFlagged ?? false);
       setReferralMade(r.referralMade ?? false);
+      setNotesRestricted(r.notesRestricted ?? '');
     } catch {
       setErrorMsg('Failed to load recording.');
     } finally {
@@ -471,7 +475,7 @@ export default function RecordingFormPage() {
         progressNoted,
         concernsFlagged,
         referralMade,
-        notesRestricted: null as string | null,
+        notesRestricted: notesRestricted || null,
       };
 
       if (isEdit) {
@@ -800,7 +804,29 @@ export default function RecordingFormPage() {
               />
               <span>Referral Made</span>
             </label>
+            <label className={styles.checkbox}>
+              <input type="checkbox" checked={needsCaseConference} onChange={(e) => setNeedsCaseConference(e.target.checked)} />
+              <span>Needs Case Conference</span>
+            </label>
+            <label className={styles.checkbox}>
+              <input type="checkbox" checked={readyForReintegration} onChange={(e) => setReadyForReintegration(e.target.checked)} />
+              <span>Ready for Reintegration Assessment</span>
+            </label>
           </div>
+        </div>
+
+        {/* Restricted Notes */}
+        <div className={styles.section}>
+          <label className={styles.label}>
+            <span>Restricted Notes</span>
+            <textarea
+              className={styles.textarea}
+              rows={3}
+              value={notesRestricted}
+              onChange={(e) => setNotesRestricted(e.target.value)}
+              placeholder="Sensitive notes visible only to authorized staff..."
+            />
+          </label>
         </div>
 
         {/* Actions */}
