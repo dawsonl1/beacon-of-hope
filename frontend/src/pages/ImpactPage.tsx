@@ -172,7 +172,7 @@ export default function ImpactPage() {
               <span className={styles.metricLabel}>Girls reunified with families</span>
               <span className={styles.metricChange}>
                 <ArrowUpRight size={12} />
-                {summary.reintegrationRate}% success rate
+                {summary.reintegrationRate}% reintegrated into families
               </span>
             </div>
             <div className={styles.metricCard}>
@@ -193,10 +193,10 @@ export default function ImpactPage() {
             </div>
             <div className={styles.metricCard}>
               <span className={styles.metricNumber}>{summary.activeSafehouses}</span>
-              <span className={styles.metricLabel}>Safehouse occupancy</span>
+              <span className={styles.metricLabel}>Active safehouses</span>
               <span className={styles.metricChange}>
                 <ArrowUpRight size={12} />
-                Active safehouses across Guam
+                Operating across Guam
               </span>
             </div>
           </div>
@@ -297,8 +297,18 @@ export default function ImpactPage() {
       {/* ── Bottom CTA ──────────────────────────────────── */}
       <section className={styles.bottomCta} ref={ctaRef}>
         <div className={`${styles.ctaInner} reveal`}>
+          {latestDonation && (
+            <div className={styles.goalProgress}>
+              <div className={styles.goalBar}>
+                <div className={styles.goalFill} style={{ width: `${Math.min(100, (latestDonation.total / 15000) * 100)}%` }} />
+              </div>
+              <p className={styles.goalText}>
+                ${(latestDonation.total / 1000).toFixed(1)}k of $15k monthly goal — {Math.round((latestDonation.total / 15000) * 100)}% there
+              </p>
+            </div>
+          )}
           <h2 className={styles.ctaTitle}>
-            Inspired by what you've seen? Help us do more.
+            Help us reach our goal this month.
           </h2>
           <Link to="/donate" className={styles.ctaButton}>
             <Heart size={16} />
