@@ -261,7 +261,8 @@ app.MapPost("/api/auth/register", async (
 
 app.MapGet("/api/auth/me", async (
     HttpContext httpContext,
-    UserManager<ApplicationUser> userManager) =>
+    UserManager<ApplicationUser> userManager,
+    AppDbContext db) =>
 {
     if (httpContext.User.Identity?.IsAuthenticated != true)
         return Results.Ok(new { isAuthenticated = false });
@@ -271,6 +272,12 @@ app.MapGet("/api/auth/me", async (
         return Results.Ok(new { isAuthenticated = false });
 
     var roles = await userManager.GetRolesAsync(user);
+    var safehouses = await db.UserSafehouses
+        .Where(us => us.UserId == user.Id)
+        .Join(db.Safehouses, us => us.SafehouseId, s => s.SafehouseId,
+            (us, s) => new { s.SafehouseId, s.SafehouseCode, s.Name })
+        .ToListAsync();
+
     return Results.Ok(new
     {
         isAuthenticated = true,
@@ -278,9 +285,393 @@ app.MapGet("/api/auth/me", async (
         firstName = user.FirstName,
         lastName = user.LastName,
         roles,
-        supporterId = user.SupporterId
+        supporterId = user.SupporterId,
+        safehouses
     });
 });
+
+// ── User Safehouse Management ───────────────────────────────
+
+app.MapPut("/api/admin/users/{id}/safehouses", async (string id, AppDbContext db, HttpContext httpContext) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<UpdateSafehousesRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    var existing = await db.UserSafehouses.Where(us => us.UserId == id).ToListAsync();
+    db.UserSafehouses.RemoveRange(existing);
+    if (body.SafehouseIds != null)
+        foreach (var sid in body.SafehouseIds)
+            db.UserSafehouses.Add(new UserSafehouse { UserId = id, SafehouseId = sid });
+    await db.SaveChangesAsync();
+    return Results.Ok(new { updated = true });
+}).RequireAuthorization("AdminOnly");
+
+// ── Staff Tasks (To-Do System) ─────────────────────────────
+
+app.MapGet("/api/staff/tasks", async (HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db, int? safehouseId) =>
+{
+    var user = await userManager.GetUserAsync(httpContext.User);
+    if (user == null) return Results.Unauthorized();
+    var now = DateTime.UtcNow;
+    var query = db.StaffTasks
+        .Where(t => t.StaffUserId == user.Id)
+        .Where(t => t.Status == "Pending" || t.Status == "Snoozed")
+        .Where(t => t.Status != "Snoozed" || t.SnoozeUntil == null || t.SnoozeUntil <= now);
+    if (safehouseId.HasValue) query = query.Where(t => t.SafehouseId == safehouseId.Value);
+    var tasks = await query.OrderByDescending(t => t.CreatedAt)
+        .Select(t => new { t.StaffTaskId, t.StaffUserId, t.ResidentId, residentCode = t.Resident != null ? t.Resident.InternalCode : null, t.SafehouseId, t.TaskType, t.Title, t.Description, t.ContextJson, t.Status, t.SnoozeUntil, t.DueTriggerDate, t.CreatedAt, t.SourceEntityType, t.SourceEntityId })
+        .ToListAsync();
+    return Results.Ok(tasks);
+}).RequireAuthorization();
+
+app.MapPost("/api/staff/tasks", async (HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db) =>
+{
+    var user = await userManager.GetUserAsync(httpContext.User);
+    if (user == null) return Results.Unauthorized();
+    var body = await httpContext.Request.ReadFromJsonAsync<CreateStaffTaskRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    var task = new StaffTask { StaffUserId = user.Id, ResidentId = body.ResidentId, SafehouseId = body.SafehouseId, TaskType = body.TaskType ?? "Manual", Title = body.Title ?? "", Description = body.Description, ContextJson = body.ContextJson, Status = "Pending" };
+    db.StaffTasks.Add(task);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { task.StaffTaskId });
+}).RequireAuthorization();
+
+app.MapPut("/api/staff/tasks/{id}", async (int id, HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db) =>
+{
+    var user = await userManager.GetUserAsync(httpContext.User);
+    if (user == null) return Results.Unauthorized();
+    var task = await db.StaffTasks.FirstOrDefaultAsync(t => t.StaffTaskId == id && t.StaffUserId == user.Id);
+    if (task == null) return Results.NotFound();
+    var body = await httpContext.Request.ReadFromJsonAsync<UpdateStaffTaskRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    if (!string.IsNullOrEmpty(body.Status)) { task.Status = body.Status; if (body.Status == "Completed" || body.Status == "Dismissed") task.CompletedAt = DateTime.UtcNow; }
+    if (body.SnoozeUntil.HasValue) { task.SnoozeUntil = body.SnoozeUntil.Value; task.Status = "Snoozed"; }
+    await db.SaveChangesAsync();
+    return Results.Ok(new { updated = true });
+}).RequireAuthorization();
+
+// ── Calendar Events ─────────────────────────────────────────
+
+app.MapGet("/api/staff/calendar", async (HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db, DateOnly? date, DateOnly? weekStart, int? safehouseId) =>
+{
+    var user = await userManager.GetUserAsync(httpContext.User);
+    if (user == null) return Results.Unauthorized();
+    var query = db.CalendarEvents.Where(e => e.StaffUserId == user.Id).Where(e => e.Status != "Cancelled");
+    if (safehouseId.HasValue) query = query.Where(e => e.SafehouseId == safehouseId.Value);
+    if (date.HasValue) query = query.Where(e => e.EventDate == date.Value);
+    else if (weekStart.HasValue) { var weekEnd = weekStart.Value.AddDays(7); query = query.Where(e => e.EventDate >= weekStart.Value && e.EventDate < weekEnd); }
+    var events = await query.OrderBy(e => e.EventDate).ThenBy(e => e.StartTime)
+        .Select(e => new { e.CalendarEventId, e.StaffUserId, e.SafehouseId, e.ResidentId, residentCode = e.Resident != null ? e.Resident.InternalCode : null, e.EventType, e.Title, e.Description, eventDate = e.EventDate.ToString("yyyy-MM-dd"), startTime = e.StartTime.HasValue ? e.StartTime.Value.ToString("HH:mm") : null, endTime = e.EndTime.HasValue ? e.EndTime.Value.ToString("HH:mm") : null, e.RecurrenceRule, e.SourceTaskId, e.Status, e.CreatedAt })
+        .ToListAsync();
+    return Results.Ok(events);
+}).RequireAuthorization();
+
+app.MapPost("/api/staff/calendar", async (HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db) =>
+{
+    var user = await userManager.GetUserAsync(httpContext.User);
+    if (user == null) return Results.Unauthorized();
+    var body = await httpContext.Request.ReadFromJsonAsync<CreateCalendarEventRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    var evt = new CalendarEvent { StaffUserId = user.Id, SafehouseId = body.SafehouseId, ResidentId = body.ResidentId, EventType = body.EventType ?? "Other", Title = body.Title ?? "", Description = body.Description, EventDate = DateOnly.Parse(body.EventDate), StartTime = !string.IsNullOrEmpty(body.StartTime) ? TimeOnly.Parse(body.StartTime) : null, EndTime = !string.IsNullOrEmpty(body.EndTime) ? TimeOnly.Parse(body.EndTime) : null, RecurrenceRule = body.RecurrenceRule, SourceTaskId = body.SourceTaskId, Status = "Scheduled" };
+    db.CalendarEvents.Add(evt);
+    if (body.SourceTaskId.HasValue) { var task = await db.StaffTasks.FirstOrDefaultAsync(t => t.StaffTaskId == body.SourceTaskId.Value); if (task != null) { task.Status = "Completed"; task.CompletedAt = DateTime.UtcNow; } }
+    await db.SaveChangesAsync();
+    return Results.Ok(new { evt.CalendarEventId });
+}).RequireAuthorization();
+
+app.MapPut("/api/staff/calendar/{id}", async (int id, HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db) =>
+{
+    var user = await userManager.GetUserAsync(httpContext.User);
+    if (user == null) return Results.Unauthorized();
+    var evt = await db.CalendarEvents.FirstOrDefaultAsync(e => e.CalendarEventId == id && e.StaffUserId == user.Id);
+    if (evt == null) return Results.NotFound();
+    var body = await httpContext.Request.ReadFromJsonAsync<UpdateCalendarEventRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    if (!string.IsNullOrEmpty(body.Status)) evt.Status = body.Status;
+    if (!string.IsNullOrEmpty(body.StartTime)) evt.StartTime = TimeOnly.Parse(body.StartTime);
+    if (!string.IsNullOrEmpty(body.EndTime)) evt.EndTime = TimeOnly.Parse(body.EndTime);
+    if (!string.IsNullOrEmpty(body.EventDate)) evt.EventDate = DateOnly.Parse(body.EventDate);
+    if (body.Title != null) evt.Title = body.Title;
+    if (body.Description != null) evt.Description = body.Description;
+    await db.SaveChangesAsync();
+    return Results.Ok(new { updated = true });
+}).RequireAuthorization();
+
+app.MapDelete("/api/staff/calendar/{id}", async (int id, HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db) =>
+{
+    var user = await userManager.GetUserAsync(httpContext.User);
+    if (user == null) return Results.Unauthorized();
+    var evt = await db.CalendarEvents.FirstOrDefaultAsync(e => e.CalendarEventId == id && e.StaffUserId == user.Id);
+    if (evt == null) return Results.NotFound();
+    evt.Status = "Cancelled";
+    await db.SaveChangesAsync();
+    return Results.Ok(new { cancelled = true });
+}).RequireAuthorization();
+
+// ── Incident Management ─────────────────────────────────────
+
+app.MapGet("/api/admin/incidents", async (AppDbContext db, int? safehouseId, int? residentId, string? severity, bool? resolved, int page = 1, int pageSize = 20) =>
+{
+    var query = db.IncidentReports.AsQueryable();
+    if (safehouseId.HasValue) query = query.Where(i => i.SafehouseId == safehouseId.Value);
+    if (residentId.HasValue) query = query.Where(i => i.ResidentId == residentId.Value);
+    if (!string.IsNullOrEmpty(severity)) query = query.Where(i => i.Severity == severity);
+    if (resolved.HasValue) query = query.Where(i => i.Resolved == resolved.Value);
+    var total = await query.CountAsync();
+    var items = await query.OrderByDescending(i => i.IncidentDate).Skip((page - 1) * pageSize).Take(pageSize)
+        .Select(i => new { i.IncidentId, i.ResidentId, residentCode = i.Resident != null ? i.Resident.InternalCode : null, i.SafehouseId, i.IncidentDate, i.IncidentType, i.Severity, i.Description, i.ResponseTaken, i.ReportedBy, i.Resolved, i.ResolutionDate, i.FollowUpRequired })
+        .ToListAsync();
+    return Results.Ok(new { total, page, pageSize, items });
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/incidents/{id}", async (int id, AppDbContext db) =>
+{
+    var i = await db.IncidentReports.Where(x => x.IncidentId == id)
+        .Select(x => new { x.IncidentId, x.ResidentId, residentCode = x.Resident != null ? x.Resident.InternalCode : null, x.SafehouseId, x.IncidentDate, x.IncidentType, x.Severity, x.Description, x.ResponseTaken, x.ReportedBy, x.Resolved, x.ResolutionDate, x.FollowUpRequired })
+        .FirstOrDefaultAsync();
+    return i == null ? Results.NotFound() : Results.Ok(i);
+}).RequireAuthorization();
+
+app.MapPost("/api/admin/incidents", async (HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<IncidentRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    var incident = new IncidentReport { ResidentId = body.ResidentId, SafehouseId = body.SafehouseId, IncidentDate = body.IncidentDate, IncidentType = body.IncidentType, Severity = body.Severity, Description = body.Description, ResponseTaken = body.ResponseTaken, ReportedBy = body.ReportedBy, Resolved = body.Resolved ?? false, ResolutionDate = body.ResolutionDate, FollowUpRequired = body.FollowUpRequired ?? false };
+    db.IncidentReports.Add(incident);
+    await db.SaveChangesAsync();
+    if (incident.FollowUpRequired == true && incident.ResidentId.HasValue)
+    {
+        var resident = await db.Residents.FindAsync(incident.ResidentId.Value);
+        if (resident != null)
+        {
+            var assignedUser = await db.UserSafehouses.Where(us => us.SafehouseId == (incident.SafehouseId ?? resident.SafehouseId ?? 0)).Select(us => us.UserId).FirstOrDefaultAsync();
+            if (assignedUser != null)
+            {
+                db.StaffTasks.Add(new StaffTask { StaffUserId = assignedUser, ResidentId = incident.ResidentId, SafehouseId = incident.SafehouseId ?? resident.SafehouseId ?? 0, TaskType = "IncidentFollowUp", Title = $"Follow up on incident for {resident.InternalCode}", Description = $"Incident: {incident.IncidentType} ({incident.Severity}) - {incident.Description}", SourceEntityType = "IncidentReport", SourceEntityId = incident.IncidentId });
+                await db.SaveChangesAsync();
+            }
+        }
+    }
+    return Results.Ok(new { incident.IncidentId });
+}).RequireAuthorization();
+
+app.MapPut("/api/admin/incidents/{id}", async (int id, HttpContext httpContext, AppDbContext db) =>
+{
+    var incident = await db.IncidentReports.FindAsync(id);
+    if (incident == null) return Results.NotFound();
+    var body = await httpContext.Request.ReadFromJsonAsync<IncidentRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    incident.ResidentId = body.ResidentId; incident.SafehouseId = body.SafehouseId; incident.IncidentDate = body.IncidentDate; incident.IncidentType = body.IncidentType; incident.Severity = body.Severity; incident.Description = body.Description; incident.ResponseTaken = body.ResponseTaken; incident.ReportedBy = body.ReportedBy; incident.Resolved = body.Resolved ?? incident.Resolved; incident.ResolutionDate = body.ResolutionDate; incident.FollowUpRequired = body.FollowUpRequired ?? incident.FollowUpRequired;
+    await db.SaveChangesAsync();
+    return Results.Ok(new { updated = true });
+}).RequireAuthorization();
+
+app.MapDelete("/api/admin/incidents/{id}", async (int id, AppDbContext db) =>
+{
+    var incident = await db.IncidentReports.FindAsync(id);
+    if (incident == null) return Results.NotFound();
+    db.IncidentReports.Remove(incident);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { deleted = true });
+}).RequireAuthorization("AdminOnly");
+
+// ── ML Predictions ──────────────────────────────────────────
+
+app.MapGet("/api/ml/predictions/{entityType}/{entityId}", async (string entityType, int entityId, AppDbContext db) =>
+{
+    var predictions = await db.MlPredictions.Where(p => p.EntityType == entityType && p.EntityId == entityId)
+        .Select(p => new { p.Id, p.EntityType, p.EntityId, p.ModelName, p.ModelVersion, p.Score, p.ScoreLabel, p.PredictedAt, p.Metadata })
+        .ToListAsync();
+    return Results.Ok(predictions);
+}).RequireAuthorization();
+
+app.MapGet("/api/ml/predictions/{entityType}/{entityId}/history", async (string entityType, int entityId, string? model, AppDbContext db) =>
+{
+    var query = db.MlPredictionHistory.Where(p => p.EntityType == entityType && p.EntityId == entityId);
+    if (!string.IsNullOrEmpty(model)) query = query.Where(p => p.ModelName == model);
+    var history = await query.OrderByDescending(p => p.PredictedAt).Take(50)
+        .Select(p => new { p.Id, p.ModelName, p.Score, p.ScoreLabel, p.PredictedAt })
+        .ToListAsync();
+    return Results.Ok(history);
+}).RequireAuthorization();
+
+// ── Case Claiming ───────────────────────────────────────────
+
+app.MapPost("/api/admin/residents/{id}/claim", async (int id, HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db) =>
+{
+    var user = await userManager.GetUserAsync(httpContext.User);
+    if (user == null) return Results.Unauthorized();
+    var resident = await db.Residents.FindAsync(id);
+    if (resident == null) return Results.NotFound();
+    resident.AssignedSocialWorker = $"{user.FirstName} {user.LastName}";
+    await db.SaveChangesAsync();
+    // Auto-generate initial home visit to-do
+    db.StaffTasks.Add(new StaffTask { StaffUserId = user.Id, ResidentId = id, SafehouseId = resident.SafehouseId ?? 1, TaskType = "ScheduleHomeVisit", Title = $"Schedule initial home visit for {resident.InternalCode}", Description = "Initial assessment visit after claiming case", Status = "Pending" });
+    await db.SaveChangesAsync();
+    return Results.Ok(new { claimed = true });
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/residents/unclaimed", async (AppDbContext db, int? safehouseId) =>
+{
+    var query = db.Residents.Where(r => r.AssignedSocialWorker == null || r.AssignedSocialWorker == "").Where(r => r.CaseStatus == "Active");
+    if (safehouseId.HasValue) query = query.Where(r => r.SafehouseId == safehouseId.Value);
+    var items = await query.OrderByDescending(r => r.DateOfAdmission)
+        .Select(r => new { r.ResidentId, r.InternalCode, r.CaseControlNo, r.SafehouseId, safehouse = r.Safehouse != null ? r.Safehouse.Name : null, r.CaseCategory, r.CurrentRiskLevel, r.DateOfAdmission })
+        .ToListAsync();
+    return Results.Ok(items);
+}).RequireAuthorization();
+
+// ── Education Records ───────────────────────────────────────
+
+app.MapGet("/api/admin/education-records", async (AppDbContext db, int? residentId) =>
+{
+    var query = db.EducationRecords.AsQueryable();
+    if (residentId.HasValue) query = query.Where(e => e.ResidentId == residentId.Value);
+    var items = await query.OrderByDescending(e => e.RecordDate)
+        .Select(e => new { e.EducationRecordId, e.ResidentId, residentCode = e.Resident.InternalCode, e.RecordDate, e.EducationLevel, e.AttendanceRate, e.ProgressPercent, e.CompletionStatus, e.Notes, e.SchoolName, e.EnrollmentStatus })
+        .ToListAsync();
+    return Results.Ok(items);
+}).RequireAuthorization();
+
+app.MapPost("/api/admin/education-records", async (HttpContext httpContext, AppDbContext db) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<EducationRecordRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    var record = new EducationRecord { ResidentId = body.ResidentId, RecordDate = body.RecordDate, EducationLevel = body.EducationLevel, AttendanceRate = body.AttendanceRate, ProgressPercent = body.ProgressPercent, CompletionStatus = body.CompletionStatus, Notes = body.Notes, SchoolName = body.SchoolName, EnrollmentStatus = body.EnrollmentStatus };
+    db.EducationRecords.Add(record);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { record.EducationRecordId });
+}).RequireAuthorization();
+
+app.MapPut("/api/admin/education-records/{id}", async (int id, HttpContext httpContext, AppDbContext db) =>
+{
+    var record = await db.EducationRecords.FindAsync(id);
+    if (record == null) return Results.NotFound();
+    var body = await httpContext.Request.ReadFromJsonAsync<EducationRecordRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    record.RecordDate = body.RecordDate; record.EducationLevel = body.EducationLevel; record.AttendanceRate = body.AttendanceRate; record.ProgressPercent = body.ProgressPercent; record.CompletionStatus = body.CompletionStatus; record.Notes = body.Notes; record.SchoolName = body.SchoolName; record.EnrollmentStatus = body.EnrollmentStatus;
+    await db.SaveChangesAsync();
+    return Results.Ok(new { updated = true });
+}).RequireAuthorization();
+
+// ── Health Records ──────────────────────────────────────────
+
+app.MapGet("/api/admin/health-records", async (AppDbContext db, int? residentId) =>
+{
+    var query = db.HealthWellbeingRecords.AsQueryable();
+    if (residentId.HasValue) query = query.Where(h => h.ResidentId == residentId.Value);
+    var items = await query.OrderByDescending(h => h.RecordDate)
+        .Select(h => new { h.HealthRecordId, h.ResidentId, residentCode = h.Resident.InternalCode, h.RecordDate, h.WeightKg, h.HeightCm, h.Bmi, h.NutritionScore, h.SleepQualityScore, h.EnergyLevelScore, h.GeneralHealthScore, h.MedicalCheckupDone, h.DentalCheckupDone, h.PsychologicalCheckupDone, h.Notes })
+        .ToListAsync();
+    return Results.Ok(items);
+}).RequireAuthorization();
+
+app.MapPost("/api/admin/health-records", async (HttpContext httpContext, AppDbContext db) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<HealthRecordRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    var record = new HealthWellbeingRecord { ResidentId = body.ResidentId, RecordDate = body.RecordDate, WeightKg = body.WeightKg, HeightCm = body.HeightCm, Bmi = body.Bmi, NutritionScore = body.NutritionScore, SleepQualityScore = body.SleepQualityScore, EnergyLevelScore = body.EnergyLevelScore, GeneralHealthScore = body.GeneralHealthScore, MedicalCheckupDone = body.MedicalCheckupDone, DentalCheckupDone = body.DentalCheckupDone, PsychologicalCheckupDone = body.PsychologicalCheckupDone, Notes = body.Notes };
+    db.HealthWellbeingRecords.Add(record);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { record.HealthRecordId });
+}).RequireAuthorization();
+
+app.MapPut("/api/admin/health-records/{id}", async (int id, HttpContext httpContext, AppDbContext db) =>
+{
+    var record = await db.HealthWellbeingRecords.FindAsync(id);
+    if (record == null) return Results.NotFound();
+    var body = await httpContext.Request.ReadFromJsonAsync<HealthRecordRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    record.RecordDate = body.RecordDate; record.WeightKg = body.WeightKg; record.HeightCm = body.HeightCm; record.Bmi = body.Bmi; record.NutritionScore = body.NutritionScore; record.SleepQualityScore = body.SleepQualityScore; record.EnergyLevelScore = body.EnergyLevelScore; record.GeneralHealthScore = body.GeneralHealthScore; record.MedicalCheckupDone = body.MedicalCheckupDone; record.DentalCheckupDone = body.DentalCheckupDone; record.PsychologicalCheckupDone = body.PsychologicalCheckupDone; record.Notes = body.Notes;
+    await db.SaveChangesAsync();
+    return Results.Ok(new { updated = true });
+}).RequireAuthorization();
+
+// ── Intervention Plans ──────────────────────────────────────
+
+app.MapGet("/api/admin/intervention-plans", async (AppDbContext db, int? residentId) =>
+{
+    var query = db.InterventionPlans.AsQueryable();
+    if (residentId.HasValue) query = query.Where(p => p.ResidentId == residentId.Value);
+    var items = await query.OrderByDescending(p => p.CreatedAt)
+        .Select(p => new { p.PlanId, p.ResidentId, residentCode = p.Resident.InternalCode, p.PlanCategory, p.PlanDescription, p.ServicesProvided, p.TargetValue, p.TargetDate, p.Status, p.CaseConferenceDate, p.CreatedAt, p.UpdatedAt })
+        .ToListAsync();
+    return Results.Ok(items);
+}).RequireAuthorization();
+
+app.MapPost("/api/admin/intervention-plans", async (HttpContext httpContext, AppDbContext db) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<InterventionPlanRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    var plan = new InterventionPlan { ResidentId = body.ResidentId, PlanCategory = body.PlanCategory, PlanDescription = body.PlanDescription, ServicesProvided = body.ServicesProvided, TargetValue = body.TargetValue, TargetDate = body.TargetDate, Status = body.Status ?? "Open", CaseConferenceDate = body.CaseConferenceDate, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow };
+    db.InterventionPlans.Add(plan);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { plan.PlanId });
+}).RequireAuthorization();
+
+app.MapPut("/api/admin/intervention-plans/{id}", async (int id, HttpContext httpContext, AppDbContext db) =>
+{
+    var plan = await db.InterventionPlans.FindAsync(id);
+    if (plan == null) return Results.NotFound();
+    var body = await httpContext.Request.ReadFromJsonAsync<InterventionPlanRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    plan.PlanCategory = body.PlanCategory; plan.PlanDescription = body.PlanDescription; plan.ServicesProvided = body.ServicesProvided; plan.TargetValue = body.TargetValue; plan.TargetDate = body.TargetDate; plan.Status = body.Status ?? plan.Status; plan.CaseConferenceDate = body.CaseConferenceDate; plan.UpdatedAt = DateTime.UtcNow;
+    await db.SaveChangesAsync();
+    return Results.Ok(new { updated = true });
+}).RequireAuthorization();
+
+app.MapDelete("/api/admin/intervention-plans/{id}", async (int id, AppDbContext db) =>
+{
+    var plan = await db.InterventionPlans.FindAsync(id);
+    if (plan == null) return Results.NotFound();
+    db.InterventionPlans.Remove(plan);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { deleted = true });
+}).RequireAuthorization("AdminOnly");
+
+// ── Post-Placement Monitoring ────────────────────────────────
+
+app.MapGet("/api/admin/post-placement", async (AppDbContext db, int? safehouseId) =>
+{
+    var query = db.Residents.Where(r => r.ReintegrationStatus == "Completed" || r.CaseStatus == "Closed" || r.CaseStatus == "Discharged");
+    if (safehouseId.HasValue) query = query.Where(r => r.SafehouseId == safehouseId.Value);
+
+    var residents = await query.OrderByDescending(r => r.DateClosed)
+        .Select(r => new
+        {
+            r.ResidentId,
+            r.InternalCode,
+            r.CaseControlNo,
+            r.SafehouseId,
+            safehouse = r.Safehouse != null ? r.Safehouse.Name : null,
+            r.CaseStatus,
+            r.ReintegrationType,
+            r.ReintegrationStatus,
+            r.DateClosed,
+            r.AssignedSocialWorker,
+            r.CurrentRiskLevel,
+            lastVisit = r.HomeVisitations
+                .Where(v => v.VisitType == "Post-Placement Monitoring")
+                .OrderByDescending(v => v.VisitDate)
+                .Select(v => v.VisitDate)
+                .FirstOrDefault(),
+            totalVisits = r.HomeVisitations.Count(v => v.VisitType == "Post-Placement Monitoring"),
+        })
+        .ToListAsync();
+
+    return Results.Ok(residents);
+}).RequireAuthorization();
+
+app.MapGet("/api/admin/post-placement/summary", async (AppDbContext db, int? safehouseId) =>
+{
+    var query = db.Residents.Where(r => r.ReintegrationStatus == "Completed" || r.CaseStatus == "Closed" || r.CaseStatus == "Discharged");
+    if (safehouseId.HasValue) query = query.Where(r => r.SafehouseId == safehouseId.Value);
+
+    var total = await query.CountAsync();
+    var byType = await query.GroupBy(r => r.ReintegrationType).Select(g => new { type = g.Key, count = g.Count() }).ToListAsync();
+    var byStatus = await query.GroupBy(r => r.CaseStatus).Select(g => new { status = g.Key, count = g.Count() }).ToListAsync();
+
+    return Results.Ok(new { total, byType, byStatus });
+}).RequireAuthorization();
 
 // ── Health endpoint ─────────────────────────────────────────
 
@@ -312,13 +703,19 @@ app.MapGet("/api/health", async (AppDbContext db) =>
 
 // ── User Management (Admin only) ────────────────────────────
 
-app.MapGet("/api/admin/users", async (UserManager<ApplicationUser> userManager) =>
+app.MapGet("/api/admin/users", async (UserManager<ApplicationUser> userManager, AppDbContext db) =>
 {
     var users = userManager.Users.ToList();
+    var allAssignments = await db.UserSafehouses
+        .Join(db.Safehouses, us => us.SafehouseId, s => s.SafehouseId,
+            (us, s) => new { us.UserId, s.SafehouseId, s.SafehouseCode, s.Name })
+        .ToListAsync();
     var result = new List<object>();
     foreach (var u in users)
     {
         var roles = await userManager.GetRolesAsync(u);
+        var safehouses = allAssignments.Where(a => a.UserId == u.Id)
+            .Select(a => new { a.SafehouseId, a.SafehouseCode, a.Name }).ToList();
         result.Add(new
         {
             id = u.Id,
@@ -326,7 +723,8 @@ app.MapGet("/api/admin/users", async (UserManager<ApplicationUser> userManager) 
             firstName = u.FirstName,
             lastName = u.LastName,
             roles = roles.ToList(),
-            supporterId = u.SupporterId
+            supporterId = u.SupporterId,
+            safehouses
         });
     }
     return result;
@@ -334,6 +732,7 @@ app.MapGet("/api/admin/users", async (UserManager<ApplicationUser> userManager) 
 
 app.MapPost("/api/admin/users", async (
     UserManager<ApplicationUser> userManager,
+    AppDbContext db,
     HttpContext httpContext) =>
 {
     var body = await httpContext.Request.ReadFromJsonAsync<CreateUserRequest>();
@@ -360,6 +759,13 @@ app.MapPost("/api/admin/users", async (
         return Results.BadRequest(new { error = string.Join("; ", result.Errors.Select(e => e.Description)) });
 
     await userManager.AddToRoleAsync(user, body.Role);
+
+    if (body.SafehouseIds != null && body.SafehouseIds.Count > 0)
+    {
+        foreach (var sid in body.SafehouseIds)
+            db.UserSafehouses.Add(new UserSafehouse { UserId = user.Id, SafehouseId = sid });
+        await db.SaveChangesAsync();
+    }
 
     return Results.Ok(new { id = user.Id, email = user.Email, role = body.Role });
 }).RequireAuthorization("AdminOnly");
@@ -2144,6 +2550,25 @@ public class CreateUserRequest
     public string Role { get; set; } = "Staff";
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
+    public List<int>? SafehouseIds { get; set; }
 }
+
+public class UpdateSafehousesRequest { public List<int>? SafehouseIds { get; set; } }
+
+public class CreateStaffTaskRequest { public int? ResidentId { get; set; } public int SafehouseId { get; set; } public string? TaskType { get; set; } public string? Title { get; set; } public string? Description { get; set; } public string? ContextJson { get; set; } }
+
+public class UpdateStaffTaskRequest { public string? Status { get; set; } public DateTime? SnoozeUntil { get; set; } }
+
+public class CreateCalendarEventRequest { public int SafehouseId { get; set; } public int? ResidentId { get; set; } public string? EventType { get; set; } public string? Title { get; set; } public string? Description { get; set; } public string EventDate { get; set; } = ""; public string? StartTime { get; set; } public string? EndTime { get; set; } public string? RecurrenceRule { get; set; } public int? SourceTaskId { get; set; } }
+
+public class UpdateCalendarEventRequest { public string? Status { get; set; } public string? StartTime { get; set; } public string? EndTime { get; set; } public string? EventDate { get; set; } public string? Title { get; set; } public string? Description { get; set; } }
+
+public class IncidentRequest { public int? ResidentId { get; set; } public int? SafehouseId { get; set; } public DateOnly? IncidentDate { get; set; } public string? IncidentType { get; set; } public string? Severity { get; set; } public string? Description { get; set; } public string? ResponseTaken { get; set; } public string? ReportedBy { get; set; } public bool? Resolved { get; set; } public DateOnly? ResolutionDate { get; set; } public bool? FollowUpRequired { get; set; } }
+
+public class EducationRecordRequest { public int ResidentId { get; set; } public DateOnly? RecordDate { get; set; } public string? EducationLevel { get; set; } public decimal? AttendanceRate { get; set; } public decimal? ProgressPercent { get; set; } public string? CompletionStatus { get; set; } public string? Notes { get; set; } public string? SchoolName { get; set; } public string? EnrollmentStatus { get; set; } }
+
+public class HealthRecordRequest { public int ResidentId { get; set; } public DateOnly? RecordDate { get; set; } public decimal? WeightKg { get; set; } public decimal? HeightCm { get; set; } public decimal? Bmi { get; set; } public decimal? NutritionScore { get; set; } public decimal? SleepQualityScore { get; set; } public decimal? EnergyLevelScore { get; set; } public decimal? GeneralHealthScore { get; set; } public bool? MedicalCheckupDone { get; set; } public bool? DentalCheckupDone { get; set; } public bool? PsychologicalCheckupDone { get; set; } public string? Notes { get; set; } }
+
+public class InterventionPlanRequest { public int ResidentId { get; set; } public string? PlanCategory { get; set; } public string? PlanDescription { get; set; } public string? ServicesProvided { get; set; } public decimal? TargetValue { get; set; } public DateOnly? TargetDate { get; set; } public string? Status { get; set; } public DateOnly? CaseConferenceDate { get; set; } }
 
 public partial class Program { }

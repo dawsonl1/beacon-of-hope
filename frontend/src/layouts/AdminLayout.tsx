@@ -12,8 +12,15 @@ import {
   LogOut,
   Menu,
   X,
+  CheckSquare,
+  Calendar,
+  AlertTriangle,
+  Inbox,
+  MessageSquare,
+  HomeIcon,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { SafehouseProvider, useSafehouse } from '../contexts/SafehouseContext';
 import styles from './AdminLayout.module.css';
 
 class PageErrorBoundary extends Component<{ children: ReactNode; resetKey: string }, { hasError: boolean }> {
@@ -52,19 +59,26 @@ class PageErrorBoundary extends Component<{ children: ReactNode; resetKey: strin
 
 const navItems = [
   { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
+  { to: '/admin/tasks', icon: CheckSquare, label: 'To-Do' },
+  { to: '/admin/calendar', icon: Calendar, label: 'Calendar' },
+  { to: '/admin/queue', icon: Inbox, label: 'Queue' },
   { to: '/admin/caseload', icon: Users, label: 'Caseload' },
   { to: '/admin/recordings', icon: AudioLines, label: 'Recordings' },
+  { to: '/admin/incidents', icon: AlertTriangle, label: 'Incidents' },
+  { to: '/admin/conferences', icon: MessageSquare, label: 'Conferences' },
   { to: '/admin/visitations', icon: Eye, label: 'Visitations' },
+  { to: '/admin/post-placement', icon: HomeIcon, label: 'Placed' },
   { to: '/admin/donors', icon: HandHeart, label: 'Donors' },
   { to: '/admin/reports', icon: BarChart3, label: 'Reports' },
   { to: '/admin/users', icon: Shield, label: 'Users' },
 ];
 
-export default function AdminLayout() {
+function AdminLayoutInner() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { safehouses, activeSafehouseId, setActiveSafehouseId, isAdmin } = useSafehouse();
 
   async function handleLogout() {
     await logout();
@@ -100,6 +114,20 @@ export default function AdminLayout() {
           </nav>
 
           <div className={styles.actions}>
+            {safehouses.length > 0 && (
+              <select
+                className={styles.safehouseSelect}
+                value={activeSafehouseId ?? ''}
+                onChange={e => setActiveSafehouseId(e.target.value ? Number(e.target.value) : null)}
+              >
+                {isAdmin && <option value="">All Safehouses</option>}
+                {safehouses.map(s => (
+                  <option key={s.safehouseId} value={s.safehouseId}>
+                    {s.safehouseCode} - {s.name}
+                  </option>
+                ))}
+              </select>
+            )}
             <span className={styles.roleBadge}>{displayRole}</span>
             <button onClick={handleLogout} className={styles.logoutBtn}>
               <LogOut size={16} />
@@ -127,5 +155,13 @@ export default function AdminLayout() {
         </PageErrorBoundary>
       </main>
     </div>
+  );
+}
+
+export default function AdminLayout() {
+  return (
+    <SafehouseProvider>
+      <AdminLayoutInner />
+    </SafehouseProvider>
   );
 }

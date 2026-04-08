@@ -115,5 +115,8 @@ public partial class Resident
 
     public virtual ICollection<ProcessRecording> ProcessRecordings { get; set; } = new List<ProcessRecording>();
 
+    public virtual ICollection<StaffTask> StaffTasks { get; set; } = new List<StaffTask>();
+    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
+
     public virtual Safehouse? Safehouse { get; set; }
 }
