@@ -474,12 +474,8 @@ app.MapGet("/api/impact/snapshots", async (AppDbContext db) =>
 
 app.MapGet("/api/admin/metrics", async (AppDbContext db) =>
 {
-    // Use the latest donation date as the reference point (data may not extend to today)
-    var latestDonation = await db.Donations
-        .OrderByDescending(d => d.DonationDate)
-        .Select(d => d.DonationDate)
-        .FirstOrDefaultAsync();
-    var refDate = latestDonation != default ? latestDonation : DateOnly.FromDateTime(DateTime.UtcNow);
+    // Fixed reference date — all data is accurate as of this date
+    var refDate = new DateOnly(2026, 2, 15);
     var startOfMonth = new DateOnly(refDate.Year, refDate.Month, 1);
     var startOfLastMonth = startOfMonth.AddMonths(-1);
 

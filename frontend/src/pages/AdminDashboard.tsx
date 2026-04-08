@@ -89,7 +89,7 @@ export default function AdminDashboard() {
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [residents, setResidents] = useState<ResidentRow[]>([]);
   const [donations, setDonations] = useState<RecentDonation[]>([]);
-  const [dataDateStr, setDataDateStr] = useState('Data as of February 15, 2026');
+  const dataDateStr = 'Data as of February 15, 2026';
   const [activeResidentsChart, setActiveResidentsChart] = useState<Array<{ month: string; count: number }>>([]);
   const [flaggedChart, setFlaggedChart] = useState<Array<{ month: string; count: number }>>([]);
   const [channels, setChannels] = useState<Array<{ channel: string; amount: number }>>([]);
@@ -99,10 +99,7 @@ export default function AdminDashboard() {
     const onErr = (e: unknown) => { console.error('API fetch failed', e); };
     const onCriticalErr = (e: unknown) => { console.error('API fetch failed', e); setError(true); };
 
-    apiFetch<Metrics>('/api/admin/metrics').then(m => {
-      setMetrics(m);
-      if (m.dataAsOf) setDataDateStr(`Data as of ${m.dataAsOf}`);
-    }).catch(onCriticalErr);
+    apiFetch<Metrics>('/api/admin/metrics').then(setMetrics).catch(onCriticalErr);
 
     apiFetch<{ items: ApiResident[] }>('/api/admin/residents').then(resp => {
       const data = resp.items ?? [];
