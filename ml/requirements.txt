@@ -18,3 +18,4 @@ sqlalchemy>=2.0,<3
 psycopg2-binary>=2.9,<3
 python-dotenv==1.0.1
 statsmodels>=0.14.2,<0.15
+pyarrow>=17.0,<19
