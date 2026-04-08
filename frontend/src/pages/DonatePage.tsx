@@ -14,6 +14,7 @@ export default function DonatePage() {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(1000);
   const [customAmount, setCustomAmount] = useState('');
   const [donorEmail, setDonorEmail] = useState('');
+  const [newsletter, setNewsletter] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -25,7 +26,7 @@ export default function DonatePage() {
 
   const handleSubmit = async () => {
     if (amountCents < 100) {
-      setError('Please enter an amount of at least 1 PHP.');
+      setError('Please enter an amount of at least $1.');
       return;
     }
     setError('');
@@ -60,7 +61,7 @@ export default function DonatePage() {
           <h1 className={styles.title}>Make a Difference Today</h1>
           <p className={styles.subtitle}>
             Your donation helps provide safe shelter, education, counseling, and a path to
-            reintegration for survivors of abuse and trafficking in the Philippines.
+            reintegration for survivors of abuse and trafficking in Guam.
           </p>
         </div>
       </section>
@@ -106,11 +107,11 @@ export default function DonatePage() {
                 className={`${styles.amountBtn} ${selectedAmount === amt && !customAmount ? styles.amountBtnActive : ''}`}
                 onClick={() => { setSelectedAmount(amt); setCustomAmount(''); }}
               >
-                &#8369;{amt.toLocaleString()}
+                ${amt.toLocaleString()}
               </button>
             ))}
             <div className={styles.customAmountWrap}>
-              <span className={styles.currencyPrefix}>&#8369;</span>
+              <span className={styles.currencyPrefix}>$</span>
               <input
                 type="number"
                 className={styles.customInput}
@@ -138,10 +139,26 @@ export default function DonatePage() {
             />
           </div>
 
+          {/* Newsletter opt-in */}
+          <label className={styles.checkboxRow}>
+            <input
+              type="checkbox"
+              checked={newsletter}
+              onChange={e => setNewsletter(e.target.checked)}
+            />
+            <span>Sign me up for the monthly newsletter with impact updates</span>
+          </label>
+
+          {/* Post-donation info */}
+          <p className={styles.infoNote}>
+            After donating, you'll receive an email with login credentials so you can
+            track your impact and manage your giving in your personal donor portal.
+          </p>
+
           {/* Summary */}
           <div className={styles.summary}>
             <span className={styles.summaryAmount}>
-              &#8369;{displayAmount.toLocaleString()}
+              ${displayAmount.toLocaleString()}
               {mode === 'recurring' && <span className={styles.summaryFreq}>{cadenceLabel}</span>}
             </span>
             <span className={styles.summaryLabel}>

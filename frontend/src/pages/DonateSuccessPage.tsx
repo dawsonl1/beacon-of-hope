@@ -54,7 +54,7 @@ export default function DonateSuccessPage() {
         <CheckCircle size={48} className={styles.icon} />
         <h1 className={styles.title}>Thank You!</h1>
         <p className={styles.amount}>
-          &#8369;{result.amount.toLocaleString()}
+          ${result.amount.toLocaleString()}
           {result.isRecurring && <span className={styles.freq}> recurring</span>}
         </p>
         <p className={styles.message}>

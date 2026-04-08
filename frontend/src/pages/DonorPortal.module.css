@@ -1,7 +1,6 @@
 .page {
-  padding: 2rem 2.5rem;
-  max-width: 960px;
-  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--color-cream);
 }
 
 .center {
@@ -24,122 +23,311 @@
   font-size: 1rem;
 }
 
-/* ── Header ──────────────────────────────────────────────── */
-.header {
-  margin-bottom: 2rem;
+/* ── Hero Banner ──────────────────────────────────────────── */
+.hero {
+  background:
+    radial-gradient(circle at 30% 20%, rgba(15, 143, 125, 0.15), transparent 50%),
+    linear-gradient(145deg, #0f1b2d 0%, #1f3148 100%);
+  padding: 3.5rem 2.5rem 3rem;
+  color: #fff;
 }
 
-.title {
+.heroContent {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.heroTitle {
   font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 600;
-  color: var(--text-strong);
-  letter-spacing: -0.03em;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
 }
 
-.subtitle {
-  color: var(--text-muted);
-  margin-top: 0.25rem;
-  font-size: 0.95rem;
+.heroSub {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.78);
+  margin-bottom: 1.25rem;
 }
 
-/* ── Summary Cards ───────────────────────────────────────── */
-.cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
-  margin-bottom: 2.5rem;
-}
-
-.card {
-  display: flex;
-  flex-direction: column;
+.heroCta {
+  display: inline-flex;
   align-items: center;
-  padding: 1.5rem;
-  background: var(--surface-1);
-  border: 1px solid rgba(15, 27, 45, 0.08);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  text-align: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  background: var(--color-teal);
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
 }
 
-.cardIcon {
-  color: var(--color-amber-dark);
-  margin-bottom: 0.75rem;
+.heroCta:hover {
+  background: var(--color-teal-dark);
+  transform: translateY(-1px);
 }
 
-.cardValue {
+/* ── Highlight Cards ──────────────────────────────────────── */
+.highlights {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  max-width: 960px;
+  margin: -1.5rem auto 0;
+  padding: 0 2.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.highlightCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.highlightIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(15, 143, 125, 0.08);
+  color: var(--color-teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.highlightValue {
+  display: block;
   font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: 600;
+  font-size: 1.5rem;
+  font-weight: 700;
   color: var(--text-strong);
-  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
-.cardLabel {
-  font-size: 0.82rem;
+.highlightLabel {
+  display: block;
+  font-size: 0.78rem;
   color: var(--text-muted);
-  margin-top: 0.25rem;
+  margin-top: 2px;
 }
 
-/* ── Sections ────────────────────────────────────────────── */
+/* ── Tabs ─────────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid rgba(15, 27, 45, 0.08);
+  max-width: 960px;
+  margin: 2rem auto 0;
+  padding: 0 2.5rem;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.85rem 1.5rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tab:hover {
+  color: var(--text-strong);
+}
+
+.tabActive {
+  color: var(--color-teal);
+  border-bottom-color: var(--color-teal);
+}
+
+.tabContent {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 2.5rem 3rem;
+}
+
+/* ── Sections ─────────────────────────────────────────────── */
 .section {
   margin-bottom: 2.5rem;
 }
 
 .sectionTitle {
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--text-strong);
   margin-bottom: 1rem;
   letter-spacing: -0.02em;
 }
 
-/* ── Allocation Grid ─────────────────────────────────────── */
+/* ── Story Grid ───────────────────────────────────────────── */
+.storyGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.storyCard {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(15, 27, 45, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.storyBadge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-teal);
+  background: rgba(15, 143, 125, 0.08);
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+}
+
+.storyText {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-strong);
+}
+
+.storyMeta {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.75rem;
+  font-style: italic;
+}
+
+.privacyNote {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 0.75rem;
+}
+
+/* ── Allocation Grid ──────────────────────────────────────── */
 .allocGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1rem;
 }
 
 .allocCard {
-  display: flex;
-  flex-direction: column;
+  background: #fff;
+  border-radius: 10px;
   padding: 1.25rem;
-  background: var(--surface-1);
-  border: 1px solid rgba(15, 27, 45, 0.08);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(15, 27, 45, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .allocProgram {
   font-weight: 600;
   color: var(--text-strong);
-  font-size: 0.92rem;
-  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+  display: block;
 }
 
 .allocAmount {
   font-family: var(--font-display);
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: var(--color-amber-dark);
+  display: block;
+  margin-bottom: 0.5rem;
 }
 
-.allocDetail {
-  font-size: 0.78rem;
+.allocBar {
+  height: 6px;
+  background: rgba(15, 27, 45, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.allocBarFill {
+  height: 100%;
+  background: var(--color-teal);
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+
+/* ── Inspire CTA ──────────────────────────────────────────── */
+.inspireCta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  background:
+    radial-gradient(circle at 80% 50%, rgba(15, 143, 125, 0.08), transparent 60%),
+    #fff;
+  border: 1px solid rgba(15, 143, 125, 0.12);
+  border-radius: 14px;
+  padding: 2rem;
+  margin-top: 1rem;
+}
+
+.inspireTitle {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  margin-bottom: 0.35rem;
+}
+
+.inspireText {
+  font-size: 0.9rem;
   color: var(--text-muted);
-  margin-top: 0.35rem;
+  line-height: 1.55;
+  max-width: 520px;
+}
+
+.inspirBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--color-teal);
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s, transform 0.15s;
+  flex-shrink: 0;
+}
+
+.inspirBtn:hover {
+  background: var(--color-teal-dark);
+  transform: translateY(-1px);
 }
 
 /* ── Table ────────────────────────────────────────────────── */
 .tableWrapper {
   overflow-x: auto;
-  background: var(--surface-1);
-  border: 1px solid rgba(15, 27, 45, 0.08);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-sm);
+  background: #fff;
+  border: 1px solid rgba(15, 27, 45, 0.06);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .table {
@@ -174,23 +362,128 @@
   font-weight: 600;
 }
 
-.empty {
-  color: var(--text-muted);
+/* ── Empty State ──────────────────────────────────────────── */
+.emptyState {
   text-align: center;
-  padding: 2rem;
+  padding: 3rem 2rem;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 27, 45, 0.06);
 }
 
-/* ── Responsive ──────────────────────────────────────────── */
-@media (max-width: 640px) {
-  .page {
-    padding: 1.5rem 1rem;
+.emptyIcon {
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.emptyState p {
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.emptyBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.2rem;
+  background: var(--color-teal);
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+/* ── Settings ─────────────────────────────────────────────── */
+.settingsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.settingsCard {
+  background: #fff;
+  border-radius: 10px;
+  padding: 1.25rem;
+  border: 1px solid rgba(15, 27, 45, 0.06);
+}
+
+.settingsLabel {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.settingsValue {
+  font-size: 1rem;
+  color: var(--text-strong);
+}
+
+.settingsLink {
+  color: var(--color-teal);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.settingsLink:hover {
+  text-decoration: underline;
+}
+
+.settingsNote {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.settingsNote a {
+  color: var(--color-teal);
+  font-weight: 600;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .hero {
+    padding: 2.5rem 1.25rem 2rem;
   }
 
-  .cards {
+  .heroTitle {
+    font-size: 1.6rem;
+  }
+
+  .highlights {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 1.25rem;
+  }
+
+  .tabs {
+    padding: 0 1.25rem;
+    overflow-x: auto;
+  }
+
+  .tabContent {
+    padding: 1.25rem 1.25rem 2rem;
+  }
+
+  .storyGrid {
     grid-template-columns: 1fr;
   }
 
-  .title {
-    font-size: 1.5rem;
+  .inspireCta {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .settingsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .highlights {
+    grid-template-columns: 1fr;
   }
 }

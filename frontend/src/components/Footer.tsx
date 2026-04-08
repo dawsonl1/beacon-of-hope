@@ -14,8 +14,8 @@ export default function Footer() {
             <span className={styles.logoIcon}>&#9670;</span>
             <span className={styles.logoText}>Beacon of Hope</span>
             <p className={styles.tagline}>
-              A 501(c)(3) nonprofit restoring hope and rebuilding lives
-              for survivors of abuse and trafficking in Guam.
+              Restoring hope and rebuilding lives for survivors of abuse
+              and trafficking in Guam.
             </p>
           </div>
 
@@ -38,6 +38,7 @@ export default function Footer() {
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a>
               <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              <Link to="/newsletter">Monthly Newsletter</Link>
               <p className={styles.dataNote}>*Data as of February 15, 2026</p>
             </div>
           </div>

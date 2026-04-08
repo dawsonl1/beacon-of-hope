@@ -177,6 +177,68 @@ app.MapPost("/api/auth/logout", async (SignInManager<ApplicationUser> signInMana
     return Results.Ok(new { message = "Logged out" });
 }).RequireAuthorization();
 
+app.MapPost("/api/auth/register", async (
+    UserManager<ApplicationUser> userManager,
+    SignInManager<ApplicationUser> signInManager,
+    AppDbContext db,
+    HttpContext httpContext) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<RegisterRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+    var (valid, err) = DtoValidator.Validate(body);
+    if (!valid) return Results.BadRequest(new { error = err });
+
+    var existing = await userManager.FindByEmailAsync(body.Email);
+    if (existing != null)
+        return Results.BadRequest(new { error = "An account with this email already exists. Please log in instead." });
+
+    // Create supporter record
+    var supporter = new backend.Models.Supporter
+    {
+        FirstName = body.FirstName,
+        LastName = body.LastName,
+        Email = body.Email,
+        DisplayName = $"{body.FirstName} {body.LastName}",
+        SupporterType = "Individual",
+        Status = "Active",
+        CreatedAt = DateTime.UtcNow,
+    };
+    db.Supporters.Add(supporter);
+    await db.SaveChangesAsync();
+
+    // Create user account linked to supporter
+    var user = new ApplicationUser
+    {
+        UserName = body.Email,
+        Email = body.Email,
+        FirstName = body.FirstName,
+        LastName = body.LastName,
+        SupporterId = supporter.SupporterId,
+        EmailConfirmed = true,
+    };
+
+    var result = await userManager.CreateAsync(user, body.Password);
+    if (!result.Succeeded)
+    {
+        db.Supporters.Remove(supporter);
+        await db.SaveChangesAsync();
+        var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+        return Results.BadRequest(new { error = errors });
+    }
+
+    await userManager.AddToRoleAsync(user, "Donor");
+    await signInManager.SignInAsync(user, isPersistent: false);
+
+    return Results.Ok(new
+    {
+        email = user.Email,
+        firstName = user.FirstName,
+        lastName = user.LastName,
+        roles = new[] { "Donor" },
+        supporterId = supporter.SupporterId,
+    });
+});
+
 app.MapGet("/api/auth/me", async (
     HttpContext httpContext,
     UserManager<ApplicationUser> userManager) =>
@@ -1592,7 +1654,7 @@ app.MapPost("/api/donate/create-checkout-session", async (HttpContext httpContex
             {
                 PriceData = new SessionLineItemPriceDataOptions
                 {
-                    Currency = "php",
+                    Currency = "usd",
                     UnitAmount = body.AmountCents,
                     ProductData = new SessionLineItemPriceDataProductDataOptions
                     {
@@ -1620,7 +1682,7 @@ app.MapPost("/api/donate/create-checkout-session", async (HttpContext httpContex
             {
                 PriceData = new SessionLineItemPriceDataOptions
                 {
-                    Currency = "php",
+                    Currency = "usd",
                     UnitAmount = body.AmountCents,
                     ProductData = new SessionLineItemPriceDataProductDataOptions
                     {
@@ -1660,7 +1722,7 @@ app.MapGet("/api/donate/success", async (string session_id, AppDbContext db) =>
             DonationType = "Monetary",
             DonationDate = DateOnly.FromDateTime(DateTime.UtcNow),
             ChannelSource = "Stripe",
-            CurrencyCode = "PHP",
+            CurrencyCode = "USD",
             Amount = (session.AmountTotal ?? 0) / 100m,
             IsRecurring = session.Mode == "subscription",
             Notes = $"Stripe Session: {session_id}"
@@ -1952,6 +2014,18 @@ public class DonationRequest
     [StringLength(200)]
     public string? CampaignName { get; set; }
     public string? Notes { get; set; }
+}
+
+public class RegisterRequest
+{
+    [Required, StringLength(100)]
+    public string FirstName { get; set; } = string.Empty;
+    [Required, StringLength(100)]
+    public string LastName { get; set; } = string.Empty;
+    [Required, EmailAddress]
+    public string Email { get; set; } = string.Empty;
+    [Required, MinLength(12)]
+    public string Password { get; set; } = string.Empty;
 }
 
 public class CreateCheckoutRequest
