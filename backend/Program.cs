@@ -676,6 +676,284 @@ app.MapGet("/api/admin/post-placement/summary", async (AppDbContext db, int? saf
     return Results.Ok(new { total, byType, byStatus });
 }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
+// ── Seed Workflow Data (one-time, admin-only) ───────────────
+
+app.MapPost("/api/admin/seed-workflow-data", async (
+    UserManager<ApplicationUser> userManager,
+    AppDbContext db) =>
+{
+    var results = new List<string>();
+
+    // ── 1. Create staff user accounts (SW-01 through SW-20) ──
+    var staffNames = new Dictionary<string, (string first, string last)>
+    {
+        ["SW-01"] = ("Maria", "Santos"), ["SW-02"] = ("Elena", "Cruz"),
+        ["SW-03"] = ("Rosa", "Garcia"), ["SW-04"] = ("Ana", "Reyes"),
+        ["SW-05"] = ("Carmen", "Bautista"), ["SW-06"] = ("Linda", "Perez"),
+        ["SW-07"] = ("Grace", "Flores"), ["SW-08"] = ("Joy", "Rivera"),
+        ["SW-09"] = ("Faith", "Torres"), ["SW-10"] = ("Hope", "Ramos"),
+        ["SW-11"] = ("Liza", "Mendoza"), ["SW-13"] = ("Diana", "Castro"),
+        ["SW-14"] = ("Sarah", "Aquino"), ["SW-15"] = ("Ruth", "Villanueva"),
+        ["SW-16"] = ("Esther", "Soriano"), ["SW-17"] = ("Mercy", "Dela Cruz"),
+        ["SW-19"] = ("Alma", "Pascual"), ["SW-20"] = ("Nina", "Cortez"),
+    };
+
+    // Map SW codes to safehouse IDs (roughly 2 staff per safehouse)
+    var swToSafehouse = new Dictionary<string, int[]>
+    {
+        ["SW-01"] = new[] { 1, 2 }, ["SW-02"] = new[] { 1 },
+        ["SW-03"] = new[] { 2 }, ["SW-04"] = new[] { 3 },
+        ["SW-05"] = new[] { 3, 4 }, ["SW-06"] = new[] { 4 },
+        ["SW-07"] = new[] { 5, 6 }, ["SW-08"] = new[] { 1 },
+        ["SW-09"] = new[] { 5 }, ["SW-10"] = new[] { 6 },
+        ["SW-11"] = new[] { 7 }, ["SW-13"] = new[] { 7, 8 },
+        ["SW-14"] = new[] { 8 }, ["SW-15"] = new[] { 9 },
+        ["SW-16"] = new[] { 2, 7 }, ["SW-17"] = new[] { 7, 8 },
+        ["SW-19"] = new[] { 9 }, ["SW-20"] = new[] { 1, 3 },
+    };
+
+    var staffUserIds = new Dictionary<string, string>(); // SW code → userId
+
+    foreach (var (sw, names) in staffNames)
+    {
+        var email = $"{sw.ToLower().Replace("-", "")}@beaconofhope.org";
+        var existing = await userManager.FindByEmailAsync(email);
+        if (existing != null)
+        {
+            staffUserIds[sw] = existing.Id;
+            results.Add($"User {sw} already exists");
+            continue;
+        }
+        var user = new ApplicationUser
+        {
+            UserName = email, Email = email,
+            FirstName = names.first, LastName = names.last,
+            EmailConfirmed = true
+        };
+        var createResult = await userManager.CreateAsync(user, "Test1234!@#$");
+        if (createResult.Succeeded)
+        {
+            await userManager.AddToRoleAsync(user, "Staff");
+            staffUserIds[sw] = user.Id;
+            results.Add($"Created user {sw}: {email}");
+        }
+        else
+        {
+            results.Add($"Failed to create {sw}: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
+        }
+    }
+
+    // ── 2. Assign safehouses to staff users ──
+    foreach (var (sw, safehouseIds) in swToSafehouse)
+    {
+        if (!staffUserIds.ContainsKey(sw)) continue;
+        var userId = staffUserIds[sw];
+        var existingAssignments = await db.UserSafehouses.Where(us => us.UserId == userId).ToListAsync();
+        if (existingAssignments.Count > 0) continue; // already assigned
+
+        foreach (var shId in safehouseIds)
+        {
+            db.UserSafehouses.Add(new UserSafehouse { UserId = userId, SafehouseId = shId });
+        }
+        results.Add($"Assigned {sw} to safehouses: {string.Join(", ", safehouseIds)}");
+    }
+
+    // Assign admin to ALL safehouses
+    var adminUser = await userManager.FindByEmailAsync("admin@beaconofhope.org");
+    if (adminUser != null)
+    {
+        var adminAssignments = await db.UserSafehouses.Where(us => us.UserId == adminUser.Id).ToListAsync();
+        if (adminAssignments.Count == 0)
+        {
+            for (int i = 1; i <= 9; i++)
+                db.UserSafehouses.Add(new UserSafehouse { UserId = adminUser.Id, SafehouseId = i });
+            results.Add("Assigned admin to all 9 safehouses");
+        }
+    }
+
+    // Assign existing staff user to safehouses 1 and 2
+    var staffUser = await userManager.FindByEmailAsync("staff@beaconofhope.org");
+    if (staffUser != null)
+    {
+        var existStaff = await db.UserSafehouses.Where(us => us.UserId == staffUser.Id).ToListAsync();
+        if (existStaff.Count == 0)
+        {
+            db.UserSafehouses.Add(new UserSafehouse { UserId = staffUser.Id, SafehouseId = 1 });
+            db.UserSafehouses.Add(new UserSafehouse { UserId = staffUser.Id, SafehouseId = 2 });
+            results.Add("Assigned staff@beaconofhope.org to safehouses 1, 2");
+        }
+    }
+
+    await db.SaveChangesAsync();
+
+    // ── 3. Create to-do tasks for active residents ──
+    var activeResidents = await db.Residents
+        .Where(r => r.CaseStatus == "Active")
+        .Select(r => new { r.ResidentId, r.InternalCode, r.AssignedSocialWorker, r.SafehouseId })
+        .ToListAsync();
+
+    var existingTaskCount = await db.StaffTasks.CountAsync();
+    if (existingTaskCount == 0)
+    {
+        var taskCount = 0;
+        var random = new Random(42); // deterministic
+        var now = DateTime.UtcNow;
+
+        foreach (var r in activeResidents)
+        {
+            var sw = r.AssignedSocialWorker ?? "SW-01";
+            if (!staffUserIds.ContainsKey(sw)) continue;
+            var userId = staffUserIds[sw];
+            var shId = r.SafehouseId ?? 1;
+
+            // Monthly doctor appointment task
+            db.StaffTasks.Add(new StaffTask
+            {
+                StaffUserId = userId, ResidentId = r.ResidentId, SafehouseId = shId,
+                TaskType = "ScheduleDoctor", Title = $"Schedule doctor appointment for {r.InternalCode}",
+                Description = "Monthly medical checkup scheduling",
+                ContextJson = $"{{\"lastDoctorVisit\": \"{now.AddDays(-random.Next(20, 45)):yyyy-MM-dd}\"}}",
+                Status = "Pending", CreatedAt = now.AddDays(-random.Next(1, 5))
+            });
+            taskCount++;
+
+            // Monthly dentist appointment task (for half the residents)
+            if (random.Next(2) == 0)
+            {
+                db.StaffTasks.Add(new StaffTask
+                {
+                    StaffUserId = userId, ResidentId = r.ResidentId, SafehouseId = shId,
+                    TaskType = "ScheduleDentist", Title = $"Schedule dentist appointment for {r.InternalCode}",
+                    Description = "Monthly dental checkup scheduling",
+                    ContextJson = $"{{\"lastDentistVisit\": \"{now.AddDays(-random.Next(25, 60)):yyyy-MM-dd}\"}}",
+                    Status = "Pending", CreatedAt = now.AddDays(-random.Next(1, 7))
+                });
+                taskCount++;
+            }
+
+            // Update education records (for 60% of residents)
+            if (random.Next(10) < 6)
+            {
+                db.StaffTasks.Add(new StaffTask
+                {
+                    StaffUserId = userId, ResidentId = r.ResidentId, SafehouseId = shId,
+                    TaskType = "UpdateEducation", Title = $"Update education records for {r.InternalCode}",
+                    Description = "Monthly education progress update",
+                    Status = "Pending", CreatedAt = now.AddDays(-random.Next(1, 10))
+                });
+                taskCount++;
+            }
+        }
+        await db.SaveChangesAsync();
+        results.Add($"Created {taskCount} to-do tasks");
+    }
+    else
+    {
+        results.Add($"Tasks already exist ({existingTaskCount}), skipping");
+    }
+
+    // ── 4. Create calendar events for next 2 weeks ──
+    var existingEventCount = await db.CalendarEvents.CountAsync();
+    if (existingEventCount == 0)
+    {
+        var eventCount = 0;
+        var random = new Random(123);
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var eventTypes = new[] { "Counseling", "Counseling", "Counseling", "HomeVisit", "DoctorApt", "DentistApt", "GroupTherapy" };
+        var timeSlots = new[] { "08:00", "09:00", "09:30", "10:00", "10:30", "11:00", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00" };
+
+        foreach (var r in activeResidents)
+        {
+            var sw = r.AssignedSocialWorker ?? "SW-01";
+            if (!staffUserIds.ContainsKey(sw)) continue;
+            var userId = staffUserIds[sw];
+            var shId = r.SafehouseId ?? 1;
+
+            // 2-4 events per active resident over next 2 weeks
+            var numEvents = random.Next(2, 5);
+            for (int i = 0; i < numEvents; i++)
+            {
+                var daysAhead = random.Next(0, 14);
+                var eventDate = today.AddDays(daysAhead);
+                // Skip weekends
+                if (eventDate.DayOfWeek == DayOfWeek.Saturday || eventDate.DayOfWeek == DayOfWeek.Sunday)
+                    continue;
+
+                var eventType = eventTypes[random.Next(eventTypes.Length)];
+                var hasTime = random.Next(3) != 0; // 2/3 have times, 1/3 unscheduled
+                var timeSlot = hasTime ? timeSlots[random.Next(timeSlots.Length)] : null;
+
+                var title = eventType switch
+                {
+                    "Counseling" => $"Counseling session — {r.InternalCode}",
+                    "HomeVisit" => $"Home visit — {r.InternalCode}",
+                    "DoctorApt" => $"Doctor appointment — {r.InternalCode}",
+                    "DentistApt" => $"Dentist appointment — {r.InternalCode}",
+                    "GroupTherapy" => "Group therapy session",
+                    _ => $"Event — {r.InternalCode}"
+                };
+
+                db.CalendarEvents.Add(new CalendarEvent
+                {
+                    StaffUserId = userId, SafehouseId = shId, ResidentId = r.ResidentId,
+                    EventType = eventType, Title = title,
+                    EventDate = eventDate,
+                    StartTime = timeSlot != null ? TimeOnly.Parse(timeSlot) : null,
+                    EndTime = timeSlot != null ? TimeOnly.Parse(timeSlot).AddHours(1) : null,
+                    Status = "Scheduled",
+                    CreatedAt = DateTime.UtcNow
+                });
+                eventCount++;
+            }
+        }
+
+        // Add Monday case conferences for each safehouse
+        var nextMonday = today;
+        while (nextMonday.DayOfWeek != DayOfWeek.Monday) nextMonday = nextMonday.AddDays(1);
+        for (int shId = 1; shId <= 9; shId++)
+        {
+            // Find a staff member at this safehouse
+            var shStaff = swToSafehouse.FirstOrDefault(kv => kv.Value.Contains(shId));
+            if (shStaff.Key == null || !staffUserIds.ContainsKey(shStaff.Key)) continue;
+
+            db.CalendarEvents.Add(new CalendarEvent
+            {
+                StaffUserId = staffUserIds[shStaff.Key], SafehouseId = shId,
+                EventType = "CaseConference", Title = $"Monday Case Conference — SH{shId:D2}",
+                EventDate = nextMonday, StartTime = TimeOnly.Parse("09:00"), EndTime = TimeOnly.Parse("10:00"),
+                Status = "Scheduled", CreatedAt = DateTime.UtcNow
+            });
+            eventCount++;
+        }
+
+        await db.SaveChangesAsync();
+        results.Add($"Created {eventCount} calendar events");
+    }
+    else
+    {
+        results.Add($"Events already exist ({existingEventCount}), skipping");
+    }
+
+    // ── 5. Clear social worker from a few residents to make unclaimed queue ──
+    var unclaimedCount = await db.Residents.CountAsync(r => (r.AssignedSocialWorker == null || r.AssignedSocialWorker == "") && r.CaseStatus == "Active");
+    if (unclaimedCount == 0)
+    {
+        var toUnclaim = await db.Residents
+            .Where(r => r.CaseStatus == "Active")
+            .OrderBy(r => r.ResidentId)
+            .Take(5)
+            .ToListAsync();
+        foreach (var r in toUnclaim)
+        {
+            r.AssignedSocialWorker = null;
+        }
+        await db.SaveChangesAsync();
+        results.Add($"Cleared social worker from {toUnclaim.Count} residents for queue");
+    }
+
+    return Results.Ok(new { results });
+}).RequireAuthorization("AdminOnly");
+
 // ── Health endpoint ─────────────────────────────────────────
 
 app.MapGet("/api/health", async (AppDbContext db) =>
