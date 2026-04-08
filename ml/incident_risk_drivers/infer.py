@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import logging
 
-from ml.incident_risk_drivers.artifacts import load_model_bundle, load_metadata
+from ml.config import MODEL_NAME_INCIDENT_RISK_DRIVERS
+from ml.incident_risk_drivers.artifacts import load_model_bundle, load_metadata, MODEL_PATH
 from ml.utils_db import get_client, now_utc, write_predictions
 
 logger = logging.getLogger(__name__)
 
-MODEL_NAME = "incident-risk-drivers"
+MODEL_NAME = MODEL_NAME_INCIDENT_RISK_DRIVERS
 
 
 def _load_model_version() -> str:
@@ -20,6 +21,10 @@ def _load_model_version() -> str:
 
 
 def run_inference() -> list[dict]:
+    if not MODEL_PATH.exists():
+        logger.warning("Skipping incident risk drivers: model file missing at %s", MODEL_PATH)
+        return []
+
     bundle = load_model_bundle()
     sh_logit = bundle.get("selfharm_logit")
     rw_logit = bundle.get("runaway_logit")

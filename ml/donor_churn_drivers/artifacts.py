@@ -4,15 +4,19 @@ from __future__ import annotations
 
 import json
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any
 
 import joblib
 
-MODEL_NAME = "donor-churn-drivers"
-_MODELS_DIR = Path(__file__).resolve().parents[2] / "models" / "donor-churn-drivers"
-MODEL_PATH = _MODELS_DIR / "model.sav"
-MODEL_RUNS_PATH = _MODELS_DIR / "model.json"
+from ml.config import (
+    MODEL_DONOR_CHURN_DRIVERS,
+    MODEL_NAME_DONOR_CHURN_DRIVERS,
+    MODEL_RUNS_DONOR_CHURN_DRIVERS,
+)
+
+MODEL_NAME = MODEL_NAME_DONOR_CHURN_DRIVERS
+MODEL_PATH = MODEL_DONOR_CHURN_DRIVERS
+MODEL_RUNS_PATH = MODEL_RUNS_DONOR_CHURN_DRIVERS
 
 
 def _version_from_utc(now: datetime) -> str:
@@ -35,7 +39,7 @@ def _load_combined() -> dict[str, Any]:
 def _append_run(run: dict[str, Any]) -> dict[str, Any]:
     combined = _load_combined()
     combined["runs"].append(run)
-    _MODELS_DIR.mkdir(parents=True, exist_ok=True)
+    MODEL_RUNS_PATH.parent.mkdir(parents=True, exist_ok=True)
     with open(MODEL_RUNS_PATH, "w", encoding="utf-8") as f:
         json.dump(combined, f, indent=2)
     return run
@@ -61,7 +65,7 @@ def save_model_bundle(
         "scaler": scaler,
         "feature_list": feature_list,
     }
-    _MODELS_DIR.mkdir(parents=True, exist_ok=True)
+    MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(bundle, MODEL_PATH)
 
 

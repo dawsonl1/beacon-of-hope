@@ -9,8 +9,11 @@ from __future__ import annotations
 import logging
 
 from ml.donor_churn.etl import build_training_frame as build_donor_churn_frame
+from ml.donor_churn_drivers.etl import build_training_frame as build_donor_churn_drivers_frame
 from ml.incident_early_warning.etl import build_training_frame as build_incident_warning_frame
+from ml.incident_risk_drivers.etl import build_training_frame as build_incident_risk_drivers_frame
 from ml.reintegration_readiness.etl import build_training_frame
+from ml.reintegration_drivers.etl import build_training_frame as build_reintegration_drivers_frame
 from ml.social_media_content.etl import build_training_frame as build_social_content_frame
 from ml.social_media_timing.etl import build_training_frame as build_social_timing_frame
 
@@ -38,6 +41,16 @@ def main() -> None:
 
     incident_df = build_incident_warning_frame()
     logger.info("Incident early warning training frame built: %s rows x %s cols", incident_df.shape[0], incident_df.shape[1])
+
+    # Explanatory/driver pipelines (reuse parent ETL)
+    reint_drivers_df = build_reintegration_drivers_frame()
+    logger.info("Reintegration drivers training frame built: %s rows x %s cols", reint_drivers_df.shape[0], reint_drivers_df.shape[1])
+
+    donor_drivers_df = build_donor_churn_drivers_frame()
+    logger.info("Donor churn drivers training frame built: %s rows x %s cols", donor_drivers_df.shape[0], donor_drivers_df.shape[1])
+
+    incident_drivers_df = build_incident_risk_drivers_frame()
+    logger.info("Incident risk drivers training frame built: %s rows x %s cols", incident_drivers_df.shape[0], incident_drivers_df.shape[1])
 
 
 if __name__ == "__main__":
