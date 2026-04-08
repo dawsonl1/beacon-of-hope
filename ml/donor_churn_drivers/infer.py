@@ -5,12 +5,13 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from ml.donor_churn_drivers.artifacts import load_model_bundle, load_metadata, MODEL_PATH
+from ml.config import MODEL_DONOR_CHURN_DRIVERS, MODEL_NAME_DONOR_CHURN_DRIVERS
+from ml.donor_churn_drivers.artifacts import load_model_bundle, load_metadata
 from ml.utils_db import get_client, now_utc, write_predictions
 
 logger = logging.getLogger(__name__)
 
-MODEL_NAME = "donor-churn-drivers"
+MODEL_NAME = MODEL_NAME_DONOR_CHURN_DRIVERS
 
 
 def _load_model_version() -> str:
@@ -22,8 +23,8 @@ def _load_model_version() -> str:
 
 def run_inference() -> list[dict]:
     """Publish coefficient summary as a single org_insight row."""
-    if not MODEL_PATH.exists():
-        logger.warning("Skipping donor churn drivers: model file missing at %s", MODEL_PATH)
+    if not MODEL_DONOR_CHURN_DRIVERS.exists():
+        logger.warning("Skipping donor churn drivers: model file missing at %s", MODEL_DONOR_CHURN_DRIVERS)
         return []
 
     bundle = load_model_bundle()

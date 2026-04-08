@@ -4,15 +4,19 @@ from __future__ import annotations
 
 import json
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any
 
 import joblib
 
-MODEL_NAME = "incident-risk-drivers"
-_MODELS_DIR = Path(__file__).resolve().parents[2] / "models" / "incident-risk-drivers"
-MODEL_PATH = _MODELS_DIR / "model.sav"
-MODEL_RUNS_PATH = _MODELS_DIR / "model.json"
+from ml.config import (
+    MODEL_INCIDENT_RISK_DRIVERS,
+    MODEL_NAME_INCIDENT_RISK_DRIVERS,
+    MODEL_RUNS_INCIDENT_RISK_DRIVERS,
+)
+
+MODEL_NAME = MODEL_NAME_INCIDENT_RISK_DRIVERS
+MODEL_PATH = MODEL_INCIDENT_RISK_DRIVERS
+MODEL_RUNS_PATH = MODEL_RUNS_INCIDENT_RISK_DRIVERS
 
 
 def _version_from_utc(now: datetime) -> str:
@@ -23,7 +27,7 @@ _PENDING_METADATA: dict[str, Any] | None = None
 
 
 def _ensure_dir() -> None:
-    _MODELS_DIR.mkdir(parents=True, exist_ok=True)
+    MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 
 def _load_combined() -> dict[str, Any]:
