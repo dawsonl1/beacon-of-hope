@@ -3,12 +3,33 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Edit, Trash2, ChevronDown, ChevronRight,
   Loader2, User, Briefcase, Heart, Home, Shield, ClipboardList, RefreshCw,
+  AlertTriangle, Activity,
 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { formatDate } from '../../constants';
 import { useAuth } from '../../contexts/AuthContext';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
 import styles from './ResidentDetailPage.module.css';
+
+interface MlPrediction {
+  id: number;
+  modelName: string;
+  score: number | null;
+  scoreLabel: string | null;
+  predictedAt: string;
+  metadata: string | null;
+}
+
+const ML_SCORE_COLORS: Record<string, string> = {
+  Critical: '#c0392b',
+  High: '#d35400',
+  Medium: '#f39c12',
+  Low: '#27ae60',
+  Ready: '#27ae60',
+  Progressing: '#3498db',
+  'Early Stage': '#f39c12',
+  'Not Ready': '#c0392b',
+};
 
 interface ResidentDetail {
   residentId: number;
@@ -127,6 +148,7 @@ export default function ResidentDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [showDelete, setShowDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [predictions, setPredictions] = useState<MlPrediction[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -134,6 +156,14 @@ export default function ResidentDetailPage() {
       .then(setResident)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      apiFetch<MlPrediction[]>(`/api/ml/predictions/resident/${id}`)
+        .then(setPredictions)
+        .catch(() => {});
+    }
   }, [id]);
 
   async function handleDelete() {
@@ -224,6 +254,67 @@ export default function ResidentDetailPage() {
           )}
         </div>
       </div>
+
+      {/* ML Predictions */}
+      {predictions.length > 0 && (
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+          {predictions.map(p => {
+            const color = ML_SCORE_COLORS[p.scoreLabel || ''] || '#95a5a6';
+            const isIncidentModel = p.modelName.includes('incident');
+            const isReintegration = p.modelName.includes('reintegration');
+            const label = p.modelName
+              .replace('incident-early-warning-', '')
+              .replace('reintegration-readiness', 'Reintegration Readiness')
+              .replace('selfharm', 'Self-Harm Risk')
+              .replace('runaway', 'Runaway Risk');
+            return (
+              <div
+                key={p.id}
+                style={{
+                  background: '#fff',
+                  border: `1px solid ${color}30`,
+                  borderRadius: '12px',
+                  padding: '0.85rem 1.1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  minWidth: '220px',
+                }}
+              >
+                <div style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: '50%',
+                  background: `${color}18`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}>
+                  {isIncidentModel ? (
+                    <AlertTriangle size={20} style={{ color }} />
+                  ) : (
+                    <Activity size={20} style={{ color }} />
+                  )}
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                    {label}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
+                    {p.score !== null && (
+                      <span style={{ fontSize: '1.3rem', fontWeight: 700, color }}>{Math.round(p.score)}</span>
+                    )}
+                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color }}>
+                      {p.scoreLabel}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Sections */}
       <Section title="Identity" icon={User} defaultOpen>

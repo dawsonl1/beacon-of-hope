@@ -1,0 +1,402 @@
+.page {
+  padding: 2rem 2.5rem;
+  max-width: 1200px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--text-strong);
+  letter-spacing: -0.03em;
+  margin: 0 0 0.15rem;
+}
+
+.subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid rgba(15, 27, 45, 0.1);
+  background: #fff;
+  cursor: pointer;
+  color: var(--text-strong);
+  transition: all 0.2s;
+}
+
+.navBtn:hover {
+  background: rgba(15, 27, 45, 0.03);
+}
+
+.todayBtn {
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(15, 143, 125, 0.2);
+  background: rgba(15, 143, 125, 0.06);
+  color: var(--color-sage);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.todayBtn:hover {
+  background: rgba(15, 143, 125, 0.12);
+}
+
+.dateLabel {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  min-width: 200px;
+  text-align: center;
+}
+
+.viewToggle {
+  display: flex;
+  gap: 0;
+  border: 1px solid rgba(15, 27, 45, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.viewBtn {
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  padding: 0.35rem 0.75rem;
+  border: none;
+  background: #fff;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.viewBtn:hover { background: rgba(15, 27, 45, 0.03); }
+
+.viewBtnActive {
+  composes: viewBtn;
+  background: var(--color-sage);
+  color: #fff;
+}
+
+.addBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  color: #fff;
+  background: linear-gradient(120deg, var(--color-sage), #13a490);
+  border: none;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.22s, filter 0.22s;
+  box-shadow: 0 8px 20px rgba(15, 143, 125, 0.22);
+}
+
+.addBtn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+}
+.error { color: #c0392b; }
+.spinner { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Unscheduled parking lot ─────────────────────────────── */
+.unscheduledSection {
+  margin-bottom: 1rem;
+}
+
+.sectionLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.unscheduledList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.unscheduledCard {
+  background: #fff;
+  border: 1px dashed rgba(15, 143, 125, 0.3);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  cursor: grab;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.unscheduledCard:hover {
+  border-color: var(--color-sage);
+  background: rgba(15, 143, 125, 0.03);
+}
+
+/* ── Day view grid ───────────────────────────────────────── */
+.dayGrid {
+  background: #fff;
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.timeSlot {
+  display: flex;
+  border-bottom: 1px solid rgba(15, 27, 45, 0.04);
+  min-height: 48px;
+  transition: background 0.2s;
+}
+
+.timeSlot:hover {
+  background: rgba(15, 143, 125, 0.02);
+}
+
+.timeLabel {
+  width: 60px;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-align: right;
+  flex-shrink: 0;
+  border-right: 1px solid rgba(15, 27, 45, 0.06);
+}
+
+.slotContent {
+  flex: 1;
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  align-items: flex-start;
+}
+
+.eventChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.25rem 0.55rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: filter 0.2s;
+  white-space: nowrap;
+}
+
+.eventChip:hover { filter: brightness(0.95); }
+
+.eventCounseling { background: rgba(52, 152, 219, 0.12); color: #2980b9; }
+.eventDoctorApt { background: rgba(46, 204, 113, 0.12); color: #27ae60; }
+.eventDentistApt { background: rgba(155, 89, 182, 0.12); color: #8e44ad; }
+.eventHomeVisit { background: rgba(15, 143, 125, 0.12); color: var(--color-sage); }
+.eventCaseConference { background: rgba(243, 156, 18, 0.12); color: #f39c12; }
+.eventGroupTherapy { background: rgba(230, 126, 34, 0.12); color: #d35400; }
+.eventOther { background: rgba(149, 165, 166, 0.12); color: #7f8c8d; }
+.eventReintegrationVisit { background: rgba(22, 160, 133, 0.12); color: #16a085; }
+.eventPostPlacementVisit { background: rgba(41, 128, 185, 0.12); color: #2980b9; }
+.eventCompleted { opacity: 0.5; text-decoration: line-through; }
+
+/* ── Week view ───────────────────────────────────────────── */
+.weekGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.weekDay {
+  background: #fff;
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: 10px;
+  padding: 0.75rem;
+  min-height: 200px;
+}
+
+.weekDayHeader {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(15, 27, 45, 0.06);
+}
+
+.weekDayToday {
+  composes: weekDay;
+  border-color: var(--color-sage);
+}
+
+.weekDayHeaderToday {
+  composes: weekDayHeader;
+  color: var(--color-sage);
+}
+
+.weekEventList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+/* ── Event detail modal ──────────────────────────────────── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.modalTitle {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  margin: 0 0 0.75rem;
+}
+
+.modalMeta {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0.25rem 0;
+}
+
+.modalActions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.modalBtn {
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid rgba(15, 27, 45, 0.1);
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modalBtn:hover { background: rgba(15, 27, 45, 0.03); }
+
+.modalBtnPrimary {
+  composes: modalBtn;
+  background: var(--color-sage);
+  color: #fff;
+  border-color: transparent;
+}
+
+.modalBtnPrimary:hover { filter: brightness(1.08); }
+
+/* ── New event form ──────────────────────────────────────── */
+.formOverlay {
+  composes: modalOverlay;
+}
+
+.formModal {
+  composes: modal;
+  max-width: 500px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.formLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.formInput, .formSelect {
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+  padding: 0.45rem 0.6rem;
+  border: 1px solid rgba(15, 27, 45, 0.12);
+  border-radius: 8px;
+  color: var(--text-strong);
+}
+
+.formInput:focus, .formSelect:focus {
+  outline: 2px solid var(--color-sage);
+  outline-offset: 1px;
+}
+
+.formFull {
+  grid-column: 1 / -1;
+}
+
+.formActions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+@media (max-width: 900px) {
+  .page { padding: 1rem; }
+  .weekGrid { grid-template-columns: 1fr; }
+  .controls { flex-wrap: wrap; }
+}

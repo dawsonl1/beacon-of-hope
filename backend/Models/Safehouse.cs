@@ -40,4 +40,8 @@ public partial class Safehouse
     public virtual ICollection<Resident> Residents { get; set; } = new List<Resident>();
 
     public virtual ICollection<SafehouseMonthlyMetric> SafehouseMonthlyMetrics { get; set; } = new List<SafehouseMonthlyMetric>();
+
+    public virtual ICollection<UserSafehouse> UserSafehouses { get; set; } = new List<UserSafehouse>();
+    public virtual ICollection<StaffTask> StaffTasks { get; set; } = new List<StaffTask>();
+    public virtual ICollection<CalendarEvent> CalendarEvents { get; set; } = new List<CalendarEvent>();
 }

@@ -95,6 +95,24 @@
   border-radius: 999px;
 }
 
+.safehouseSelect {
+  font-size: 0.78rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--text-strong);
+  background: rgba(15, 143, 125, 0.06);
+  border: 1px solid rgba(15, 143, 125, 0.2);
+  border-radius: 8px;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  max-width: 200px;
+}
+
+.safehouseSelect:focus {
+  outline: 2px solid var(--color-sage);
+  outline-offset: 1px;
+}
+
 .logoutBtn {
   display: inline-flex;
   align-items: center;

@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react';
-import { UserPlus, Trash2, Loader2, Shield, User } from 'lucide-react';
+import { UserPlus, Trash2, Loader2, Shield, User, Building2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
 import styles from './UsersPage.module.css';
+
+interface SafehouseRef {
+  safehouseId: number;
+  safehouseCode: string;
+  name: string;
+}
 
 interface AppUser {
   id: string;
@@ -11,6 +17,7 @@ interface AppUser {
   firstName: string;
   lastName: string;
   roles: string[];
+  safehouses?: SafehouseRef[];
 }
 
 export default function UsersPage() {
@@ -22,6 +29,9 @@ export default function UsersPage() {
   const [error, setError] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
+  // Available safehouses
+  const [allSafehouses, setAllSafehouses] = useState<SafehouseRef[]>([]);
+
   // Create form
   const [showForm, setShowForm] = useState(false);
   const [formEmail, setFormEmail] = useState('');
@@ -29,6 +39,7 @@ export default function UsersPage() {
   const [formFirst, setFormFirst] = useState('');
   const [formLast, setFormLast] = useState('');
   const [formRole, setFormRole] = useState('Staff');
+  const [formSafehouses, setFormSafehouses] = useState<number[]>([]);
   const [creating, setCreating] = useState(false);
   const [formError, setFormError] = useState('');
 
@@ -58,6 +69,12 @@ export default function UsersPage() {
 
   useEffect(() => { fetchUsers(); }, []);
 
+  useEffect(() => {
+    apiFetch<{ safehouseId: number; safehouseCode: string; name: string }[]>('/api/impact/safehouses')
+      .then(data => setAllSafehouses(data.map(s => ({ safehouseId: s.safehouseId, safehouseCode: s.safehouseCode ?? '', name: s.name ?? '' }))))
+      .catch(() => {});
+  }, []);
+
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     setFormError('');
@@ -79,10 +96,11 @@ export default function UsersPage() {
           firstName: formFirst,
           lastName: formLast,
           role: formRole,
+          safehouseIds: formSafehouses,
         }),
       });
       setShowForm(false);
-      setFormEmail(''); setFormPassword(''); setFormFirst(''); setFormLast(''); setFormRole('Staff');
+      setFormEmail(''); setFormPassword(''); setFormFirst(''); setFormLast(''); setFormRole('Staff'); setFormSafehouses([]);
       fetchUsers();
     } catch (e) {
       setFormError(e instanceof Error ? e.message : 'Failed to create user.');
@@ -149,6 +167,26 @@ export default function UsersPage() {
                 </select>
               </label>
             </div>
+            {allSafehouses.length > 0 && (
+              <div style={{ marginTop: '0.75rem' }}>
+                <label className={styles.label}>Assigned Safehouses</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.35rem' }}>
+                  {allSafehouses.map(s => (
+                    <label key={s.safehouseId} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.85rem', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={formSafehouses.includes(s.safehouseId)}
+                        onChange={e => {
+                          if (e.target.checked) setFormSafehouses(prev => [...prev, s.safehouseId]);
+                          else setFormSafehouses(prev => prev.filter(id => id !== s.safehouseId));
+                        }}
+                      />
+                      {s.safehouseCode} - {s.name}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
             {formError && <p className={styles.formError} role="alert">{formError}</p>}
             <div className={styles.formActions}>
               <button type="button" className={styles.cancelBtn} onClick={() => setShowForm(false)}>Cancel</button>
@@ -176,6 +214,7 @@ export default function UsersPage() {
                 <th>Name</th>
                 <th>Email</th>
                 <th>Role</th>
+                <th>Safehouses</th>
                 <th></th>
               </tr>
             </thead>
@@ -191,6 +230,19 @@ export default function UsersPage() {
                     <span className={`${styles.roleBadge} ${u.roles.includes('Admin') ? styles.roleAdmin : styles.roleStaff}`}>
                       {u.roles[0] || 'Staff'}
                     </span>
+                  </td>
+                  <td>
+                    {u.safehouses && u.safehouses.length > 0 ? (
+                      <span style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap' }}>
+                        {u.safehouses.map(s => (
+                          <span key={s.safehouseId} style={{ fontSize: '0.75rem', background: 'rgba(15,143,125,0.08)', padding: '0.15rem 0.4rem', borderRadius: '4px', whiteSpace: 'nowrap' }}>
+                            {s.safehouseCode}
+                          </span>
+                        ))}
+                      </span>
+                    ) : (
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>None</span>
+                    )}
                   </td>
                   <td>
                     {u.email !== currentUser?.email && (

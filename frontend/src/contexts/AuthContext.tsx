@@ -8,6 +8,7 @@ export interface AuthUser {
   lastName: string;
   roles: string[];
   supporterId?: number | null;
+  safehouses?: { safehouseId: number; safehouseCode: string; name: string }[];
 }
 
 interface AuthState {
@@ -47,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           lastName: data.lastName ?? '',
           roles: data.roles ?? [],
           supporterId: data.supporterId ?? null,
+          safehouses: (data as any).safehouses ?? [],
         };
         try { sessionStorage.setItem('auth_user', JSON.stringify(user)); } catch { /* ignore */ }
         setState({ user, isAuthenticated: true, isLoading: false });
@@ -88,6 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       lastName: data.lastName,
       roles: data.roles,
       supporterId: data.supporterId ?? null,
+      safehouses: (data as any).safehouses ?? [],
     };
     try { sessionStorage.setItem('auth_user', JSON.stringify(user)); } catch { /* ignore */ }
     setState({ user, isAuthenticated: true, isLoading: false });

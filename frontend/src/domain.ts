@@ -30,3 +30,21 @@ export type ReintegrationStatus = typeof REINTEGRATION_STATUSES[number];
 
 export const ACQUISITION_CHANNELS = ['SocialMedia', 'Church', 'Event', 'PartnerReferral', 'Campaign', 'Direct', 'Other'] as const;
 export type AcquisitionChannel = typeof ACQUISITION_CHANNELS[number];
+
+export const TASK_TYPES = ['ScheduleDoctor', 'ScheduleDentist', 'UpdateEducation', 'InputHealthRecords', 'IncidentFollowUp', 'ScheduleHomeVisit', 'ScheduleReintegration', 'PostPlacementVisit', 'Manual'] as const;
+export type TaskType = typeof TASK_TYPES[number];
+
+export const TASK_STATUSES = ['Pending', 'Snoozed', 'Completed', 'Dismissed'] as const;
+export type TaskStatus = typeof TASK_STATUSES[number];
+
+export const EVENT_TYPES = ['Counseling', 'DoctorApt', 'DentistApt', 'HomeVisit', 'CaseConference', 'ReintegrationVisit', 'PostPlacementVisit', 'GroupTherapy', 'Other'] as const;
+export type EventType = typeof EVENT_TYPES[number];
+
+export const EVENT_STATUSES = ['Scheduled', 'Completed', 'Cancelled'] as const;
+export type EventStatus = typeof EVENT_STATUSES[number];
+
+export const INCIDENT_TYPES = ['Runaway', 'SelfHarm', 'Behavioral', 'Security', 'Medical', 'Other'] as const;
+export type IncidentType = typeof INCIDENT_TYPES[number];
+
+export const SEVERITY_LEVELS = ['Critical', 'High', 'Medium', 'Low'] as const;
+export type SeverityLevel = typeof SEVERITY_LEVELS[number];
