@@ -74,6 +74,25 @@
   transform: translateX(1px);
 }
 
+.newsletterDismiss {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  padding: 0.2rem;
+  margin-left: 0.25rem;
+  border-radius: 4px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.newsletterDismiss:hover {
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .newsletterThanks {
   font-weight: 600;
   color: var(--color-amber);
@@ -83,12 +102,16 @@
 /* ── Header ──────────────────────────────────────────────── */
 .header {
   position: sticky;
-  top: 34px;
+  top: 0;
   z-index: 100;
   background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(15, 27, 45, 0.08);
   height: var(--header-height);
+}
+
+.headerWithBar {
+  top: 34px;
 }
 
 .inner {
@@ -242,17 +265,13 @@
     width: 140px;
   }
 
-  .header {
-    top: 32px;
-  }
-
   .inner {
     padding: 0 1.25rem;
   }
 
   .nav {
     position: fixed;
-    top: calc(var(--header-height) + 32px);
+    top: var(--header-height);
     left: 0;
     right: 0;
     bottom: 0;

@@ -4,7 +4,25 @@ import { Menu, X, User, UserPlus, LogOut, ArrowRight, Mail } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext';
 import styles from './Header.module.css';
 
-function NewsletterBar() {
+const SUBSCRIBED_KEY = 'newsletter_subscribed';
+const DISMISSED_KEY = 'newsletter_dismissed';
+const DISMISS_DAYS = 7;
+
+function shouldShowNewsletter(): boolean {
+  try {
+    if (localStorage.getItem(SUBSCRIBED_KEY)) return false;
+    const dismissed = localStorage.getItem(DISMISSED_KEY);
+    if (dismissed) {
+      const daysSince = (Date.now() - Number(dismissed)) / (1000 * 60 * 60 * 24);
+      if (daysSince < DISMISS_DAYS) return false;
+    }
+    return true;
+  } catch {
+    return true;
+  }
+}
+
+function NewsletterBar({ visible, onHide }: { visible: boolean; onHide: () => void }) {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
@@ -12,7 +30,16 @@ function NewsletterBar() {
     e.preventDefault();
     if (!email) return;
     setSubmitted(true);
+    try { localStorage.setItem(SUBSCRIBED_KEY, '1'); } catch { /* noop */ }
+    setTimeout(onHide, 2500);
   }
+
+  function handleDismiss() {
+    try { localStorage.setItem(DISMISSED_KEY, String(Date.now())); } catch { /* noop */ }
+    onHide();
+  }
+
+  if (!visible) return null;
 
   if (submitted) {
     return (
@@ -44,6 +71,13 @@ function NewsletterBar() {
             <ArrowRight size={14} />
           </button>
         </form>
+        <button
+          className={styles.newsletterDismiss}
+          onClick={handleDismiss}
+          aria-label="Dismiss"
+        >
+          <X size={14} />
+        </button>
       </div>
     </div>
   );
@@ -51,6 +85,7 @@ function NewsletterBar() {
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showNewsletter, setShowNewsletter] = useState(shouldShowNewsletter);
   const { isAuthenticated, user, logout } = useAuth();
 
   async function handleLogout() {
@@ -59,8 +94,8 @@ export default function Header() {
 
   return (
     <>
-    <NewsletterBar />
-    <header className={styles.header}>
+    <NewsletterBar visible={showNewsletter} onHide={() => setShowNewsletter(false)} />
+    <header className={`${styles.header} ${showNewsletter ? styles.headerWithBar : ''}`}>
       <div className={styles.inner}>
         <Link to="/" className={styles.logo}>
           <span className={styles.logoIcon}>&#9670;</span>
