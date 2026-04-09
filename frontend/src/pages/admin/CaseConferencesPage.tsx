@@ -2,13 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Loader2, Users, Plus, X, AlertTriangle,
-  Calendar, Clock, CheckCircle, UserPlus,
+  Calendar, Clock, CheckCircle, UserPlus, ChevronDown,
 } from 'lucide-react';
 import { apiFetch } from '../../api';
 
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import MlBadge from '../../components/admin/MlBadge';
 import Dropdown from '../../components/admin/Dropdown';
+import MultiSelectDropdown from '../../components/admin/MultiSelectDropdown';
 import DatePicker from '../../components/admin/DatePicker';
 import styles from './IncidentsPage.module.css';
 
@@ -49,6 +50,11 @@ interface AlertResident {
 interface SafehouseOption {
   safehouseId: number;
   name: string;
+}
+
+interface ResidentOption {
+  residentId: number;
+  internalCode: string;
 }
 
 /* ── Constants ────────────────────────────────────── */
@@ -209,6 +215,43 @@ export default function CaseConferencesPage() {
     } catch {}
   }
 
+  // Cache of residents per safehouse for the add-residents dropdown
+  const [safehouseResidents, setSafehouseResidents] = useState<Record<number, ResidentOption[]>>({});
+
+  async function fetchSafehouseResidents(safehouseId: number) {
+    if (safehouseResidents[safehouseId]) return;
+    try {
+      const data = await apiFetch<{ items: Array<{ residentId: number; internalCode: string | null }> }>(
+        `/api/admin/residents?page=1&pageSize=500&safehouseId=${safehouseId}&caseStatus=Active&sortBy=internalcode&sortDir=asc`
+      );
+      setSafehouseResidents(prev => ({
+        ...prev,
+        [safehouseId]: data.items.map(r => ({
+          residentId: r.residentId,
+          internalCode: r.internalCode ?? '',
+        })),
+      }));
+    } catch {}
+  }
+
+  async function addResidentsToConference(confId: number, residentIds: number[]) {
+    if (residentIds.length === 0) return;
+    try {
+      await apiFetch(`/api/admin/case-conferences/${confId}/residents`, {
+        method: 'POST',
+        body: JSON.stringify({ residentIds, source: 'Manual' }),
+      });
+      // Refresh
+      fetchAll();
+      if (expandedId === confId) {
+        const data = await apiFetch<Conference>(`/api/admin/case-conferences/${confId}`);
+        setExpandedData(data);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to add residents');
+    }
+  }
+
   const upcoming = conferences.filter(c => c.status === 'Scheduled' || c.status === 'InProgress');
   const past = conferences.filter(c => c.status === 'Completed' || c.status === 'Cancelled');
 
@@ -337,6 +380,9 @@ export default function CaseConferencesPage() {
                 onClickResident={(rid) => navigate(`/admin/caseload/${rid}`)}
                 onMarkDiscussed={(rid, d) => markDiscussed(conf.conferenceId, rid, d)}
                 onUpdateStatus={(s) => updateConferenceStatus(conf.conferenceId, s)}
+                safehouseResidents={safehouseResidents[conf.safehouseId] ?? null}
+                onLoadResidents={() => fetchSafehouseResidents(conf.safehouseId)}
+                onAddResidents={(ids) => addResidentsToConference(conf.conferenceId, ids)}
               />
             ))}
           </div>
@@ -363,6 +409,9 @@ export default function CaseConferencesPage() {
                 onClickResident={(rid) => navigate(`/admin/caseload/${rid}`)}
                 onMarkDiscussed={(rid, d) => markDiscussed(conf.conferenceId, rid, d)}
                 onUpdateStatus={(s) => updateConferenceStatus(conf.conferenceId, s)}
+                safehouseResidents={safehouseResidents[conf.safehouseId] ?? null}
+                onLoadResidents={() => fetchSafehouseResidents(conf.safehouseId)}
+                onAddResidents={(ids) => addResidentsToConference(conf.conferenceId, ids)}
               />
             ))}
           </div>
@@ -383,11 +432,32 @@ interface ConferenceCardProps {
   onClickResident: (residentId: number) => void;
   onMarkDiscussed: (residentId: number, discussed: boolean) => void;
   onUpdateStatus: (status: string) => void;
+  safehouseResidents: ResidentOption[] | null;
+  onLoadResidents: () => void;
+  onAddResidents: (residentIds: number[]) => void;
 }
 
-function ConferenceCard({ conf, isExpanded, expandedData, expandedLoading, onToggle, onClickResident, onMarkDiscussed, onUpdateStatus }: ConferenceCardProps) {
+function ConferenceCard({ conf, isExpanded, expandedData, expandedLoading, onToggle, onClickResident, onMarkDiscussed, onUpdateStatus, safehouseResidents, onLoadResidents, onAddResidents }: ConferenceCardProps) {
+  const [addResidentIds, setAddResidentIds] = useState<string[]>([]);
   const color = STATUS_COLORS[conf.status] || '#95a5a6';
   const isActive = conf.status === 'Scheduled' || conf.status === 'InProgress';
+  const isCompleted = conf.status === 'Completed';
+
+  // Load residents for this safehouse when expanded
+  useEffect(() => {
+    if (isExpanded && isActive) onLoadResidents();
+  }, [isExpanded, isActive]);
+
+  // Filter out residents already in the conference
+  const alreadyInConference = new Set(expandedData?.residents.map(r => r.residentId) ?? []);
+  const availableResidents = (safehouseResidents ?? []).filter(r => !alreadyInConference.has(r.residentId));
+
+  function handleAddResidents() {
+    const ids = addResidentIds.map(Number).filter(n => n > 0);
+    if (ids.length === 0) return;
+    onAddResidents(ids);
+    setAddResidentIds([]);
+  }
 
   return (
     <div style={{ background: '#fff', border: isExpanded ? '2px solid var(--color-sage)' : '1px solid rgba(15,27,45,0.08)', borderRadius: '12px', overflow: 'hidden', transition: 'border-color 0.2s' }}>
@@ -405,9 +475,19 @@ function ConferenceCard({ conf, isExpanded, expandedData, expandedLoading, onTog
               {conf.scheduledDate}
             </span>
           </div>
-          <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '0.15rem 0.55rem', borderRadius: '4px', background: `${color}18`, color, textTransform: 'uppercase' }}>
-            {conf.status}
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '0.15rem 0.55rem', borderRadius: '4px', background: `${color}18`, color, textTransform: 'uppercase' }}>
+              {conf.status}
+            </span>
+            <ChevronDown
+              size={16}
+              style={{
+                color: 'var(--text-muted)',
+                transition: 'transform 0.2s',
+                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+              }}
+            />
+          </div>
         </div>
         <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
           {conf.safehouseName || `Safehouse #${conf.safehouseId}`}
@@ -425,86 +505,118 @@ function ConferenceCard({ conf, isExpanded, expandedData, expandedLoading, onTog
             <div style={{ textAlign: 'center', padding: '1rem', color: 'var(--text-muted)', fontSize: '0.82rem' }}>
               <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Loading...
             </div>
-          ) : expandedData && expandedData.residents.length > 0 ? (
+          ) : (
             <>
-              {/* Status actions */}
-              {isActive && (
+              {/* Status actions — no Start Meeting, just Complete */}
+              {isActive && conf.status === 'InProgress' && (
                 <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                  {conf.status === 'Scheduled' && (
-                    <button onClick={() => onUpdateStatus('InProgress')} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', padding: '0.35rem 0.75rem', borderRadius: '6px', border: '1px solid rgba(243,156,18,0.3)', background: 'rgba(243,156,18,0.08)', color: '#f39c12', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}>
-                      Start Meeting
-                    </button>
-                  )}
-                  {conf.status === 'InProgress' && (
-                    <button onClick={() => onUpdateStatus('Completed')} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', padding: '0.35rem 0.75rem', borderRadius: '6px', border: '1px solid rgba(39,174,96,0.3)', background: 'rgba(39,174,96,0.08)', color: '#27ae60', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}>
-                      <CheckCircle size={13} /> Complete Meeting
-                    </button>
-                  )}
+                  <button onClick={() => onUpdateStatus('Completed')} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', padding: '0.35rem 0.75rem', borderRadius: '6px', border: '1px solid rgba(39,174,96,0.3)', background: 'rgba(39,174,96,0.08)', color: '#27ae60', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}>
+                    <CheckCircle size={13} /> Complete Meeting
+                  </button>
                 </div>
               )}
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '0.6rem' }}>
-                {expandedData.residents.map(r => {
-                  const riskColor = RISK_COLORS[r.currentRiskLevel || ''] || '#95a5a6';
-                  return (
-                    <div
-                      key={r.id}
-                      style={{
-                        background: r.discussed ? 'rgba(39,174,96,0.04)' : '#fff',
-                        border: r.discussed ? '1px solid rgba(39,174,96,0.2)' : '1px solid rgba(15,27,45,0.1)',
-                        borderRadius: '10px',
-                        padding: '0.75rem 1rem',
-                        cursor: 'pointer',
-                        transition: 'box-shadow 0.15s',
-                        position: 'relative',
-                      }}
-                      onClick={() => onClickResident(r.residentId)}
-                      onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(15,27,45,0.08)')}
-                      onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
-                        <span style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--color-sage)' }}>
-                          {r.residentCode || `#${r.residentId}`}
-                        </span>
-                        {r.discussed && <CheckCircle size={14} style={{ color: '#27ae60' }} />}
+              {/* Completed banner */}
+              {isCompleted && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.45rem 0.75rem', borderRadius: '8px', background: 'rgba(39,174,96,0.06)', border: '1px solid rgba(39,174,96,0.15)', marginBottom: '0.75rem', fontSize: '0.78rem', fontWeight: 600, color: '#27ae60' }}>
+                  <CheckCircle size={14} /> Meeting Completed
+                </div>
+              )}
+
+              {/* Add residents multi-select — only for active conferences */}
+              {isActive && availableResidents.length > 0 && (
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end', marginBottom: '0.75rem' }}>
+                  <div style={{ flex: 1, maxWidth: '360px' }}>
+                    <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.25rem' }}>Add Residents</label>
+                    <MultiSelectDropdown
+                      values={addResidentIds}
+                      placeholder="Select residents to add..."
+                      options={availableResidents.map(r => ({ value: String(r.residentId), label: r.internalCode }))}
+                      onChange={setAddResidentIds}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddResidents}
+                    disabled={addResidentIds.length === 0}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
+                      padding: '0.5rem 0.85rem', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 700,
+                      border: 'none', cursor: addResidentIds.length > 0 ? 'pointer' : 'default',
+                      background: addResidentIds.length > 0 ? 'var(--color-sage)' : 'rgba(15,27,45,0.08)',
+                      color: addResidentIds.length > 0 ? '#fff' : 'var(--text-muted)',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    <UserPlus size={14} /> Add
+                  </button>
+                </div>
+              )}
+
+              {expandedData && expandedData.residents.length > 0 ? (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '0.6rem' }}>
+                  {expandedData.residents.map(r => {
+                    const riskColor = RISK_COLORS[r.currentRiskLevel || ''] || '#95a5a6';
+                    return (
+                      <div
+                        key={r.id}
+                        style={{
+                          background: r.discussed ? 'rgba(39,174,96,0.04)' : '#fff',
+                          border: r.discussed ? '1px solid rgba(39,174,96,0.2)' : '1px solid rgba(15,27,45,0.1)',
+                          borderRadius: '10px',
+                          padding: '0.75rem 1rem',
+                          cursor: 'pointer',
+                          transition: 'box-shadow 0.15s',
+                          position: 'relative',
+                        }}
+                        onClick={() => onClickResident(r.residentId)}
+                        onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(15,27,45,0.08)')}
+                        onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
+                          <span style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--color-sage)' }}>
+                            {r.residentCode || `#${r.residentId}`}
+                          </span>
+                          {r.discussed && <CheckCircle size={14} style={{ color: '#27ae60' }} />}
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', marginBottom: '0.3rem' }}>
+                          <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '0.1rem 0.35rem', borderRadius: '4px', background: `${riskColor}18`, color: riskColor, textTransform: 'uppercase' }}>
+                            {r.currentRiskLevel || '--'}
+                          </span>
+                          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                            {SOURCE_LABELS[r.source] || r.source}
+                          </span>
+                        </div>
+                        {r.assignedSocialWorker && (
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>SW: {r.assignedSocialWorker}</div>
+                        )}
+                        {/* Discussed toggle */}
+                        {isActive && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); onMarkDiscussed(r.residentId, !r.discussed); }}
+                            style={{
+                              marginTop: '0.5rem',
+                              display: 'inline-flex', alignItems: 'center', gap: '0.25rem',
+                              padding: '0.25rem 0.5rem', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 600,
+                              border: r.discussed ? '1px solid rgba(39,174,96,0.3)' : '1px solid rgba(15,27,45,0.12)',
+                              background: r.discussed ? 'rgba(39,174,96,0.1)' : '#fff',
+                              color: r.discussed ? '#27ae60' : 'var(--text-muted)',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            <CheckCircle size={11} /> {r.discussed ? 'Discussed' : 'Mark Discussed'}
+                          </button>
+                        )}
                       </div>
-                      <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', marginBottom: '0.3rem' }}>
-                        <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '0.1rem 0.35rem', borderRadius: '4px', background: `${riskColor}18`, color: riskColor, textTransform: 'uppercase' }}>
-                          {r.currentRiskLevel || '--'}
-                        </span>
-                        <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                          {SOURCE_LABELS[r.source] || r.source}
-                        </span>
-                      </div>
-                      {r.assignedSocialWorker && (
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>SW: {r.assignedSocialWorker}</div>
-                      )}
-                      {/* Discussed toggle */}
-                      {isActive && (
-                        <button
-                          onClick={(e) => { e.stopPropagation(); onMarkDiscussed(r.residentId, !r.discussed); }}
-                          style={{
-                            marginTop: '0.5rem',
-                            display: 'inline-flex', alignItems: 'center', gap: '0.25rem',
-                            padding: '0.25rem 0.5rem', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 600,
-                            border: r.discussed ? '1px solid rgba(39,174,96,0.3)' : '1px solid rgba(15,27,45,0.12)',
-                            background: r.discussed ? 'rgba(39,174,96,0.1)' : '#fff',
-                            color: r.discussed ? '#27ae60' : 'var(--text-muted)',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          <CheckCircle size={11} /> {r.discussed ? 'Discussed' : 'Mark Discussed'}
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '1rem', color: 'var(--text-muted)', fontSize: '0.82rem' }}>
+                  No residents scheduled for this conference.
+                </div>
+              )}
             </>
-          ) : (
-            <div style={{ textAlign: 'center', padding: '1rem', color: 'var(--text-muted)', fontSize: '0.82rem' }}>
-              No residents scheduled for this conference.
-            </div>
           )}
         </div>
       )}

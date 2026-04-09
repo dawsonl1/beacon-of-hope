@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { ArrowLeft, AlertTriangle, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
+import { APP_TODAY_STR } from '../../constants';
 import { VISIT_TYPES, COOPERATION_LEVELS } from '../../domain';
+import { useAuth } from '../../contexts/AuthContext';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Dropdown from '../../components/admin/Dropdown';
 import DatePicker from '../../components/admin/DatePicker';
@@ -56,7 +58,13 @@ export default function VisitationFormPage() {
   const calendarEventId = searchParams.get('calendarEventId');
   const fromCalendar = Boolean(calendarEventId);
 
-  const [form, setForm] = useState<FormData>(emptyForm);
+  const { user } = useAuth();
+  const defaultSocialWorker = user ? `${user.firstName} ${user.lastName}`.trim() : '';
+  const [form, setForm] = useState<FormData>({
+    ...emptyForm,
+    visitDate: APP_TODAY_STR,
+    socialWorker: defaultSocialWorker,
+  });
   const [residents, setResidents] = useState<ResidentOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
