@@ -110,6 +110,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseHsts();
 app.UseCors("AllowFrontend");
+app.UseStaticFiles();
 
 // ── Global error handler (ensures CORS headers on errors) ──
 app.Use(async (context, next) =>

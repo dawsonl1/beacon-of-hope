@@ -69,8 +69,24 @@ export default function SocialPhotosPage() {
     setUploading(true);
     setUploadError(null);
     try {
-      const filePath = `/media/library/upload_${Date.now()}.jpg`;
-      await apiFetch('/api/social/media/upload', { method: 'POST', body: JSON.stringify({ filePath, thumbnailPath: filePath, caption: caption || null, activityType, consentConfirmed: true }) });
+      const file = fileRef.current?.files?.[0];
+      if (file) {
+        // Real multipart upload with actual file
+        const formData = new FormData();
+        formData.append('photo', file);
+        formData.append('caption', caption || '');
+        formData.append('activityType', activityType);
+        formData.append('consentConfirmed', 'true');
+        const res = await fetch(`${getApiUrl()}/api/social/media/upload`, {
+          method: 'POST',
+          credentials: 'include',
+          body: formData,
+        });
+        if (!res.ok) throw new Error('Upload failed');
+      } else {
+        // Fallback JSON upload (for when preview was set without file input)
+        await apiFetch('/api/social/media/upload', { method: 'POST', body: JSON.stringify({ filePath: `/media/library/upload_${Date.now()}.jpg`, thumbnailPath: `/media/library/upload_${Date.now()}.jpg`, caption: caption || null, activityType, consentConfirmed: true }) });
+      }
       setUploadSuccess(true);
       setPreview(null);
       setCaption('');
