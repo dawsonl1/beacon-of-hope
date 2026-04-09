@@ -145,7 +145,6 @@
 
 .safetyToggle:hover {
   border-color: rgba(203, 87, 104, 0.4);
-  color: var(--color-rose);
 }
 
 .safetyToggleActive {
