@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowUpRight, AlertTriangle, Calendar, UserPlus, DollarSign, FileText } from 'lucide-react';
+import { ArrowUpRight, AlertTriangle, Calendar, UserPlus, DollarSign, FileText, Filter } from 'lucide-react';
 import { apiFetch } from '../api';
 import { formatMonthLabel, formatEnumLabel } from '../constants';
 import { ChartTooltip } from '../components/ChartTooltip';
@@ -83,6 +83,11 @@ interface ApiDonation {
 }
 
 
+interface SafehouseOption {
+  safehouseId: number;
+  label: string;
+}
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
 
@@ -95,14 +100,25 @@ export default function AdminDashboard() {
   const [flaggedChart, setFlaggedChart] = useState<Array<{ month: string; count: number }>>([]);
   const [channels, setChannels] = useState<Array<{ channel: string; amount: number }>>([]);
   const [error, setError] = useState(false);
+  const [safehouses, setSafehouses] = useState<SafehouseOption[]>([]);
+  const [safehouseId, setSafehouseId] = useState<number | null>(null);
 
+  // Fetch safehouse options once
   useEffect(() => {
+    apiFetch<{ safehouses: SafehouseOption[] }>('/api/admin/residents/filter-options')
+      .then(resp => setSafehouses(resp.safehouses ?? []))
+      .catch(() => {});
+  }, []);
+
+  const fetchData = useCallback((shId: number | null) => {
     const onErr = (e: unknown) => { console.error('API fetch failed', e); };
     const onCriticalErr = (e: unknown) => { console.error('API fetch failed', e); setError(true); };
+    const sfParam = shId ? `?safehouseId=${shId}` : '';
+    const sfAmp = shId ? `&safehouseId=${shId}` : '';
 
-    apiFetch<Metrics>('/api/admin/metrics').then(setMetrics).catch(onCriticalErr);
+    apiFetch<Metrics>(`/api/admin/metrics${sfParam}`).then(setMetrics).catch(onCriticalErr);
 
-    apiFetch<{ items: ApiResident[]; totalCount: number }>('/api/admin/residents').then(resp => {
+    apiFetch<{ items: ApiResident[]; totalCount: number }>(`/api/admin/residents?pageSize=20${sfAmp}`).then(resp => {
       const data = resp.items ?? [];
       setTotalResidents(resp.totalCount ?? data.length);
       setResidents(data.map(r => {
@@ -133,19 +149,20 @@ export default function AdminDashboard() {
       })));
     }).catch(onErr);
 
-    apiFetch<Array<{ year: number; month: number; count: number }>>('/api/admin/active-residents-trend').then(data => {
+    apiFetch<Array<{ year: number; month: number; count: number }>>(`/api/admin/active-residents-trend${sfParam}`).then(data => {
       setActiveResidentsChart(data.map(d => ({ month: formatMonthLabel(d.year, d.month), count: d.count })));
     }).catch(onErr);
 
-    apiFetch<Array<{ year: number; month: number; count: number }>>('/api/admin/flagged-cases-trend').then(data => {
+    apiFetch<Array<{ year: number; month: number; count: number }>>(`/api/admin/flagged-cases-trend${sfParam}`).then(data => {
       setFlaggedChart(data.map(d => ({ month: formatMonthLabel(d.year, d.month), count: d.count })));
     }).catch(onErr);
 
     apiFetch<Array<{ channel: string; count: number }>>('/api/admin/donations-by-channel').then(data => {
       setChannels(data.map(d => ({ channel: formatEnumLabel(d.channel), amount: d.count })));
     }).catch(onErr);
-
   }, []);
+
+  useEffect(() => { fetchData(safehouseId); }, [safehouseId, fetchData]);
 
   return (
     <div className={styles.page}>
@@ -161,6 +178,19 @@ export default function AdminDashboard() {
           <p className={styles.dateText}>{dataDateStr}</p>
         </div>
         <div className={styles.quickActions}>
+          <div className={styles.filterWrap}>
+            <Filter size={14} className={styles.filterIcon} />
+            <select
+              className={styles.safehouseSelect}
+              value={safehouseId ?? ''}
+              onChange={e => setSafehouseId(e.target.value ? Number(e.target.value) : null)}
+            >
+              <option value="">All Safehouses</option>
+              {safehouses.map(s => (
+                <option key={s.safehouseId} value={s.safehouseId}>{s.label}</option>
+              ))}
+            </select>
+          </div>
           <button className={styles.actionBtn} onClick={() => navigate('/admin/caseload/new')}>
             <UserPlus size={15} />
             <span>Add Resident</span>

@@ -1311,16 +1311,19 @@ app.MapPost("/api/volunteer", async (AppDbContext db, HttpContext httpContext) =
 
 // ── Admin endpoints ────────────────────────────────────────
 
-app.MapGet("/api/admin/metrics", async (AppDbContext db) =>
+app.MapGet("/api/admin/metrics", async (AppDbContext db, int? safehouseId) =>
 {
     var refDate = DATA_CUTOFF;
     var startOfMonth = new DateOnly(refDate.Year, refDate.Month, 1);
     var startOfLastMonth = startOfMonth.AddMonths(-1);
 
-    var activeResidents = await db.Residents.CountAsync(r => r.CaseStatus == "Active");
+    var residentsQuery = db.Residents.Where(r => r.CaseStatus == "Active");
+    if (safehouseId.HasValue) residentsQuery = residentsQuery.Where(r => r.SafehouseId == safehouseId.Value);
+    var activeResidents = await residentsQuery.CountAsync();
 
-    var incidents = await db.IncidentReports
-        .Where(i => i.Resolved != true)
+    var incidentsQuery = db.IncidentReports.Where(i => i.Resolved != true);
+    if (safehouseId.HasValue) incidentsQuery = incidentsQuery.Where(i => i.SafehouseId == safehouseId.Value);
+    var incidents = await incidentsQuery
         .GroupBy(_ => 1)
         .Select(g => new
         {
@@ -1344,13 +1347,17 @@ app.MapGet("/api/admin/metrics", async (AppDbContext db) =>
         .Where(d => d.DonationDate >= startOfLastMonth && d.DonationDate < startOfMonth)
         .SumAsync(d => (decimal?)d.Amount ?? 0);
 
-    var nextConference = await db.InterventionPlans
+    var conferencesQuery = db.InterventionPlans.AsQueryable();
+    if (safehouseId.HasValue)
+        conferencesQuery = conferencesQuery.Where(p => db.Residents.Any(r => r.ResidentId == p.ResidentId && r.SafehouseId == safehouseId.Value));
+
+    var nextConference = await conferencesQuery
         .Where(p => p.CaseConferenceDate > refDate)
         .OrderBy(p => p.CaseConferenceDate)
         .Select(p => p.CaseConferenceDate)
         .FirstOrDefaultAsync();
 
-    var upcomingConferences = await db.InterventionPlans
+    var upcomingConferences = await conferencesQuery
         .CountAsync(p => p.CaseConferenceDate > refDate);
 
     var donationChange = lastMonthDonations > 0
@@ -1607,10 +1614,12 @@ app.MapGet("/api/admin/donations-by-channel", async (AppDbContext db) =>
     return data;
 }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
-app.MapGet("/api/admin/active-residents-trend", async (AppDbContext db) =>
+app.MapGet("/api/admin/active-residents-trend", async (AppDbContext db, int? safehouseId) =>
 {
-    var data = await db.SafehouseMonthlyMetrics
-        .Where(m => m.MonthStart != null && m.MonthStart <= DATA_CUTOFF)
+    var query = db.SafehouseMonthlyMetrics.Where(m => m.MonthStart != null && m.MonthStart <= DATA_CUTOFF);
+    if (safehouseId.HasValue) query = query.Where(m => m.SafehouseId == safehouseId.Value);
+
+    var data = await query
         .GroupBy(m => new { m.MonthStart!.Value.Year, m.MonthStart!.Value.Month })
         .Select(g => new
         {
@@ -1624,10 +1633,12 @@ app.MapGet("/api/admin/active-residents-trend", async (AppDbContext db) =>
     return data;
 }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
-app.MapGet("/api/admin/flagged-cases-trend", async (AppDbContext db) =>
+app.MapGet("/api/admin/flagged-cases-trend", async (AppDbContext db, int? safehouseId) =>
 {
-    var data = await db.SafehouseMonthlyMetrics
-        .Where(m => m.MonthStart != null && m.MonthStart <= DATA_CUTOFF)
+    var query = db.SafehouseMonthlyMetrics.Where(m => m.MonthStart != null && m.MonthStart <= DATA_CUTOFF);
+    if (safehouseId.HasValue) query = query.Where(m => m.SafehouseId == safehouseId.Value);
+
+    var data = await query
         .GroupBy(m => new { m.MonthStart!.Value.Year, m.MonthStart!.Value.Month })
         .Select(g => new
         {
