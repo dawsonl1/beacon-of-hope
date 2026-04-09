@@ -150,7 +150,7 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 /* ── Unscheduled parking lot ─────────────────────── */
@@ -197,14 +197,12 @@
   background: #fff;
   border: 1px solid rgba(15, 27, 45, 0.08);
   border-radius: 12px;
-  overflow-y: auto;
-  flex: 1;
 }
 
 .timeSlot {
   display: flex;
-  border-bottom: 1px solid rgba(15, 27, 45, 0.04);
-  min-height: 44px;
+  border-bottom: 1px solid rgba(15, 27, 45, 0.06);
+  height: 60px;
   transition: background 0.2s;
 }
 
@@ -271,8 +269,6 @@
 .weekGrid {
   display: grid;
   grid-template-columns: 52px repeat(7, 1fr);
-  flex: 1;
-  overflow-y: auto;
   background: #fff;
   border: 1px solid rgba(15, 27, 45, 0.08);
   border-radius: 12px;
@@ -334,20 +330,22 @@
   font-weight: 600;
   color: var(--text-muted);
   text-align: right;
-  padding: 0.2rem 0.35rem 0 0;
-  border-top: 1px solid rgba(15, 27, 45, 0.04);
+  padding: 0.25rem 0.4rem 0 0;
+  border-top: 1px solid rgba(15, 27, 45, 0.06);
+  height: 60px;
   line-height: 1;
 }
 
 .weekCell {
-  border-top: 1px solid rgba(15, 27, 45, 0.04);
+  border-top: 1px solid rgba(15, 27, 45, 0.06);
   border-left: 1px solid rgba(15, 27, 45, 0.04);
-  min-height: 44px;
-  padding: 0.15rem 0.2rem;
+  height: 60px;
+  padding: 0.15rem 0.25rem;
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
   transition: background 0.15s;
+  overflow: hidden;
 }
 
 .weekCell:hover {
