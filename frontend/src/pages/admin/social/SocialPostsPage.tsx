@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Loader2, Check, X, Clock, Edit3, ThumbsUp, ThumbsDown, Copy, ExternalLink, BarChart2, ChevronLeft, ChevronRight, Sparkles, CameraIcon } from 'lucide-react';
 import { apiFetch, getApiUrl } from '../../../api';
+import { APP_TODAY } from '../../../constants';
 import TextArea from '../../../components/admin/TextArea';
 import styles from './SocialPostsPage.module.css';
 
@@ -43,7 +44,7 @@ const PILLAR_COLORS: Record<string, string> = {
 };
 
 function getMonthDays(offset: number): { days: Date[]; month: number; year: number } {
-  const now = new Date();
+  const now = new Date(APP_TODAY);
   const target = new Date(now.getFullYear(), now.getMonth() + offset, 1);
   const month = target.getMonth();
   const year = target.getFullYear();
@@ -454,7 +455,7 @@ export default function SocialPostsPage() {
         <div className={styles.monthGrid}>
           {monthDays.map(day => {
             const dayPosts = scheduled.filter(p => p.scheduledAt && isSameDay(new Date(p.scheduledAt), day));
-            const isToday = isSameDay(day, new Date());
+            const isToday = isSameDay(day, new Date(APP_TODAY));
             const isOtherMonth = day.getMonth() !== calMonth;
             return (
               <div key={day.toISOString()} className={`${styles.monthCell} ${isToday ? styles.dayToday : ''} ${isOtherMonth ? styles.otherMonth : ''}`}>

@@ -40,7 +40,7 @@ public static class NewsletterEndpoints
             {
                 Email = email,
                 Name = name,
-                SubscribedAt = DateTime.UtcNow,
+                SubscribedAt = AppConstants.DataCutoffUtc,
                 UnsubscribeToken = Guid.NewGuid().ToString("N"),
                 IsActive = true
             };
@@ -124,7 +124,7 @@ public static class NewsletterEndpoints
 
             nl.Status = "approved";
             nl.ApprovedBy = ctx.User.FindFirstValue(ClaimTypes.Email) ?? "admin";
-            nl.ApprovedAt = DateTime.UtcNow;
+            nl.ApprovedAt = AppConstants.DataCutoffUtc;
             await db.SaveChangesAsync();
             return Results.Ok(nl);
         }).RequireAuthorization(p => p.RequireRole("Admin"));
@@ -189,7 +189,7 @@ public static class NewsletterEndpoints
             }
 
             nl.Status = "sent";
-            nl.SentAt = DateTime.UtcNow;
+            nl.SentAt = AppConstants.DataCutoffUtc;
             nl.RecipientCount = sent;
             await db.SaveChangesAsync();
             return Results.Ok(new { sent, total = subscribers.Count });
@@ -206,7 +206,7 @@ public static class NewsletterEndpoints
             if (!string.IsNullOrEmpty(harnessKey))
                 httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {harnessKey}");
 
-            var now = DateTime.UtcNow;
+            var now = AppConstants.DataCutoffUtc;
             var genResp = await httpClient.PostAsJsonAsync($"{harnessUrl}/generate-newsletter",
                 new { year = now.Year, month = now.Month });
 
@@ -221,7 +221,7 @@ public static class NewsletterEndpoints
                 HtmlContent = genJson.TryGetProperty("html_content", out var h) ? h.GetString() : null,
                 PlainText = genJson.TryGetProperty("plain_text", out var p) ? p.GetString() : null,
                 Status = "draft",
-                GeneratedAt = DateTime.UtcNow,
+                GeneratedAt = AppConstants.DataCutoffUtc,
                 MonthYear = now.Year * 100 + now.Month
             };
 

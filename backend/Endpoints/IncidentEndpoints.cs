@@ -177,7 +177,7 @@ public static class IncidentEndpoints
             var status = body?.GetValueOrDefault("status");
             if (string.IsNullOrEmpty(status)) return Results.BadRequest(new { error = "Status is required." });
             task.Status = status;
-            if (status == "Completed" || status == "Dismissed") task.CompletedAt = DateTime.UtcNow;
+            if (status == "Completed" || status == "Dismissed") task.CompletedAt = AppConstants.DataCutoffUtc;
             await db.SaveChangesAsync();
             return Results.Ok(new { updated = true });
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));

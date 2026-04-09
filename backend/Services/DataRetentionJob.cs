@@ -50,7 +50,7 @@ public class DataRetentionJob : BackgroundService
         _logger.LogInformation("Starting data retention cleanup...");
         using var scope = _services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var now = DateTime.UtcNow;
+        var now = AppConstants.DataCutoffUtc;
         int totalCleaned = 0;
 
         // 1. Delete rejected posts older than 12 months

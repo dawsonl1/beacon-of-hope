@@ -1,5 +1,10 @@
 /** Build: 2026-04-09T12:45 — HomePage @dnd-kit drag-and-drop */
-/** The app's reference date — all data is as of this date */
+/**
+ * IMPORTANT: The app is frozen to February 16, 2026.
+ * All "today" references MUST use APP_TODAY / APP_TODAY_STR — NEVER new Date().
+ * new Date() is only acceptable for real system timestamps (analytics, cookies).
+ * See CLAUDE.md rule #9.
+ */
 export const APP_TODAY = new Date(2026, 1, 16); // Feb 16, 2026 (month is 0-indexed)
 export const APP_TODAY_STR = '2026-02-16';
 

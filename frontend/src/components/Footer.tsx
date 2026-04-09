@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Heart } from 'lucide-react';
+import { APP_TODAY } from '../constants';
 import { useCookieConsent } from '../contexts/CookieConsentContext';
 import styles from './Footer.module.css';
 
@@ -48,7 +49,7 @@ export default function Footer() {
 
         <div className={styles.bottom}>
           <p className={styles.copy}>
-            &copy; {new Date().getFullYear()} Beacon of Hope. All rights reserved.
+            &copy; {new Date(APP_TODAY).getFullYear()} Beacon of Hope. All rights reserved.
           </p>
           <p className={styles.madeWith}>
             Made with <Heart size={12} className={styles.heart} /> for those who need it most

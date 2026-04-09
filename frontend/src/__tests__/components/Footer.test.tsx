@@ -33,7 +33,7 @@ describe('Footer', () => {
 
   it('displays current year in copyright', () => {
     renderWithProviders(<Footer />);
-    const year = new Date().getFullYear().toString();
+    const year = '2026';
     const matches = screen.getAllByText(new RegExp(year));
     expect(matches.length).toBeGreaterThanOrEqual(1);
   });

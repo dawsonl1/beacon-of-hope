@@ -203,7 +203,7 @@ public class ContentGenerationJob : BackgroundService
                     FactId = factId,
                     TalkingPointId = tpId,
                     ScheduledAt = scheduledAt,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = AppConstants.DataCutoffUtc
                 };
                 db.AutomatedPosts.Add(post);
                 await db.SaveChangesAsync(ct);

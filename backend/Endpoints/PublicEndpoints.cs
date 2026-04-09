@@ -25,7 +25,7 @@ public static class PublicEndpoints
             {
                 status = canConnect ? "ok" : "degraded",
                 database = canConnect ? "connected" : "unreachable",
-                timestamp = DateTime.UtcNow.ToString("o")
+                timestamp = AppConstants.DataCutoffUtc.ToString("o")
             };
         });
 
@@ -241,7 +241,7 @@ public static class PublicEndpoints
                     Country = "Guam",
                     Status = "Prospective",
                     AcquisitionChannel = "Direct",
-                    CreatedAt = DateTime.UtcNow,
+                    CreatedAt = AppConstants.DataCutoffUtc,
                 };
 
                 db.Supporters.Add(supporter);
@@ -295,7 +295,7 @@ public static class PublicEndpoints
                     Email = email,
                     Phone = body.Phone?.Trim(),
                     Status = "Prospective",
-                    StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                    StartDate = AppConstants.DataCutoff,
                     Notes = body.Notes?.Trim(),
                 };
 

@@ -15,7 +15,7 @@ public class CalendarEvent
     public string? RecurrenceRule { get; set; }
     public int? SourceTaskId { get; set; }
     public string Status { get; set; } = "Scheduled"; // Scheduled, Completed, Cancelled
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = AppConstants.DataCutoffUtc; // Frozen date — do not replace with DateTime.UtcNow
 
     public virtual ApplicationUser StaffUser { get; set; } = null!;
     public virtual Safehouse Safehouse { get; set; } = null!;

@@ -110,7 +110,7 @@ public static class ResidentEndpoints
             if (!valid) return Results.BadRequest(new { error = err });
             var denied3 = await SafehouseAuth.ValidateResidentAccess(httpContext, db, body.ResidentId);
             if (denied3 != null) return denied3;
-            var plan = new InterventionPlan { ResidentId = body.ResidentId, PlanCategory = body.PlanCategory, PlanDescription = body.PlanDescription, ServicesProvided = body.ServicesProvided, TargetValue = body.TargetValue, TargetDate = body.TargetDate, Status = body.Status ?? "Open", CaseConferenceDate = body.CaseConferenceDate, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow };
+            var plan = new InterventionPlan { ResidentId = body.ResidentId, PlanCategory = body.PlanCategory, PlanDescription = body.PlanDescription, ServicesProvided = body.ServicesProvided, TargetValue = body.TargetValue, TargetDate = body.TargetDate, Status = body.Status ?? "Open", CaseConferenceDate = body.CaseConferenceDate, CreatedAt = AppConstants.DataCutoffUtc, UpdatedAt = AppConstants.DataCutoffUtc };
             db.InterventionPlans.Add(plan);
             await db.SaveChangesAsync();
             return Results.Ok(new { plan.PlanId });
@@ -124,7 +124,7 @@ public static class ResidentEndpoints
             if (body == null) return Results.BadRequest(new { error = "Request body is required." });
             var (valid, err) = DtoValidator.Validate(body);
             if (!valid) return Results.BadRequest(new { error = err });
-            plan.PlanCategory = body.PlanCategory; plan.PlanDescription = body.PlanDescription; plan.ServicesProvided = body.ServicesProvided; plan.TargetValue = body.TargetValue; plan.TargetDate = body.TargetDate; plan.Status = body.Status ?? plan.Status; plan.CaseConferenceDate = body.CaseConferenceDate; plan.UpdatedAt = DateTime.UtcNow;
+            plan.PlanCategory = body.PlanCategory; plan.PlanDescription = body.PlanDescription; plan.ServicesProvided = body.ServicesProvided; plan.TargetValue = body.TargetValue; plan.TargetDate = body.TargetDate; plan.Status = body.Status ?? plan.Status; plan.CaseConferenceDate = body.CaseConferenceDate; plan.UpdatedAt = AppConstants.DataCutoffUtc;
             await db.SaveChangesAsync();
             return Results.Ok(new { updated = true });
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));

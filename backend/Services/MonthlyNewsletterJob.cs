@@ -61,7 +61,7 @@ public class MonthlyNewsletterJob : BackgroundService
 
     private async Task GenerateNewsletter(CancellationToken ct)
     {
-        var now = DateTime.UtcNow;
+        var now = AppConstants.DataCutoffUtc;
         var monthYear = now.Year * 100 + now.Month;
 
         // Check if already generated this month
@@ -98,7 +98,7 @@ public class MonthlyNewsletterJob : BackgroundService
             HtmlContent = genJson.TryGetProperty("html_content", out var h) ? h.GetString() : null,
             PlainText = genJson.TryGetProperty("plain_text", out var p) ? p.GetString() : null,
             Status = "draft",
-            GeneratedAt = DateTime.UtcNow,
+            GeneratedAt = AppConstants.DataCutoffUtc,
             MonthYear = monthYear
         };
 

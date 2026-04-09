@@ -94,3 +94,5 @@ intex2/
 7. [DATA] For Npgsql connection strings, use camelCase key names without spaces: `SslMode` (not `SSL Mode`), `TrustServerCertificate` (not `Trust Server Certificate`), `Username` (not `User Id`). Npgsql 10.x is strict about this.
 
 8. [PROCESS] Never push directly to main. Always create a feature branch, push to it, and open a PR — because direct pushes bypass review and can break the shared branch.
+
+9. [DATA] The app is frozen to February 16, 2026. All timestamps and "today" references MUST use `AppConstants.DataCutoff` (DateOnly) or `AppConstants.DataCutoffUtc` (DateTime) in backend C#, and `APP_TODAY` / `APP_TODAY_STR` in frontend TypeScript. Never use `DateTime.UtcNow`, `DateTime.Now`, `new Date()`, or `Date.now()` for data-facing logic. The only exception is real timer scheduling math in background jobs (calculating delays for `Task.Delay`). If you see `DateTime.UtcNow` in a merge conflict, always pick the `AppConstants.DataCutoffUtc` side.

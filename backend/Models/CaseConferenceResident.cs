@@ -8,7 +8,7 @@ public class CaseConferenceResident
     public string Source { get; set; } = "Manual"; // Manual, NeedsConference, MlAlert
     public bool Discussed { get; set; } = false;
     public string? Notes { get; set; }
-    public DateTime AddedAt { get; set; } = DateTime.UtcNow;
+    public DateTime AddedAt { get; set; } = AppConstants.DataCutoffUtc; // Frozen date — do not replace with DateTime.UtcNow
 
     public virtual CaseConference Conference { get; set; } = null!;
     public virtual Resident Resident { get; set; } = null!;

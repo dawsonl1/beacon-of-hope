@@ -190,12 +190,12 @@ public static class CaseConferenceEndpoints
         // ── ML Alerts: residents needing conference ──
         app.MapGet("/api/admin/case-conferences/alerts", async (AppDbContext db) =>
         {
-            var threeWeeksAgo = DateTime.UtcNow.AddDays(-21);
+            var threeWeeksAgo = AppConstants.DataCutoffUtc.AddDays(-21);
 
             // 1. Residents flagged via process recordings (needsCaseConference=true)
             //    who are NOT already in an upcoming conference
             var upcomingConferenceResidentIds = await db.CaseConferenceResidents
-                .Where(cr => cr.Conference.ScheduledDate >= DateOnly.FromDateTime(DateTime.UtcNow))
+                .Where(cr => cr.Conference.ScheduledDate >= AppConstants.DataCutoff)
                 .Select(cr => cr.ResidentId)
                 .Distinct()
                 .ToListAsync();
@@ -293,7 +293,7 @@ public static class CaseConferenceEndpoints
 
     public static DateOnly GetNextMonday()
     {
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var today = AppConstants.DataCutoff;
         var daysUntilMonday = ((int)DayOfWeek.Monday - (int)today.DayOfWeek + 7) % 7;
         if (daysUntilMonday == 0) daysUntilMonday = 7; // If today is Monday, next Monday
         return today.AddDays(daysUntilMonday);

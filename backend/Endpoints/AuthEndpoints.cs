@@ -81,7 +81,7 @@ public static class AuthEndpoints
                 DisplayName = $"{body.FirstName} {body.LastName}",
                 SupporterType = "Individual",
                 Status = "Active",
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = AppConstants.DataCutoffUtc,
             };
             db.Supporters.Add(supporter);
             await db.SaveChangesAsync();
