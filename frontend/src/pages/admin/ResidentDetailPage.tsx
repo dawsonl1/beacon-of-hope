@@ -2,8 +2,8 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Edit, Trash2, Loader2, User, Shield, ClipboardList,
-  AlertTriangle, Activity, GraduationCap, Stethoscope, Plus, Users,
-  Calendar, Home, Heart, FileText, Mic, Eye,
+  AlertTriangle, Activity, GraduationCap, Plus,
+  Calendar, Heart, FileText, Mic, Eye,
 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { formatDate } from '../../constants';
@@ -568,7 +568,6 @@ export default function ResidentDetailPage() {
                 resident={resident}
                 conferences={conferences}
                 setConferences={setConferences}
-                navigate={navigate}
                 id={id!}
               />
             )}
@@ -587,11 +586,10 @@ const PLAN_STATUS_COLORS: Record<string, string> = {
   Open: '#3498db', 'In Progress': '#f39c12', Achieved: '#27ae60', 'On Hold': '#95a5a6', Closed: '#95a5a6',
 };
 
-function PlanTab({ resident, conferences, setConferences, navigate, id }: {
+function PlanTab({ resident, conferences, setConferences, id }: {
   resident: ResidentDetail;
   conferences: any[];
   setConferences: (c: any[]) => void;
-  navigate: (path: string) => void;
   id: string;
 }) {
   const [showForm, setShowForm] = useState(false);
