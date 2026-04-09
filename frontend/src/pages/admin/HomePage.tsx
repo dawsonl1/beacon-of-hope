@@ -152,9 +152,25 @@ function toMinutes(time: string | null): number {
   return h * 60 + m;
 }
 
+const DEFAULT_DURATION: Record<string, number> = {
+  Counseling: 60,
+  GroupTherapy: 90,
+  DoctorApt: 30,
+  DentistApt: 30,
+  HomeVisit: 120,
+  CaseConference: 60,
+  ReintegrationVisit: 90,
+  PostPlacementVisit: 60,
+  Other: 60,
+};
+
+function defaultDuration(eventType: string): number {
+  return DEFAULT_DURATION[eventType] ?? 60;
+}
+
 function eventEnd(evt: CalendarEventItem): number {
   if (evt.endTime) return toMinutes(evt.endTime);
-  return toMinutes(evt.startTime) + 60; // default 1 hour
+  return toMinutes(evt.startTime) + defaultDuration(evt.eventType);
 }
 
 function computeOverlapLayout(dayEvents: CalendarEventItem[], draggedId: number | null): Map<number, EventLayout> {
@@ -485,7 +501,7 @@ export default function HomePage() {
   }, [selectedEvent]);
 
   function getEventDuration(evt: CalendarEventItem): number {
-    if (!evt.startTime || !evt.endTime) return 60; // default 1 hour
+    if (!evt.startTime || !evt.endTime) return defaultDuration(evt.eventType);
     const [sh, sm] = evt.startTime.split(':').map(Number);
     const [eh, em] = evt.endTime.split(':').map(Number);
     return Math.max((eh * 60 + em) - (sh * 60 + sm), 15);
