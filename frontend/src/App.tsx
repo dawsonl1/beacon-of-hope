@@ -69,6 +69,7 @@ import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 // SignupPage removed — donors get accounts after donating
 const NewsletterPage = lazyRetry(() => import('./pages/NewsletterPage'));
 const VolunteerPage = lazyRetry(() => import('./pages/VolunteerPage'));
+const PartnerPage = lazyRetry(() => import('./pages/PartnerPage'));
 // Admin pages — lazy loaded (code-split)
 const AdminLayout = lazyRetry(() => import('./layouts/AdminLayout'));
 const AdminDashboard = lazyRetry(() => import('./pages/AdminDashboard'));
@@ -139,6 +140,7 @@ function App() {
             <Route path="/signup" element={<Navigate to="/donate" replace />} />
             <Route path="/newsletter" element={<PublicLayout><NewsletterPage /></PublicLayout>} />
             <Route path="/volunteer" element={<PublicLayout><VolunteerPage /></PublicLayout>} />
+            <Route path="/partner" element={<PublicLayout><PartnerPage /></PublicLayout>} />
             <Route path="/donate" element={<PublicLayout><DonatePage /></PublicLayout>} />
             <Route path="/donate/success" element={<PublicLayout><DonateSuccessPage /></PublicLayout>} />
 

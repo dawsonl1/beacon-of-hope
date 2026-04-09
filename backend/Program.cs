@@ -1309,6 +1309,105 @@ app.MapPost("/api/volunteer", async (AppDbContext db, HttpContext httpContext) =
     }
 });
 
+// ── Partner sign-up (public) ──────────────────────────────
+
+app.MapPost("/api/partner", async (AppDbContext db, HttpContext httpContext) =>
+{
+    try
+    {
+        var body = await httpContext.Request.ReadFromJsonAsync<PartnerSignupRequest>();
+        if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+
+        var partnerName = body.PartnerName?.Trim() ?? "";
+        var contactName = body.ContactName?.Trim() ?? "";
+        var email = body.Email?.Trim() ?? "";
+
+        if (string.IsNullOrEmpty(contactName))
+            return Results.BadRequest(new { error = "Contact name is required." });
+        if (string.IsNullOrEmpty(email))
+            return Results.BadRequest(new { error = "Email is required." });
+
+        // Check if this email is already registered as a partner
+        var existing = await db.Partners
+            .AnyAsync(p => p.Email == email);
+        if (existing)
+            return Results.Ok(new { message = "You're already registered. We'll be in touch!" });
+
+        // Reset sequence to avoid duplicate key issues (same as volunteer endpoint)
+        await db.Database.ExecuteSqlRawAsync(
+            "SELECT setval(pg_get_serial_sequence('partners', 'partner_id'), (SELECT COALESCE(MAX(partner_id), 0) FROM partners))");
+
+        var partner = new backend.Models.Partner
+        {
+            PartnerName = string.IsNullOrEmpty(partnerName) ? contactName : partnerName,
+            PartnerType = body.PartnerType?.Trim() ?? "Organization",
+            RoleType = "Prospective",
+            ContactName = contactName,
+            Email = email,
+            Phone = body.Phone?.Trim(),
+            Status = "Prospective",
+            StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+            Notes = body.Notes?.Trim(),
+        };
+
+        db.Partners.Add(partner);
+        await db.SaveChangesAsync();
+        return Results.Ok(new { message = "Thank you for your interest in partnering!" });
+    }
+    catch (Exception ex)
+    {
+        var logger = httpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+            .CreateLogger("PartnerEndpoint");
+        logger.LogError(ex, "Partner signup failed");
+        var inner = ex.InnerException?.Message ?? "no inner exception";
+        return Results.Problem($"Partner signup failed: {ex.Message} | Inner: {inner}");
+    }
+});
+
+// ── Admin partners list ───────────────────────────────────
+
+app.MapGet("/api/admin/partners", async (AppDbContext db, string? search, string? status, string? partnerType, int page = 1, int pageSize = 20) =>
+{
+    if (pageSize > 100) pageSize = 100;
+    var q = db.Partners.AsQueryable();
+
+    if (!string.IsNullOrWhiteSpace(search))
+    {
+        var s = search.Trim().ToLower();
+        q = q.Where(p =>
+            (p.PartnerName != null && p.PartnerName.ToLower().Contains(s)) ||
+            (p.ContactName != null && p.ContactName.ToLower().Contains(s)) ||
+            (p.Email != null && p.Email.ToLower().Contains(s)));
+    }
+    if (!string.IsNullOrWhiteSpace(status))
+        q = q.Where(p => p.Status == status);
+    if (!string.IsNullOrWhiteSpace(partnerType))
+        q = q.Where(p => p.PartnerType == partnerType);
+
+    var totalCount = await q.CountAsync();
+    var items = await q
+        .OrderByDescending(p => p.StartDate)
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .Select(p => new
+        {
+            p.PartnerId,
+            p.PartnerName,
+            p.PartnerType,
+            p.RoleType,
+            p.ContactName,
+            p.Email,
+            p.Phone,
+            p.Region,
+            p.Status,
+            p.StartDate,
+            p.Notes
+        })
+        .ToListAsync();
+
+    return new { items, totalCount, page, pageSize };
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
+
 // ── Admin endpoints ────────────────────────────────────────
 
 app.MapGet("/api/admin/metrics", async (AppDbContext db, int? safehouseId) =>
@@ -2970,6 +3069,16 @@ public class VolunteerSignupRequest
     public string? LastName { get; set; }
     public string? Email { get; set; }
     public string? Region { get; set; }
+}
+
+public class PartnerSignupRequest
+{
+    public string? PartnerType { get; set; }
+    public string? PartnerName { get; set; }
+    public string? ContactName { get; set; }
+    public string? Email { get; set; }
+    public string? Phone { get; set; }
+    public string? Notes { get; set; }
 }
 
 public partial class Program { }

@@ -402,6 +402,20 @@
   color: var(--text-muted);
 }
 
+.cardArrow {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-sage);
+  margin-top: 0.6rem;
+  opacity: 0.6;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.involvedCard:hover .cardArrow {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
 /* ── Donate CTA ───────────────────────────────────────────── */
 .donateCta {
   padding: 5.5rem 1.25rem;

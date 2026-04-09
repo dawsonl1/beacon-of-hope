@@ -41,6 +41,20 @@ interface DonationRow {
   campaignName: string | null;
 }
 
+interface PartnerRow {
+  partnerId: number;
+  partnerName: string | null;
+  partnerType: string | null;
+  roleType: string | null;
+  contactName: string | null;
+  email: string | null;
+  phone: string | null;
+  region: string | null;
+  status: string | null;
+  startDate: string | null;
+  notes: string | null;
+}
+
 interface AllocationByProgram {
   programArea: string;
   totalAllocated: number;
@@ -71,7 +85,7 @@ export default function DonorsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const isAdmin = user?.roles?.includes('Admin') ?? false;
 
-  type TabName = 'supporters' | 'donations' | 'allocations';
+  type TabName = 'supporters' | 'partners' | 'donations' | 'allocations';
   const [activeTab, setActiveTab] = useState<TabName>(
     (searchParams.get('tab') as TabName) || 'supporters'
   );
@@ -85,6 +99,11 @@ export default function DonorsPage() {
   const [donations, setDonations] = useState<PagedResult<DonationRow> | null>(null);
   const [dLoading, setDLoading] = useState(false);
   const [dError, setDError] = useState<string | null>(null);
+
+  // Partners state
+  const [partners, setPartners] = useState<PagedResult<PartnerRow> | null>(null);
+  const [pLoading, setPLoading] = useState(false);
+  const [pError, setPError] = useState<string | null>(null);
 
   // Allocations state
   const [allocByProgram, setAllocByProgram] = useState<AllocationByProgram[]>([]);
@@ -155,6 +174,26 @@ export default function DonorsPage() {
     }
   }, [page, donationType]);
 
+  // Fetch partners
+  const fetchPartners = useCallback(async () => {
+    setPLoading(true);
+    setPError(null);
+    try {
+      const params = new URLSearchParams();
+      params.set('page', String(page));
+      params.set('pageSize', '20');
+      if (search) params.set('search', search);
+      if (status) params.set('status', status);
+      if (supporterType) params.set('partnerType', supporterType);
+      const data = await apiFetch<PagedResult<PartnerRow>>(`/api/admin/partners?${params}`);
+      setPartners(data);
+    } catch (e) {
+      setPError(e instanceof Error ? e.message : 'Failed to load partners');
+    } finally {
+      setPLoading(false);
+    }
+  }, [page, search, status, supporterType]);
+
   // Fetch allocations
   const fetchAllocations = useCallback(async () => {
     setAllocLoading(true);
@@ -175,9 +214,10 @@ export default function DonorsPage() {
 
   useEffect(() => {
     if (activeTab === 'supporters') fetchSupporters();
+    else if (activeTab === 'partners') fetchPartners();
     else if (activeTab === 'donations') fetchDonations();
     else fetchAllocations();
-  }, [activeTab, fetchSupporters, fetchDonations, fetchAllocations]);
+  }, [activeTab, fetchSupporters, fetchPartners, fetchDonations, fetchAllocations]);
 
   // Debounced search
   function handleSearchChange(value: string) {
@@ -233,6 +273,12 @@ export default function DonorsPage() {
           Supporters Directory
         </button>
         <button
+          className={`${styles.tab} ${activeTab === 'partners' ? styles.tabActive : ''}`}
+          onClick={() => handleTabChange('partners')}
+        >
+          Partners Directory
+        </button>
+        <button
           className={`${styles.tab} ${activeTab === 'donations' ? styles.tabActive : ''}`}
           onClick={() => handleTabChange('donations')}
         >
@@ -274,6 +320,38 @@ export default function DonorsPage() {
             >
               <option value="">All Statuses</option>
               {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </>
+        )}
+        {activeTab === 'partners' && (
+          <>
+            <div className={styles.searchWrap}>
+              <Search size={16} className={styles.searchIcon} />
+              <input
+                className={styles.searchInput}
+                placeholder="Search by name, email..."
+                value={searchInput}
+                onChange={e => handleSearchChange(e.target.value)}
+              />
+            </div>
+            <select
+              className={styles.filterSelect}
+              value={supporterType}
+              onChange={e => setParam('supporterType', e.target.value)}
+            >
+              <option value="">All Types</option>
+              <option value="Organization">Organization</option>
+              <option value="Individual">Individual</option>
+            </select>
+            <select
+              className={styles.filterSelect}
+              value={status}
+              onChange={e => setParam('status', e.target.value)}
+            >
+              <option value="">All Statuses</option>
+              <option value="Prospective">Prospective</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
             </select>
           </>
         )}
@@ -340,6 +418,61 @@ export default function DonorsPage() {
                 page={supporters.page}
                 pageSize={supporters.pageSize}
                 totalCount={supporters.totalCount}
+                onPageChange={p => setParam('page', String(p))}
+              />
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Partners Table */}
+      {activeTab === 'partners' && (
+        <div className={styles.tableCard}>
+          {pLoading ? (
+            <div className={styles.loading}><Loader2 size={28} className={styles.spinner} /></div>
+          ) : pError ? (
+            <div className={styles.error}>{pError}</div>
+          ) : !partners || partners.items.length === 0 ? (
+            <div className={styles.empty}>No partners found</div>
+          ) : (
+            <>
+              <div className={styles.tableWrapper}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Contact</th>
+                      <th>Email</th>
+                      <th>Status</th>
+                      <th>Since</th>
+                      <th>Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {partners.items.map(p => (
+                      <tr key={p.partnerId}>
+                        <td>
+                          <span className={styles.supporterName}>{p.partnerName ?? 'Unnamed'}</span>
+                          {p.partnerName !== p.contactName && p.contactName && (
+                            <span className={styles.supporterOrg}>{p.contactName}</span>
+                          )}
+                        </td>
+                        <td>{p.partnerType ? <span className={styles.typeBadge}>{p.partnerType}</span> : '--'}</td>
+                        <td>{p.contactName ?? '--'}</td>
+                        <td>{p.email ?? '--'}</td>
+                        <td><span className={statusClassName(p.status)}>{p.status ?? '--'}</span></td>
+                        <td>{formatDate(p.startDate)}</td>
+                        <td className={styles.notesCol}>{p.notes ? (p.notes.length > 40 ? p.notes.slice(0, 40) + '...' : p.notes) : '--'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <Pagination
+                page={partners.page}
+                pageSize={partners.pageSize}
+                totalCount={partners.totalCount}
                 onPageChange={p => setParam('page', String(p))}
               />
             </>

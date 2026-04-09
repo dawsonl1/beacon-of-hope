@@ -252,21 +252,25 @@ export default function HomePage() {
               <Heart size={28} className={styles.involvedIcon} />
               <h3>Donate</h3>
               <p>Your financial support funds shelter, education, counseling, and care.</p>
+              <span className={styles.cardArrow}><ArrowRight size={16} /></span>
             </Link>
             <Link to="/volunteer" className={`${styles.involvedCard} reveal`} style={{ textDecoration: 'none', color: 'inherit' }}>
               <Users size={28} className={styles.involvedIcon} />
               <h3>Volunteer</h3>
               <p>Give your time and skills to help our team on the ground.</p>
+              <span className={styles.cardArrow}><ArrowRight size={16} /></span>
             </Link>
-            <Link to="/donate" className={`${styles.involvedCard} reveal`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Link to="/partner" className={`${styles.involvedCard} reveal`} style={{ textDecoration: 'none', color: 'inherit' }}>
               <HandHeart size={28} className={styles.involvedIcon} />
               <h3>Partner</h3>
               <p>Bring your church, company, or community alongside our mission.</p>
+              <span className={styles.cardArrow}><ArrowRight size={16} /></span>
             </Link>
             <Link to="/newsletter" className={`${styles.involvedCard} reveal`} style={{ textDecoration: 'none', color: 'inherit' }}>
               <Megaphone size={28} className={styles.involvedIcon} />
               <h3>Advocate</h3>
               <p>Stay informed and share our story.</p>
+              <span className={styles.cardArrow}><ArrowRight size={16} /></span>
             </Link>
           </div>
         </div>

@@ -276,6 +276,12 @@
   font-weight: 600;
 }
 
+.notesCol {
+  max-width: 200px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
 .amountCol {
   font-family: var(--font-body);
   font-weight: 600;
