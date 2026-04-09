@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { UserPlus, Trash2, Loader2, Shield, User, Heart, Pencil, Save } from 'lucide-react';
+import { UserPlus, Trash2, Loader2, Shield, User, Heart, Pencil, Save, Megaphone } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
@@ -21,7 +21,7 @@ interface AppUser {
   safehouses?: SafehouseRef[];
 }
 
-type RoleFilter = 'All' | 'Staff' | 'Donors';
+type RoleFilter = 'All' | 'Staff' | 'Donors' | 'Social Media';
 
 export default function UsersPage() {
   useDocumentTitle('User Management');
@@ -68,6 +68,8 @@ export default function UsersPage() {
     if (roleFilter === 'All') return users;
     if (roleFilter === 'Staff')
       return users.filter(u => u.roles.includes('Admin') || u.roles.includes('Staff'));
+    if (roleFilter === 'Social Media')
+      return users.filter(u => u.roles.includes('SocialMediaManager'));
     return users.filter(u => u.roles.includes('Donor'));
   }, [users, roleFilter]);
 
@@ -194,7 +196,7 @@ export default function UsersPage() {
       <header className={styles.header}>
         <div>
           <h1 className={styles.title}>User Management</h1>
-          <p className={styles.subtitle}>Manage staff, admin, and donor accounts</p>
+          <p className={styles.subtitle}>Manage staff, admin, donor, and social media accounts</p>
         </div>
         <button className={styles.addBtn} onClick={() => setShowForm(true)}>
           <UserPlus size={15} />
@@ -203,7 +205,7 @@ export default function UsersPage() {
       </header>
 
       <div className={styles.filterBar}>
-        {(['All', 'Staff', 'Donors'] as RoleFilter[]).map(f => (
+        {(['All', 'Staff', 'Donors', 'Social Media'] as RoleFilter[]).map(f => (
           <button
             key={f}
             className={`${styles.filterBtn} ${roleFilter === f ? styles.filterActive : ''}`}
@@ -215,7 +217,9 @@ export default function UsersPage() {
                 ? users.length
                 : f === 'Staff'
                   ? users.filter(u => u.roles.includes('Admin') || u.roles.includes('Staff')).length
-                  : users.filter(u => u.roles.includes('Donor')).length}
+                  : f === 'Social Media'
+                    ? users.filter(u => u.roles.includes('SocialMediaManager')).length
+                    : users.filter(u => u.roles.includes('Donor')).length}
             </span>
           </button>
         ))}
@@ -249,6 +253,7 @@ export default function UsersPage() {
                   <option value="Staff">Staff</option>
                   <option value="Admin">Admin</option>
                   <option value="Donor">Donor</option>
+                  <option value="SocialMediaManager">Social Media Manager</option>
                 </select>
               </label>
             </div>
@@ -308,16 +313,18 @@ export default function UsersPage() {
                 const role = u.roles[0] || 'Staff';
                 const isDonor = u.roles.includes('Donor');
                 const isAdminRole = u.roles.includes('Admin');
+                const isSocialMedia = u.roles.includes('SocialMediaManager');
+                const displayRole = isSocialMedia ? 'Social Media' : role;
                 return (
                   <tr key={u.id}>
                     <td className={styles.nameCell}>
-                      {isAdminRole ? <Shield size={15} /> : isDonor ? <Heart size={15} /> : <User size={15} />}
+                      {isAdminRole ? <Shield size={15} /> : isDonor ? <Heart size={15} /> : isSocialMedia ? <Megaphone size={15} /> : <User size={15} />}
                       <span>{u.firstName} {u.lastName}</span>
                     </td>
                     <td>{u.email}</td>
                     <td>
-                      <span className={`${styles.roleBadge} ${isAdminRole ? styles.roleAdmin : isDonor ? styles.roleDonor : styles.roleStaff}`}>
-                        {role}
+                      <span className={`${styles.roleBadge} ${isAdminRole ? styles.roleAdmin : isDonor ? styles.roleDonor : isSocialMedia ? styles.roleSocialMedia : styles.roleStaff}`}>
+                        {displayRole}
                       </span>
                     </td>
                     <td>
@@ -385,6 +392,7 @@ export default function UsersPage() {
                     <option value="Staff">Staff</option>
                     <option value="Admin">Admin</option>
                     <option value="Donor">Donor</option>
+                    <option value="SocialMediaManager">Social Media Manager</option>
                   </select>
                 </label>
               </div>
