@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { Plus, Eye, AlertTriangle, Calendar, ClipboardList } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Plus, AlertTriangle, ClipboardList } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { formatDate } from '../../constants';
 import { useSafehouse } from '../../contexts/SafehouseContext';
@@ -30,21 +30,6 @@ interface VisitationListResponse {
   totalCount: number;
   page: number;
   pageSize: number;
-}
-
-interface Conference {
-  planId: number;
-  residentId: number;
-  residentCode: string | null;
-  planCategory: string | null;
-  planDescription: string | null;
-  caseConferenceDate: string | null;
-  status: string | null;
-}
-
-interface ConferencesResponse {
-  upcoming: Conference[];
-  past: Conference[];
 }
 
 /* ── Constants ──────────────────────────────────────── */
@@ -81,11 +66,8 @@ function getCoopClass(level: string | null): string {
 export default function VisitationsPage() {
   useDocumentTitle('Visitations');
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
   const { activeSafehouseId } = useSafehouse();
-  const activeTab = searchParams.get('tab') === 'conferences' ? 'conferences' : 'visitations';
 
-  // Visitations state
   const [visitations, setVisitations] = useState<VisitationRow[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
@@ -93,15 +75,9 @@ export default function VisitationsPage() {
   const [visitTypeFilter, setVisitTypeFilter] = useState('');
   const [safetyOnly, setSafetyOnly] = useState(false);
 
-  // Conferences state
-  const [conferences, setConferences] = useState<ConferencesResponse | null>(null);
-  const [confLoading, setConfLoading] = useState(false);
-
   const pageSize = 15;
 
-  // Fetch visitations
   useEffect(() => {
-    if (activeTab !== 'visitations') return;
     setLoading(true);
     const params = new URLSearchParams();
     params.set('page', String(page));
@@ -117,21 +93,7 @@ export default function VisitationsPage() {
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [activeTab, page, visitTypeFilter, safetyOnly, activeSafehouseId]);
-
-  // Fetch conferences
-  useEffect(() => {
-    if (activeTab !== 'conferences') return;
-    setConfLoading(true);
-    apiFetch<ConferencesResponse>('/api/admin/conferences')
-      .then(setConferences)
-      .catch(console.error)
-      .finally(() => setConfLoading(false));
-  }, [activeTab]);
-
-  function switchTab(tab: string) {
-    setSearchParams(tab === 'conferences' ? { tab: 'conferences' } : {});
-  }
+  }, [page, visitTypeFilter, safetyOnly, activeSafehouseId]);
 
   const totalPages = Math.ceil(totalCount / pageSize);
 
@@ -141,45 +103,17 @@ export default function VisitationsPage() {
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <div className={styles.headerRow}>
-            <h1 className={styles.title}>Home Visitations & Conferences</h1>
+            <h1 className={styles.title}>Home Visitations</h1>
           </div>
           <p className={styles.subtitle}>
-            Track field visits, family assessments, and case conference schedules
+            Track field visits and family assessments
           </p>
         </div>
-        {activeTab === 'visitations' && (
-          <Link to="/admin/visitations/new" className={styles.newBtn}>
-            <Plus size={15} />
-            New Visit
-          </Link>
-        )}
+        <Link to="/admin/visitations/new" className={styles.newBtn}>
+          <Plus size={15} />
+          New Visit
+        </Link>
       </header>
-
-      {/* ── Tabs ─────────────────────────────────────── */}
-      <div className={styles.tabs}>
-        <button
-          className={`${styles.tab} ${activeTab === 'visitations' ? styles.tabActive : ''}`}
-          onClick={() => switchTab('visitations')}
-        >
-          <Eye size={16} />
-          Home Visitations
-          {totalCount > 0 && <span className={styles.tabCount}>{totalCount}</span>}
-        </button>
-        <button
-          className={`${styles.tab} ${activeTab === 'conferences' ? styles.tabActive : ''}`}
-          onClick={() => switchTab('conferences')}
-        >
-          <Calendar size={16} />
-          Case Conferences
-          {conferences && conferences.upcoming.length > 0 && (
-            <span className={styles.tabCount}>{conferences.upcoming.length} upcoming</span>
-          )}
-        </button>
-      </div>
-
-      {/* ── Visitations Tab ──────────────────────────── */}
-      {activeTab === 'visitations' && (
-        <>
           <div className={styles.filters}>
             <Dropdown
               value={visitTypeFilter}
@@ -278,107 +212,6 @@ export default function VisitationsPage() {
               )}
             </div>
           )}
-        </>
-      )}
-
-      {/* ── Conferences Tab ──────────────────────────── */}
-      {activeTab === 'conferences' && (
-        <>
-          {confLoading ? (
-            <div className={styles.loading}>Loading conferences...</div>
-          ) : !conferences ? (
-            <div className={styles.loading}>Unable to load conferences.</div>
-          ) : (
-            <>
-              {/* Upcoming */}
-              <div className={styles.conferenceSection}>
-                <h2 className={styles.sectionTitle}>
-                  Upcoming Conferences
-                  <span className={styles.sectionCount}>({conferences.upcoming.length})</span>
-                </h2>
-                {conferences.upcoming.length === 0 ? (
-                  <div className={styles.tableCard}>
-                    <div className={styles.emptyState}>
-                      <Calendar size={36} className={styles.emptyIcon} />
-                      <p className={styles.emptyTitle}>No upcoming conferences</p>
-                      <p className={styles.emptyText}>
-                        Case conferences are scheduled via intervention plans.
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className={styles.conferenceGrid}>
-                    {conferences.upcoming.map((c) => (
-                      <div key={c.planId} className={`${styles.conferenceCard} ${styles.conferenceUpcoming}`}>
-                        <div className={styles.conferenceDate}>
-                          {formatDate(c.caseConferenceDate)}
-                        </div>
-                        <div className={styles.conferenceResident}>
-                          Resident: {c.residentCode ?? `#${c.residentId}`}
-                        </div>
-                        {c.planCategory && (
-                          <div className={styles.conferenceCategory}>{c.planCategory}</div>
-                        )}
-                        {c.planDescription && (
-                          <div className={styles.conferenceDesc}>
-                            {c.planDescription.length > 120
-                              ? c.planDescription.slice(0, 120) + '...'
-                              : c.planDescription}
-                          </div>
-                        )}
-                        {c.status && (
-                          <span className={styles.conferenceStatus}>{c.status}</span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Past */}
-              <div className={styles.conferenceSection}>
-                <h2 className={styles.sectionTitle}>
-                  Past Conferences
-                  <span className={styles.sectionCount}>({conferences.past.length})</span>
-                </h2>
-                {conferences.past.length === 0 ? (
-                  <div className={styles.tableCard}>
-                    <div className={styles.emptyState}>
-                      <p className={styles.emptyTitle}>No past conferences</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className={styles.conferenceGrid}>
-                    {conferences.past.map((c) => (
-                      <div key={c.planId} className={`${styles.conferenceCard} ${styles.conferencePast}`}>
-                        <div className={styles.conferenceDate}>
-                          {formatDate(c.caseConferenceDate)}
-                        </div>
-                        <div className={styles.conferenceResident}>
-                          Resident: {c.residentCode ?? `#${c.residentId}`}
-                        </div>
-                        {c.planCategory && (
-                          <div className={styles.conferenceCategory}>{c.planCategory}</div>
-                        )}
-                        {c.planDescription && (
-                          <div className={styles.conferenceDesc}>
-                            {c.planDescription.length > 120
-                              ? c.planDescription.slice(0, 120) + '...'
-                              : c.planDescription}
-                          </div>
-                        )}
-                        {c.status && (
-                          <span className={styles.conferenceStatus}>{c.status}</span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-        </>
-      )}
     </div>
   );
 }
