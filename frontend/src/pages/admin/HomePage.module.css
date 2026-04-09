@@ -121,7 +121,7 @@
 /* ── Calendar panel ──────────────────────────────── */
 .calendarPanel {
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
   position: relative;
 }
 
@@ -235,8 +235,6 @@
   background: #fff;
   border: 1px solid rgba(15, 27, 45, 0.08);
   border-radius: 12px;
-  overflow-y: auto;
-  height: 100%;
 }
 
 .weekCorner {

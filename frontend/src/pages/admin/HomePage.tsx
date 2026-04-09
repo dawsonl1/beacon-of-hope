@@ -178,6 +178,7 @@ export default function HomePage() {
   const [dropHour, setDropHour] = useState<number | null>(null);
   const [dropMinute, setDropMinute] = useState<number>(0);
   const [dropDate, setDropDate] = useState<string | null>(null);
+  const dragOffsetY = useRef<number>(0);
 
   // All-day expand state (tracks which days are expanded)
   const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set());
@@ -294,6 +295,7 @@ export default function HomePage() {
   /* ── Drag-and-drop handlers ────────────────────── */
 
   function handleDragStart(taskId: number) {
+    dragOffsetY.current = 0;
     setDragTaskId(taskId);
   }
 
@@ -323,7 +325,7 @@ export default function HomePage() {
 
   function getQuarterFromEvent(e: React.DragEvent): number {
     const rect = e.currentTarget.getBoundingClientRect();
-    const y = e.clientY - rect.top;
+    const y = e.clientY - dragOffsetY.current - rect.top;
     const quarter = Math.floor((y / rect.height) * 4);
     return [0, 15, 30, 45][Math.min(Math.max(quarter, 0), 3)];
   }
@@ -417,7 +419,7 @@ export default function HomePage() {
         className={`${getEventStyle(evt.eventType, evt.status)} ${dragEventId === evt.calendarEventId ? styles.eventDragging : ''}`}
         onClick={e => handleEventClick(evt, e)}
         draggable
-        onDragStart={e => { e.stopPropagation(); setDragEventId(evt.calendarEventId); }}
+        onDragStart={e => { e.stopPropagation(); dragOffsetY.current = e.clientY - (e.currentTarget as HTMLElement).getBoundingClientRect().top; setDragEventId(evt.calendarEventId); }}
         onDragEnd={() => setDragEventId(null)}
       >
         <span>{evt.title}</span>
@@ -508,7 +510,7 @@ export default function HomePage() {
                         key={evt.calendarEventId}
                         className={styles.allDayChip}
                         draggable
-                        onDragStart={() => setDragEventId(evt.calendarEventId)}
+                        onDragStart={e => { dragOffsetY.current = e.clientY - (e.currentTarget as HTMLElement).getBoundingClientRect().top; setDragEventId(evt.calendarEventId); }}
                         onDragEnd={() => setDragEventId(null)}
                         onClick={e => handleEventClick(evt, e)}
                       >
