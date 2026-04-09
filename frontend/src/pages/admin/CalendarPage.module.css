@@ -68,7 +68,7 @@
 }
 .queueHighlight {
   border-color: var(--color-sage) !important;
-  background: rgba(15, 143, 125, 0.08) !important;
+  background: rgba(15, 143, 125, 0.15) !important;
 }
 .sectionLabel {
   font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
@@ -85,17 +85,26 @@
 .timeSlot {
   display: flex; border-bottom: 1px solid rgba(15, 27, 45, 0.06);
   min-height: 42px; transition: background 0.15s;
+  position: relative;
 }
 .halfHourSlot { border-bottom: 1px dashed rgba(15, 27, 45, 0.03); }
-.slotHighlight { background: rgba(15, 143, 125, 0.15) !important; }
+.slotHighlight { background: rgba(15, 143, 125, 0.28) !important; }
+
+/* Invisible droppable layer — sits behind content so draggable chips get pointer events first */
+.dropOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
 .timeLabel {
   width: 64px; padding: 0.4rem 0.5rem; font-size: 0.72rem;
   color: var(--text-muted); font-weight: 600; text-align: right;
   flex-shrink: 0; border-right: 1px solid rgba(15, 27, 45, 0.06);
+  position: relative; z-index: 1;
 }
 .slotContent {
   flex: 1; padding: 0.25rem 0.5rem; display: flex; flex-wrap: wrap;
-  gap: 0.3rem; align-items: center;
+  gap: 0.3rem; align-items: center; position: relative; z-index: 1;
 }
 
 /* ── Event chips ───────────────────────────────────────── */
