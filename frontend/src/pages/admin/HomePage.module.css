@@ -127,10 +127,7 @@
 
 /* ── All-day row ─────────────────────────────────── */
 .allDayLabel {
-  position: sticky;
-  top: 58px;
-  z-index: 2;
-  background: #fff;
+  background: #fafafa;
   font-size: 0.6rem;
   font-weight: 600;
   color: var(--text-muted);
@@ -144,10 +141,7 @@
 }
 
 .allDayCell {
-  position: sticky;
-  top: 58px;
-  z-index: 2;
-  background: #fff;
+  background: #fafafa;
   border-top: 1px solid rgba(15, 27, 45, 0.06);
   border-bottom: 1px solid rgba(15, 27, 45, 0.1);
   border-left: 1px solid rgba(15, 27, 45, 0.04);
