@@ -5,7 +5,7 @@ import {
   Calendar, Clock, CheckCircle, UserPlus, ChevronDown,
 } from 'lucide-react';
 import { apiFetch } from '../../api';
-
+import { useSafehouse } from '../../contexts/SafehouseContext';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import MlBadge from '../../components/admin/MlBadge';
 import Dropdown from '../../components/admin/Dropdown';
@@ -85,6 +85,7 @@ const SOURCE_LABELS: Record<string, string> = {
 export default function CaseConferencesPage() {
   useDocumentTitle('Case Conferences');
   const navigate = useNavigate();
+  const { activeSafehouseId } = useSafehouse();
 
   const [conferences, setConferences] = useState<Conference[]>([]);
   const [alerts, setAlerts] = useState<AlertResident[]>([]);
@@ -107,9 +108,10 @@ export default function CaseConferencesPage() {
   const fetchAll = useCallback(async () => {
     setLoading(true);
     try {
+      const shParam = activeSafehouseId ? `?safehouseId=${activeSafehouseId}` : '';
       const [confData, alertData] = await Promise.all([
-        apiFetch<Conference[]>('/api/admin/case-conferences'),
-        apiFetch<AlertResident[]>('/api/admin/case-conferences/alerts'),
+        apiFetch<Conference[]>(`/api/admin/case-conferences${shParam}`),
+        apiFetch<AlertResident[]>(`/api/admin/case-conferences/alerts${shParam}`),
       ]);
       setConferences(confData);
       setAlerts(alertData);
@@ -118,7 +120,7 @@ export default function CaseConferencesPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [activeSafehouseId]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 

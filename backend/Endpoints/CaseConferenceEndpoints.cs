@@ -188,7 +188,7 @@ public static class CaseConferenceEndpoints
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
         // ── ML Alerts: residents needing conference ──
-        app.MapGet("/api/admin/case-conferences/alerts", async (AppDbContext db) =>
+        app.MapGet("/api/admin/case-conferences/alerts", async (AppDbContext db, int? safehouseId) =>
         {
             var threeWeeksAgo = AppConstants.DataCutoffUtc.AddDays(-21);
 
@@ -243,8 +243,11 @@ public static class CaseConferenceEndpoints
             // Combine and fetch resident details
             var allAlertIds = flaggedByRecording.Union(mlAlertResidentIds).Distinct().ToList();
 
-            var residents = await db.Residents
-                .Where(r => allAlertIds.Contains(r.ResidentId) && r.CaseStatus == "Active")
+            var alertQuery = db.Residents
+                .Where(r => allAlertIds.Contains(r.ResidentId) && r.CaseStatus == "Active");
+            if (safehouseId.HasValue)
+                alertQuery = alertQuery.Where(r => r.SafehouseId == safehouseId.Value);
+            var residents = await alertQuery
                 .Select(r => new
                 {
                     r.ResidentId,
