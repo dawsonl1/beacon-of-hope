@@ -669,7 +669,7 @@ function MlInsightsTab() {
               <BarChart data={reintDrivers.slice(0, 8).map(d => ({ name: humanize(d.feature), value: d.coefficient }))} layout="vertical" margin={{ left: 120, right: 20, top: 4, bottom: 4 }}>
                 <XAxis type="number" tick={{ fontSize: 11 }} />
                 <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={120} />
-                <Tooltip formatter={(v: number) => v.toFixed(3)} />
+                <Tooltip formatter={(v) => typeof v === 'number' ? v.toFixed(3) : String(v)} />
                 <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                   {reintDrivers.slice(0, 8).map((d, i) => (
                     <Cell key={i} fill={d.coefficient >= 0 ? '#27ae60' : '#c0392b'} />

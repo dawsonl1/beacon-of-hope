@@ -101,8 +101,6 @@ const VISIT_EVENT_TYPES = new Set(['HomeVisit', 'ReintegrationVisit', 'PostPlace
 const RECORDING_EVENT_TYPES = new Set(['Counseling', 'GroupTherapy']);
 
 // Task types that require logging instead of direct completion
-const TASK_REQUIRES_VISIT = new Set(['ScheduleHomeVisit', 'ScheduleReintegration', 'PostPlacementVisit']);
-const TASK_REQUIRES_RECORDING = new Set<string>(); // counseling tasks aren't in the to-do system currently
 const TASK_REQUIRES_EDUCATION = new Set(['UpdateEducation']);
 const TASK_REQUIRES_HEALTH = new Set(['InputHealthRecords']);
 
@@ -250,7 +248,7 @@ function parseContext(json: string | null): Record<string, string> {
   try { return JSON.parse(json); } catch { return {}; }
 }
 
-function formatContextValue(key: string, value: string): string {
+function formatContextValue(_key: string, value: string): string {
   // Format date values nicely
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     const d = new Date(value + 'T00:00:00');

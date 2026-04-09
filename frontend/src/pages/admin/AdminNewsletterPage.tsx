@@ -46,12 +46,10 @@ export default function AdminNewsletterPage() {
 
   const fetchData = useCallback(async () => {
     try {
-      const [nlResp, subResp] = await Promise.all([
-        apiFetch('/api/admin/newsletters?page=1&pageSize=20'),
-        apiFetch('/api/admin/newsletter-subscribers?page=1&pageSize=1'),
+      const [nlData, subData] = await Promise.all([
+        apiFetch<{ items: Newsletter[]; total: number }>('/api/admin/newsletters?page=1&pageSize=20'),
+        apiFetch<{ total: number }>('/api/admin/newsletter-subscribers?page=1&pageSize=1'),
       ]);
-      const nlData = await nlResp.json();
-      const subData = await subResp.json();
       setNewsletters(nlData.items ?? []);
       setSubscriberCount(subData.total ?? 0);
     } catch { /* ignore */ }
@@ -114,8 +112,7 @@ export default function AdminNewsletterPage() {
     }
     // Fetch full newsletter with HTML content
     try {
-      const resp = await apiFetch(`/api/admin/newsletters/${id}`);
-      const full: Newsletter = await resp.json();
+      const full = await apiFetch<Newsletter>(`/api/admin/newsletters/${id}`);
       setNewsletters(prev => prev.map(n => n.newsletterId === id ? { ...n, ...full } : n));
     } catch { /* ignore */ }
     setExpandedId(id);
