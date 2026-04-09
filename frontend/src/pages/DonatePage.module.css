@@ -255,6 +255,95 @@
   color: #a0a8b4;
 }
 
+/* ── Impact Meter ────────────────────────────────── */
+.impactMeter {
+  margin-bottom: 1.5rem;
+  background: var(--color-cream);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.impactMeterTitle {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-slate);
+  margin-bottom: 0.85rem;
+}
+
+.impactTiers {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.impactTier {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr 4.5rem;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  opacity: 0.35;
+  transition: opacity 0.3s, background 0.3s, transform 0.3s;
+}
+
+.impactTierActive {
+  opacity: 1;
+}
+
+.impactTierHighest {
+  background: rgba(15, 143, 125, 0.08);
+  transform: scale(1.02);
+}
+
+.tierIcon {
+  font-size: 1rem;
+  text-align: center;
+}
+
+.tierContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.tierLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-slate-dark);
+}
+
+.tierThreshold {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.tierBar {
+  height: 5px;
+  background: rgba(15, 27, 45, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.tierBarFill {
+  height: 100%;
+  background: var(--color-teal);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.impactTierActive .tierBarFill {
+  background: var(--color-teal);
+}
+
+.impactTierHighest .tierBarFill {
+  background: linear-gradient(90deg, var(--color-sage), #13a490);
+}
+
 .fieldGroup {
   margin-bottom: 1.5rem;
 }
