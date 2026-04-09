@@ -227,7 +227,7 @@ export default function CalendarPage() {
       setSearchParams({}, { replace: true });
     }
   }, [searchParams, setSearchParams]);
-  const [residents, setResidents] = useState<{ residentId: number; internalCode: string }[]>([]);
+  const [residents, setResidents] = useState<{ residentId: number; firstName: string | null; lastName: string | null; internalCode: string }[]>([]);
 
   // dnd-kit state
   const [activeEvent, setActiveEvent] = useState<CalendarEventItem | null>(null);
@@ -260,7 +260,7 @@ export default function CalendarPage() {
   useEffect(() => { fetchEvents(); }, [fetchEvents]);
 
   useEffect(() => {
-    apiFetch<{ items: { residentId: number; internalCode: string }[] }>('/api/admin/residents-list')
+    apiFetch<{ items: { residentId: number; firstName: string | null; lastName: string | null; internalCode: string }[] }>('/api/admin/residents-list')
       .then(data => setResidents(Array.isArray(data) ? data : data.items || []))
       .catch(() => {});
   }, []);
@@ -544,7 +544,7 @@ export default function CalendarPage() {
                 <Dropdown
                   value={newEvent.residentId}
                   placeholder="None"
-                  options={[{ value: '', label: 'None' }, ...residents.map(r => ({ value: String(r.residentId), label: r.internalCode }))]}
+                  options={[{ value: '', label: 'None' }, ...residents.map(r => ({ value: String(r.residentId), label: r.firstName && r.lastName ? `${r.firstName} ${r.lastName[0]}.` : r.internalCode }))]}
                   onChange={v => setNewEvent({ ...newEvent, residentId: v })}
                 />
               </div>

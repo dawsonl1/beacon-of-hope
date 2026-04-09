@@ -7,6 +7,10 @@ public partial class Resident
 {
     public int ResidentId { get; set; }
 
+    public string? FirstName { get; set; }
+
+    public string? LastName { get; set; }
+
     public string? CaseControlNo { get; set; }
 
     public string? InternalCode { get; set; }

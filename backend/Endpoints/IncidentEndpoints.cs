@@ -33,7 +33,7 @@ public static class IncidentEndpoints
                 _ => descending ? query.OrderByDescending(i => i.IncidentDate) : query.OrderBy(i => i.IncidentDate),
             };
             var items = await ordered.Skip((page - 1) * pageSize).Take(pageSize)
-                .Select(i => new { i.IncidentId, i.ResidentId, residentCode = i.Resident != null ? i.Resident.InternalCode : null, i.SafehouseId, i.IncidentDate, i.IncidentType, i.Severity, i.Description, i.ResponseTaken, i.ReportedBy, i.Resolved, i.ResolutionDate, i.FollowUpRequired })
+                .Select(i => new { i.IncidentId, i.ResidentId, residentCode = i.Resident != null ? (i.Resident.FirstName != null && i.Resident.LastName != null ? i.Resident.FirstName + " " + i.Resident.LastName.Substring(0, 1) + "." : i.Resident.InternalCode) : null, i.SafehouseId, i.IncidentDate, i.IncidentType, i.Severity, i.Description, i.ResponseTaken, i.ReportedBy, i.Resolved, i.ResolutionDate, i.FollowUpRequired })
                 .ToListAsync();
             return Results.Ok(new { total, page, pageSize, items });
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
@@ -41,7 +41,7 @@ public static class IncidentEndpoints
         app.MapGet("/api/admin/incidents/{id}", async (int id, AppDbContext db) =>
         {
             var i = await db.IncidentReports.Where(x => x.IncidentId == id)
-                .Select(x => new { x.IncidentId, x.ResidentId, residentCode = x.Resident != null ? x.Resident.InternalCode : null, x.SafehouseId, x.IncidentDate, x.IncidentType, x.Severity, x.Description, x.ResponseTaken, x.ReportedBy, x.Resolved, x.ResolutionDate, x.FollowUpRequired })
+                .Select(x => new { x.IncidentId, x.ResidentId, residentCode = x.Resident != null ? (x.Resident.FirstName != null && x.Resident.LastName != null ? x.Resident.FirstName + " " + x.Resident.LastName.Substring(0, 1) + "." : x.Resident.InternalCode) : null, x.SafehouseId, x.IncidentDate, x.IncidentType, x.Severity, x.Description, x.ResponseTaken, x.ReportedBy, x.Resolved, x.ResolutionDate, x.FollowUpRequired })
                 .FirstOrDefaultAsync();
             return i == null ? Results.NotFound() : Results.Ok(i);
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
@@ -253,7 +253,7 @@ public static class IncidentEndpoints
             var query = db.Residents.Where(r => r.AssignedSocialWorker == null || r.AssignedSocialWorker == "").Where(r => r.CaseStatus == "Active");
             query = SafehouseAuth.ApplyResidentFilter(query, allowed, safehouseId);
             var items = await query.OrderByDescending(r => r.DateOfAdmission)
-                .Select(r => new { r.ResidentId, r.InternalCode, r.CaseControlNo, r.SafehouseId, safehouse = r.Safehouse != null ? r.Safehouse.Name : null, r.CaseCategory, r.CurrentRiskLevel, r.DateOfAdmission })
+                .Select(r => new { r.ResidentId, r.FirstName, r.LastName, r.InternalCode, r.CaseControlNo, r.SafehouseId, safehouse = r.Safehouse != null ? r.Safehouse.Name : null, r.CaseCategory, r.CurrentRiskLevel, r.DateOfAdmission })
                 .ToListAsync();
             return Results.Ok(items);
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
@@ -267,7 +267,7 @@ public static class IncidentEndpoints
             var query = db.Residents.Where(r => r.AssignedSocialWorker == fullName && r.CaseStatus == "Active");
             query = SafehouseAuth.ApplyResidentFilter(query, allowed, safehouseId);
             var items = await query.OrderByDescending(r => r.DateOfAdmission)
-                .Select(r => new { r.ResidentId, r.InternalCode, r.CaseControlNo, r.SafehouseId, safehouse = r.Safehouse != null ? r.Safehouse.Name : null, r.CaseCategory, r.CurrentRiskLevel, r.DateOfAdmission })
+                .Select(r => new { r.ResidentId, r.FirstName, r.LastName, r.InternalCode, r.CaseControlNo, r.SafehouseId, safehouse = r.Safehouse != null ? r.Safehouse.Name : null, r.CaseCategory, r.CurrentRiskLevel, r.DateOfAdmission })
                 .ToListAsync();
             return Results.Ok(items);
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));

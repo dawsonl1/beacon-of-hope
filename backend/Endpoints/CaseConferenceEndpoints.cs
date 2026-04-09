@@ -36,7 +36,7 @@ public static class CaseConferenceEndpoints
                     {
                         cr.Id,
                         cr.ResidentId,
-                        residentCode = cr.Resident.InternalCode,
+                        residentCode = cr.Resident.FirstName != null && cr.Resident.LastName != null ? cr.Resident.FirstName + " " + cr.Resident.LastName.Substring(0, 1) + "." : cr.Resident.InternalCode,
                         cr.Source,
                         cr.Discussed,
                         cr.Notes,
@@ -68,7 +68,7 @@ public static class CaseConferenceEndpoints
                     {
                         cr.Id,
                         cr.ResidentId,
-                        residentCode = cr.Resident.InternalCode,
+                        residentCode = cr.Resident.FirstName != null && cr.Resident.LastName != null ? cr.Resident.FirstName + " " + cr.Resident.LastName.Substring(0, 1) + "." : cr.Resident.InternalCode,
                         currentRiskLevel = cr.Resident.CurrentRiskLevel,
                         assignedSocialWorker = cr.Resident.AssignedSocialWorker,
                         cr.Source,

@@ -38,7 +38,7 @@ public static class StaffEndpoints
                 .Where(t => t.Status != "Snoozed" || t.SnoozeUntil == null || t.SnoozeUntil <= now);
             if (safehouseId.HasValue) query = query.Where(t => t.SafehouseId == safehouseId.Value);
             var tasks = await query.OrderByDescending(t => t.CreatedAt)
-                .Select(t => new { t.StaffTaskId, t.StaffUserId, t.ResidentId, residentCode = t.Resident != null ? t.Resident.InternalCode : null, t.SafehouseId, t.TaskType, t.Title, t.Description, t.ContextJson, t.Status, t.SnoozeUntil, t.DueTriggerDate, t.CreatedAt, t.SourceEntityType, t.SourceEntityId })
+                .Select(t => new { t.StaffTaskId, t.StaffUserId, t.ResidentId, residentCode = t.Resident != null ? (t.Resident.FirstName != null && t.Resident.LastName != null ? t.Resident.FirstName + " " + t.Resident.LastName.Substring(0, 1) + "." : t.Resident.InternalCode) : null, t.SafehouseId, t.TaskType, t.Title, t.Description, t.ContextJson, t.Status, t.SnoozeUntil, t.DueTriggerDate, t.CreatedAt, t.SourceEntityType, t.SourceEntityId })
                 .ToListAsync();
             return Results.Ok(tasks);
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
@@ -82,7 +82,7 @@ public static class StaffEndpoints
             if (date.HasValue) query = query.Where(e => e.EventDate == date.Value);
             else if (weekStart.HasValue) { var weekEnd = weekStart.Value.AddDays(7); query = query.Where(e => e.EventDate >= weekStart.Value && e.EventDate < weekEnd); }
             var events = await query.OrderBy(e => e.EventDate).ThenBy(e => e.StartTime)
-                .Select(e => new { e.CalendarEventId, e.StaffUserId, e.SafehouseId, e.ResidentId, residentCode = e.Resident != null ? e.Resident.InternalCode : null, e.EventType, e.Title, e.Description, eventDate = e.EventDate.ToString("yyyy-MM-dd"), startTime = e.StartTime.HasValue ? e.StartTime.Value.ToString("HH:mm") : null, endTime = e.EndTime.HasValue ? e.EndTime.Value.ToString("HH:mm") : null, e.RecurrenceRule, e.SourceTaskId, e.Status, e.CreatedAt })
+                .Select(e => new { e.CalendarEventId, e.StaffUserId, e.SafehouseId, e.ResidentId, residentCode = e.Resident != null ? (e.Resident.FirstName != null && e.Resident.LastName != null ? e.Resident.FirstName + " " + e.Resident.LastName.Substring(0, 1) + "." : e.Resident.InternalCode) : null, e.EventType, e.Title, e.Description, eventDate = e.EventDate.ToString("yyyy-MM-dd"), startTime = e.StartTime.HasValue ? e.StartTime.Value.ToString("HH:mm") : null, endTime = e.EndTime.HasValue ? e.EndTime.Value.ToString("HH:mm") : null, e.RecurrenceRule, e.SourceTaskId, e.Status, e.CreatedAt })
                 .ToListAsync();
             return Results.Ok(events);
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));

@@ -11,6 +11,8 @@ import styles from './CaseloadPage.module.css';
 
 interface ResidentRow {
   residentId: number;
+  firstName: string | null;
+  lastName: string | null;
   internalCode: string | null;
   caseControlNo: string | null;
   safehouseId: number | null;
@@ -300,7 +302,7 @@ export default function CaseloadPage() {
                       onClick={() => navigate(`/admin/caseload/${r.residentId}?${searchParams.toString()}`)}
                     >
                       <td>
-                        <span className={styles.codeCell}>{r.internalCode ?? '--'}</span>
+                        <span className={styles.codeCell}>{r.firstName && r.lastName ? `${r.firstName} ${r.lastName[0]}.` : r.internalCode ?? '--'}</span>
                       </td>
                       <td className={styles.monoCell}>{r.caseControlNo ?? '--'}</td>
                       <td>{r.safehouse ?? '--'}</td>

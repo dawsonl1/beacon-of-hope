@@ -28,6 +28,8 @@ interface MlPrediction {
 
 interface ResidentDetail {
   residentId: number;
+  firstName: string | null;
+  lastName: string | null;
   caseControlNo: string | null;
   internalCode: string | null;
   safehouseId: number | null;
@@ -278,7 +280,7 @@ export default function ResidentDetailPage() {
       <div className={styles.headerCard}>
         <div className={styles.headerTop}>
           <div>
-            <h1 className={styles.headerTitle}>{resident.internalCode ?? 'No Code'}</h1>
+            <h1 className={styles.headerTitle}>{resident.firstName && resident.lastName ? `${resident.firstName} ${resident.lastName}` : resident.internalCode ?? 'No Code'}</h1>
             <p className={styles.headerMeta}>
               Case #{resident.caseControlNo ?? '--'}
               {resident.safehouse && <> &middot; {resident.safehouse}</>}

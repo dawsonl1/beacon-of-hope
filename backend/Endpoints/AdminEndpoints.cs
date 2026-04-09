@@ -354,6 +354,8 @@ public static class AdminEndpoints
                 query = query.Where(r =>
                     (r.InternalCode != null && r.InternalCode.ToLower().Contains(s)) ||
                     (r.CaseControlNo != null && r.CaseControlNo.ToLower().Contains(s)) ||
+                    (r.FirstName != null && r.FirstName.ToLower().Contains(s)) ||
+                    (r.LastName != null && r.LastName.ToLower().Contains(s)) ||
                     (r.AssignedSocialWorker != null && r.AssignedSocialWorker.ToLower().Contains(s)));
             }
             if (!string.IsNullOrWhiteSpace(caseStatus))
@@ -392,6 +394,8 @@ public static class AdminEndpoints
                 .Select(r => new
                 {
                     r.ResidentId,
+                    r.FirstName,
+                    r.LastName,
                     r.InternalCode,
                     r.CaseControlNo,
                     r.SafehouseId,
@@ -486,7 +490,7 @@ public static class AdminEndpoints
                 .Where(r => r.ResidentId == id)
                 .Select(r => new
                 {
-                    r.ResidentId, r.CaseControlNo, r.InternalCode, r.SafehouseId,
+                    r.ResidentId, r.FirstName, r.LastName, r.CaseControlNo, r.InternalCode, r.SafehouseId,
                     safehouse = db.Safehouses
                         .Where(s => s.SafehouseId == r.SafehouseId)
                         .Select(s => s.SafehouseCode + " " + s.City)
@@ -662,6 +666,8 @@ public static class AdminEndpoints
                 .Select(r => new
                 {
                     r.ResidentId,
+                    r.FirstName,
+                    r.LastName,
                     r.InternalCode,
                     r.CaseStatus
                 })

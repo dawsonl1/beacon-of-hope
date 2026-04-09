@@ -285,7 +285,7 @@ export default function HomePage() {
     eventType: 'Counseling', title: '', description: '',
     eventDate: APP_TODAY_STR, startTime: '', endTime: '', residentId: '',
   });
-  const [residents, setResidents] = useState<{ residentId: number; internalCode: string }[]>([]);
+  const [residents, setResidents] = useState<{ residentId: number; firstName: string | null; lastName: string | null; internalCode: string }[]>([]);
 
   // Tasks state
   const [tasks, setTasks] = useState<StaffTaskItem[]>([]);
@@ -344,7 +344,7 @@ export default function HomePage() {
   useEffect(() => { fetchTasks(); }, [fetchTasks]);
 
   useEffect(() => {
-    apiFetch<{ items: { residentId: number; internalCode: string }[] }>('/api/admin/residents-list')
+    apiFetch<{ items: { residentId: number; firstName: string | null; lastName: string | null; internalCode: string }[] }>('/api/admin/residents-list')
       .then(data => setResidents(Array.isArray(data) ? data : data.items || []))
       .catch(() => {});
   }, []);
@@ -1255,7 +1255,7 @@ export default function HomePage() {
                   placeholder="None"
                   options={[
                     { value: '', label: 'None' },
-                    ...residents.map(r => ({ value: String(r.residentId), label: r.internalCode })),
+                    ...residents.map(r => ({ value: String(r.residentId), label: r.firstName && r.lastName ? `${r.firstName} ${r.lastName[0]}.` : r.internalCode })),
                   ]}
                   onChange={v => setNewEvent({ ...newEvent, residentId: v })}
                 />
