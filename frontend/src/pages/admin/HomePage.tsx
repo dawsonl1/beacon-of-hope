@@ -269,6 +269,8 @@ export default function HomePage() {
 
   // Schedule modal state
   const [scheduleTask, setScheduleTask] = useState<StaffTaskItem | null>(null);
+  const [setTimeValue, setSetTimeValue] = useState<string>('09:00');
+  const [showSetTime, setShowSetTime] = useState(false);
   const [scheduleForm, setScheduleForm] = useState<ScheduleForm>({ eventDate: APP_TODAY_STR, startTime: '' });
 
   const dragCounterRef = useRef(0);
@@ -486,6 +488,7 @@ export default function HomePage() {
   function closePopover() {
     setSelectedEvent(null);
     setPopoverPos(null);
+    setShowSetTime(false);
   }
 
   // Close popover on click outside
@@ -760,13 +763,27 @@ export default function HomePage() {
                       Log Visit
                     </button>
                   )}
-                  {!selectedEvent.startTime && (
-                    <button className={styles.modalBtn} onClick={() => {
-                      const time = prompt('Enter start time (HH:MM):', '09:00');
-                      if (time) handleUpdateEvent(selectedEvent.calendarEventId, { startTime: time });
-                    }}>
+                  {!selectedEvent.startTime && !showSetTime && (
+                    <button className={styles.modalBtn} onClick={() => setShowSetTime(true)}>
                       Set Time
                     </button>
+                  )}
+                  {!selectedEvent.startTime && showSetTime && (
+                    <div className={styles.setTimeRow}>
+                      <input
+                        type="time"
+                        className={styles.setTimeInput}
+                        value={setTimeValue}
+                        onChange={e => setSetTimeValue(e.target.value)}
+                        autoFocus
+                      />
+                      <button className={styles.modalBtnPrimary} onClick={() => {
+                        if (setTimeValue) handleUpdateEvent(selectedEvent.calendarEventId, { startTime: setTimeValue });
+                        setShowSetTime(false);
+                      }}>
+                        Save
+                      </button>
+                    </div>
                   )}
                   <button className={styles.modalBtnDanger} onClick={() => handleUpdateEvent(selectedEvent.calendarEventId, { status: 'Cancelled' })}>
                     Cancel

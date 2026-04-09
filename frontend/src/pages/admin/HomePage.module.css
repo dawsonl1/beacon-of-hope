@@ -616,6 +616,28 @@
   margin-top: 0.25rem;
 }
 
+.setTimeRow {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  width: 100%;
+}
+
+.setTimeInput {
+  font-size: 0.82rem;
+  font-family: var(--font-body);
+  padding: 0.3rem 0.5rem;
+  border: 1px solid rgba(15, 27, 45, 0.15);
+  border-radius: 6px;
+  color: var(--text-strong);
+  flex: 1;
+}
+
+.setTimeInput:focus {
+  outline: 2px solid var(--color-sage);
+  outline-offset: 1px;
+}
+
 /* ── Shared modal buttons (used by popover + form modals) ──── */
 
 .modalBtn {
