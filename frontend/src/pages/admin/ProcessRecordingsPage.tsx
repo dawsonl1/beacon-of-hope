@@ -5,7 +5,7 @@ import { apiFetch } from '../../api';
 import { ApiError } from '../../components/ApiError';
 import { formatDate } from '../../constants';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
-import { Pagination } from '../../components/admin/Pagination';
+import Pagination from '../../components/admin/Pagination';
 import styles from './ProcessRecordingsPage.module.css';
 
 interface RecordingRow {

@@ -4,7 +4,7 @@ import { Plus, Eye, AlertTriangle, Calendar, ClipboardList } from 'lucide-react'
 import { apiFetch } from '../../api';
 import { formatDate } from '../../constants';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
-import { Pagination } from '../../components/admin/Pagination';
+import Pagination from '../../components/admin/Pagination';
 import styles from './VisitationsPage.module.css';
 
 /* ── Types ──────────────────────────────────────────── */

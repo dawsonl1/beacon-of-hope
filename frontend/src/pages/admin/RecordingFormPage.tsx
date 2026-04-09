@@ -28,6 +28,8 @@ interface RecordingData {
   concernsFlagged: boolean | null;
   referralMade: boolean | null;
   notesRestricted: string | null;
+  needsCaseConference: boolean | null;
+  readyForReintegration: boolean | null;
 }
 
 interface GeminiResponse {
