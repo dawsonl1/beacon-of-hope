@@ -5,12 +5,21 @@ import {
   Loader2, User, Briefcase, Heart, Home, Shield, ClipboardList, RefreshCw,
   AlertTriangle, Activity, GraduationCap, Stethoscope, Plus, Users,
 } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { apiFetch } from '../../api';
 import { formatDate } from '../../constants';
 import { useAuth } from '../../contexts/AuthContext';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './ResidentDetailPage.module.css';
+
+interface PredictionHistory {
+  id: number;
+  modelName: string;
+  score: number | null;
+  scoreLabel: string | null;
+  predictedAt: string;
+}
 
 interface MlPrediction {
   id: number;
@@ -159,6 +168,7 @@ export default function ResidentDetailPage() {
   const [incidents, setIncidents] = useState<any[]>([]);
   const [conferences, setConferences] = useState<any[]>([]);
   const [emotionalTrends, setEmotionalTrends] = useState<{ sessionDate: string; emotionalStateObserved: string; emotionalStateEnd: string }[]>([]);
+  const [reintegrationHistory, setReintegrationHistory] = useState<PredictionHistory[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -176,6 +186,7 @@ export default function ResidentDetailPage() {
       apiFetch<{ items: any[] }>(`/api/admin/incidents?residentId=${id}`).then(d => setIncidents(d.items || [])).catch(() => {});
       apiFetch<any[]>(`/api/admin/intervention-plans?residentId=${id}`).then(setConferences).catch(() => {});
       apiFetch<any[]>(`/api/admin/recordings/emotional-trends?residentId=${id}`).then(setEmotionalTrends).catch(() => {});
+      apiFetch<PredictionHistory[]>(`/api/ml/predictions/resident/${id}/history?model=reintegration-readiness`).then(setReintegrationHistory).catch(() => {});
     }
   }, [id]);
 
@@ -281,74 +292,132 @@ export default function ResidentDetailPage() {
         </div>
       )}
 
-      {/* ML Predictions */}
-      {predictions.length > 0 && (
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-          {predictions.map(p => {
-            const color = ML_SCORE_COLORS[p.scoreLabel || ''] || '#95a5a6';
-            const isIncidentModel = p.modelName.includes('incident');
-            const isHighRisk = isIncidentModel && (p.scoreLabel === 'High' || p.scoreLabel === 'Critical');
-            const label = p.modelName
-              .replace('incident-early-warning-', '')
-              .replace('reintegration-readiness', 'Reintegration Readiness')
-              .replace('selfharm', 'Self-Harm Risk')
-              .replace('runaway', 'Runaway Risk');
-            return (
-              <div
-                key={p.id}
-                style={{
-                  background: '#fff',
-                  border: `1px solid ${color}30`,
-                  borderRadius: '12px',
-                  padding: '0.85rem 1.1rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  minWidth: '220px',
-                }}
-              >
-                <div style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: '50%',
-                  background: `${color}18`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
-                  {isIncidentModel ? (
-                    <AlertTriangle size={20} style={{ color }} />
-                  ) : (
-                    <Activity size={20} style={{ color }} />
-                  )}
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                    {label}
+      {/* Risk Assessments */}
+      {predictions.length > 0 && (() => {
+        const hasHighRisk = predictions.some(p =>
+          p.modelName.includes('incident') && (p.scoreLabel === 'High' || p.scoreLabel === 'Critical')
+        );
+        return (
+          <div style={{ marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              {predictions.map(p => {
+                const color = ML_SCORE_COLORS[p.scoreLabel || ''] || '#95a5a6';
+                const isIncidentModel = p.modelName.includes('incident');
+                const label = p.modelName
+                  .replace('incident-early-warning-', '')
+                  .replace('reintegration-readiness', 'Reintegration Readiness')
+                  .replace('selfharm', 'Self-Harm Risk')
+                  .replace('runaway', 'Runaway Risk');
+                return (
+                  <div
+                    key={p.id}
+                    style={{
+                      background: '#fff',
+                      border: `1px solid ${color}30`,
+                      borderRadius: '12px',
+                      padding: '0.85rem 1.1rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.75rem',
+                      minWidth: '220px',
+                    }}
+                  >
+                    <div style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: '50%',
+                      background: `${color}18`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}>
+                      {isIncidentModel ? (
+                        <AlertTriangle size={20} style={{ color }} />
+                      ) : (
+                        <Activity size={20} style={{ color }} />
+                      )}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                        {label}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
+                        {p.score !== null && (
+                          <span style={{ fontSize: '1.3rem', fontWeight: 700, color }}>{Math.round(p.score)}</span>
+                        )}
+                        <span style={{ fontSize: '0.8rem', fontWeight: 600, color }}>
+                          {p.scoreLabel}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
-                    {p.score !== null && (
-                      <span style={{ fontSize: '1.3rem', fontWeight: 700, color }}>{Math.round(p.score)}</span>
-                    )}
-                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color }}>
-                      {p.scoreLabel}
-                    </span>
+                );
+              })}
+              {hasHighRisk && (
+                <button
+                  onClick={() => navigate(`/admin/conferences?scheduleFor=${id}`)}
+                  className={styles.scheduleBtn}
+                >
+                  Schedule Conference
+                </button>
+              )}
+            </div>
+
+            {/* Reintegration Readiness Trend */}
+            {reintegrationHistory.length > 1 && (() => {
+              const chartData = [...reintegrationHistory]
+                .sort((a, b) => new Date(a.predictedAt).getTime() - new Date(b.predictedAt).getTime())
+                .map(h => ({
+                  date: new Date(h.predictedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                  score: h.score != null ? Math.round(h.score) : null,
+                }));
+              return (
+                <div className={styles.trendCard}>
+                  <div className={styles.trendHeader}>
+                    <Activity size={14} style={{ color: '#3498db' }} />
+                    <span>Reintegration Readiness Trend</span>
                   </div>
-                  {isHighRisk && (
-                    <button
-                      onClick={() => navigate(`/admin/conferences?scheduleFor=${id}`)}
-                      className={styles.scheduleBtn}
-                    >
-                      Schedule Conference
-                    </button>
-                  )}
+                  <ResponsiveContainer width="100%" height={140}>
+                    <AreaChart data={chartData} margin={{ top: 8, right: 12, bottom: 0, left: -20 }}>
+                      <defs>
+                        <linearGradient id="reintGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#3498db" stopOpacity={0.25} />
+                          <stop offset="95%" stopColor="#3498db" stopOpacity={0.02} />
+                        </linearGradient>
+                      </defs>
+                      <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#95a5a6' }} tickLine={false} axisLine={false} />
+                      <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: '#95a5a6' }} tickLine={false} axisLine={false} />
+                      <Tooltip
+                        contentStyle={{ fontSize: '0.78rem', borderRadius: '8px', border: '1px solid rgba(15,27,45,0.08)', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
+                        formatter={(value) => [`${value}`, 'Score']}
+                      />
+                      <ReferenceLine y={75} stroke="#27ae60" strokeDasharray="3 3" strokeOpacity={0.5} />
+                      <ReferenceLine y={50} stroke="#f39c12" strokeDasharray="3 3" strokeOpacity={0.5} />
+                      <ReferenceLine y={25} stroke="#c0392b" strokeDasharray="3 3" strokeOpacity={0.5} />
+                      <Area
+                        type="monotone"
+                        dataKey="score"
+                        stroke="#3498db"
+                        strokeWidth={2}
+                        fill="url(#reintGrad)"
+                        dot={{ r: 3, fill: '#3498db', strokeWidth: 0 }}
+                        activeDot={{ r: 5, fill: '#3498db', stroke: '#fff', strokeWidth: 2 }}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                  <div className={styles.trendLegend}>
+                    <span style={{ color: '#c0392b' }}>Not Ready</span>
+                    <span style={{ color: '#f39c12' }}>Early Stage</span>
+                    <span style={{ color: '#3498db' }}>Progressing</span>
+                    <span style={{ color: '#27ae60' }}>Ready</span>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })()}
+          </div>
+        );
+      })()}
 
       {/* Sections */}
       <Section title="Identity" icon={User}>
