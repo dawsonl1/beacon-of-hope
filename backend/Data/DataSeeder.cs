@@ -488,7 +488,11 @@ public static class DataSeeder
         db.PublicImpactSnapshots.AddRange(snapshots);
         await db.SaveChangesAsync();
 
-        // Reset PostgreSQL identity sequences so new inserts get correct IDs
+        await ResetSequencesAsync(db);
+    }
+
+    public static async Task ResetSequencesAsync(AppDbContext db)
+    {
         var sequenceResets = new[]
         {
             "SELECT setval(pg_get_serial_sequence('safehouses', 'safehouse_id'), (SELECT COALESCE(MAX(safehouse_id), 0) FROM safehouses))",

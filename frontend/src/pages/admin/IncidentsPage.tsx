@@ -44,7 +44,7 @@ export default function IncidentsPage() {
   const [error, setError] = useState<string | null>(null);
   const [severityFilter, setSeverityFilter] = useState('');
   const [tab, setTab] = useState<Tab>('open');
-  const [sortBy, setSortBy] = useState('date');
+  const [sortBy, setSortBy] = useState('severity');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const pageSize = 20;
 

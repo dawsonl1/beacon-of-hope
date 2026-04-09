@@ -25,7 +25,9 @@ public static class IncidentEndpoints
             IOrderedQueryable<IncidentReport> ordered = sortBy?.ToLower() switch
             {
                 "type" => descending ? query.OrderByDescending(i => i.IncidentType) : query.OrderBy(i => i.IncidentType),
-                "severity" => descending ? query.OrderByDescending(i => i.Severity) : query.OrderBy(i => i.Severity),
+                "severity" => descending
+                    ? query.OrderByDescending(i => i.Severity == "Critical" ? 3 : i.Severity == "High" ? 2 : i.Severity == "Medium" ? 1 : 0)
+                    : query.OrderBy(i => i.Severity == "Critical" ? 3 : i.Severity == "High" ? 2 : i.Severity == "Medium" ? 1 : 0),
                 "reportedby" => descending ? query.OrderByDescending(i => i.ReportedBy) : query.OrderBy(i => i.ReportedBy),
                 "status" => descending ? query.OrderByDescending(i => i.Resolved) : query.OrderBy(i => i.Resolved),
                 _ => descending ? query.OrderByDescending(i => i.IncidentDate) : query.OrderBy(i => i.IncidentDate),
@@ -57,16 +59,34 @@ public static class IncidentEndpoints
             }
             var incident = new IncidentReport { ResidentId = body.ResidentId, SafehouseId = body.SafehouseId, IncidentDate = body.IncidentDate, IncidentType = body.IncidentType, Severity = body.Severity, Description = body.Description, ResponseTaken = body.ResponseTaken, ReportedBy = body.ReportedBy, Resolved = body.Resolved ?? false, ResolutionDate = body.ResolutionDate, FollowUpRequired = body.FollowUpRequired ?? false };
             db.IncidentReports.Add(incident);
-            await db.SaveChangesAsync();
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                return Results.Json(new { error = ex.InnerException?.Message ?? ex.Message }, statusCode: 500);
+            }
             if (incident.FollowUpRequired == true && incident.ResidentId.HasValue)
             {
                 var resident = await db.Residents.FindAsync(incident.ResidentId.Value);
                 if (resident != null)
                 {
-                    var assignedUser = await db.UserSafehouses.Where(us => us.SafehouseId == (incident.SafehouseId ?? resident.SafehouseId ?? 0)).Select(us => us.UserId).FirstOrDefaultAsync();
-                    if (assignedUser != null)
+                    var safehouseId = incident.SafehouseId ?? resident.SafehouseId ?? 0;
+                    // Assign to the resident's assigned social worker
+                    string? assignedUserId = null;
+                    if (!string.IsNullOrEmpty(resident.AssignedSocialWorker))
                     {
-                        db.StaffTasks.Add(new StaffTask { StaffUserId = assignedUser, ResidentId = incident.ResidentId, SafehouseId = incident.SafehouseId ?? resident.SafehouseId ?? 0, TaskType = "IncidentFollowUp", Title = "Incident Follow-Up", Description = $"{incident.IncidentType} ({incident.Severity}) — {incident.Description}", SourceEntityType = "IncidentReport", SourceEntityId = incident.IncidentId });
+                        assignedUserId = await db.Users
+                            .Where(u => (u.FirstName + " " + u.LastName) == resident.AssignedSocialWorker)
+                            .Select(u => u.Id)
+                            .FirstOrDefaultAsync();
+                    }
+                    // Fallback: first staff member assigned to the safehouse
+                    assignedUserId ??= await db.UserSafehouses.Where(us => us.SafehouseId == safehouseId).Select(us => us.UserId).FirstOrDefaultAsync();
+                    if (assignedUserId != null)
+                    {
+                        db.StaffTasks.Add(new StaffTask { StaffUserId = assignedUserId, ResidentId = incident.ResidentId, SafehouseId = safehouseId, TaskType = "IncidentFollowUp", Title = "Incident Follow-Up", Description = $"{incident.IncidentType} ({incident.Severity}) — {incident.Description}", SourceEntityType = "IncidentReport", SourceEntityId = incident.IncidentId });
                         await db.SaveChangesAsync();
                     }
                 }
@@ -83,6 +103,81 @@ public static class IncidentEndpoints
             var (valid, err) = DtoValidator.Validate(body);
             if (!valid) return Results.BadRequest(new { error = err });
             incident.ResidentId = body.ResidentId; incident.SafehouseId = body.SafehouseId; incident.IncidentDate = body.IncidentDate; incident.IncidentType = body.IncidentType; incident.Severity = body.Severity; incident.Description = body.Description; incident.ResponseTaken = body.ResponseTaken; incident.ReportedBy = body.ReportedBy; incident.Resolved = body.Resolved ?? incident.Resolved; incident.ResolutionDate = body.ResolutionDate; incident.FollowUpRequired = body.FollowUpRequired ?? incident.FollowUpRequired;
+            await db.SaveChangesAsync();
+            return Results.Ok(new { updated = true });
+        }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
+
+        // ── Incident Follow-Up Tasks ────────────────────────────────
+
+        app.MapGet("/api/admin/incidents/{id}/tasks", async (int id, AppDbContext db) =>
+        {
+            var incident = await db.IncidentReports.FindAsync(id);
+            if (incident == null) return Results.NotFound();
+            var tasks = await db.StaffTasks
+                .Where(t => t.SourceEntityType == "IncidentReport" && t.SourceEntityId == id)
+                .Select(t => new { t.StaffTaskId, t.TaskType, t.Title, t.Description, t.Status, t.CreatedAt, t.CompletedAt, assignedTo = t.StaffUser.FirstName + " " + t.StaffUser.LastName })
+                .ToListAsync();
+            // For each task, check if there's a linked calendar event
+            var taskIds = tasks.Select(t => t.StaffTaskId).ToList();
+            var events = await db.CalendarEvents
+                .Where(e => e.SourceTaskId != null && taskIds.Contains(e.SourceTaskId.Value))
+                .Select(e => new { e.CalendarEventId, e.SourceTaskId, e.Title, e.EventDate, e.StartTime, e.EndTime, e.Status, e.EventType })
+                .ToListAsync();
+            var result = tasks.Select(t => new
+            {
+                t.StaffTaskId, t.TaskType, t.Title, t.Description, t.Status, t.CreatedAt, t.CompletedAt, t.assignedTo,
+                calendarEvent = events.FirstOrDefault(e => e.SourceTaskId == t.StaffTaskId)
+            });
+            return Results.Ok(result);
+        }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
+
+        app.MapPost("/api/admin/incidents/{id}/create-task", async (int id, HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db) =>
+        {
+            var incident = await db.IncidentReports.Include(i => i.Resident).FirstOrDefaultAsync(i => i.IncidentId == id);
+            if (incident == null) return Results.NotFound();
+            if (incident.FollowUpRequired != true) return Results.BadRequest(new { error = "This incident does not require follow-up." });
+            // Check if a task already exists
+            var existing = await db.StaffTasks.AnyAsync(t => t.SourceEntityType == "IncidentReport" && t.SourceEntityId == id);
+            if (existing) return Results.BadRequest(new { error = "A follow-up task already exists for this incident." });
+            // Assign to the resident's assigned social worker, fallback to current user
+            var currentUser = await userManager.GetUserAsync(httpContext.User);
+            if (currentUser == null) return Results.Unauthorized();
+            var safehouseId = incident.SafehouseId ?? incident.Resident?.SafehouseId ?? 0;
+            string? assignedUserId = null;
+            if (!string.IsNullOrEmpty(incident.Resident?.AssignedSocialWorker))
+            {
+                assignedUserId = await db.Users
+                    .Where(u => (u.FirstName + " " + u.LastName) == incident.Resident.AssignedSocialWorker)
+                    .Select(u => u.Id)
+                    .FirstOrDefaultAsync();
+            }
+            assignedUserId ??= currentUser.Id;
+            var task = new StaffTask
+            {
+                StaffUserId = assignedUserId,
+                ResidentId = incident.ResidentId,
+                SafehouseId = safehouseId,
+                TaskType = "IncidentFollowUp",
+                Title = "Incident Follow-Up",
+                Description = $"{incident.IncidentType} ({incident.Severity}) — {incident.Description}",
+                SourceEntityType = "IncidentReport",
+                SourceEntityId = incident.IncidentId,
+                Status = "Pending"
+            };
+            db.StaffTasks.Add(task);
+            await db.SaveChangesAsync();
+            return Results.Ok(new { task.StaffTaskId });
+        }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
+
+        app.MapPut("/api/admin/tasks/{taskId}/status", async (int taskId, AppDbContext db, HttpContext httpContext) =>
+        {
+            var task = await db.StaffTasks.FindAsync(taskId);
+            if (task == null) return Results.NotFound();
+            var body = await httpContext.Request.ReadFromJsonAsync<Dictionary<string, string>>();
+            var status = body?.GetValueOrDefault("status");
+            if (string.IsNullOrEmpty(status)) return Results.BadRequest(new { error = "Status is required." });
+            task.Status = status;
+            if (status == "Completed" || status == "Dismissed") task.CompletedAt = DateTime.UtcNow;
             await db.SaveChangesAsync();
             return Results.Ok(new { updated = true });
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));

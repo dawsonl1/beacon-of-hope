@@ -117,6 +117,10 @@ using (var scope = app.Services.CreateScope())
         await db.Database.MigrateAsync();
     try { await IdentitySeeder.SeedAsync(scope.ServiceProvider); }
     catch (Exception ex) { Console.WriteLine($"Seeder skipped (data already exists): {ex.Message}"); }
+
+    // Always reset sequences so inserts don't collide with seeded data
+    try { await DataSeeder.ResetSequencesAsync(db); }
+    catch (Exception ex) { Console.WriteLine($"Sequence reset skipped: {ex.Message}"); }
 }
 
 if (app.Environment.IsDevelopment())

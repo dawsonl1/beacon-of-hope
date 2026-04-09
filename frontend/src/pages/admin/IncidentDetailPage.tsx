@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Edit, Trash2, Loader2, AlertTriangle, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Loader2, AlertTriangle, CheckCircle, ClipboardList, Calendar, Plus } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { formatDate } from '../../constants';
 import { useAuth } from '../../contexts/AuthContext';
@@ -24,6 +24,33 @@ interface IncidentDetail {
   followUpRequired: boolean;
 }
 
+interface FollowUpTask {
+  staffTaskId: number;
+  taskType: string;
+  title: string;
+  description: string | null;
+  status: string;
+  createdAt: string;
+  completedAt: string | null;
+  assignedTo: string | null;
+  calendarEvent: {
+    calendarEventId: number;
+    title: string;
+    eventDate: string;
+    startTime: string | null;
+    endTime: string | null;
+    status: string;
+    eventType: string;
+  } | null;
+}
+
+const TASK_STATUS_STYLES: Record<string, { color: string; bg: string }> = {
+  Pending: { color: '#e67e22', bg: '#e67e2218' },
+  Snoozed: { color: '#8e44ad', bg: '#8e44ad18' },
+  Completed: { color: '#27ae60', bg: '#27ae6018' },
+  Dismissed: { color: '#95a5a6', bg: '#95a5a618' },
+};
+
 const SEVERITY_COLORS: Record<string, string> = {
   Critical: '#c0392b',
   High: '#d35400',
@@ -43,6 +70,10 @@ export default function IncidentDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [showDelete, setShowDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [followUpTasks, setFollowUpTasks] = useState<FollowUpTask[]>([]);
+  const [tasksLoading, setTasksLoading] = useState(false);
+  const [creatingTask, setCreatingTask] = useState(false);
+  const [updatingTaskId, setUpdatingTaskId] = useState<number | null>(null);
 
   useEffect(() => {
     apiFetch<IncidentDetail>(`/api/admin/incidents/${id}`)
@@ -50,6 +81,41 @@ export default function IncidentDetailPage() {
       .catch(e => setError(e instanceof Error ? e.message : 'Failed to load incident'))
       .finally(() => setLoading(false));
   }, [id]);
+
+  useEffect(() => {
+    if (!incident?.followUpRequired) return;
+    setTasksLoading(true);
+    apiFetch<FollowUpTask[]>(`/api/admin/incidents/${id}/tasks`)
+      .then(setFollowUpTasks)
+      .catch(() => {})
+      .finally(() => setTasksLoading(false));
+  }, [id, incident?.followUpRequired]);
+
+  async function handleCreateTask() {
+    setCreatingTask(true);
+    try {
+      await apiFetch(`/api/admin/incidents/${id}/create-task`, { method: 'POST' });
+      const tasks = await apiFetch<FollowUpTask[]>(`/api/admin/incidents/${id}/tasks`);
+      setFollowUpTasks(tasks);
+    } catch {
+      // silently fail — user will see no task appeared
+    } finally {
+      setCreatingTask(false);
+    }
+  }
+
+  async function handleUpdateTaskStatus(taskId: number, status: string) {
+    setUpdatingTaskId(taskId);
+    try {
+      await apiFetch(`/api/admin/tasks/${taskId}/status`, { method: 'PUT', body: JSON.stringify({ status }) });
+      const tasks = await apiFetch<FollowUpTask[]>(`/api/admin/incidents/${id}/tasks`);
+      setFollowUpTasks(tasks);
+    } catch {
+      // silently fail
+    } finally {
+      setUpdatingTaskId(null);
+    }
+  }
 
   async function handleDelete() {
     setDeleting(true);
@@ -157,6 +223,123 @@ export default function IncidentDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* ── Follow-Up Tasks ─────────────────────── */}
+      {incident.followUpRequired && (
+        <div className={styles.card}>
+          <h3 className={styles.cardTitle} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <ClipboardList size={16} /> Follow-Up
+          </h3>
+          {tasksLoading ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#7f8c8d', fontSize: '0.85rem' }}>
+              <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> Loading tasks...
+            </div>
+          ) : followUpTasks.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {followUpTasks.map(task => {
+                const statusStyle = TASK_STATUS_STYLES[task.status] || { color: '#95a5a6', bg: '#95a5a618' };
+                const isUpdating = updatingTaskId === task.staffTaskId;
+                const isTerminal = task.status === 'Completed' || task.status === 'Dismissed';
+                return (
+                  <div key={task.staffTaskId} style={{ border: '1px solid #e8e8e8', borderRadius: '8px', padding: '0.85rem 1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                      <span style={{ fontWeight: 600, fontSize: '0.88rem', color: '#2c3e50' }}>{task.title}</span>
+                      <span style={{
+                        fontSize: '0.7rem', fontWeight: 700, padding: '0.15rem 0.5rem',
+                        borderRadius: '999px', background: statusStyle.bg, color: statusStyle.color,
+                        textTransform: 'uppercase', letterSpacing: '0.04em',
+                      }}>
+                        {task.status}
+                      </span>
+                    </div>
+                    {task.assignedTo && (
+                      <div style={{ fontSize: '0.8rem', color: '#7f8c8d', marginBottom: '0.3rem' }}>
+                        Assigned to: {task.assignedTo}
+                      </div>
+                    )}
+                    {!isTerminal && (
+                      <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.5rem' }}>
+                        {task.status !== 'Completed' && (
+                          <button
+                            onClick={() => handleUpdateTaskStatus(task.staffTaskId, 'Completed')}
+                            disabled={isUpdating}
+                            style={{
+                              display: 'inline-flex', alignItems: 'center', gap: '0.25rem',
+                              padding: '0.3rem 0.7rem', fontSize: '0.75rem', fontWeight: 600,
+                              border: '1px solid #27ae60', borderRadius: '5px', cursor: 'pointer',
+                              background: '#fff', color: '#27ae60',
+                              opacity: isUpdating ? 0.5 : 1,
+                            }}
+                          >
+                            <CheckCircle size={12} /> Complete
+                          </button>
+                        )}
+                        {task.status !== 'Dismissed' && (
+                          <button
+                            onClick={() => handleUpdateTaskStatus(task.staffTaskId, 'Dismissed')}
+                            disabled={isUpdating}
+                            style={{
+                              display: 'inline-flex', alignItems: 'center', gap: '0.25rem',
+                              padding: '0.3rem 0.7rem', fontSize: '0.75rem', fontWeight: 600,
+                              border: '1px solid #95a5a6', borderRadius: '5px', cursor: 'pointer',
+                              background: '#fff', color: '#95a5a6',
+                              opacity: isUpdating ? 0.5 : 1,
+                            }}
+                          >
+                            Dismiss
+                          </button>
+                        )}
+                      </div>
+                    )}
+                    {task.calendarEvent && (
+                      <div
+                        onClick={() => navigate('/admin/calendar')}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: '0.35rem',
+                          fontSize: '0.8rem', color: '#2980b9', marginTop: '0.5rem',
+                          background: '#2980b90a', padding: '0.4rem 0.6rem', borderRadius: '6px',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <Calendar size={13} />
+                        <span style={{ fontWeight: 600 }}>{task.calendarEvent.title}</span>
+                        <span style={{ color: '#7f8c8d' }}>
+                          {' '}— {formatDate(task.calendarEvent.eventDate)}
+                          {task.calendarEvent.startTime && ` at ${task.calendarEvent.startTime}`}
+                        </span>
+                        <span style={{
+                          marginLeft: 'auto', fontSize: '0.7rem', fontWeight: 600,
+                          color: task.calendarEvent.status === 'Completed' ? '#27ae60' : task.calendarEvent.status === 'Cancelled' ? '#e74c3c' : '#2980b9',
+                        }}>
+                          {task.calendarEvent.status}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: '0.85rem', color: '#7f8c8d' }}>No follow-up task has been created yet.</span>
+              <button
+                onClick={handleCreateTask}
+                disabled={creatingTask}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
+                  padding: '0.4rem 0.85rem', fontSize: '0.8rem', fontWeight: 600,
+                  border: 'none', borderRadius: '6px', cursor: 'pointer',
+                  background: 'var(--color-sage, #27ae60)', color: '#fff',
+                  opacity: creatingTask ? 0.6 : 1,
+                }}
+              >
+                {creatingTask ? <Loader2 size={13} style={{ animation: 'spin 1s linear infinite' }} /> : <Plus size={13} />}
+                Create Follow-Up Task
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ── Description ───────────────────────── */}
       <div className={styles.card}>
