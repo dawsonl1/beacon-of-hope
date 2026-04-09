@@ -143,23 +143,25 @@ public static class SeedEndpoints
                 var shId = r.SafehouseId ?? 1;
 
                 // Monthly doctor appointment
+                var lastDoc = today.AddDays(-random.Next(28, 45));
                 db.StaffTasks.Add(new StaffTask
                 {
                     StaffUserId = userId, ResidentId = r.ResidentId, SafehouseId = shId,
-                    TaskType = "ScheduleDoctor", Title = $"Schedule doctor appointment for {r.InternalCode}",
-                    Description = "Monthly medical checkup — due this week",
-                    ContextJson = $"{{\"lastDoctorVisit\": \"{today.AddDays(-random.Next(28, 45)):yyyy-MM-dd}\"}}",
+                    TaskType = "ScheduleDoctor", Title = "Schedule Doctor Appointment",
+                    Description = $"Monthly medical checkup — last visit {lastDoc:MMM d}",
+                    ContextJson = $"{{\"lastVisit\": \"{lastDoc:yyyy-MM-dd}\", \"type\": \"Doctor\"}}",
                     Status = "Pending", CreatedAt = todayDt.AddDays(-random.Next(0, 3))
                 });
                 taskCount++;
 
                 // Monthly dentist appointment
+                var lastDent = today.AddDays(-random.Next(30, 60));
                 db.StaffTasks.Add(new StaffTask
                 {
                     StaffUserId = userId, ResidentId = r.ResidentId, SafehouseId = shId,
-                    TaskType = "ScheduleDentist", Title = $"Schedule dentist appointment for {r.InternalCode}",
-                    Description = "Monthly dental checkup — due this week",
-                    ContextJson = $"{{\"lastDentistVisit\": \"{today.AddDays(-random.Next(30, 60)):yyyy-MM-dd}\"}}",
+                    TaskType = "ScheduleDentist", Title = "Schedule Dentist Appointment",
+                    Description = $"Monthly dental checkup — last visit {lastDent:MMM d}",
+                    ContextJson = $"{{\"lastVisit\": \"{lastDent:yyyy-MM-dd}\", \"type\": \"Dentist\"}}",
                     Status = "Pending", CreatedAt = todayDt.AddDays(-random.Next(0, 4))
                 });
                 taskCount++;
@@ -168,7 +170,7 @@ public static class SeedEndpoints
                 db.StaffTasks.Add(new StaffTask
                 {
                     StaffUserId = userId, ResidentId = r.ResidentId, SafehouseId = shId,
-                    TaskType = "UpdateEducation", Title = $"Update education records for {r.InternalCode}",
+                    TaskType = "UpdateEducation", Title = "Update Education Records",
                     Description = "Monthly education progress update",
                     Status = "Pending", CreatedAt = todayDt.AddDays(-random.Next(0, 5))
                 });
@@ -180,7 +182,7 @@ public static class SeedEndpoints
                     db.StaffTasks.Add(new StaffTask
                     {
                         StaffUserId = userId, ResidentId = r.ResidentId, SafehouseId = shId,
-                        TaskType = "InputHealthRecords", Title = $"Input health records for {r.InternalCode}",
+                        TaskType = "InputHealthRecords", Title = "Input Health Records",
                         Description = "Record data from recent medical appointment",
                         Status = "Pending", CreatedAt = todayDt.AddDays(-1)
                     });
@@ -190,11 +192,12 @@ public static class SeedEndpoints
                 // Incident follow-up (for some residents)
                 if (random.Next(4) == 0)
                 {
+                    var severity = random.Next(2) == 0 ? "Medium" : "High";
                     db.StaffTasks.Add(new StaffTask
                     {
                         StaffUserId = userId, ResidentId = r.ResidentId, SafehouseId = shId,
-                        TaskType = "IncidentFollowUp", Title = $"Follow up on incident for {r.InternalCode}",
-                        Description = $"Incident: Behavioral ({(random.Next(2) == 0 ? "Medium" : "High")}) — Review and determine next steps",
+                        TaskType = "IncidentFollowUp", Title = "Incident Follow-Up",
+                        Description = $"Behavioral incident ({severity}) — review and determine next steps",
                         SourceEntityType = "IncidentReport",
                         Status = "Pending", CreatedAt = todayDt.AddDays(-random.Next(0, 2))
                     });
@@ -207,7 +210,7 @@ public static class SeedEndpoints
                     db.StaffTasks.Add(new StaffTask
                     {
                         StaffUserId = userId, ResidentId = r.ResidentId, SafehouseId = shId,
-                        TaskType = "ScheduleHomeVisit", Title = $"Schedule home visit for {r.InternalCode}",
+                        TaskType = "ScheduleHomeVisit", Title = "Schedule Home Visit",
                         Description = "Routine follow-up home visit due",
                         Status = "Pending", CreatedAt = todayDt.AddDays(-random.Next(0, 3))
                     });

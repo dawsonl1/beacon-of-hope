@@ -146,6 +146,23 @@ function parseContext(json: string | null): Record<string, string> {
   try { return JSON.parse(json); } catch { return {}; }
 }
 
+function formatContextValue(key: string, value: string): string {
+  // Format date values nicely
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const d = new Date(value + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+  return value;
+}
+
+function formatContextLabel(key: string): string {
+  // Clean up camelCase keys into readable labels
+  return key
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, s => s.toUpperCase())
+    .trim();
+}
+
 /* ── Component ───────────────────────────────────── */
 
 export default function HomePage() {
@@ -674,7 +691,7 @@ export default function HomePage() {
                       {task.description && <p className={styles.taskMeta}>{task.description}</p>}
                       {Object.keys(ctx).length > 0 && (
                         <p className={styles.taskContext}>
-                          {Object.entries(ctx).map(([k, v]) => `${k}: ${v}`).join(' · ')}
+                          {Object.entries(ctx).map(([k, v]) => `${formatContextLabel(k)}: ${formatContextValue(k, v)}`).join(' · ')}
                         </p>
                       )}
                       <div className={styles.taskActions}>

@@ -51,7 +51,7 @@ public static class IncidentEndpoints
                     var assignedUser = await db.UserSafehouses.Where(us => us.SafehouseId == (incident.SafehouseId ?? resident.SafehouseId ?? 0)).Select(us => us.UserId).FirstOrDefaultAsync();
                     if (assignedUser != null)
                     {
-                        db.StaffTasks.Add(new StaffTask { StaffUserId = assignedUser, ResidentId = incident.ResidentId, SafehouseId = incident.SafehouseId ?? resident.SafehouseId ?? 0, TaskType = "IncidentFollowUp", Title = $"Follow up on incident for {resident.InternalCode}", Description = $"Incident: {incident.IncidentType} ({incident.Severity}) - {incident.Description}", SourceEntityType = "IncidentReport", SourceEntityId = incident.IncidentId });
+                        db.StaffTasks.Add(new StaffTask { StaffUserId = assignedUser, ResidentId = incident.ResidentId, SafehouseId = incident.SafehouseId ?? resident.SafehouseId ?? 0, TaskType = "IncidentFollowUp", Title = "Incident Follow-Up", Description = $"{incident.IncidentType} ({incident.Severity}) — {incident.Description}", SourceEntityType = "IncidentReport", SourceEntityId = incident.IncidentId });
                         await db.SaveChangesAsync();
                     }
                 }
@@ -112,7 +112,7 @@ public static class IncidentEndpoints
             resident.AssignedSocialWorker = $"{user.FirstName} {user.LastName}";
             await db.SaveChangesAsync();
             // Auto-generate initial home visit to-do
-            db.StaffTasks.Add(new StaffTask { StaffUserId = user.Id, ResidentId = id, SafehouseId = resident.SafehouseId ?? 1, TaskType = "ScheduleHomeVisit", Title = $"Schedule initial home visit for {resident.InternalCode}", Description = "Initial assessment visit after claiming case", Status = "Pending" });
+            db.StaffTasks.Add(new StaffTask { StaffUserId = user.Id, ResidentId = id, SafehouseId = resident.SafehouseId ?? 1, TaskType = "ScheduleHomeVisit", Title = "Schedule Initial Home Visit", Description = "Initial assessment visit after claiming case", Status = "Pending" });
             await db.SaveChangesAsync();
             return Results.Ok(new { claimed = true });
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
