@@ -107,14 +107,6 @@ namespace backend.Migrations
                 oldNullable: true);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_AspNetUsers_supporters_SupporterId",
-                table: "AspNetUsers",
-                column: "SupporterId",
-                principalTable: "supporters",
-                principalColumn: "supporter_id",
-                onDelete: ReferentialAction.SetNull);
-
-            migrationBuilder.AddForeignKey(
                 name: "donation_allocations_donation_id_fkey",
                 table: "donation_allocations",
                 column: "donation_id",
@@ -174,10 +166,6 @@ namespace backend.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_AspNetUsers_supporters_SupporterId",
-                table: "AspNetUsers");
-
             migrationBuilder.DropForeignKey(
                 name: "donation_allocations_donation_id_fkey",
                 table: "donation_allocations");
