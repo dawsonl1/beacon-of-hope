@@ -126,45 +126,53 @@
   overflow: hidden;
 }
 
-/* ── Unscheduled parking lot ─────────────────────── */
-.unscheduledSection {
-  margin-bottom: 0.5rem;
+/* ── Sticky week header (day names + all-day row) ── */
+.weekHeader {
   flex-shrink: 0;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(15, 27, 45, 0.06);
 }
 
-.sectionLabel {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+/* ── All-day row ─────────────────────────────────── */
+.allDayLabel {
+  font-size: 0.58rem;
+  font-weight: 600;
   color: var(--text-muted);
-  margin-bottom: 0.4rem;
+  text-align: right;
+  padding: 0.3rem 0.35rem;
+  border-top: 1px solid rgba(15, 27, 45, 0.06);
+  border-bottom: 1px solid rgba(15, 27, 45, 0.1);
 }
 
-.unscheduledList {
+.allDayCell {
+  border-top: 1px solid rgba(15, 27, 45, 0.06);
+  border-bottom: 1px solid rgba(15, 27, 45, 0.1);
+  border-left: 1px solid rgba(15, 27, 45, 0.04);
+  padding: 0.2rem 0.15rem;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-height: 28px;
 }
 
-.unscheduledCard {
-  background: #fff;
-  border: 1px dashed rgba(15, 143, 125, 0.3);
-  border-radius: 8px;
-  padding: 0.4rem 0.65rem;
-  font-size: 0.75rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.unscheduledCard:hover {
-  border-color: var(--color-sage);
+.allDayCellToday {
   background: rgba(15, 143, 125, 0.03);
+}
+
+.allDayChip {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.12rem 0.35rem;
+  border-radius: 3px;
+  background: rgba(15, 143, 125, 0.12);
+  color: var(--color-sage);
+  cursor: grab;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: filter 0.15s;
+}
+
+.allDayChip:hover {
+  filter: brightness(0.92);
 }
 
 /* ── Event chips ─────────────────────────────────── */
@@ -213,19 +221,13 @@
 }
 
 .weekCorner {
-  position: sticky;
-  top: 0;
-  z-index: 2;
   background: #fff;
-  border-bottom: 1px solid rgba(15, 27, 45, 0.1);
+  border-bottom: 1px solid rgba(15, 27, 45, 0.06);
 }
 
 .weekColHeader {
-  position: sticky;
-  top: 0;
-  z-index: 2;
   background: #fff;
-  border-bottom: 1px solid rgba(15, 27, 45, 0.1);
+  border-bottom: 1px solid rgba(15, 27, 45, 0.06);
   border-left: 1px solid rgba(15, 27, 45, 0.04);
   display: flex;
   flex-direction: column;

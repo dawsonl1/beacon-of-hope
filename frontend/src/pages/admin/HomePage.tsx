@@ -175,6 +175,7 @@ export default function HomePage() {
 
   // Drag-and-drop state
   const [dragTaskId, setDragTaskId] = useState<number | null>(null);
+  const [dragEventId, setDragEventId] = useState<number | null>(null);
   const [dropHour, setDropHour] = useState<number | null>(null);
   const [dropDate, setDropDate] = useState<string | null>(null);
 
@@ -295,6 +296,7 @@ export default function HomePage() {
 
   function handleDragEnd() {
     setDragTaskId(null);
+    setDragEventId(null);
     setDropHour(null);
     setDropDate(null);
     dragCounterRef.current = 0;
@@ -319,10 +321,20 @@ export default function HomePage() {
     if (!dragTaskId) return;
     const task = tasks.find(t => t.staffTaskId === dragTaskId);
     if (!task) return;
-    const startTime = `${hour.toString().padStart(2, '0')}:00`;
+    const startTime = hour >= 0 ? `${hour.toString().padStart(2, '0')}:00` : null;
     const targetDate = date || fmtDate(currentDate);
     scheduleTaskToCalendar(task, targetDate, startTime);
     setDragTaskId(null);
+    setDropHour(null);
+    setDropDate(null);
+    dragCounterRef.current = 0;
+  }
+
+  function handleEventDrop(hour: number, date: string) {
+    if (!dragEventId) return;
+    const startTime = hour >= 0 ? `${hour.toString().padStart(2, '0')}:00` : null;
+    handleUpdateEvent(dragEventId, { startTime, eventDate: date });
+    setDragEventId(null);
     setDropHour(null);
     setDropDate(null);
     dragCounterRef.current = 0;
@@ -419,20 +431,9 @@ export default function HomePage() {
             <div className={styles.loading}><Loader2 size={20} className={styles.spinner} /> Loading calendar...</div>
           ) : (
             <>
-              {unscheduled.length > 0 && (
-                <div className={styles.unscheduledSection}>
-                  <div className={styles.sectionLabel}>Unscheduled</div>
-                  <div className={styles.unscheduledList}>
-                    {unscheduled.map(evt => (
-                      <div key={evt.calendarEventId} className={styles.unscheduledCard} onClick={e => handleEventClick(evt, e)}>
-                        {evt.title} {evt.residentCode && `(${evt.residentCode})`}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              <div className={styles.weekScrollContainer}>
-                <div className={styles.weekGrid}>
+              {/* Sticky header: day columns + all-day row */}
+              <div className={styles.weekHeader}>
+                <div className={styles.weekGrid} style={{ borderBottom: 'none', borderRadius: '12px 12px 0 0' }}>
                   {/* Column headers */}
                   <div className={styles.weekCorner} />
                   {DAY_NAMES.map((_, i) => {
@@ -447,7 +448,42 @@ export default function HomePage() {
                       </div>
                     );
                   })}
-                  {/* Time rows */}
+                  {/* All-day row */}
+                  <div className={styles.allDayLabel}>all-day</div>
+                  {DAY_NAMES.map((_, i) => {
+                    const dayDate = addDays(getWeekStart(currentDate), i);
+                    const dayStr = fmtDate(dayDate);
+                    const isToday = dayStr === APP_TODAY_STR;
+                    const dayUnscheduled = unscheduled.filter(e => e.eventDate === dayStr);
+                    return (
+                      <div
+                        key={`allday-${i}`}
+                        className={`${styles.allDayCell} ${isToday ? styles.allDayCellToday : ''}`}
+                        onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }}
+                        onDragEnter={() => handleSlotDragEnter(-1, dayStr)}
+                        onDragLeave={handleSlotDragLeave}
+                        onDrop={e => { e.preventDefault(); handleSlotDrop(-1, dayStr); }}
+                      >
+                        {dayUnscheduled.map(evt => (
+                          <div
+                            key={evt.calendarEventId}
+                            className={styles.allDayChip}
+                            draggable
+                            onDragStart={() => setDragEventId(evt.calendarEventId)}
+                            onDragEnd={() => setDragEventId(null)}
+                            onClick={e => handleEventClick(evt, e)}
+                          >
+                            {evt.title} {evt.residentCode && `(${evt.residentCode})`}
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              {/* Scrollable time grid */}
+              <div className={styles.weekScrollContainer}>
+                <div className={styles.weekGrid} style={{ borderTop: 'none', borderRadius: '0 0 12px 12px' }}>
                   {HOURS.map(hour => {
                     const hourStr = hour.toString().padStart(2, '0');
                     return (
@@ -459,14 +495,15 @@ export default function HomePage() {
                           const isToday = dayStr === APP_TODAY_STR;
                           const cellEvents = events.filter(e => e.eventDate === dayStr && e.startTime?.startsWith(hourStr));
                           const isDropTarget = dragTaskId !== null && dropHour === hour && dropDate === dayStr;
+                          const isEventDropTarget = dragEventId !== null && dropHour === hour && dropDate === dayStr;
                           return (
                             <div
                               key={`${hour}-${i}`}
-                              className={`${styles.weekCell} ${isToday ? styles.weekCellToday : ''} ${isDropTarget ? styles.weekCellDropTarget : ''}`}
+                              className={`${styles.weekCell} ${isToday ? styles.weekCellToday : ''} ${(isDropTarget || isEventDropTarget) ? styles.weekCellDropTarget : ''}`}
                               onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }}
                               onDragEnter={() => handleSlotDragEnter(hour, dayStr)}
                               onDragLeave={handleSlotDragLeave}
-                              onDrop={e => { e.preventDefault(); handleSlotDrop(hour, dayStr); }}
+                              onDrop={e => { e.preventDefault(); handleEventDrop(hour, dayStr); handleSlotDrop(hour, dayStr); }}
                             >
                               {cellEvents.map(renderEventChip)}
                             </div>
