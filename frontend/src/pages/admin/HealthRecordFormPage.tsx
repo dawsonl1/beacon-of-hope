@@ -113,67 +113,88 @@ export default function HealthRecordFormPage() {
       </Link>
       <h1 className={styles.title}>Input Health Record</h1>
 
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.grid}>
-          <div className={styles.label}>
-            Resident *
-            <Dropdown
-              value={String(form.residentId)}
-              placeholder="Select resident"
-              options={residents.map(r => ({ value: String(r.residentId), label: r.internalCode }))}
-              onChange={v => handleChange('residentId', v ? Number(v) : '')}
-            />
+      {error && <div className={styles.error}>{error}</div>}
+
+      <form onSubmit={handleSubmit}>
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Resident & Date</h2>
+          <div className={styles.fieldGrid}>
+            <div className={styles.field}>
+              <div className={styles.label}>Resident <span className={styles.required}>*</span></div>
+              <Dropdown
+                value={String(form.residentId)}
+                placeholder="Select resident"
+                options={residents.map(r => ({ value: String(r.residentId), label: r.internalCode }))}
+                onChange={v => handleChange('residentId', v ? Number(v) : '')}
+              />
+            </div>
+            <div className={styles.field}>
+              <div className={styles.label}>Record Date</div>
+              <DatePicker value={form.recordDate} onChange={v => handleChange('recordDate', v)} placeholder="Select date..." />
+            </div>
           </div>
-          <div className={styles.label}>
-            Record Date
-            <DatePicker value={form.recordDate} onChange={v => handleChange('recordDate', v)} placeholder="Select date..." />
-          </div>
-          <label className={styles.label}>
-            Weight (kg)
-            <input type="number" step="0.1" className={styles.input} value={form.weightKg} onChange={e => handleChange('weightKg', e.target.value)} placeholder="kg" />
-          </label>
-          <label className={styles.label}>
-            Height (cm)
-            <input type="number" step="0.1" className={styles.input} value={form.heightCm} onChange={e => handleChange('heightCm', e.target.value)} placeholder="cm" />
-          </label>
-          <label className={styles.label}>
-            BMI (auto-calculated)
-            <input type="number" step="0.1" className={styles.input} value={form.bmi} readOnly style={{ background: '#f5f5f5' }} />
-          </label>
-          <label className={styles.label}>
-            Nutrition Score (1-5)
-            <input type="number" min="1" max="5" step="0.1" className={styles.input} value={form.nutritionScore} onChange={e => handleChange('nutritionScore', e.target.value)} />
-          </label>
-          <label className={styles.label}>
-            Sleep Quality (1-5)
-            <input type="number" min="1" max="5" step="0.1" className={styles.input} value={form.sleepQualityScore} onChange={e => handleChange('sleepQualityScore', e.target.value)} />
-          </label>
-          <label className={styles.label}>
-            Energy Level (1-5)
-            <input type="number" min="1" max="5" step="0.1" className={styles.input} value={form.energyLevelScore} onChange={e => handleChange('energyLevelScore', e.target.value)} />
-          </label>
-          <label className={styles.label}>
-            General Health (1-5)
-            <input type="number" min="1" max="5" step="0.1" className={styles.input} value={form.generalHealthScore} onChange={e => handleChange('generalHealthScore', e.target.value)} />
-          </label>
         </div>
 
-        <div style={{ display: 'flex', gap: '2rem', marginTop: '0.75rem' }}>
-          <Checkbox checked={form.medicalCheckupDone} onChange={v => handleChange('medicalCheckupDone', v)} label="Medical Checkup Done" />
-          <Checkbox checked={form.dentalCheckupDone} onChange={v => handleChange('dentalCheckupDone', v)} label="Dental Checkup Done" />
-          <Checkbox checked={form.psychologicalCheckupDone} onChange={v => handleChange('psychologicalCheckupDone', v)} label="Psychological Checkup Done" />
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Measurements</h2>
+          <div className={styles.fieldGrid}>
+            <div className={styles.field}>
+              <label className={styles.label}>Weight (kg)</label>
+              <input type="number" step="0.1" className={styles.input} value={form.weightKg} onChange={e => handleChange('weightKg', e.target.value)} placeholder="kg" />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Height (cm)</label>
+              <input type="number" step="0.1" className={styles.input} value={form.heightCm} onChange={e => handleChange('heightCm', e.target.value)} placeholder="cm" />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>BMI (auto-calculated)</label>
+              <input type="number" step="0.1" className={styles.input} value={form.bmi} readOnly style={{ background: 'var(--surface-2)', opacity: 0.7 }} />
+            </div>
+          </div>
         </div>
 
-        <label className={styles.label} style={{ marginTop: '0.75rem' }}>
-          Notes
-          <TextArea className={styles.textarea} rows={3} value={form.notes} onChange={e => handleChange('notes', e.target.value)} placeholder="Additional notes..." />
-        </label>
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Health Scores (1-5)</h2>
+          <div className={styles.fieldGrid}>
+            <div className={styles.field}>
+              <label className={styles.label}>Nutrition Score</label>
+              <input type="number" min="1" max="5" step="0.1" className={styles.input} value={form.nutritionScore} onChange={e => handleChange('nutritionScore', e.target.value)} />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Sleep Quality</label>
+              <input type="number" min="1" max="5" step="0.1" className={styles.input} value={form.sleepQualityScore} onChange={e => handleChange('sleepQualityScore', e.target.value)} />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Energy Level</label>
+              <input type="number" min="1" max="5" step="0.1" className={styles.input} value={form.energyLevelScore} onChange={e => handleChange('energyLevelScore', e.target.value)} />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>General Health</label>
+              <input type="number" min="1" max="5" step="0.1" className={styles.input} value={form.generalHealthScore} onChange={e => handleChange('generalHealthScore', e.target.value)} />
+            </div>
+          </div>
+        </div>
 
-        {error && <p className={styles.error} role="alert">{error}</p>}
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Checkups</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <Checkbox checked={form.medicalCheckupDone} onChange={v => handleChange('medicalCheckupDone', v)} label="Medical Checkup Done" />
+            <Checkbox checked={form.dentalCheckupDone} onChange={v => handleChange('dentalCheckupDone', v)} label="Dental Checkup Done" />
+            <Checkbox checked={form.psychologicalCheckupDone} onChange={v => handleChange('psychologicalCheckupDone', v)} label="Psychological Checkup Done" />
+          </div>
+        </div>
+
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Notes</h2>
+          <div className={`${styles.field} ${styles.fieldFull}`}>
+            <label className={styles.label}>Additional Notes</label>
+            <TextArea className={styles.textarea} rows={3} value={form.notes} onChange={e => handleChange('notes', e.target.value)} placeholder="Additional notes..." />
+          </div>
+        </div>
 
         <div className={styles.actions}>
           <button type="button" className={styles.cancelBtn} onClick={() => navigate(fromCalendar ? '/admin' : -1 as any)}>Cancel</button>
-          <button type="submit" className={styles.saveBtn} disabled={saving}>
+          <button type="submit" className={styles.submitBtn} disabled={saving}>
             {saving ? 'Saving...' : 'Save Health Record'}
           </button>
         </div>

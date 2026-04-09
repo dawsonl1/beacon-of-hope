@@ -207,6 +207,6 @@ public static class RecordingEndpoints
             db.ProcessRecordings.Remove(recording);
             await db.SaveChangesAsync();
             return Results.Ok(new { message = "Recording deleted." });
-        }).RequireAuthorization(policy => policy.RequireRole("Admin"));
+        }).RequireAuthorization(policy => policy.RequireRole("Admin", "Staff"));
     }
 }

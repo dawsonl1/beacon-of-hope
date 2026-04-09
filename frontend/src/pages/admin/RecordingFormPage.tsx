@@ -95,6 +95,16 @@ const EMOTIONAL_STATES = [
 
 const RISK_LEVELS = ['Critical', 'High', 'Medium', 'Low'];
 
+const INTERVENTION_OPTIONS = ['Caring', 'Legal Services', 'Healing', 'Teaching'];
+
+const FLAG_COLORS: Record<string, { active: string; activeBg: string; activeBorder: string }> = {
+  'Progress Noted': { active: '#1E8449', activeBg: 'rgba(30,132,73,0.1)', activeBorder: '#27AE60' },
+  'Concerns Flagged': { active: '#C0392B', activeBg: 'rgba(203,87,104,0.1)', activeBorder: 'rgba(203,87,104,0.5)' },
+  'Referral Made': { active: '#D35400', activeBg: 'rgba(255,159,67,0.1)', activeBorder: 'rgba(255,159,67,0.5)' },
+  'Needs Case Conference': { active: '#2874A6', activeBg: 'rgba(40,116,166,0.1)', activeBorder: 'rgba(40,116,166,0.5)' },
+  'Ready for Reintegration': { active: 'var(--color-sage)', activeBg: 'rgba(15,143,125,0.1)', activeBorder: 'var(--color-sage)' },
+};
+
 const GEMINI_PROMPT = `You are a clinical documentation assistant for a children's residential care facility. A social worker has just recorded a voice memo summarizing a counseling session with a resident. Your job is to extract structured data from the audio and return it as JSON.
 
 Return ONLY a JSON object with these exact keys. Use null for any field the speaker did not mention or that you cannot confidently determine:
@@ -779,9 +789,9 @@ export default function RecordingFormPage() {
         {/* ── Interventions & Follow-up ────────────── */}
         <div className={styles.formCard}>
           <h2 className={styles.sectionTitle}>Interventions & Follow-up</h2>
-          <div className={`${styles.field} ${styles.fieldFull}`}>
+          <div className={styles.field} style={{ maxWidth: '300px' }}>
             <label>Interventions Applied</label>
-            <TextArea className={styles.textareaField} value={interventions} onChange={e => setInterventions(e.target.value)} placeholder="List interventions used during this session (e.g., CBT, Play Therapy, Grounding Techniques)..." />
+            <Dropdown value={interventions} placeholder="Select intervention..." options={INTERVENTION_OPTIONS.map(i => ({ value: i, label: i }))} onChange={v => setInterventions(v)} />
           </div>
           <div className={`${styles.field} ${styles.fieldFull}`} style={{ marginTop: '0.75rem' }}>
             <label>Follow-up Actions</label>
@@ -792,10 +802,12 @@ export default function RecordingFormPage() {
         {/* ── Risk Assessment ─────────────────────── */}
         <div className={styles.formCard}>
           <h2 className={styles.sectionTitle}>Risk Assessment</h2>
-          <div className={styles.field} style={{ maxWidth: '300px' }}>
+          <div className={styles.field}>
             <label>Updated Risk Level</label>
-            <Dropdown value={updatedRiskLevel} placeholder="No change" options={[{ value: '', label: 'No change' }, ...RISK_LEVELS.map(l => ({ value: l, label: l }))]} onChange={v => setUpdatedRiskLevel(v)} />
-            <span className={styles.fieldHint}>Updates the resident's current risk level on the caseload inventory.</span>
+            <div style={{ maxWidth: '300px' }}>
+              <Dropdown value={updatedRiskLevel} placeholder="No change" options={[{ value: '', label: 'No change' }, ...RISK_LEVELS.map(l => ({ value: l, label: l }))]} onChange={v => setUpdatedRiskLevel(v)} />
+            </div>
+            <span className={styles.fieldHint} style={{ whiteSpace: 'nowrap' }}>Updates the resident&apos;s current risk level on the caseload inventory.</span>
           </div>
         </div>
 
@@ -820,6 +832,7 @@ export default function RecordingFormPage() {
                         { key: 'readyForReintegration' as const, label: 'Ready for Reintegration' },
                       ]).map(({ key, label }) => {
                         const checked = flags[key];
+                        const flagColor = FLAG_COLORS[label];
                         return (
                           <button
                             key={label}
@@ -829,9 +842,9 @@ export default function RecordingFormPage() {
                               display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
                               padding: '0.4rem 0.75rem', borderRadius: '999px', fontSize: '0.78rem',
                               fontWeight: 600, fontFamily: 'var(--font-body)', cursor: 'pointer',
-                              border: checked ? '1px solid var(--color-sage)' : '1px solid rgba(15,27,45,0.12)',
-                              background: checked ? 'rgba(15,143,125,0.1)' : '#fff',
-                              color: checked ? 'var(--color-sage)' : 'var(--text-muted)',
+                              border: checked ? `1px solid ${flagColor.activeBorder}` : '1px solid rgba(15,27,45,0.12)',
+                              background: checked ? flagColor.activeBg : '#fff',
+                              color: checked ? flagColor.active : 'var(--text-muted)',
                               transition: 'all 0.15s',
                             }}
                           >
@@ -856,25 +869,28 @@ export default function RecordingFormPage() {
                 { checked: referralMade, set: setReferralMade, label: 'Referral Made' },
                 { checked: needsCaseConference, set: setNeedsCaseConference, label: 'Needs Case Conference' },
                 { checked: readyForReintegration, set: setReadyForReintegration, label: 'Ready for Reintegration' },
-              ] as const).map(({ checked, set, label }) => (
-                <button
-                  key={label}
-                  type="button"
-                  onClick={() => set(!checked)}
-                  style={{
-                    display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
-                    padding: '0.4rem 0.75rem', borderRadius: '999px', fontSize: '0.78rem',
-                    fontWeight: 600, fontFamily: 'var(--font-body)', cursor: 'pointer',
-                    border: checked ? '1px solid var(--color-sage)' : '1px solid rgba(15,27,45,0.12)',
-                    background: checked ? 'rgba(15,143,125,0.1)' : '#fff',
-                    color: checked ? 'var(--color-sage)' : 'var(--text-muted)',
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  {checked && <span style={{ fontSize: '0.65rem' }}>&#10003;</span>}
-                  {label}
-                </button>
-              ))}
+              ] as const).map(({ checked, set, label }) => {
+                const flagColor = FLAG_COLORS[label];
+                return (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => set(!checked)}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
+                      padding: '0.4rem 0.75rem', borderRadius: '999px', fontSize: '0.78rem',
+                      fontWeight: 600, fontFamily: 'var(--font-body)', cursor: 'pointer',
+                      border: checked ? `1px solid ${flagColor.activeBorder}` : '1px solid rgba(15,27,45,0.12)',
+                      background: checked ? flagColor.activeBg : '#fff',
+                      color: checked ? flagColor.active : 'var(--text-muted)',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    {checked && <span style={{ fontSize: '0.65rem' }}>&#10003;</span>}
+                    {label}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>

@@ -76,7 +76,6 @@ export default function EducationRecordFormPage() {
           notes: form.notes || null,
         }),
       });
-      // Mark task as completed if linked
       if (taskId) {
         await apiFetch(`/api/staff/tasks/${taskId}`, {
           method: 'PUT',
@@ -98,89 +97,101 @@ export default function EducationRecordFormPage() {
       </Link>
       <h1 className={styles.title}>Update Education Record</h1>
 
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.grid}>
-          <div className={styles.label}>
-            Resident *
-            <Dropdown
-              value={String(form.residentId)}
-              placeholder="Select resident"
-              options={residents.map(r => ({ value: String(r.residentId), label: r.internalCode }))}
-              onChange={v => handleChange('residentId', v ? Number(v) : '')}
-            />
-          </div>
-          <div className={styles.label}>
-            Record Date
-            <DatePicker value={form.recordDate} onChange={v => handleChange('recordDate', v)} placeholder="Select date..." />
-          </div>
-          <div className={styles.label}>
-            Education Level
-            <Dropdown
-              value={form.educationLevel}
-              placeholder="Select"
-              options={[
-                { value: 'Bridge Program', label: 'Bridge Program' },
-                { value: 'Secondary Support', label: 'Secondary Support' },
-                { value: 'Vocational Skills', label: 'Vocational Skills' },
-                { value: 'Literacy Boost', label: 'Literacy Boost' },
-                { value: 'Elementary', label: 'Elementary' },
-                { value: 'High School', label: 'High School' },
-              ]}
-              onChange={v => handleChange('educationLevel', v)}
-            />
-          </div>
-          <label className={styles.label}>
-            School Name
-            <input className={styles.input} value={form.schoolName} onChange={e => handleChange('schoolName', e.target.value)} placeholder="School name" />
-          </label>
-          <label className={styles.label}>
-            Attendance Rate (%)
-            <input type="number" min="0" max="100" step="0.1" className={styles.input} value={form.attendanceRate} onChange={e => handleChange('attendanceRate', e.target.value)} placeholder="0-100" />
-          </label>
-          <label className={styles.label}>
-            Progress (%)
-            <input type="number" min="0" max="100" step="0.1" className={styles.input} value={form.progressPercent} onChange={e => handleChange('progressPercent', e.target.value)} placeholder="0-100" />
-          </label>
-          <div className={styles.label}>
-            Completion Status
-            <Dropdown
-              value={form.completionStatus}
-              placeholder="Select"
-              options={[
-                { value: 'In Progress', label: 'In Progress' },
-                { value: 'Completed', label: 'Completed' },
-                { value: 'Dropped', label: 'Dropped' },
-                { value: 'On Hold', label: 'On Hold' },
-              ]}
-              onChange={v => handleChange('completionStatus', v)}
-            />
-          </div>
-          <div className={styles.label}>
-            Enrollment Status
-            <Dropdown
-              value={form.enrollmentStatus}
-              placeholder="Select"
-              options={[
-                { value: 'Enrolled', label: 'Enrolled' },
-                { value: 'Not Enrolled', label: 'Not Enrolled' },
-                { value: 'Graduated', label: 'Graduated' },
-                { value: 'Transferred', label: 'Transferred' },
-              ]}
-              onChange={v => handleChange('enrollmentStatus', v)}
-            />
+      {error && <div className={styles.error}>{error}</div>}
+
+      <form onSubmit={handleSubmit}>
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Student Details</h2>
+          <div className={styles.fieldGrid}>
+            <div className={styles.field}>
+              <div className={styles.label}>Resident <span className={styles.required}>*</span></div>
+              <Dropdown
+                value={String(form.residentId)}
+                placeholder="Select resident"
+                options={residents.map(r => ({ value: String(r.residentId), label: r.internalCode }))}
+                onChange={v => handleChange('residentId', v ? Number(v) : '')}
+              />
+            </div>
+            <div className={styles.field}>
+              <div className={styles.label}>Record Date</div>
+              <DatePicker value={form.recordDate} onChange={v => handleChange('recordDate', v)} placeholder="Select date..." />
+            </div>
+            <div className={styles.field}>
+              <div className={styles.label}>Education Level</div>
+              <Dropdown
+                value={form.educationLevel}
+                placeholder="Select"
+                options={[
+                  { value: 'Bridge Program', label: 'Bridge Program' },
+                  { value: 'Secondary Support', label: 'Secondary Support' },
+                  { value: 'Vocational Skills', label: 'Vocational Skills' },
+                  { value: 'Literacy Boost', label: 'Literacy Boost' },
+                  { value: 'Elementary', label: 'Elementary' },
+                  { value: 'High School', label: 'High School' },
+                ]}
+                onChange={v => handleChange('educationLevel', v)}
+              />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>School Name</label>
+              <input className={styles.input} value={form.schoolName} onChange={e => handleChange('schoolName', e.target.value)} placeholder="School name" />
+            </div>
           </div>
         </div>
 
-        <label className={styles.label} style={{ marginTop: '0.75rem' }}>
-          Notes
-          <TextArea className={styles.textarea} rows={3} value={form.notes} onChange={e => handleChange('notes', e.target.value)} placeholder="Additional notes..." />
-        </label>
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Progress & Status</h2>
+          <div className={styles.fieldGrid}>
+            <div className={styles.field}>
+              <label className={styles.label}>Attendance Rate (%)</label>
+              <input type="number" min="0" max="100" step="0.1" className={styles.input} value={form.attendanceRate} onChange={e => handleChange('attendanceRate', e.target.value)} placeholder="0-100" />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Progress (%)</label>
+              <input type="number" min="0" max="100" step="0.1" className={styles.input} value={form.progressPercent} onChange={e => handleChange('progressPercent', e.target.value)} placeholder="0-100" />
+            </div>
+            <div className={styles.field}>
+              <div className={styles.label}>Completion Status</div>
+              <Dropdown
+                value={form.completionStatus}
+                placeholder="Select"
+                options={[
+                  { value: 'In Progress', label: 'In Progress' },
+                  { value: 'Completed', label: 'Completed' },
+                  { value: 'Dropped', label: 'Dropped' },
+                  { value: 'On Hold', label: 'On Hold' },
+                ]}
+                onChange={v => handleChange('completionStatus', v)}
+              />
+            </div>
+            <div className={styles.field}>
+              <div className={styles.label}>Enrollment Status</div>
+              <Dropdown
+                value={form.enrollmentStatus}
+                placeholder="Select"
+                options={[
+                  { value: 'Enrolled', label: 'Enrolled' },
+                  { value: 'Not Enrolled', label: 'Not Enrolled' },
+                  { value: 'Graduated', label: 'Graduated' },
+                  { value: 'Transferred', label: 'Transferred' },
+                ]}
+                onChange={v => handleChange('enrollmentStatus', v)}
+              />
+            </div>
+          </div>
+        </div>
 
-        {error && <p className={styles.error} role="alert">{error}</p>}
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Notes</h2>
+          <div className={`${styles.field} ${styles.fieldFull}`}>
+            <label className={styles.label}>Additional Notes</label>
+            <TextArea className={styles.textarea} rows={3} value={form.notes} onChange={e => handleChange('notes', e.target.value)} placeholder="Additional notes..." />
+          </div>
+        </div>
 
         <div className={styles.actions}>
           <button type="button" className={styles.cancelBtn} onClick={() => navigate(-1)}>Cancel</button>
-          <button type="submit" className={styles.saveBtn} disabled={saving}>
+          <button type="submit" className={styles.submitBtn} disabled={saving}>
             {saving ? 'Saving...' : 'Save Education Record'}
           </button>
         </div>

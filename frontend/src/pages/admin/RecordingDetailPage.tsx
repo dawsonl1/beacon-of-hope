@@ -36,15 +36,15 @@ interface Recording {
 }
 
 const emotionalColor: Record<string, string> = {
-  'Severe Distress': '#A5524D',
-  'Distressed': '#C4756E',
-  'Struggling': '#D48C53',
+  'Severe Distress': '#C0392B',
+  'Distressed': '#D35400',
+  'Struggling': '#E67E22',
   'Unsettled': '#D4A853',
   'Neutral': '#8A8078',
   'Coping': '#7A9E7E',
-  'Stable': '#5A8A5E',
-  'Good': '#4A7A4E',
-  'Thriving': '#3A6A3E',
+  'Stable': '#27AE60',
+  'Good': '#1E8449',
+  'Thriving': '#196F3D',
 };
 
 function getEmotionalStyle(state: string | null) {
@@ -69,6 +69,9 @@ export default function RecordingDetailPage() {
   const [deleting, setDeleting] = useState(false);
 
   const isAdmin = user?.roles.includes('Admin') ?? false;
+  const isStaff = user?.roles.includes('Staff') ?? false;
+  const canEdit = isAdmin || isStaff;
+  const canDelete = isAdmin || isStaff;
 
   useEffect(() => {
     if (!id) return;
@@ -129,7 +132,7 @@ export default function RecordingDetailPage() {
           </div>
         </div>
         <div className={styles.headerActions}>
-          {isAdmin && (
+          {canEdit && (
             <button
               className={styles.editBtn}
               onClick={() => navigate(`/admin/recordings/${id}/edit`)}
@@ -137,7 +140,7 @@ export default function RecordingDetailPage() {
               <Edit3 size={14} /> Edit
             </button>
           )}
-          {isAdmin && (
+          {canDelete && (
             <button className={styles.deleteBtn} onClick={() => setShowDeleteConfirm(true)}>
               <Trash2 size={14} /> Delete
             </button>
