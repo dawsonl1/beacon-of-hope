@@ -451,7 +451,9 @@ export default function HomePage() {
 
   function getQuarterFromEvent(e: React.DragEvent): number {
     const rect = e.currentTarget.getBoundingClientRect();
-    const y = e.clientY - dragOffsetY.current - rect.top;
+    // Clamp offset so grabbing bottom of tall events doesn't break calculation
+    const offset = Math.min(dragOffsetY.current, rect.height * 0.75);
+    const y = e.clientY - offset - rect.top;
     const quarter = Math.round((y / rect.height) * 4);
     return [0, 15, 30, 45][Math.min(Math.max(quarter, 0), 3)];
   }
