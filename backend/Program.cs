@@ -2851,6 +2851,298 @@ app.MapPatch("/api/admin/social/posts/{id}/engagement", async (int id, HttpConte
     return Results.Ok(post);
 }).RequireAuthorization(p => p.RequireRole("Admin"));
 
+// Awareness Dates (Admin only)
+app.MapGet("/api/admin/social/awareness-dates", async (AppDbContext db) =>
+{
+    var dates = await db.AwarenessDates.Where(d => d.IsActive).OrderBy(d => d.DateStart).ToListAsync();
+    return Results.Ok(dates);
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+app.MapPost("/api/admin/social/awareness-dates", async (HttpContext ctx, AppDbContext db) =>
+{
+    var body = await ctx.Request.ReadFromJsonAsync<JsonElement>();
+    if (body.ValueKind == JsonValueKind.Undefined) return Results.BadRequest();
+    var date = new backend.Models.SocialMedia.AwarenessDate
+    {
+        Name = body.TryGetProperty("name", out var n) ? n.GetString() : null,
+        DateStart = body.TryGetProperty("dateStart", out var ds) ? DateOnly.Parse(ds.GetString()!) : null,
+        DateEnd = body.TryGetProperty("dateEnd", out var de) ? DateOnly.Parse(de.GetString()!) : null,
+        Recurrence = body.TryGetProperty("recurrence", out var r) ? r.GetString() : null,
+        PillarEmphasis = body.TryGetProperty("pillarEmphasis", out var pe) ? pe.GetString() : null,
+        Description = body.TryGetProperty("description", out var d) ? d.GetString() : null,
+        CreatedAt = DateTime.UtcNow
+    };
+    db.AwarenessDates.Add(date);
+    await db.SaveChangesAsync();
+    return Results.Created($"/api/admin/social/awareness-dates/{date.AwarenessDateId}", date);
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+app.MapPut("/api/admin/social/awareness-dates/{id}", async (int id, HttpContext ctx, AppDbContext db) =>
+{
+    var date = await db.AwarenessDates.FindAsync(id);
+    if (date == null) return Results.NotFound();
+    var body = await ctx.Request.ReadFromJsonAsync<JsonElement>();
+    if (body.ValueKind == JsonValueKind.Undefined) return Results.BadRequest();
+    if (body.TryGetProperty("name", out var n)) date.Name = n.GetString();
+    if (body.TryGetProperty("dateStart", out var ds)) date.DateStart = DateOnly.Parse(ds.GetString()!);
+    if (body.TryGetProperty("dateEnd", out var de)) date.DateEnd = DateOnly.Parse(de.GetString()!);
+    if (body.TryGetProperty("recurrence", out var r)) date.Recurrence = r.GetString();
+    if (body.TryGetProperty("pillarEmphasis", out var pe)) date.PillarEmphasis = pe.GetString();
+    if (body.TryGetProperty("description", out var d)) date.Description = d.GetString();
+    await db.SaveChangesAsync();
+    return Results.Ok(date);
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+app.MapDelete("/api/admin/social/awareness-dates/{id}", async (int id, AppDbContext db) =>
+{
+    var date = await db.AwarenessDates.FindAsync(id);
+    if (date == null) return Results.NotFound();
+    db.AwarenessDates.Remove(date);
+    await db.SaveChangesAsync();
+    return Results.NoContent();
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+// CTA Config (Admin only)
+app.MapGet("/api/admin/social/cta", async (AppDbContext db) =>
+{
+    var ctas = await db.CtaConfigs.Where(c => c.IsActive).OrderBy(c => c.Priority).ToListAsync();
+    return Results.Ok(ctas);
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+app.MapPost("/api/admin/social/cta", async (HttpContext ctx, AppDbContext db) =>
+{
+    var body = await ctx.Request.ReadFromJsonAsync<JsonElement>();
+    if (body.ValueKind == JsonValueKind.Undefined) return Results.BadRequest();
+    var cta = new backend.Models.SocialMedia.CtaConfig
+    {
+        Title = body.TryGetProperty("title", out var t) ? t.GetString() : null,
+        Description = body.TryGetProperty("description", out var d) ? d.GetString() : null,
+        GoalAmount = body.TryGetProperty("goalAmount", out var ga) ? ga.GetDecimal() : null,
+        CurrentAmount = body.TryGetProperty("currentAmount", out var ca) ? ca.GetDecimal() : null,
+        Url = body.TryGetProperty("url", out var u) ? u.GetString() : null,
+        Priority = body.TryGetProperty("priority", out var p) ? p.GetInt32() : 0,
+        CreatedAt = DateTime.UtcNow
+    };
+    db.CtaConfigs.Add(cta);
+    await db.SaveChangesAsync();
+    return Results.Created($"/api/admin/social/cta/{cta.CtaConfigId}", cta);
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+app.MapPut("/api/admin/social/cta/{id}", async (int id, HttpContext ctx, AppDbContext db) =>
+{
+    var cta = await db.CtaConfigs.FindAsync(id);
+    if (cta == null) return Results.NotFound();
+    var body = await ctx.Request.ReadFromJsonAsync<JsonElement>();
+    if (body.ValueKind == JsonValueKind.Undefined) return Results.BadRequest();
+    if (body.TryGetProperty("title", out var t)) cta.Title = t.GetString();
+    if (body.TryGetProperty("description", out var d)) cta.Description = d.GetString();
+    if (body.TryGetProperty("goalAmount", out var ga)) cta.GoalAmount = ga.GetDecimal();
+    if (body.TryGetProperty("currentAmount", out var ca)) cta.CurrentAmount = ca.GetDecimal();
+    if (body.TryGetProperty("url", out var u)) cta.Url = u.GetString();
+    if (body.TryGetProperty("priority", out var p)) cta.Priority = p.GetInt32();
+    if (body.TryGetProperty("isActive", out var ia)) cta.IsActive = ia.GetBoolean();
+    cta.UpdatedAt = DateTime.UtcNow;
+    await db.SaveChangesAsync();
+    return Results.Ok(cta);
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+app.MapDelete("/api/admin/social/cta/{id}", async (int id, AppDbContext db) =>
+{
+    var cta = await db.CtaConfigs.FindAsync(id);
+    if (cta == null) return Results.NotFound();
+    db.CtaConfigs.Remove(cta);
+    await db.SaveChangesAsync();
+    return Results.NoContent();
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+// Milestone Rules (Admin only)
+app.MapGet("/api/admin/social/milestone-rules", async (AppDbContext db) =>
+{
+    var rules = await db.MilestoneRules.OrderBy(r => r.Name).ToListAsync();
+    return Results.Ok(rules);
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+app.MapPost("/api/admin/social/milestone-rules", async (HttpContext ctx, AppDbContext db) =>
+{
+    var body = await ctx.Request.ReadFromJsonAsync<JsonElement>();
+    if (body.ValueKind == JsonValueKind.Undefined) return Results.BadRequest();
+    var rule = new backend.Models.SocialMedia.MilestoneRule
+    {
+        Name = body.TryGetProperty("name", out var n) ? n.GetString() : null,
+        MetricName = body.TryGetProperty("metricName", out var mn) ? mn.GetString() : null,
+        ThresholdType = body.TryGetProperty("thresholdType", out var tt) ? tt.GetString() : null,
+        ThresholdValue = body.TryGetProperty("thresholdValue", out var tv) ? tv.GetDecimal() : null,
+        CooldownDays = body.TryGetProperty("cooldownDays", out var cd) ? cd.GetInt32() : 7,
+        PostTemplate = body.TryGetProperty("postTemplate", out var pt) ? pt.GetString() : null,
+        CreatedAt = DateTime.UtcNow
+    };
+    db.MilestoneRules.Add(rule);
+    await db.SaveChangesAsync();
+    return Results.Created($"/api/admin/social/milestone-rules/{rule.MilestoneRuleId}", rule);
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+app.MapPut("/api/admin/social/milestone-rules/{id}", async (int id, HttpContext ctx, AppDbContext db) =>
+{
+    var rule = await db.MilestoneRules.FindAsync(id);
+    if (rule == null) return Results.NotFound();
+    var body = await ctx.Request.ReadFromJsonAsync<JsonElement>();
+    if (body.ValueKind == JsonValueKind.Undefined) return Results.BadRequest();
+    if (body.TryGetProperty("name", out var n)) rule.Name = n.GetString();
+    if (body.TryGetProperty("metricName", out var mn)) rule.MetricName = mn.GetString();
+    if (body.TryGetProperty("thresholdType", out var tt)) rule.ThresholdType = tt.GetString();
+    if (body.TryGetProperty("thresholdValue", out var tv)) rule.ThresholdValue = tv.GetDecimal();
+    if (body.TryGetProperty("cooldownDays", out var cd)) rule.CooldownDays = cd.GetInt32();
+    if (body.TryGetProperty("postTemplate", out var pt)) rule.PostTemplate = pt.GetString();
+    if (body.TryGetProperty("isActive", out var ia)) rule.IsActive = ia.GetBoolean();
+    rule.UpdatedAt = DateTime.UtcNow;
+    await db.SaveChangesAsync();
+    return Results.Ok(rule);
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+app.MapDelete("/api/admin/social/milestone-rules/{id}", async (int id, AppDbContext db) =>
+{
+    var rule = await db.MilestoneRules.FindAsync(id);
+    if (rule == null) return Results.NotFound();
+    db.MilestoneRules.Remove(rule);
+    await db.SaveChangesAsync();
+    return Results.NoContent();
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+// Media Library (Admin can browse/delete, Staff can upload)
+app.MapGet("/api/admin/social/media", async (string? activityType, AppDbContext db) =>
+{
+    var query = db.MediaLibraryItems.Where(m => m.ConsentConfirmed);
+    if (!string.IsNullOrEmpty(activityType)) query = query.Where(m => m.ActivityType == activityType);
+    var items = await query.OrderByDescending(m => m.UploadedAt).ToListAsync();
+    return Results.Ok(items);
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+app.MapPost("/api/admin/social/media", async (HttpContext ctx, AppDbContext db, UserManager<ApplicationUser> userManager) =>
+{
+    var body = await ctx.Request.ReadFromJsonAsync<JsonElement>();
+    if (body.ValueKind == JsonValueKind.Undefined) return Results.BadRequest();
+    bool consent = body.TryGetProperty("consentConfirmed", out var cc) && cc.GetBoolean();
+    if (!consent) return Results.BadRequest(new { error = "Consent confirmation is required." });
+    var user = await userManager.GetUserAsync(ctx.User);
+    var item = new backend.Models.SocialMedia.MediaLibraryItem
+    {
+        FilePath = body.TryGetProperty("filePath", out var fp) ? fp.GetString() : null,
+        ThumbnailPath = body.TryGetProperty("thumbnailPath", out var tp) ? tp.GetString() : null,
+        Caption = body.TryGetProperty("caption", out var cap) ? cap.GetString() : null,
+        ActivityType = body.TryGetProperty("activityType", out var at2) ? at2.GetString() : null,
+        ConsentConfirmed = true,
+        UploadedBy = user?.Email,
+        UploadedAt = DateTime.UtcNow
+    };
+    db.MediaLibraryItems.Add(item);
+    await db.SaveChangesAsync();
+    return Results.Created($"/api/admin/social/media/{item.MediaLibraryItemId}", item);
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+app.MapDelete("/api/admin/social/media/{id}", async (int id, AppDbContext db) =>
+{
+    var item = await db.MediaLibraryItems.FindAsync(id);
+    if (item == null) return Results.NotFound();
+    db.MediaLibraryItems.Remove(item);
+    await db.SaveChangesAsync();
+    return Results.NoContent();
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+// Staff photo upload (accessible to all authenticated staff)
+app.MapPost("/api/social/media/upload", async (HttpContext ctx, AppDbContext db, UserManager<ApplicationUser> userManager) =>
+{
+    var body = await ctx.Request.ReadFromJsonAsync<JsonElement>();
+    if (body.ValueKind == JsonValueKind.Undefined) return Results.BadRequest();
+    bool consent = body.TryGetProperty("consentConfirmed", out var cc) && cc.GetBoolean();
+    if (!consent) return Results.BadRequest(new { error = "Consent confirmation is required." });
+    var user = await userManager.GetUserAsync(ctx.User);
+    var item = new backend.Models.SocialMedia.MediaLibraryItem
+    {
+        FilePath = body.TryGetProperty("filePath", out var fp) ? fp.GetString() : null,
+        ThumbnailPath = body.TryGetProperty("thumbnailPath", out var tp) ? tp.GetString() : null,
+        Caption = body.TryGetProperty("caption", out var cap) ? cap.GetString() : null,
+        ActivityType = body.TryGetProperty("activityType", out var at2) ? at2.GetString() : null,
+        ConsentConfirmed = true,
+        UploadedBy = user?.Email,
+        UploadedAt = DateTime.UtcNow
+    };
+    db.MediaLibraryItems.Add(item);
+    await db.SaveChangesAsync();
+    return Results.Created($"/api/social/media/upload/{item.MediaLibraryItemId}", item);
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
+
+// Content Fact Candidates (Admin only)
+app.MapGet("/api/admin/social/fact-candidates", async (string? status, AppDbContext db) =>
+{
+    var query = db.ContentFactCandidates.AsQueryable();
+    if (!string.IsNullOrEmpty(status)) query = query.Where(c => c.Status == status);
+    var candidates = await query.OrderByDescending(c => c.CreatedAt).ToListAsync();
+    return Results.Ok(candidates);
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+app.MapGet("/api/admin/social/fact-candidates/{id}", async (int id, AppDbContext db) =>
+{
+    var candidate = await db.ContentFactCandidates.FindAsync(id);
+    return candidate == null ? Results.NotFound() : Results.Ok(candidate);
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+app.MapPost("/api/admin/social/fact-candidates", async (HttpContext ctx, AppDbContext db) =>
+{
+    var body = await ctx.Request.ReadFromJsonAsync<JsonElement>();
+    if (body.ValueKind == JsonValueKind.Undefined) return Results.BadRequest();
+    var candidate = new backend.Models.SocialMedia.ContentFactCandidate
+    {
+        FactText = body.TryGetProperty("factText", out var ft) ? ft.GetString() : null,
+        SourceName = body.TryGetProperty("sourceName", out var sn) ? sn.GetString() : null,
+        SourceUrl = body.TryGetProperty("sourceUrl", out var su) ? su.GetString() : null,
+        Category = body.TryGetProperty("category", out var c) ? c.GetString() : null,
+        SearchQuery = body.TryGetProperty("searchQuery", out var sq) ? sq.GetString() : null,
+        Status = "pending",
+        CreatedAt = DateTime.UtcNow
+    };
+    db.ContentFactCandidates.Add(candidate);
+    await db.SaveChangesAsync();
+    return Results.Created($"/api/admin/social/fact-candidates/{candidate.ContentFactCandidateId}", candidate);
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+app.MapPatch("/api/admin/social/fact-candidates/{id}/approve", async (int id, HttpContext ctx, AppDbContext db, UserManager<ApplicationUser> userManager) =>
+{
+    var candidate = await db.ContentFactCandidates.FindAsync(id);
+    if (candidate == null) return Results.NotFound();
+    var user = await userManager.GetUserAsync(ctx.User);
+    var body = await ctx.Request.ReadFromJsonAsync<JsonElement>();
+    string? pillar = body.ValueKind != JsonValueKind.Undefined && body.TryGetProperty("pillar", out var p) ? p.GetString() : "the_problem";
+    candidate.Status = "approved";
+    candidate.ReviewedBy = user?.Email;
+    candidate.ReviewedAt = DateTime.UtcNow;
+    // Create a new content fact from the approved candidate
+    var fact = new backend.Models.SocialMedia.ContentFact
+    {
+        FactText = candidate.FactText,
+        SourceName = candidate.SourceName,
+        SourceUrl = candidate.SourceUrl,
+        Category = candidate.Category,
+        Pillar = pillar,
+        AddedBy = user?.Email,
+        AddedAt = DateTime.UtcNow
+    };
+    db.ContentFacts.Add(fact);
+    await db.SaveChangesAsync();
+    return Results.Ok(candidate);
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
+app.MapPatch("/api/admin/social/fact-candidates/{id}/reject", async (int id, HttpContext ctx, AppDbContext db, UserManager<ApplicationUser> userManager) =>
+{
+    var candidate = await db.ContentFactCandidates.FindAsync(id);
+    if (candidate == null) return Results.NotFound();
+    var user = await userManager.GetUserAsync(ctx.User);
+    candidate.Status = "rejected";
+    candidate.ReviewedBy = user?.Email;
+    candidate.ReviewedAt = DateTime.UtcNow;
+    await db.SaveChangesAsync();
+    return Results.Ok(candidate);
+}).RequireAuthorization(p => p.RequireRole("Admin"));
+
 // Calendar view — returns scheduled + ready_to_publish posts ordered by scheduled time
 app.MapGet("/api/admin/social/calendar", async (AppDbContext db) =>
 {
