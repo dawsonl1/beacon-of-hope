@@ -854,13 +854,9 @@ export default function HomePage() {
                         )}
                         <button
                           className={styles.completeBtn}
-                          onClick={e => {
-                            e.stopPropagation();
-                            if (task.residentId) navigate(`/admin/caseload/${task.residentId}`);
-                            else handleTaskAction(task.staffTaskId, 'Completed');
-                          }}
+                          onClick={e => { e.stopPropagation(); handleTaskAction(task.staffTaskId, 'Completed'); }}
                         >
-                          <CheckCircle size={12} /> {task.residentId ? 'View' : 'Done'}
+                          <CheckCircle size={12} /> Done
                         </button>
                         <button className={styles.snoozeBtn} onClick={e => { e.stopPropagation(); handleTaskAction(task.staffTaskId, 'Snoozed', 30); }}>
                           <Clock size={12} />
