@@ -53,6 +53,35 @@ public class PostReadinessJob : BackgroundService
                     _logger.LogInformation("PostReadinessJob: {Ready} posts moved to ready, {Snoozed} snoozes expired.",
                         readyPosts.Count, expiredSnoozes.Count);
                 }
+
+                // Send email notification if posts are ready
+                if (readyPosts.Count > 0)
+                {
+                    try
+                    {
+                        var emailService = scope.ServiceProvider.GetRequiredService<IEmailNotificationService>();
+                        await emailService.SendPostReadyNotification(readyPosts.Count);
+                    }
+                    catch (Exception emailEx)
+                    {
+                        _logger.LogWarning(emailEx, "Failed to send post-ready email notification.");
+                    }
+                }
+
+                // Check for published posts missing engagement data (48+ hours)
+                var cutoff = now.AddHours(-48);
+                var needsEngagement = await db.AutomatedPosts
+                    .CountAsync(p => p.Status == "published" && p.UpdatedAt <= cutoff
+                        && p.EngagementLikes == null, stoppingToken);
+                if (needsEngagement > 0)
+                {
+                    try
+                    {
+                        var emailService = scope.ServiceProvider.GetRequiredService<IEmailNotificationService>();
+                        await emailService.SendEngagementReminder(needsEngagement);
+                    }
+                    catch { /* non-critical */ }
+                }
             }
             catch (Exception ex)
             {

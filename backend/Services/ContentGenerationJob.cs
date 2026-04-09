@@ -44,6 +44,13 @@ public class ContentGenerationJob : BackgroundService
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Content generation failed. Will retry next cycle.");
+                try
+                {
+                    using var scope = _services.CreateScope();
+                    var emailService = scope.ServiceProvider.GetRequiredService<IEmailNotificationService>();
+                    await emailService.SendGenerationFailedNotification(ex.Message);
+                }
+                catch { /* email failure shouldn't prevent retry */ }
                 await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
             }
         }

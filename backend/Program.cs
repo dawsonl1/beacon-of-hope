@@ -78,10 +78,12 @@ builder.Services.AddCors(options =>
 
 StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
-// Register social media background jobs
+// Register social media services and background jobs
+builder.Services.AddSingleton<backend.Services.IEmailNotificationService, backend.Services.EmailNotificationService>();
 builder.Services.AddHostedService<backend.Services.ContentGenerationJob>();
 builder.Services.AddHostedService<backend.Services.PostReadinessJob>();
 builder.Services.AddHostedService<backend.Services.MilestoneEvaluationJob>();
+builder.Services.AddHostedService<backend.Services.DataRetentionJob>();
 
 var app = builder.Build();
 
