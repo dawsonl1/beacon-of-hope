@@ -12,10 +12,11 @@ public static class IncidentEndpoints
     {
         // ── Incident Management ─────────────────────────────────────
 
-        app.MapGet("/api/admin/incidents", async (AppDbContext db, int? safehouseId, int? residentId, string? severity, bool? resolved, int page = 1, int pageSize = 20) =>
+        app.MapGet("/api/admin/incidents", async (HttpContext httpContext, AppDbContext db, int? safehouseId, int? residentId, string? severity, bool? resolved, int page = 1, int pageSize = 20) =>
         {
+            var allowed = await SafehouseAuth.GetAllowedSafehouseIds(httpContext, db);
             var query = db.IncidentReports.AsQueryable();
-            if (safehouseId.HasValue) query = query.Where(i => i.SafehouseId == safehouseId.Value);
+            query = SafehouseAuth.ApplyIncidentFilter(query, allowed, safehouseId);
             if (residentId.HasValue) query = query.Where(i => i.ResidentId == residentId.Value);
             if (!string.IsNullOrEmpty(severity)) query = query.Where(i => i.Severity == severity);
             if (resolved.HasValue) query = query.Where(i => i.Resolved == resolved.Value);
@@ -117,10 +118,11 @@ public static class IncidentEndpoints
             return Results.Ok(new { claimed = true });
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
-        app.MapGet("/api/admin/residents/unclaimed", async (AppDbContext db, int? safehouseId) =>
+        app.MapGet("/api/admin/residents/unclaimed", async (HttpContext httpContext, AppDbContext db, int? safehouseId) =>
         {
+            var allowed = await SafehouseAuth.GetAllowedSafehouseIds(httpContext, db);
             var query = db.Residents.Where(r => r.AssignedSocialWorker == null || r.AssignedSocialWorker == "").Where(r => r.CaseStatus == "Active");
-            if (safehouseId.HasValue) query = query.Where(r => r.SafehouseId == safehouseId.Value);
+            query = SafehouseAuth.ApplyResidentFilter(query, allowed, safehouseId);
             var items = await query.OrderByDescending(r => r.DateOfAdmission)
                 .Select(r => new { r.ResidentId, r.InternalCode, r.CaseControlNo, r.SafehouseId, safehouse = r.Safehouse != null ? r.Safehouse.Name : null, r.CaseCategory, r.CurrentRiskLevel, r.DateOfAdmission })
                 .ToListAsync();

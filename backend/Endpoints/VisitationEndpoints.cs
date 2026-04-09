@@ -10,6 +10,7 @@ public static class VisitationEndpoints
     public static void MapVisitationEndpoints(this WebApplication app)
     {
         app.MapGet("/api/admin/visitations", async (
+            HttpContext httpContext,
             AppDbContext db,
             int? residentId,
             string? visitType,
@@ -19,7 +20,11 @@ public static class VisitationEndpoints
         {
             if (pageSize > 100) pageSize = 100;
 
+            var allowed = await SafehouseAuth.GetAllowedSafehouseIds(httpContext, db);
             var query = db.HomeVisitations.AsQueryable();
+
+            if (allowed != null)
+                query = query.Where(v => db.Residents.Any(r => r.ResidentId == v.ResidentId && r.SafehouseId.HasValue && allowed.Contains(r.SafehouseId.Value)));
 
             if (residentId.HasValue)
                 query = query.Where(v => v.ResidentId == residentId.Value);
@@ -123,11 +128,16 @@ public static class VisitationEndpoints
 
         // ── Conferences ──────────────────────────────────────────
 
-        app.MapGet("/api/admin/conferences", async (AppDbContext db) =>
+        app.MapGet("/api/admin/conferences", async (HttpContext httpContext, AppDbContext db) =>
         {
+            var allowed = await SafehouseAuth.GetAllowedSafehouseIds(httpContext, db);
             var now = AppConstants.DataCutoff;
 
-            var upcoming = await db.InterventionPlans
+            var plansQuery = db.InterventionPlans.AsQueryable();
+            if (allowed != null)
+                plansQuery = plansQuery.Where(p => db.Residents.Any(r => r.ResidentId == p.ResidentId && r.SafehouseId.HasValue && allowed.Contains(r.SafehouseId.Value)));
+
+            var upcoming = await plansQuery
                 .Where(p => p.CaseConferenceDate != null && p.CaseConferenceDate > now)
                 .OrderBy(p => p.CaseConferenceDate)
                 .Take(50)
@@ -146,7 +156,7 @@ public static class VisitationEndpoints
                 })
                 .ToListAsync();
 
-            var past = await db.InterventionPlans
+            var past = await plansQuery
                 .Where(p => p.CaseConferenceDate != null && p.CaseConferenceDate <= now)
                 .OrderByDescending(p => p.CaseConferenceDate)
                 .Take(50)

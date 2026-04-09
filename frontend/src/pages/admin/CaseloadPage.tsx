@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, Plus, ChevronUp, ChevronDown, X, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
+import { useSafehouse } from '../../contexts/SafehouseContext';
 import Pagination from '../../components/admin/Pagination';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './CaseloadPage.module.css';
@@ -31,7 +32,6 @@ interface PagedResult {
 
 interface FilterOptions {
   caseStatuses: string[];
-  safehouses: { safehouseId: number; label: string }[];
   categories: string[];
   riskLevels: string[];
   socialWorkers: string[];
@@ -60,6 +60,7 @@ function statusClass(status: string | null): string {
 export default function CaseloadPage() {
   useDocumentTitle('Caseload');
   const { user } = useAuth();
+  const { activeSafehouseId } = useSafehouse();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const canManageResidents = user?.roles?.some(r => r === 'Admin' || r === 'Staff') ?? false;
@@ -73,7 +74,6 @@ export default function CaseloadPage() {
   const page = parseInt(searchParams.get('page') || '1', 10);
   const search = searchParams.get('search') || '';
   const caseStatus = searchParams.get('caseStatus') || '';
-  const safehouseId = searchParams.get('safehouseId') || '';
   const caseCategory = searchParams.get('caseCategory') || '';
   const riskLevel = searchParams.get('riskLevel') || '';
   const sortBy = searchParams.get('sortBy') || '';
@@ -118,7 +118,7 @@ export default function CaseloadPage() {
     params.set('pageSize', '20');
     if (search) params.set('search', search);
     if (caseStatus) params.set('caseStatus', caseStatus);
-    if (safehouseId) params.set('safehouseId', safehouseId);
+    if (activeSafehouseId) params.set('safehouseId', String(activeSafehouseId));
     if (caseCategory) params.set('caseCategory', caseCategory);
     if (riskLevel) params.set('riskLevel', riskLevel);
     if (sortBy) params.set('sortBy', sortBy);
@@ -128,7 +128,7 @@ export default function CaseloadPage() {
       .then(setData)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [page, search, caseStatus, safehouseId, caseCategory, riskLevel, sortBy, sortDir]);
+  }, [page, search, caseStatus, activeSafehouseId, caseCategory, riskLevel, sortBy, sortDir]);
 
   function handleSort(col: string) {
     if (sortBy === col) {
@@ -149,7 +149,7 @@ export default function CaseloadPage() {
     updateParams({ [key]: '', page: '1' });
   }
 
-  const hasFilters = !!(caseStatus || safehouseId || caseCategory || riskLevel);
+  const hasFilters = !!(caseStatus || caseCategory || riskLevel);
 
   return (
     <div className={styles.page}>
@@ -203,16 +203,6 @@ export default function CaseloadPage() {
           </select>
           <select
             className={styles.filterSelect}
-            value={safehouseId}
-            onChange={(e) => updateParams({ safehouseId: e.target.value, page: '1' })}
-          >
-            <option value="">All Safehouses</option>
-            {filterOptions?.safehouses.map((s) => (
-              <option key={s.safehouseId} value={String(s.safehouseId)}>{s.label}</option>
-            ))}
-          </select>
-          <select
-            className={styles.filterSelect}
             value={caseCategory}
             onChange={(e) => updateParams({ caseCategory: e.target.value, page: '1' })}
           >
@@ -243,12 +233,6 @@ export default function CaseloadPage() {
               <button onClick={() => clearFilter('caseStatus')} className={styles.chipClose}><X size={12} /></button>
             </span>
           )}
-          {safehouseId && (
-            <span className={styles.chip}>
-              Safehouse: {filterOptions?.safehouses.find(s => String(s.safehouseId) === safehouseId)?.label ?? safehouseId}
-              <button onClick={() => clearFilter('safehouseId')} className={styles.chipClose}><X size={12} /></button>
-            </span>
-          )}
           {caseCategory && (
             <span className={styles.chip}>
               Category: {caseCategory}
@@ -263,7 +247,7 @@ export default function CaseloadPage() {
           )}
           <button
             className={styles.clearAllBtn}
-            onClick={() => updateParams({ caseStatus: '', safehouseId: '', caseCategory: '', riskLevel: '', page: '1' })}
+            onClick={() => updateParams({ caseStatus: '', caseCategory: '', riskLevel: '', page: '1' })}
           >
             Clear all
           </button>
