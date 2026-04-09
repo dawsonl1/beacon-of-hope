@@ -47,9 +47,7 @@
   transition: all 0.2s;
 }
 
-.navBtn:hover {
-  background: rgba(15, 27, 45, 0.03);
-}
+.navBtn:hover { background: rgba(15, 27, 45, 0.03); }
 
 .todayBtn {
   font-size: 0.78rem;
@@ -64,9 +62,7 @@
   transition: all 0.2s;
 }
 
-.todayBtn:hover {
-  background: rgba(15, 143, 125, 0.12);
-}
+.todayBtn:hover { background: rgba(15, 143, 125, 0.12); }
 
 .dateLabel {
   font-size: 1rem;
@@ -136,69 +132,14 @@
 .spinner { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── Moving indicator banner ───────────────────────────── */
-.movingBanner {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.6rem 1rem;
-  margin-bottom: 0.75rem;
-  background: rgba(15, 143, 125, 0.08);
-  border: 1px solid rgba(15, 143, 125, 0.2);
-  border-radius: 10px;
-  font-size: 0.82rem;
-  color: var(--text-strong);
-  animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.movingHint {
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  flex: 1;
-}
-
-.movingCancel {
-  font-size: 0.75rem;
-  font-weight: 600;
-  font-family: var(--font-body);
-  color: var(--text-muted);
-  background: #fff;
-  border: 1px solid rgba(15, 27, 45, 0.1);
-  border-radius: 6px;
-  padding: 0.25rem 0.6rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.movingCancel:hover {
-  background: rgba(15, 27, 45, 0.04);
-}
-
-/* ── Unscheduled / To Do queue ─────────────────────────── */
+/* ── To Do queue ───────────────────────────────────────── */
 .unscheduledSection {
   margin-bottom: 1rem;
   padding: 0.75rem;
-  border: 2px dashed rgba(15, 27, 45, 0.1);
+  border: 2px dashed rgba(15, 27, 45, 0.12);
   border-radius: 10px;
-  transition: border-color 0.2s, background 0.2s;
   min-height: 52px;
-}
-
-.dropZoneActive {
-  border-color: var(--color-sage);
-  background: rgba(15, 143, 125, 0.04);
-  cursor: pointer;
-}
-
-.dropZoneHint {
-  font-weight: 400;
-  color: var(--color-sage);
-  font-size: 0.72rem;
+  transition: border-color 0.15s, background 0.15s;
 }
 
 .sectionLabel {
@@ -216,32 +157,13 @@
   gap: 0.5rem;
 }
 
-.unscheduledCard {
-  background: #fff;
-  border: 1px dashed rgba(15, 143, 125, 0.3);
-  border-radius: 8px;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  user-select: none;
-}
-
-.unscheduledCard:hover {
-  border-color: var(--color-sage);
-  background: rgba(15, 143, 125, 0.03);
-}
-
 .unscheduledEmpty {
   font-size: 0.78rem;
   color: var(--text-muted);
   padding: 0.25rem 0;
 }
 
-/* ── Day view grid ───────────────────────────────────────── */
+/* ── Day grid ──────────────────────────────────────────── */
 .dayGrid {
   background: #fff;
   border: 1px solid rgba(15, 27, 45, 0.08);
@@ -253,24 +175,11 @@
   display: flex;
   border-bottom: 1px solid rgba(15, 27, 45, 0.06);
   min-height: 42px;
-  transition: background 0.15s;
+  transition: background 0.1s;
 }
 
 .halfHourSlot {
   border-bottom: 1px dashed rgba(15, 27, 45, 0.03);
-}
-
-.timeSlot:hover {
-  background: rgba(15, 143, 125, 0.02);
-}
-
-/* When in moving mode, slots become clickable targets */
-.slotClickable {
-  cursor: pointer;
-}
-
-.slotClickable:hover {
-  background: rgba(15, 143, 125, 0.1) !important;
 }
 
 .timeLabel {
@@ -293,20 +202,7 @@
   align-items: center;
 }
 
-/* Time hint shown in each slot during move mode */
-.slotTimeHint {
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: rgba(15, 143, 125, 0.5);
-  pointer-events: none;
-  min-width: 50px;
-}
-
-.slotClickable:hover .slotTimeHint {
-  color: var(--color-sage);
-}
-
-/* ── Event chips ─────────────────────────────────────────── */
+/* ── Event chips ───────────────────────────────────────── */
 .eventChip {
   display: inline-flex;
   align-items: center;
@@ -316,35 +212,23 @@
   padding: 0.25rem 0.55rem;
   border-radius: 6px;
   cursor: pointer;
-  transition: filter 0.2s, box-shadow 0.2s;
+  transition: filter 0.2s;
   white-space: nowrap;
   user-select: none;
 }
 
 .eventChip:hover { filter: brightness(0.95); }
 
-.eventMovable {
-  cursor: pointer;
+.draggableChip {
+  cursor: grab;
 }
 
-.eventMovable:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Pulsing ring on the currently selected/moving event */
-.eventMoving {
-  outline: 2px solid var(--color-sage);
-  outline-offset: 2px;
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { outline-color: var(--color-sage); }
-  50% { outline-color: rgba(15, 143, 125, 0.3); }
+.draggableChip:active {
+  cursor: grabbing;
 }
 
 .gripIcon {
-  opacity: 0.4;
+  opacity: 0.35;
   flex-shrink: 0;
 }
 
@@ -359,7 +243,7 @@
 .eventPostPlacementVisit { background: rgba(41, 128, 185, 0.12); color: #2980b9; }
 .eventCompleted { opacity: 0.5; text-decoration: line-through; }
 
-/* ── Week view ───────────────────────────────────────────── */
+/* ── Week view ─────────────────────────────────────────── */
 .weekGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -385,15 +269,8 @@
   border-bottom: 1px solid rgba(15, 27, 45, 0.06);
 }
 
-.weekDayToday {
-  composes: weekDay;
-  border-color: var(--color-sage);
-}
-
-.weekDayHeaderToday {
-  composes: weekDayHeader;
-  color: var(--color-sage);
-}
+.weekDayToday { composes: weekDay; border-color: var(--color-sage); }
+.weekDayHeaderToday { composes: weekDayHeader; color: var(--color-sage); }
 
 .weekEventList {
   display: flex;
@@ -401,7 +278,7 @@
   gap: 0.3rem;
 }
 
-/* ── Event detail modal ──────────────────────────────────── */
+/* ── Modals ────────────────────────────────────────────── */
 .modalOverlay {
   position: fixed;
   inset: 0;
@@ -465,15 +342,8 @@
 
 .modalBtnPrimary:hover { filter: brightness(1.08); }
 
-/* ── New event form ──────────────────────────────────────── */
-.formOverlay {
-  composes: modalOverlay;
-}
-
-.formModal {
-  composes: modal;
-  max-width: 500px;
-}
+.formOverlay { composes: modalOverlay; }
+.formModal { composes: modal; max-width: 500px; }
 
 .formGrid {
   display: grid;
@@ -504,9 +374,7 @@
   outline-offset: 1px;
 }
 
-.formFull {
-  grid-column: 1 / -1;
-}
+.formFull { grid-column: 1 / -1; }
 
 .formActions {
   display: flex;
