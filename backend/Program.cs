@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 using Stripe.Checkout;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 using backend.Data;
 using backend.Models;
 
@@ -2618,7 +2620,7 @@ app.MapGet("/api/admin/social/facts", async (AppDbContext db) =>
 {
     var facts = await db.ContentFacts.Where(f => f.IsActive).OrderByDescending(f => f.AddedAt).ToListAsync();
     return Results.Ok(facts);
-}).RequireAuthorization(p => p.RequireRole("Admin"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
 app.MapGet("/api/admin/social/facts/{id}", async (int id, AppDbContext db) =>
 {
@@ -2768,21 +2770,22 @@ app.MapDelete("/api/admin/social/hashtag-sets/{id}", async (int id, AppDbContext
 }).RequireAuthorization(p => p.RequireRole("Admin"));
 
 // Automated Posts (Admin only for now — Social Media Manager role added later)
-app.MapGet("/api/admin/social/posts", async (string? status, string? pillar, string? platform, AppDbContext db) =>
+app.MapGet("/api/admin/social/posts", async (string? status, string? pillar, string? platform, int page = 1, int pageSize = 50, AppDbContext db = null!) =>
 {
     var query = db.AutomatedPosts.AsQueryable();
     if (!string.IsNullOrEmpty(status)) query = query.Where(p => p.Status == status);
     if (!string.IsNullOrEmpty(pillar)) query = query.Where(p => p.ContentPillar == pillar);
     if (!string.IsNullOrEmpty(platform)) query = query.Where(p => p.Platform == platform);
-    var posts = await query.OrderByDescending(p => p.CreatedAt).ToListAsync();
+    var total = await query.CountAsync();
+    var posts = await query.OrderByDescending(p => p.CreatedAt).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
     return Results.Ok(posts);
-}).RequireAuthorization(p => p.RequireRole("Admin"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
 app.MapGet("/api/admin/social/posts/{id}", async (int id, AppDbContext db) =>
 {
     var post = await db.AutomatedPosts.FindAsync(id);
     return post == null ? Results.NotFound() : Results.Ok(post);
-}).RequireAuthorization(p => p.RequireRole("Admin"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
 app.MapPost("/api/admin/social/posts", async (HttpContext ctx, AppDbContext db) =>
 {
@@ -2800,7 +2803,7 @@ app.MapPost("/api/admin/social/posts", async (HttpContext ctx, AppDbContext db) 
     db.AutomatedPosts.Add(post);
     await db.SaveChangesAsync();
     return Results.Created($"/api/admin/social/posts/{post.AutomatedPostId}", post);
-}).RequireAuthorization(p => p.RequireRole("Admin"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
 app.MapPatch("/api/admin/social/posts/{id}/approve", async (int id, HttpContext ctx, AppDbContext db, UserManager<ApplicationUser> userManager) =>
 {
@@ -2819,7 +2822,7 @@ app.MapPatch("/api/admin/social/posts/{id}/approve", async (int id, HttpContext 
     post.UpdatedAt = DateTime.UtcNow;
     await db.SaveChangesAsync();
     return Results.Ok(post);
-}).RequireAuthorization(p => p.RequireRole("Admin"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
 app.MapPatch("/api/admin/social/posts/{id}/reject", async (int id, HttpContext ctx, AppDbContext db) =>
 {
@@ -2832,7 +2835,7 @@ app.MapPatch("/api/admin/social/posts/{id}/reject", async (int id, HttpContext c
     post.UpdatedAt = DateTime.UtcNow;
     await db.SaveChangesAsync();
     return Results.Ok(post);
-}).RequireAuthorization(p => p.RequireRole("Admin"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
 app.MapPatch("/api/admin/social/posts/{id}/snooze", async (int id, HttpContext ctx, AppDbContext db) =>
 {
@@ -2845,7 +2848,7 @@ app.MapPatch("/api/admin/social/posts/{id}/snooze", async (int id, HttpContext c
     post.UpdatedAt = DateTime.UtcNow;
     await db.SaveChangesAsync();
     return Results.Ok(post);
-}).RequireAuthorization(p => p.RequireRole("Admin"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
 app.MapPatch("/api/admin/social/posts/{id}/publish", async (int id, AppDbContext db) =>
 {
@@ -2855,7 +2858,7 @@ app.MapPatch("/api/admin/social/posts/{id}/publish", async (int id, AppDbContext
     post.UpdatedAt = DateTime.UtcNow;
     await db.SaveChangesAsync();
     return Results.Ok(post);
-}).RequireAuthorization(p => p.RequireRole("Admin"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
 app.MapPatch("/api/admin/social/posts/{id}/engagement", async (int id, HttpContext ctx, AppDbContext db) =>
 {
@@ -2870,7 +2873,7 @@ app.MapPatch("/api/admin/social/posts/{id}/engagement", async (int id, HttpConte
     post.UpdatedAt = DateTime.UtcNow;
     await db.SaveChangesAsync();
     return Results.Ok(post);
-}).RequireAuthorization(p => p.RequireRole("Admin"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
 // Awareness Dates (Admin only)
 app.MapGet("/api/admin/social/awareness-dates", async (AppDbContext db) =>
@@ -3079,13 +3082,13 @@ app.MapDelete("/api/admin/social/milestone-rules/{id}", async (int id, AppDbCont
 }).RequireAuthorization(p => p.RequireRole("Admin"));
 
 // Media Library (Admin can browse/delete, Staff can upload)
-app.MapGet("/api/admin/social/media", async (string? activityType, AppDbContext db) =>
+app.MapGet("/api/admin/social/media", async (string? activityType, int page = 1, int pageSize = 50, AppDbContext db = null!) =>
 {
     var query = db.MediaLibraryItems.Where(m => m.ConsentConfirmed);
     if (!string.IsNullOrEmpty(activityType)) query = query.Where(m => m.ActivityType == activityType);
-    var items = await query.OrderByDescending(m => m.UploadedAt).ToListAsync();
+    var items = await query.OrderByDescending(m => m.UploadedAt).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
     return Results.Ok(items);
-}).RequireAuthorization(p => p.RequireRole("Admin"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
 app.MapPost("/api/admin/social/media", async (HttpContext ctx, AppDbContext db, UserManager<ApplicationUser> userManager) =>
 {
@@ -3118,20 +3121,79 @@ app.MapDelete("/api/admin/social/media/{id}", async (int id, AppDbContext db) =>
     return Results.NoContent();
 }).RequireAuthorization(p => p.RequireRole("Admin"));
 
-// Staff photo upload (accessible to all authenticated staff)
-app.MapPost("/api/social/media/upload", async (HttpContext ctx, AppDbContext db, UserManager<ApplicationUser> userManager) =>
+// Staff photo upload — accepts multipart form OR JSON (for backwards compat with tests)
+app.MapPost("/api/social/media/upload", async (HttpContext ctx, AppDbContext db, UserManager<ApplicationUser> userManager, IWebHostEnvironment env) =>
 {
-    var body = await ctx.Request.ReadFromJsonAsync<JsonElement>();
-    if (body.ValueKind == JsonValueKind.Undefined) return Results.BadRequest();
-    bool consent = body.TryGetProperty("consentConfirmed", out var cc) && cc.GetBoolean();
-    if (!consent) return Results.BadRequest(new { error = "Consent confirmation is required." });
     var user = await userManager.GetUserAsync(ctx.User);
+    string? caption = null;
+    string? activityType = null;
+    bool consent = false;
+    string? filePath = null;
+    string? thumbnailPath = null;
+
+    if (ctx.Request.HasFormContentType)
+    {
+        // Multipart form upload (real file)
+        var form = await ctx.Request.ReadFormAsync();
+        consent = form["consentConfirmed"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase);
+        if (!consent) return Results.BadRequest(new { error = "Consent confirmation is required." });
+
+        caption = form["caption"].ToString();
+        activityType = form["activityType"].ToString();
+        var file = form.Files.GetFile("photo");
+        if (file == null || file.Length == 0) return Results.BadRequest(new { error = "Photo file is required." });
+        if (file.Length > 10 * 1024 * 1024) return Results.BadRequest(new { error = "Photo must be under 10MB." });
+
+        // Save and compress
+        var mediaDir = Path.Combine(env.WebRootPath ?? Path.Combine(env.ContentRootPath, "wwwroot"), "media", "library");
+        Directory.CreateDirectory(mediaDir);
+        var fileName = $"{Guid.NewGuid()}.jpg";
+        var thumbName = $"thumb_{fileName}";
+        var fullPath = Path.Combine(mediaDir, fileName);
+        var thumbPath = Path.Combine(mediaDir, thumbName);
+
+        using (var image = await SixLabors.ImageSharp.Image.LoadAsync(file.OpenReadStream()))
+        {
+            // Compress to max 1920px wide
+            if (image.Width > 1920)
+                image.Mutate(x => x.Resize(new SixLabors.ImageSharp.Processing.ResizeOptions
+                {
+                    Size = new SixLabors.ImageSharp.Size(1920, 0),
+                    Mode = SixLabors.ImageSharp.Processing.ResizeMode.Max
+                }));
+            await image.SaveAsJpegAsync(fullPath, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder { Quality = 80 });
+
+            // Generate 400px thumbnail
+            image.Mutate(x => x.Resize(new SixLabors.ImageSharp.Processing.ResizeOptions
+            {
+                Size = new SixLabors.ImageSharp.Size(400, 0),
+                Mode = SixLabors.ImageSharp.Processing.ResizeMode.Max
+            }));
+            await image.SaveAsJpegAsync(thumbPath, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder { Quality = 75 });
+        }
+
+        filePath = $"/media/library/{fileName}";
+        thumbnailPath = $"/media/library/{thumbName}";
+    }
+    else
+    {
+        // JSON upload (for tests and backwards compat)
+        var body = await ctx.Request.ReadFromJsonAsync<JsonElement>();
+        if (body.ValueKind == JsonValueKind.Undefined) return Results.BadRequest();
+        consent = body.TryGetProperty("consentConfirmed", out var cc) && cc.GetBoolean();
+        if (!consent) return Results.BadRequest(new { error = "Consent confirmation is required." });
+        filePath = body.TryGetProperty("filePath", out var fp) ? fp.GetString() : null;
+        thumbnailPath = body.TryGetProperty("thumbnailPath", out var tp) ? tp.GetString() : null;
+        caption = body.TryGetProperty("caption", out var capJ) ? capJ.GetString() : null;
+        activityType = body.TryGetProperty("activityType", out var atJ) ? atJ.GetString() : null;
+    }
+
     var item = new backend.Models.SocialMedia.MediaLibraryItem
     {
-        FilePath = body.TryGetProperty("filePath", out var fp) ? fp.GetString() : null,
-        ThumbnailPath = body.TryGetProperty("thumbnailPath", out var tp) ? tp.GetString() : null,
-        Caption = body.TryGetProperty("caption", out var cap) ? cap.GetString() : null,
-        ActivityType = body.TryGetProperty("activityType", out var at2) ? at2.GetString() : null,
+        FilePath = filePath,
+        ThumbnailPath = thumbnailPath,
+        Caption = caption,
+        ActivityType = activityType,
         ConsentConfirmed = true,
         UploadedBy = user?.Email,
         UploadedAt = DateTime.UtcNow
@@ -3139,7 +3201,7 @@ app.MapPost("/api/social/media/upload", async (HttpContext ctx, AppDbContext db,
     db.MediaLibraryItems.Add(item);
     await db.SaveChangesAsync();
     return Results.Created($"/api/social/media/upload/{item.MediaLibraryItemId}", item);
-}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff")).DisableAntiforgery();
 
 // Content Fact Candidates (Admin only)
 app.MapGet("/api/admin/social/fact-candidates", async (string? status, AppDbContext db) =>
@@ -3148,13 +3210,13 @@ app.MapGet("/api/admin/social/fact-candidates", async (string? status, AppDbCont
     if (!string.IsNullOrEmpty(status)) query = query.Where(c => c.Status == status);
     var candidates = await query.OrderByDescending(c => c.CreatedAt).ToListAsync();
     return Results.Ok(candidates);
-}).RequireAuthorization(p => p.RequireRole("Admin"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
 app.MapGet("/api/admin/social/fact-candidates/{id}", async (int id, AppDbContext db) =>
 {
     var candidate = await db.ContentFactCandidates.FindAsync(id);
     return candidate == null ? Results.NotFound() : Results.Ok(candidate);
-}).RequireAuthorization(p => p.RequireRole("Admin"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
 app.MapPost("/api/admin/social/fact-candidates", async (HttpContext ctx, AppDbContext db) =>
 {
@@ -3173,7 +3235,7 @@ app.MapPost("/api/admin/social/fact-candidates", async (HttpContext ctx, AppDbCo
     db.ContentFactCandidates.Add(candidate);
     await db.SaveChangesAsync();
     return Results.Created($"/api/admin/social/fact-candidates/{candidate.ContentFactCandidateId}", candidate);
-}).RequireAuthorization(p => p.RequireRole("Admin"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
 app.MapPatch("/api/admin/social/fact-candidates/{id}/approve", async (int id, HttpContext ctx, AppDbContext db, UserManager<ApplicationUser> userManager) =>
 {
@@ -3199,7 +3261,7 @@ app.MapPatch("/api/admin/social/fact-candidates/{id}/approve", async (int id, Ht
     db.ContentFacts.Add(fact);
     await db.SaveChangesAsync();
     return Results.Ok(candidate);
-}).RequireAuthorization(p => p.RequireRole("Admin"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
 app.MapPatch("/api/admin/social/fact-candidates/{id}/reject", async (int id, HttpContext ctx, AppDbContext db, UserManager<ApplicationUser> userManager) =>
 {
@@ -3211,7 +3273,60 @@ app.MapPatch("/api/admin/social/fact-candidates/{id}/reject", async (int id, Htt
     candidate.ReviewedAt = DateTime.UtcNow;
     await db.SaveChangesAsync();
     return Results.Ok(candidate);
-}).RequireAuthorization(p => p.RequireRole("Admin"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
+
+// Research refresh — proxies to AI harness and saves candidates
+app.MapPost("/api/admin/social/research-refresh", async (HttpContext ctx, AppDbContext db, IConfiguration config, UserManager<ApplicationUser> userManager) =>
+{
+    var harnessUrl = config["AiHarness:Url"] ?? "http://localhost:8001";
+    var harnessKey = config["AiHarness:ApiKey"] ?? "";
+
+    using var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(120) };
+    if (!string.IsNullOrEmpty(harnessKey))
+        httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {harnessKey}");
+
+    var body = await ctx.Request.ReadFromJsonAsync<JsonElement>();
+    var categories = new[] { "trafficking_stats", "rehabilitation", "regional" };
+    if (body.ValueKind != JsonValueKind.Undefined && body.TryGetProperty("categories", out var cats))
+    {
+        categories = cats.EnumerateArray().Select(c => c.GetString()!).ToArray();
+    }
+
+    try
+    {
+        var resp = await httpClient.PostAsJsonAsync($"{harnessUrl}/refresh-facts", new { categories });
+        if (!resp.IsSuccessStatusCode)
+            return Results.StatusCode(503);
+
+        var result = await resp.Content.ReadFromJsonAsync<JsonElement>();
+        if (!result.TryGetProperty("candidates", out var candidatesArr))
+            return Results.Ok(new { saved = 0 });
+
+        var user = await userManager.GetUserAsync(ctx.User);
+        int saved = 0;
+        foreach (var c in candidatesArr.EnumerateArray())
+        {
+            var candidate = new backend.Models.SocialMedia.ContentFactCandidate
+            {
+                FactText = c.TryGetProperty("fact_text", out var ft) ? ft.GetString() : null,
+                SourceName = c.TryGetProperty("source_name", out var sn) ? sn.GetString() : null,
+                SourceUrl = c.TryGetProperty("source_url", out var su) ? su.GetString() : null,
+                Category = c.TryGetProperty("category", out var cat) ? cat.GetString() : null,
+                SearchQuery = "research_refresh",
+                Status = "pending",
+                CreatedAt = DateTime.UtcNow
+            };
+            db.ContentFactCandidates.Add(candidate);
+            saved++;
+        }
+        await db.SaveChangesAsync();
+        return Results.Ok(new { saved });
+    }
+    catch (HttpRequestException)
+    {
+        return Results.StatusCode(503);
+    }
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
 // Calendar view — returns scheduled + ready_to_publish posts ordered by scheduled time
 app.MapGet("/api/admin/social/calendar", async (AppDbContext db) =>
@@ -3221,7 +3336,7 @@ app.MapGet("/api/admin/social/calendar", async (AppDbContext db) =>
         .OrderBy(p => p.ScheduledAt)
         .ToListAsync();
     return Results.Ok(posts);
-}).RequireAuthorization(p => p.RequireRole("Admin"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
 // Queue count — for the nav badge
 app.MapGet("/api/admin/social/queue-count", async (AppDbContext db) =>
@@ -3229,7 +3344,7 @@ app.MapGet("/api/admin/social/queue-count", async (AppDbContext db) =>
     var draftCount = await db.AutomatedPosts.CountAsync(p => p.Status == "draft");
     var readyCount = await db.AutomatedPosts.CountAsync(p => p.Status == "ready_to_publish");
     return Results.Ok(new { draftCount, readyCount });
-}).RequireAuthorization(p => p.RequireRole("Admin"));
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
 // Trigger content generation — calls the Python AI harness
 app.MapPost("/api/admin/social/generate", async (HttpContext ctx, AppDbContext db, IConfiguration config) =>

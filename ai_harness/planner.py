@@ -79,6 +79,18 @@ PLANNER_TOOLS = [
     {
         "type": "function",
         "function": {
+            "name": "get_awareness_dates",
+            "description": "Returns upcoming awareness dates and events in the next N days.",
+            "parameters": {
+                "type": "object",
+                "properties": {"next_days": {"type": "integer", "default": 7}},
+                "required": [],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "get_cta_config",
             "description": "Returns the current highest-priority active call-to-action (fundraising goal or volunteer need).",
             "parameters": {"type": "object", "properties": {}, "required": []},
@@ -93,6 +105,7 @@ TOOL_HANDLERS = {
     "get_scheduled_count": lambda: {"scheduled_count": db.fetch_scheduled_count()},
     "get_unused_photos": lambda limit=10: db.fetch_unused_photos(limit),
     "get_unused_facts": lambda limit=5: db.fetch_unused_facts(limit),
+    "get_awareness_dates": lambda next_days=7: db.fetch_awareness_dates(next_days),
     "get_talking_points": lambda topic=None: db.fetch_talking_points(topic),
     "get_cta_config": lambda: db.fetch_cta_config() or {"error": "No active CTA configured"},
 }

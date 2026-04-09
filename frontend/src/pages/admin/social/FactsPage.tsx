@@ -76,9 +76,8 @@ export default function FactsPage() {
   async function refreshResearch() {
     setRefreshing(true);
     try {
-      // Call the harness via the backend (or directly if wired up)
-      await apiFetch('/api/admin/social/generate', { method: 'POST', body: JSON.stringify({ maxPosts: 0 }) });
-      // For now, just refresh the candidates list
+      await apiFetch('/api/admin/social/research-refresh', { method: 'POST', body: JSON.stringify({ categories: ['trafficking_stats', 'rehabilitation', 'regional'] }) });
+      setTab('candidates');
       fetchAll();
     } finally { setRefreshing(false); }
   }

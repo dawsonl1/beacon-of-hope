@@ -13,7 +13,7 @@ public static class IdentitySeeder
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var env = services.GetRequiredService<IWebHostEnvironment>();
 
-        string[] roles = { "Admin", "Staff", "Donor" };
+        string[] roles = { "Admin", "Staff", "Donor", "SocialMediaManager" };
         foreach (var role in roles)
         {
             if (!await roleManager.RoleExistsAsync(role))
@@ -28,6 +28,8 @@ public static class IdentitySeeder
                 "Elena", "Reyes", "Test1234!@#$", null);
             await CreateUserIfNotExists(userManager, "donor@beaconofhope.org", "Donor",
                 "Maria", "Chen", "Test1234!@#$", 1);
+            await CreateUserIfNotExists(userManager, "social@beaconofhope.org", "SocialMediaManager",
+                "Rosa", "Santos", "Test1234!@#$", null);
         }
     }
 

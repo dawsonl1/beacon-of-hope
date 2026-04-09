@@ -105,6 +105,22 @@ def fetch_pillar_mix(days: int = 14) -> dict:
         return {r["content_pillar"]: r["cnt"] for r in rows}
 
 
+def fetch_awareness_dates(next_days: int = 7) -> list[dict]:
+    with get_engine().connect() as conn:
+        rows = conn.execute(
+            text("""
+                SELECT * FROM awareness_dates
+                WHERE is_active = true
+                  AND (
+                    (date_start <= CURRENT_DATE + INTERVAL ':days days' AND date_end >= CURRENT_DATE)
+                    OR (date_start BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL ':days days')
+                  )
+                ORDER BY date_start
+            """.replace(":days", str(int(next_days)))),
+        ).mappings().all()
+        return [dict(r) for r in rows]
+
+
 def fetch_scheduled_count() -> int:
     with get_engine().connect() as conn:
         row = conn.execute(
