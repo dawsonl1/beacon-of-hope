@@ -74,6 +74,7 @@ export default function IncidentDetailPage() {
   const [tasksLoading, setTasksLoading] = useState(false);
   const [creatingTask, setCreatingTask] = useState(false);
   const [updatingTaskId, setUpdatingTaskId] = useState<number | null>(null);
+  const [togglingResolved, setTogglingResolved] = useState(false);
 
   useEffect(() => {
     apiFetch<IncidentDetail>(`/api/admin/incidents/${id}`)
@@ -114,6 +115,23 @@ export default function IncidentDetailPage() {
       // silently fail
     } finally {
       setUpdatingTaskId(null);
+    }
+  }
+
+  async function toggleResolved() {
+    if (!incident || togglingResolved) return;
+    const newResolved = !incident.resolved;
+    setIncident({ ...incident, resolved: newResolved });
+    setTogglingResolved(true);
+    try {
+      await apiFetch(`/api/admin/incidents/${id}/resolve`, {
+        method: 'PATCH',
+        body: JSON.stringify({ resolved: newResolved }),
+      });
+    } catch {
+      setIncident(incident);
+    } finally {
+      setTogglingResolved(false);
     }
   }
 
@@ -358,6 +376,48 @@ export default function IncidentDetailPage() {
           </p>
         </div>
       )}
+
+      {/* ── Resolve Toggle ────────────────────── */}
+      <div className={styles.card}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <button
+            type="button"
+            onClick={toggleResolved}
+            disabled={togglingResolved}
+            style={{
+              position: 'relative',
+              width: 44,
+              height: 24,
+              background: incident.resolved ? 'var(--color-sage, #27ae60)' : 'rgba(15, 27, 45, 0.15)',
+              borderRadius: 12,
+              cursor: togglingResolved ? 'default' : 'pointer',
+              border: 'none',
+              transition: 'background 0.25s',
+              flexShrink: 0,
+              opacity: togglingResolved ? 0.6 : 1,
+            }}
+          >
+            <span style={{
+              position: 'absolute',
+              top: 2,
+              left: 2,
+              width: 20,
+              height: 20,
+              background: '#fff',
+              borderRadius: '50%',
+              transition: 'transform 0.25s',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
+              transform: incident.resolved ? 'translateX(20px)' : 'translateX(0)',
+            }} />
+          </button>
+          <div>
+            <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Resolved</div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+              {incident.resolved ? 'This incident has been resolved' : 'Mark this incident as resolved'}
+            </div>
+          </div>
+        </div>
+      </div>
 
       {showDelete && (
         <DeleteConfirmDialog

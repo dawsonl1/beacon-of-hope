@@ -229,7 +229,11 @@ export default function HomePage() {
             </p>
           </blockquote>
           <div className={styles.quoteAttr}>
-            <div className={styles.quoteAvatar} aria-hidden="true" />
+            <img
+              src="/images/quote-avatar.jpg"
+              alt="Beacon of Hope graduate"
+              className={styles.quoteAvatar}
+            />
             <div>
               <p className={styles.quoteName}>A Beacon of Hope graduate</p>
               <p className={styles.quoteDetail}>

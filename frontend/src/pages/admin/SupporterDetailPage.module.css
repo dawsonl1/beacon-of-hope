@@ -342,9 +342,11 @@
 }
 
 .amountCol {
-  font-family: var(--font-display);
-  font-weight: 600;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.88rem;
   color: var(--text-strong);
+  letter-spacing: -0.01em;
 }
 
 .recurringBadge {

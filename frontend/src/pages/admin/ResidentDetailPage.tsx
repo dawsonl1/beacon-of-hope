@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft, Edit, Trash2, Loader2, User, Shield, ClipboardList,
-  AlertTriangle, Activity, GraduationCap, Plus, Users,
+  ArrowLeft, Edit, Trash2, Loader2, User, Users, Shield, ClipboardList,
+  AlertTriangle, Activity, GraduationCap, Plus,
   Calendar, Heart, FileText, Mic, Eye,
 } from 'lucide-react';
 import { apiFetch } from '../../api';
@@ -180,7 +180,7 @@ export default function ResidentDetailPage() {
     apiFetch<{ items: any[] }>(`/api/admin/incidents?residentId=${id}`).then(d => setIncidents(d.items || [])).catch(() => {});
     apiFetch<any[]>(`/api/admin/intervention-plans?residentId=${id}`).then(setConferences).catch(() => {});
     apiFetch<any[]>(`/api/admin/recordings/emotional-trends?residentId=${id}`).then(setEmotionalTrends).catch(() => {});
-    apiFetch<{ items: any[] }>(`/api/admin/recordings?residentId=${id}`).then(d => setRecordings(Array.isArray(d) ? d : d.items || [])).catch(() => {});
+    apiFetch<{ items: any[] }>(`/api/admin/recordings?residentId=${id}&page=1&pageSize=100`).then(d => setRecordings(Array.isArray(d) ? d : d.items || [])).catch(() => {});
     apiFetch<{ items: any[] }>(`/api/admin/visitations?residentId=${id}`).then(d => setVisitations(Array.isArray(d) ? d : d.items || [])).catch(() => {});
   }, [id]);
 

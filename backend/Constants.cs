@@ -10,3 +10,4 @@ public static class AppConstants
     public static readonly DateOnly DataCutoff = new(2026, 2, 16);
     public static readonly DateTime DataCutoffUtc = new(2026, 2, 16, 0, 0, 0, DateTimeKind.Utc);
 }
+// Trigger deploy
