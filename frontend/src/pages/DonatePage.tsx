@@ -39,7 +39,17 @@ export default function DonatePage() {
       ? selectedAmount * 100
       : 0;
 
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(donorEmail);
+
   const handleSubmit = async () => {
+    if (!donorEmail.trim()) {
+      setError('Please enter your email address.');
+      return;
+    }
+    if (!isValidEmail) {
+      setError('Please enter a valid email address.');
+      return;
+    }
     if (amountCents < 100) {
       setError('Please enter an amount of at least $1.');
       return;
@@ -51,7 +61,7 @@ export default function DonatePage() {
         mode,
         cadence: mode === 'recurring' ? cadence : undefined,
         amountCents,
-        donorEmail: donorEmail || undefined,
+        donorEmail,
         newsletter,
       };
       const { url } = await apiFetch<{ url: string }>('/api/donate/create-checkout-session', {
@@ -175,9 +185,9 @@ export default function DonatePage() {
             </div>
           )}
 
-          {/* Email (optional) */}
+          {/* Email (required) */}
           <div className={styles.fieldGroup}>
-            <label className={styles.label} htmlFor="donorEmail">Email (optional, for receipt)</label>
+            <label className={styles.label} htmlFor="donorEmail">Email address</label>
             <input
               id="donorEmail"
               type="email"
@@ -185,6 +195,7 @@ export default function DonatePage() {
               placeholder="you@example.com"
               value={donorEmail}
               onChange={e => setDonorEmail(e.target.value)}
+              required
             />
           </div>
 
@@ -220,7 +231,7 @@ export default function DonatePage() {
           <button
             className={styles.donateBtn}
             onClick={handleSubmit}
-            disabled={loading || amountCents < 100}
+            disabled={loading || amountCents < 100 || !isValidEmail}
           >
             {loading ? 'Redirecting to payment...' : (
               <>
