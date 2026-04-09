@@ -372,20 +372,29 @@ export default function CaseConferencesPage() {
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '0.75rem' }}>
             {upcoming.map(conf => (
-              <ConferenceCard
-                key={conf.conferenceId}
-                conf={conf}
-                isExpanded={expandedId === conf.conferenceId}
-                expandedData={expandedId === conf.conferenceId ? expandedData : null}
-                expandedLoading={expandedId === conf.conferenceId && expandedLoading}
-                onToggle={() => loadConferenceDetail(conf.conferenceId)}
-                onClickResident={(rid) => navigate(`/admin/caseload/${rid}`)}
-                onMarkDiscussed={(rid, d) => markDiscussed(conf.conferenceId, rid, d)}
-                onUpdateStatus={(s) => updateConferenceStatus(conf.conferenceId, s)}
-                safehouseResidents={safehouseResidents[conf.safehouseId] ?? null}
-                onLoadResidents={() => fetchSafehouseResidents(conf.safehouseId)}
-                onAddResidents={(ids) => addResidentsToConference(conf.conferenceId, ids)}
-              />
+              <div key={conf.conferenceId}>
+                <ConferenceCard
+                  conf={conf}
+                  isExpanded={expandedId === conf.conferenceId}
+                  expandedData={expandedId === conf.conferenceId ? expandedData : null}
+                  expandedLoading={expandedId === conf.conferenceId && expandedLoading}
+                  onToggle={() => loadConferenceDetail(conf.conferenceId)}
+                  onClickResident={(rid) => navigate(`/admin/caseload/${rid}`)}
+                  onMarkDiscussed={(rid, d) => markDiscussed(conf.conferenceId, rid, d)}
+                  onUpdateStatus={(s) => updateConferenceStatus(conf.conferenceId, s)}
+                  safehouseResidents={safehouseResidents[conf.safehouseId] ?? null}
+                  onLoadResidents={() => fetchSafehouseResidents(conf.safehouseId)}
+                  onAddResidents={(ids) => addResidentsToConference(conf.conferenceId, ids)}
+                />
+                {referredResident && !referredAdded && (
+                  <button
+                    onClick={() => addReferredToConference(conf.conferenceId)}
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', width: '100%', justifyContent: 'center', marginTop: '0.35rem', padding: '0.45rem', background: 'rgba(15,143,125,0.08)', border: '1px solid rgba(15,143,125,0.2)', borderRadius: '8px', color: 'var(--color-sage)', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
+                  >
+                    <UserPlus size={13} /> Add {referredResident.internalCode || 'resident'} to this conference
+                  </button>
+                )}
+              </div>
             ))}
           </div>
         </div>
