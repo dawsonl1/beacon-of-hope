@@ -12,7 +12,7 @@ public static class IncidentEndpoints
     {
         // ── Incident Management ─────────────────────────────────────
 
-        app.MapGet("/api/admin/incidents", async (HttpContext httpContext, AppDbContext db, int? safehouseId, int? residentId, string? severity, bool? resolved, int page = 1, int pageSize = 20) =>
+        app.MapGet("/api/admin/incidents", async (HttpContext httpContext, AppDbContext db, int? safehouseId, int? residentId, string? severity, bool? resolved, string? sortBy = null, string? sortDir = null, int page = 1, int pageSize = 20) =>
         {
             var allowed = await SafehouseAuth.GetAllowedSafehouseIds(httpContext, db);
             var query = db.IncidentReports.AsQueryable();
@@ -21,7 +21,16 @@ public static class IncidentEndpoints
             if (!string.IsNullOrEmpty(severity)) query = query.Where(i => i.Severity == severity);
             if (resolved.HasValue) query = query.Where(i => i.Resolved == resolved.Value);
             var total = await query.CountAsync();
-            var items = await query.OrderByDescending(i => i.IncidentDate).Skip((page - 1) * pageSize).Take(pageSize)
+            var descending = string.Equals(sortDir, "asc", StringComparison.OrdinalIgnoreCase) ? false : true;
+            IOrderedQueryable<IncidentReport> ordered = sortBy?.ToLower() switch
+            {
+                "type" => descending ? query.OrderByDescending(i => i.IncidentType) : query.OrderBy(i => i.IncidentType),
+                "severity" => descending ? query.OrderByDescending(i => i.Severity) : query.OrderBy(i => i.Severity),
+                "reportedby" => descending ? query.OrderByDescending(i => i.ReportedBy) : query.OrderBy(i => i.ReportedBy),
+                "status" => descending ? query.OrderByDescending(i => i.Resolved) : query.OrderBy(i => i.Resolved),
+                _ => descending ? query.OrderByDescending(i => i.IncidentDate) : query.OrderBy(i => i.IncidentDate),
+            };
+            var items = await ordered.Skip((page - 1) * pageSize).Take(pageSize)
                 .Select(i => new { i.IncidentId, i.ResidentId, residentCode = i.Resident != null ? i.Resident.InternalCode : null, i.SafehouseId, i.IncidentDate, i.IncidentType, i.Severity, i.Description, i.ResponseTaken, i.ReportedBy, i.Resolved, i.ResolutionDate, i.FollowUpRequired })
                 .ToListAsync();
             return Results.Ok(new { total, page, pageSize, items });

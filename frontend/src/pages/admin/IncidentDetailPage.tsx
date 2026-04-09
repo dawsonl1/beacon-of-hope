@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Edit, Trash2, Loader2 } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Loader2, AlertTriangle, CheckCircle } from 'lucide-react';
 import { apiFetch } from '../../api';
+import { formatDate } from '../../constants';
 import { useAuth } from '../../contexts/AuthContext';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
@@ -64,32 +65,46 @@ export default function IncidentDetailPage() {
   if (error) return <div className={styles.page}><p style={{ color: '#c0392b' }}>{error}</p></div>;
   if (!incident) return <div className={styles.page}><p>Incident not found.</p></div>;
 
+  const severityColor = SEVERITY_COLORS[incident.severity || ''] || '#95a5a6';
+
   return (
     <div className={styles.page}>
       <Link to="/admin/incidents" className={styles.backLink}>
-        <ArrowLeft size={16} /> Back to Incidents
+        <ArrowLeft size={15} /> Back to Incidents
       </Link>
 
-      <div className={styles.headerRow}>
-        <h1 className={styles.title}>
-          Incident #{incident.incidentId}
-          {incident.severity && (
+      <div className={styles.header}>
+        <div className={styles.headerLeft}>
+          <h1 className={styles.title}>Incident #{incident.incidentId}</h1>
+          <div className={styles.headerMeta}>
+            {incident.severity && (
+              <span style={{
+                display: 'inline-block',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                padding: '0.2rem 0.55rem',
+                borderRadius: '999px',
+                background: `${severityColor}18`,
+                color: severityColor,
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+              }}>
+                {incident.severity}
+              </span>
+            )}
             <span style={{
-              display: 'inline-block',
-              fontSize: '0.7rem',
-              fontWeight: 700,
-              padding: '0.2rem 0.5rem',
-              borderRadius: '4px',
-              marginLeft: '0.75rem',
-              background: `${SEVERITY_COLORS[incident.severity] || '#95a5a6'}18`,
-              color: SEVERITY_COLORS[incident.severity] || '#95a5a6',
-              verticalAlign: 'middle',
-              textTransform: 'uppercase',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.25rem',
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              color: incident.resolved ? '#27ae60' : '#e74c3c',
             }}>
-              {incident.severity}
+              {incident.resolved ? <CheckCircle size={14} /> : <AlertTriangle size={14} />}
+              {incident.resolved ? 'Resolved' : 'Open'}
             </span>
-          )}
-        </h1>
+          </div>
+        </div>
         <div className={styles.headerActions}>
           <button className={styles.editBtn} onClick={() => navigate(`/admin/incidents/${id}/edit`)}>
             <Edit size={14} /> Edit
@@ -102,15 +117,21 @@ export default function IncidentDetailPage() {
         </div>
       </div>
 
+      {/* ── Incident Info ─────────────────────── */}
       <div className={styles.card}>
-        <div className={styles.detailGrid}>
-          <div className={styles.detailItem}>
-            <span className={styles.detailLabel}>Date</span>
-            <span className={styles.detailValue}>{incident.incidentDate || '-'}</span>
+        <h3 className={styles.cardTitle}>Incident Details</h3>
+        <div className={styles.fieldGrid}>
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>Date</span>
+            <span className={styles.fieldValue}>{formatDate(incident.incidentDate)}</span>
           </div>
-          <div className={styles.detailItem}>
-            <span className={styles.detailLabel}>Resident</span>
-            <span className={styles.detailValue}>
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>Type</span>
+            <span className={styles.fieldValue}>{incident.incidentType || '-'}</span>
+          </div>
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>Resident</span>
+            <span className={styles.fieldValue}>
               {incident.residentId ? (
                 <Link to={`/admin/caseload/${incident.residentId}`} style={{ color: 'var(--color-sage)', textDecoration: 'none', fontWeight: 600 }}>
                   {incident.residentCode || `#${incident.residentId}`}
@@ -118,42 +139,40 @@ export default function IncidentDetailPage() {
               ) : '-'}
             </span>
           </div>
-          <div className={styles.detailItem}>
-            <span className={styles.detailLabel}>Type</span>
-            <span className={styles.detailValue}>{incident.incidentType || '-'}</span>
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>Reported By</span>
+            <span className={styles.fieldValue}>{incident.reportedBy || '-'}</span>
           </div>
-          <div className={styles.detailItem}>
-            <span className={styles.detailLabel}>Reported By</span>
-            <span className={styles.detailValue}>{incident.reportedBy || '-'}</span>
-          </div>
-          <div className={styles.detailItem}>
-            <span className={styles.detailLabel}>Status</span>
-            <span className={styles.detailValue}>
-              <span style={{
-                color: incident.resolved ? '#27ae60' : '#e74c3c',
-                fontWeight: 600,
-              }}>
-                {incident.resolved ? 'Resolved' : 'Open'}
-              </span>
-              {incident.resolutionDate && ` (${incident.resolutionDate})`}
+          {incident.resolved && incident.resolutionDate && (
+            <div className={styles.field}>
+              <span className={styles.fieldLabel}>Resolution Date</span>
+              <span className={styles.fieldValue}>{formatDate(incident.resolutionDate)}</span>
+            </div>
+          )}
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>Follow-Up Required</span>
+            <span className={styles.fieldValue} style={{ fontWeight: 600, color: incident.followUpRequired ? '#e74c3c' : '#27ae60' }}>
+              {incident.followUpRequired ? 'Yes' : 'No'}
             </span>
-          </div>
-          <div className={styles.detailItem}>
-            <span className={styles.detailLabel}>Follow-Up Required</span>
-            <span className={styles.detailValue}>{incident.followUpRequired ? 'Yes' : 'No'}</span>
           </div>
         </div>
       </div>
 
+      {/* ── Description ───────────────────────── */}
       <div className={styles.card}>
-        <h3 className={styles.sectionTitle}>Description</h3>
-        <p className={styles.textContent}>{incident.description || 'No description provided.'}</p>
+        <h3 className={styles.cardTitle}>Description</h3>
+        <p className={styles.fieldValue} style={{ whiteSpace: 'pre-wrap', lineHeight: 1.65, margin: 0 }}>
+          {incident.description || 'No description provided.'}
+        </p>
       </div>
 
+      {/* ── Response ──────────────────────────── */}
       {incident.responseTaken && (
         <div className={styles.card}>
-          <h3 className={styles.sectionTitle}>Response Taken</h3>
-          <p className={styles.textContent}>{incident.responseTaken}</p>
+          <h3 className={styles.cardTitle}>Response Taken</h3>
+          <p className={styles.fieldValue} style={{ whiteSpace: 'pre-wrap', lineHeight: 1.65, margin: 0 }}>
+            {incident.responseTaken}
+          </p>
         </div>
       )}
 

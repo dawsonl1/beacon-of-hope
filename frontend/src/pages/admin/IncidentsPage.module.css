@@ -169,6 +169,20 @@
   border-bottom-color: var(--color-sage);
 }
 
+/* ── Sort indicators ──────────────────────────────────── */
+.sortInactive {
+  opacity: 0.3;
+  vertical-align: middle;
+  margin-left: 0.15rem;
+}
+
+.sortActive {
+  opacity: 1;
+  color: var(--color-sage);
+  vertical-align: middle;
+  margin-left: 0.15rem;
+}
+
 @media (max-width: 700px) {
   .page { padding: 1rem; }
 }

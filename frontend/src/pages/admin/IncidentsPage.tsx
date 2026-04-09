@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Loader2 } from 'lucide-react';
+import { Plus, ChevronUp, ChevronDown, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useSafehouse } from '../../contexts/SafehouseContext';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
@@ -30,6 +30,8 @@ const SEVERITY_STYLES: Record<string, string> = {
   Low: 'severityLow',
 };
 
+type Tab = 'open' | 'resolved' | 'all';
+
 export default function IncidentsPage() {
   useDocumentTitle('Incidents');
   const navigate = useNavigate();
@@ -40,7 +42,9 @@ export default function IncidentsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [severityFilter, setSeverityFilter] = useState('');
-  const [resolvedFilter, setResolvedFilter] = useState('');
+  const [tab, setTab] = useState<Tab>('open');
+  const [sortBy, setSortBy] = useState('date');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const pageSize = 20;
 
   const fetchIncidents = useCallback(async () => {
@@ -49,8 +53,10 @@ export default function IncidentsPage() {
       const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
       if (activeSafehouseId) params.set('safehouseId', String(activeSafehouseId));
       if (severityFilter) params.set('severity', severityFilter);
-      if (resolvedFilter === 'true') params.set('resolved', 'true');
-      if (resolvedFilter === 'false') params.set('resolved', 'false');
+      if (tab === 'open') params.set('resolved', 'false');
+      if (tab === 'resolved') params.set('resolved', 'true');
+      if (sortBy) params.set('sortBy', sortBy);
+      if (sortDir) params.set('sortDir', sortDir);
       const data = await apiFetch<{ total: number; items: IncidentRow[] }>(`/api/admin/incidents?${params}`);
       setIncidents(data.items);
       setTotal(data.total);
@@ -59,9 +65,31 @@ export default function IncidentsPage() {
     } finally {
       setLoading(false);
     }
-  }, [activeSafehouseId, page, severityFilter, resolvedFilter]);
+  }, [activeSafehouseId, page, severityFilter, tab, sortBy, sortDir]);
 
   useEffect(() => { fetchIncidents(); }, [fetchIncidents]);
+
+  function handleSort(col: string) {
+    if (sortBy === col) {
+      setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(col);
+      setSortDir('asc');
+    }
+    setPage(1);
+  }
+
+  function SortIcon({ col }: { col: string }) {
+    if (sortBy !== col) return <ChevronDown size={12} className={styles.sortInactive} />;
+    return sortDir === 'asc'
+      ? <ChevronUp size={12} className={styles.sortActive} />
+      : <ChevronDown size={12} className={styles.sortActive} />;
+  }
+
+  function handleTabChange(t: Tab) {
+    setTab(t);
+    setPage(1);
+  }
 
   return (
     <div className={styles.page}>
@@ -75,6 +103,19 @@ export default function IncidentsPage() {
         </button>
       </header>
 
+      {/* ── Tabs ─────────────────────────────── */}
+      <div className={styles.tabs}>
+        <button className={`${styles.tab} ${tab === 'open' ? styles.tabActive : ''}`} onClick={() => handleTabChange('open')}>
+          Open
+        </button>
+        <button className={`${styles.tab} ${tab === 'resolved' ? styles.tabActive : ''}`} onClick={() => handleTabChange('resolved')}>
+          Resolved
+        </button>
+        <button className={`${styles.tab} ${tab === 'all' ? styles.tabActive : ''}`} onClick={() => handleTabChange('all')}>
+          All
+        </button>
+      </div>
+
       <div className={styles.filters}>
         <select className={styles.filterSelect} value={severityFilter} onChange={e => { setSeverityFilter(e.target.value); setPage(1); }}>
           <option value="">All Severities</option>
@@ -83,36 +124,45 @@ export default function IncidentsPage() {
           <option value="Medium">Medium</option>
           <option value="Low">Low</option>
         </select>
-        <select className={styles.filterSelect} value={resolvedFilter} onChange={e => { setResolvedFilter(e.target.value); setPage(1); }}>
-          <option value="">All Status</option>
-          <option value="false">Unresolved</option>
-          <option value="true">Resolved</option>
-        </select>
       </div>
 
       {loading ? (
         <div className={styles.loading}><Loader2 size={24} className={styles.spinner} /> Loading...</div>
       ) : error ? (
         <div className={styles.error}>{error}</div>
-      ) : incidents.length === 0 ? (
-        <div className={styles.empty}>No incidents found.</div>
       ) : (
         <>
           <div className={styles.tableCard}>
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Date</th>
+                  <th onClick={() => handleSort('date')} style={{ cursor: 'pointer' }}>
+                    Date <SortIcon col="date" />
+                  </th>
                   <th>Resident</th>
-                  <th>Type</th>
-                  <th>Severity</th>
-                  <th>Reported By</th>
-                  <th>Status</th>
+                  <th onClick={() => handleSort('type')} style={{ cursor: 'pointer' }}>
+                    Type <SortIcon col="type" />
+                  </th>
+                  <th onClick={() => handleSort('severity')} style={{ cursor: 'pointer' }}>
+                    Severity <SortIcon col="severity" />
+                  </th>
+                  <th onClick={() => handleSort('reportedby')} style={{ cursor: 'pointer' }}>
+                    Reported By <SortIcon col="reportedby" />
+                  </th>
+                  <th onClick={() => handleSort('status')} style={{ cursor: 'pointer' }}>
+                    Status <SortIcon col="status" />
+                  </th>
                   <th>Follow-Up</th>
                 </tr>
               </thead>
               <tbody>
-                {incidents.map(inc => (
+                {incidents.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} style={{ textAlign: 'center', padding: '2rem 1rem', color: 'var(--text-muted)' }}>
+                      {tab === 'open' ? 'No open incidents.' : tab === 'resolved' ? 'No resolved incidents.' : 'No incidents match the current filters.'}
+                    </td>
+                  </tr>
+                ) : incidents.map(inc => (
                   <tr key={inc.incidentId} onClick={() => navigate(`/admin/incidents/${inc.incidentId}`)}>
                     <td>{inc.incidentDate || '-'}</td>
                     <td>{inc.residentCode || '-'}</td>
@@ -134,7 +184,7 @@ export default function IncidentsPage() {
               </tbody>
             </table>
           </div>
-          <Pagination page={page} pageSize={pageSize} totalCount={total} onPageChange={setPage} />
+          {incidents.length > 0 && <Pagination page={page} pageSize={pageSize} totalCount={total} onPageChange={setPage} />}
         </>
       )}
     </div>
