@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Loader2, Plus, GripVertical } from 'lucide-react';
 import { apiFetch } from '../../api';
@@ -47,6 +47,12 @@ const EVENT_TYPE_STYLES: Record<string, string> = {
 
 const HOURS = Array.from({ length: 14 }, (_, i) => i + 6); // 6am to 7pm
 
+// All half-hour time strings in order: "06:00", "06:30", "07:00", ...
+const ALL_SLOTS: string[] = HOURS.flatMap(h => [
+  `${h.toString().padStart(2, '0')}:00`,
+  `${h.toString().padStart(2, '0')}:30`,
+]);
+
 function formatDate(d: Date): string {
   return d.toISOString().split('T')[0];
 }
@@ -67,7 +73,6 @@ function addDays(d: Date, n: number): Date {
   return result;
 }
 
-/** Snap a "HH:mm" time string to the nearest :00 or :30 slot */
 function snapToSlot(time: string): string {
   const [h, m] = time.split(':').map(Number);
   return `${h.toString().padStart(2, '0')}:${m < 30 ? '00' : '30'}`;
@@ -80,13 +85,44 @@ function formatHour(hour: number): string {
   return `${hour - 12} PM`;
 }
 
-function formatSlotTime(hour: number, minute: number): string {
-  const h = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-  const sfx = hour < 12 ? 'AM' : 'PM';
-  return `${h}:${minute.toString().padStart(2, '0')} ${sfx}`;
+/** Calculate how many half-hour slots an event spans (min 1, default 2 = 1 hour) */
+function calcSlotSpan(evt: CalendarEventItem): number {
+  if (evt.startTime && evt.endTime) {
+    const [sh, sm] = evt.startTime.split(':').map(Number);
+    const [eh, em] = evt.endTime.split(':').map(Number);
+    const mins = (eh * 60 + em) - (sh * 60 + sm);
+    if (mins > 0) return Math.max(1, Math.round(mins / 30));
+  }
+  return 2; // default: 1 hour = 2 half-hour slots
 }
 
 const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+// ─── Drag helper: all DOM-based, no React state ─────────────────
+// We store drag state in refs and manipulate CSS classes directly
+// to avoid React re-renders that kill the HTML5 drag session.
+
+const DRAG_HIGHLIGHT = 'dragHighlight';
+const DRAG_QUEUE_HIGHLIGHT = 'dragQueueHighlight';
+
+function clearAllHighlights(gridRef: HTMLDivElement | null, queueRef: HTMLDivElement | null) {
+  if (gridRef) {
+    gridRef.querySelectorAll(`.${DRAG_HIGHLIGHT}`).forEach(el => el.classList.remove(DRAG_HIGHLIGHT));
+  }
+  if (queueRef) {
+    queueRef.classList.remove(DRAG_QUEUE_HIGHLIGHT);
+  }
+}
+
+function highlightSlots(gridRef: HTMLDivElement | null, timeStr: string, span: number) {
+  if (!gridRef) return;
+  const startIdx = ALL_SLOTS.indexOf(timeStr);
+  if (startIdx === -1) return;
+  for (let i = 0; i < span && startIdx + i < ALL_SLOTS.length; i++) {
+    const slot = gridRef.querySelector(`[data-time="${ALL_SLOTS[startIdx + i]}"]`);
+    if (slot) slot.classList.add(DRAG_HIGHLIGHT);
+  }
+}
 
 export default function CalendarPage() {
   useDocumentTitle('Calendar');
@@ -110,8 +146,11 @@ export default function CalendarPage() {
   });
   const [residents, setResidents] = useState<{ residentId: number; internalCode: string }[]>([]);
 
-  // Click-to-place state: selected event ID that's being moved
-  const [movingId, setMovingId] = useState<number | null>(null);
+  // Refs for drag — NO React state during drag
+  const dragEvtRef = useRef<CalendarEventItem | null>(null);
+  const dragSpanRef = useRef(2);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const queueRef = useRef<HTMLDivElement>(null);
 
   const fetchEvents = useCallback(async () => {
     setLoading(true);
@@ -141,16 +180,6 @@ export default function CalendarPage() {
       .catch(() => {});
   }, []);
 
-  // Cancel move on Escape key
-  useEffect(() => {
-    if (!movingId) return;
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setMovingId(null);
-    }
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [movingId]);
-
   function navigate_date(delta: number) {
     if (view === 'day') setCurrentDate(addDays(currentDate, delta));
     else setCurrentDate(addDays(currentDate, delta * 7));
@@ -178,7 +207,7 @@ export default function CalendarPage() {
     } catch { /* ignore */ }
   }
 
-  async function handleUpdateEvent(id: number, updates: Record<string, unknown>) {
+  async function updateEvent(id: number, updates: Record<string, unknown>) {
     try {
       await apiFetch(`/api/staff/calendar/${id}`, {
         method: 'PUT',
@@ -196,53 +225,94 @@ export default function CalendarPage() {
     return classes.join(' ');
   }
 
-  // ── Click-to-place handlers ────────────────────────────
+  // ── HTML5 Drag handlers (all DOM-based, zero React setState) ──
 
-  function handlePickUp(evt: CalendarEventItem, e: React.MouseEvent) {
-    e.stopPropagation();
-    if (evt.status === 'Completed') return;
-    if (movingId === evt.calendarEventId) {
-      // Click again to deselect
-      setMovingId(null);
-    } else {
-      setMovingId(evt.calendarEventId);
+  function onDragStart(e: React.DragEvent, evt: CalendarEventItem) {
+    dragEvtRef.current = evt;
+    dragSpanRef.current = calcSlotSpan(evt);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', String(evt.calendarEventId));
+    // Make the dragged element semi-transparent
+    const el = e.currentTarget as HTMLElement;
+    requestAnimationFrame(() => { el.style.opacity = '0.4'; });
+  }
+
+  function onDragEnd(e: React.DragEvent) {
+    (e.currentTarget as HTMLElement).style.opacity = '';
+    clearAllHighlights(gridRef.current, queueRef.current);
+    dragEvtRef.current = null;
+  }
+
+  // Slot drag-over: highlight the target slots (direct DOM, no setState)
+  function onSlotDragOver(e: React.DragEvent) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const timeStr = (e.currentTarget as HTMLElement).dataset.time;
+    if (!timeStr) return;
+    // Clear previous highlights and apply new ones
+    clearAllHighlights(gridRef.current, queueRef.current);
+    highlightSlots(gridRef.current, timeStr, dragSpanRef.current);
+  }
+
+  function onSlotDragLeave(e: React.DragEvent) {
+    // Only clear if actually leaving the slot (not entering a child)
+    const related = e.relatedTarget as HTMLElement | null;
+    const current = e.currentTarget as HTMLElement;
+    if (!related || !current.contains(related)) {
+      clearAllHighlights(gridRef.current, queueRef.current);
     }
   }
 
-  async function handlePlaceOnSlot(timeStr: string) {
-    if (!movingId) return;
-    const id = movingId;
-    setMovingId(null);
-    await handleUpdateEvent(id, { startTime: timeStr });
+  async function onSlotDrop(e: React.DragEvent) {
+    e.preventDefault();
+    const timeStr = (e.currentTarget as HTMLElement).dataset.time;
+    const evt = dragEvtRef.current;
+    clearAllHighlights(gridRef.current, queueRef.current);
+    if (!evt || !timeStr) return;
+    dragEvtRef.current = null;
+    await updateEvent(evt.calendarEventId, { startTime: timeStr });
   }
 
-  async function handlePlaceOnQueue() {
-    if (!movingId) return;
-    const id = movingId;
-    setMovingId(null);
-    // Send empty string to clear startTime (backend handles "" as null)
-    await handleUpdateEvent(id, { startTime: '' });
+  // Queue drag handlers
+  function onQueueDragOver(e: React.DragEvent) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    clearAllHighlights(gridRef.current, null);
+    queueRef.current?.classList.add(DRAG_QUEUE_HIGHLIGHT);
+  }
+
+  function onQueueDragLeave(e: React.DragEvent) {
+    const related = e.relatedTarget as HTMLElement | null;
+    const current = e.currentTarget as HTMLElement;
+    if (!related || !current.contains(related)) {
+      queueRef.current?.classList.remove(DRAG_QUEUE_HIGHLIGHT);
+    }
+  }
+
+  async function onQueueDrop(e: React.DragEvent) {
+    e.preventDefault();
+    const evt = dragEvtRef.current;
+    clearAllHighlights(gridRef.current, queueRef.current);
+    if (!evt) return;
+    dragEvtRef.current = null;
+    // Send empty string to clear startTime on the backend
+    await updateEvent(evt.calendarEventId, { startTime: '' });
   }
 
   // ── Rendering ──────────────────────────────────────────
 
-  function renderEventChip(evt: CalendarEventItem) {
-    const isMoving = movingId === evt.calendarEventId;
-    const canMove = evt.status !== 'Completed';
+  function renderDraggableChip(evt: CalendarEventItem) {
+    const canDrag = evt.status !== 'Completed';
     return (
       <div
         key={evt.calendarEventId}
-        className={`${getEventStyle(evt.eventType, evt.status)} ${isMoving ? styles.eventMoving : ''} ${canMove ? styles.eventMovable : ''}`}
-        onClick={(e) => {
-          if (canMove && !selectedEvent) {
-            handlePickUp(evt, e);
-          } else if (!movingId) {
-            e.stopPropagation();
-            setSelectedEvent(evt);
-          }
-        }}
+        className={`${getEventStyle(evt.eventType, evt.status)} ${canDrag ? styles.draggableChip : ''}`}
+        draggable={canDrag}
+        onDragStart={canDrag ? (e) => onDragStart(e, evt) : undefined}
+        onDragEnd={canDrag ? onDragEnd : undefined}
+        onClick={() => setSelectedEvent(evt)}
       >
-        {canMove && <GripVertical size={12} className={styles.gripIcon} />}
+        {canDrag && <GripVertical size={12} className={styles.gripIcon} />}
         {evt.startTime && <span>{evt.startTime}</span>}
         <span>{evt.title}</span>
         {evt.residentCode && <span>({evt.residentCode})</span>}
@@ -250,14 +320,12 @@ export default function CalendarPage() {
     );
   }
 
-  const movingEvent = movingId ? events.find(e => e.calendarEventId === movingId) : null;
-
   const todayStr = APP_TODAY_STR;
   const unscheduled = events.filter(e => !e.startTime && e.status !== 'Completed');
   const scheduled = events.filter(e => e.startTime);
 
   return (
-    <div className={styles.page} onClick={() => { if (movingId) setMovingId(null); }}>
+    <div className={styles.page}>
       <header className={styles.header}>
         <div>
           <h1 className={styles.title}>Calendar</h1>
@@ -273,15 +341,6 @@ export default function CalendarPage() {
           </button>
         </div>
       </header>
-
-      {/* Moving indicator banner */}
-      {movingEvent && (
-        <div className={styles.movingBanner} onClick={(e) => e.stopPropagation()}>
-          <span>Moving: <strong>{movingEvent.title}</strong></span>
-          <span className={styles.movingHint}>Click a time slot to place, or click the To Do area to unschedule</span>
-          <button className={styles.movingCancel} onClick={() => setMovingId(null)}>Cancel</button>
-        </div>
-      )}
 
       <div className={styles.controls}>
         <button className={styles.navBtn} onClick={() => navigate_date(-1)}><ChevronLeft size={18} /></button>
@@ -299,30 +358,30 @@ export default function CalendarPage() {
         <div className={styles.error}>{error}</div>
       ) : view === 'day' ? (
         <>
-          {/* ── To Do queue ──────────────────────────────── */}
+          {/* ── To Do queue (drop target) ───────────────── */}
           <div
-            className={`${styles.unscheduledSection} ${movingId ? styles.dropZoneActive : ''}`}
-            onClick={(e) => { e.stopPropagation(); if (movingId) handlePlaceOnQueue(); }}
+            ref={queueRef}
+            className={styles.unscheduledSection}
+            onDragOver={onQueueDragOver}
+            onDragLeave={onQueueDragLeave}
+            onDrop={onQueueDrop}
           >
             <div className={styles.sectionLabel}>
               To Do {unscheduled.length > 0 && `(${unscheduled.length})`}
-              {movingId && movingEvent?.startTime && (
-                <span className={styles.dropZoneHint}> — click here to unschedule</span>
-              )}
             </div>
             {unscheduled.length > 0 ? (
               <div className={styles.unscheduledList}>
-                {unscheduled.map(evt => renderEventChip(evt))}
+                {unscheduled.map(evt => renderDraggableChip(evt))}
               </div>
             ) : (
               <div className={styles.unscheduledEmpty}>
-                {movingId ? 'Click here to unschedule' : 'No unscheduled events'}
+                Drag events here to unschedule
               </div>
             )}
           </div>
 
           {/* ── Day grid with half-hour slots ────────────── */}
-          <div className={styles.dayGrid}>
+          <div className={styles.dayGrid} ref={gridRef}>
             {HOURS.map(hour => (
               [0, 30].map(minute => {
                 const timeStr = `${hour.toString().padStart(2, '0')}:${minute === 0 ? '00' : '30'}`;
@@ -332,22 +391,17 @@ export default function CalendarPage() {
                 return (
                   <div
                     key={timeStr}
-                    className={`${styles.timeSlot} ${isHalf ? styles.halfHourSlot : ''} ${movingId ? styles.slotClickable : ''}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (movingId) {
-                        handlePlaceOnSlot(timeStr);
-                      }
-                    }}
+                    data-time={timeStr}
+                    className={`${styles.timeSlot} ${isHalf ? styles.halfHourSlot : ''}`}
+                    onDragOver={onSlotDragOver}
+                    onDragLeave={onSlotDragLeave}
+                    onDrop={onSlotDrop}
                   >
                     <div className={styles.timeLabel}>
                       {minute === 0 ? formatHour(hour) : ''}
                     </div>
                     <div className={styles.slotContent}>
-                      {movingId && (
-                        <span className={styles.slotTimeHint}>{formatSlotTime(hour, minute)}</span>
-                      )}
-                      {slotEvents.map(evt => renderEventChip(evt))}
+                      {slotEvents.map(evt => renderDraggableChip(evt))}
                     </div>
                   </div>
                 );
@@ -368,7 +422,7 @@ export default function CalendarPage() {
                   {name} {dayDate.getDate()}
                 </div>
                 <div className={styles.weekEventList}>
-                  {dayEvents.map(evt => renderEventChip(evt))}
+                  {dayEvents.map(evt => renderDraggableChip(evt))}
                 </div>
               </div>
             );
@@ -390,7 +444,7 @@ export default function CalendarPage() {
             <div className={styles.modalActions}>
               {selectedEvent.status === 'Scheduled' && (
                 <>
-                  <button className={styles.modalBtnPrimary} onClick={() => handleUpdateEvent(selectedEvent.calendarEventId, { status: 'Completed' })}>
+                  <button className={styles.modalBtnPrimary} onClick={() => updateEvent(selectedEvent.calendarEventId, { status: 'Completed' })}>
                     Mark Complete
                   </button>
                   {selectedEvent.eventType === 'Counseling' && (
@@ -406,12 +460,12 @@ export default function CalendarPage() {
                   {!selectedEvent.startTime && (
                     <button className={styles.modalBtn} onClick={() => {
                       const time = prompt('Enter start time (HH:MM):', '09:00');
-                      if (time) handleUpdateEvent(selectedEvent.calendarEventId, { startTime: time });
+                      if (time) updateEvent(selectedEvent.calendarEventId, { startTime: time });
                     }}>
                       Set Time
                     </button>
                   )}
-                  <button className={styles.modalBtn} onClick={() => handleUpdateEvent(selectedEvent.calendarEventId, { status: 'Cancelled' })}>
+                  <button className={styles.modalBtn} onClick={() => updateEvent(selectedEvent.calendarEventId, { status: 'Cancelled' })}>
                     Cancel Event
                   </button>
                 </>
