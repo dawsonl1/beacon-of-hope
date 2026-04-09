@@ -6,6 +6,11 @@ import { APP_TODAY_STR } from '../../constants';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './VisitationFormPage.module.css';
 
+interface ResidentOption {
+  residentId: number;
+  internalCode: string | null;
+}
+
 interface FormData {
   residentId: number | '';
   recordDate: string;
@@ -37,23 +42,23 @@ export default function EducationRecordFormPage() {
   const residentId = params.get('residentId');
 
   const [form, setForm] = useState<FormData>({ ...emptyForm, residentId: residentId ? Number(residentId) : '' });
-  const [residents, setResidents] = useState<{ residentId: number; internalCode: string }[]>([]);
+  const [residents, setResidents] = useState<ResidentOption[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    apiFetch<any>('/api/admin/residents-list')
+    apiFetch<ResidentOption[] | { items: ResidentOption[] }>('/api/admin/residents-list')
       .then(data => setResidents(Array.isArray(data) ? data : data.items || []))
       .catch(() => {});
   }, []);
 
-  function handleChange(field: keyof FormData, value: any) {
-    setForm(prev => ({ ...prev, [field]: value }));
+  function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
+    setForm(prev => ({ ...prev, [key]: value }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.residentId) { setError('Resident is required.'); return; }
+    if (!form.residentId) { setError('Please select a resident.'); return; }
     setError('');
     setSaving(true);
     try {
@@ -82,79 +87,158 @@ export default function EducationRecordFormPage() {
   return (
     <div className={styles.page}>
       <Link to={residentId ? `/admin/caseload/${residentId}` : '/admin/caseload'} className={styles.backLink}>
-        <ArrowLeft size={16} /> Back
+        <ArrowLeft size={15} />
+        Back
       </Link>
+
       <h1 className={styles.title}>Update Education Record</h1>
 
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.grid}>
-          <label className={styles.label}>
-            Resident *
-            <select className={styles.select} value={form.residentId} onChange={e => handleChange('residentId', e.target.value ? Number(e.target.value) : '')} required>
-              <option value="">Select resident</option>
-              {residents.map(r => <option key={r.residentId} value={r.residentId}>{r.internalCode}</option>)}
-            </select>
-          </label>
-          <label className={styles.label}>
-            Record Date
-            <input type="date" className={styles.input} value={form.recordDate} onChange={e => handleChange('recordDate', e.target.value)} />
-          </label>
-          <label className={styles.label}>
-            Education Level
-            <select className={styles.select} value={form.educationLevel} onChange={e => handleChange('educationLevel', e.target.value)}>
-              <option value="">Select</option>
-              <option value="Bridge Program">Bridge Program</option>
-              <option value="Secondary Support">Secondary Support</option>
-              <option value="Vocational Skills">Vocational Skills</option>
-              <option value="Literacy Boost">Literacy Boost</option>
-              <option value="Elementary">Elementary</option>
-              <option value="High School">High School</option>
-            </select>
-          </label>
-          <label className={styles.label}>
-            School Name
-            <input className={styles.input} value={form.schoolName} onChange={e => handleChange('schoolName', e.target.value)} placeholder="School name" />
-          </label>
-          <label className={styles.label}>
-            Attendance Rate (%)
-            <input type="number" min="0" max="100" step="0.1" className={styles.input} value={form.attendanceRate} onChange={e => handleChange('attendanceRate', e.target.value)} placeholder="0-100" />
-          </label>
-          <label className={styles.label}>
-            Progress (%)
-            <input type="number" min="0" max="100" step="0.1" className={styles.input} value={form.progressPercent} onChange={e => handleChange('progressPercent', e.target.value)} placeholder="0-100" />
-          </label>
-          <label className={styles.label}>
-            Completion Status
-            <select className={styles.select} value={form.completionStatus} onChange={e => handleChange('completionStatus', e.target.value)}>
-              <option value="">Select</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Completed">Completed</option>
-              <option value="Dropped">Dropped</option>
-              <option value="On Hold">On Hold</option>
-            </select>
-          </label>
-          <label className={styles.label}>
-            Enrollment Status
-            <select className={styles.select} value={form.enrollmentStatus} onChange={e => handleChange('enrollmentStatus', e.target.value)}>
-              <option value="">Select</option>
-              <option value="Enrolled">Enrolled</option>
-              <option value="Not Enrolled">Not Enrolled</option>
-              <option value="Graduated">Graduated</option>
-              <option value="Transferred">Transferred</option>
-            </select>
-          </label>
+      {error && <div className={styles.error}>{error}</div>}
+
+      <form onSubmit={handleSubmit}>
+        {/* ── Record Details ──────────────────────────── */}
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Record Details</h2>
+          <div className={styles.fieldGrid}>
+            <div className={styles.field}>
+              <label className={styles.label}>
+                Resident <span className={styles.required}>*</span>
+              </label>
+              <select
+                className={styles.select}
+                value={form.residentId}
+                onChange={e => updateField('residentId', e.target.value ? Number(e.target.value) : '')}
+                required
+              >
+                <option value="">Select resident...</option>
+                {residents.map(r => (
+                  <option key={r.residentId} value={r.residentId}>
+                    {r.internalCode ?? `#${r.residentId}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Record Date</label>
+              <input
+                type="date"
+                className={styles.input}
+                value={form.recordDate}
+                onChange={e => updateField('recordDate', e.target.value)}
+              />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>School Name</label>
+              <input
+                type="text"
+                className={styles.input}
+                value={form.schoolName}
+                onChange={e => updateField('schoolName', e.target.value)}
+                placeholder="Name of school"
+              />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Education Level</label>
+              <select
+                className={styles.select}
+                value={form.educationLevel}
+                onChange={e => updateField('educationLevel', e.target.value)}
+              >
+                <option value="">Select level...</option>
+                <option value="Bridge Program">Bridge Program</option>
+                <option value="Secondary Support">Secondary Support</option>
+                <option value="Vocational Skills">Vocational Skills</option>
+                <option value="Literacy Boost">Literacy Boost</option>
+                <option value="Elementary">Elementary</option>
+                <option value="High School">High School</option>
+              </select>
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Enrollment Status</label>
+              <select
+                className={styles.select}
+                value={form.enrollmentStatus}
+                onChange={e => updateField('enrollmentStatus', e.target.value)}
+              >
+                <option value="">Select status...</option>
+                <option value="Enrolled">Enrolled</option>
+                <option value="Not Enrolled">Not Enrolled</option>
+                <option value="Graduated">Graduated</option>
+                <option value="Transferred">Transferred</option>
+              </select>
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Completion Status</label>
+              <select
+                className={styles.select}
+                value={form.completionStatus}
+                onChange={e => updateField('completionStatus', e.target.value)}
+              >
+                <option value="">Select status...</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+                <option value="Dropped">Dropped</option>
+                <option value="On Hold">On Hold</option>
+              </select>
+            </div>
+          </div>
         </div>
 
-        <label className={styles.label} style={{ marginTop: '0.75rem' }}>
-          Notes
-          <textarea className={styles.textarea} rows={3} value={form.notes} onChange={e => handleChange('notes', e.target.value)} placeholder="Additional notes..." />
-        </label>
+        {/* ── Progress & Performance ──────────────────── */}
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Progress & Performance</h2>
+          <div className={styles.fieldGrid}>
+            <div className={styles.field}>
+              <label className={styles.label}>Attendance Rate (%)</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.1"
+                className={styles.input}
+                value={form.attendanceRate}
+                onChange={e => updateField('attendanceRate', e.target.value)}
+                placeholder="0 – 100"
+              />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Progress (%)</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.1"
+                className={styles.input}
+                value={form.progressPercent}
+                onChange={e => updateField('progressPercent', e.target.value)}
+                placeholder="0 – 100"
+              />
+            </div>
+          </div>
+        </div>
 
-        {error && <p className={styles.error} role="alert">{error}</p>}
+        {/* ── Notes ───────────────────────────────────── */}
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Notes</h2>
+          <div className={styles.fieldGrid}>
+            <div className={`${styles.field} ${styles.fieldFull}`}>
+              <label className={styles.label}>Additional Notes</label>
+              <textarea
+                className={styles.textarea}
+                value={form.notes}
+                onChange={e => updateField('notes', e.target.value)}
+                placeholder="Any additional notes about the education record..."
+              />
+            </div>
+          </div>
+        </div>
 
+        {/* ── Actions ────────────────────────────────── */}
         <div className={styles.actions}>
-          <button type="button" className={styles.cancelBtn} onClick={() => navigate(-1)}>Cancel</button>
-          <button type="submit" className={styles.saveBtn} disabled={saving}>
+          <button type="button" className={styles.cancelBtn} onClick={() => navigate(-1)}>
+            Cancel
+          </button>
+          <button type="submit" className={styles.submitBtn} disabled={saving}>
             {saving ? 'Saving...' : 'Save Education Record'}
           </button>
         </div>
