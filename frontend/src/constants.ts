@@ -1,4 +1,4 @@
-/** Build: 2026-04-09T09:50 */
+/** Build: 2026-04-09T11:15 — @dnd-kit calendar + routes wired */
 /** The app's reference date — all data is as of this date */
 export const APP_TODAY = new Date(2026, 1, 16); // Feb 16, 2026 (month is 0-indexed)
 export const APP_TODAY_STR = '2026-02-16';
