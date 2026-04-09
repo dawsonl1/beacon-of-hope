@@ -7,6 +7,7 @@ public static class AuthHelper
     private const string AdminEmail = "admin@beaconofhope.org";
     private const string StaffEmail = "staff@beaconofhope.org";
     private const string DonorEmail = "donor@beaconofhope.org";
+    private const string SocialMediaManagerEmail = "social@beaconofhope.org";
     private const string Password = "Test1234!@#$";
 
     public static HttpClient GetAnonymousClient(TestWebApplicationFactory factory)
@@ -32,6 +33,11 @@ public static class AuthHelper
     public static async Task<HttpClient> GetDonorClientAsync(TestWebApplicationFactory factory)
     {
         return await GetAuthenticatedClientAsync(factory, DonorEmail, Password);
+    }
+
+    public static async Task<HttpClient> GetSocialMediaManagerClientAsync(TestWebApplicationFactory factory)
+    {
+        return await GetAuthenticatedClientAsync(factory, SocialMediaManagerEmail, Password);
     }
 
     private static async Task<HttpClient> GetAuthenticatedClientAsync(

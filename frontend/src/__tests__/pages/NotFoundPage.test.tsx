@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
 import { renderWithRouter } from '../helpers/renderWithProviders';
 import NotFoundPage from '../../pages/NotFoundPage';

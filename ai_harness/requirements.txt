@@ -1,0 +1,11 @@
+fastapi>=0.115,<1
+uvicorn>=0.34,<1
+openai>=1.60,<2
+httpx>=0.28,<1
+sqlalchemy>=2.0,<3
+psycopg2-binary>=2.9,<3
+python-dotenv>=1.0,<2
+Pillow>=11.0,<12
+azure-storage-blob>=12.20,<13
+pytest>=8.0,<9
+pytest-asyncio>=0.24,<1

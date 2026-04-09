@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/dawsonpitcher/School/intex2/backend.Tests/backend.Tests.csproj": {}
+    "/Users/dawsonpitcher/School/intex2-social-media-automation/backend.Tests/backend.Tests.csproj": {}
   },
   "projects": {
-    "/Users/dawsonpitcher/School/intex2/backend.Tests/backend.Tests.csproj": {
+    "/Users/dawsonpitcher/School/intex2-social-media-automation/backend.Tests/backend.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/dawsonpitcher/School/intex2/backend.Tests/backend.Tests.csproj",
+        "projectUniqueName": "/Users/dawsonpitcher/School/intex2-social-media-automation/backend.Tests/backend.Tests.csproj",
         "projectName": "backend.Tests",
-        "projectPath": "/Users/dawsonpitcher/School/intex2/backend.Tests/backend.Tests.csproj",
+        "projectPath": "/Users/dawsonpitcher/School/intex2-social-media-automation/backend.Tests/backend.Tests.csproj",
         "packagesPath": "/Users/dawsonpitcher/.nuget/packages/",
-        "outputPath": "/Users/dawsonpitcher/School/intex2/backend.Tests/obj/",
+        "outputPath": "/Users/dawsonpitcher/School/intex2-social-media-automation/backend.Tests/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/dawsonpitcher/.nuget/NuGet/NuGet.Config"
@@ -26,8 +26,8 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "/Users/dawsonpitcher/School/intex2/backend/backend.csproj": {
-                "projectPath": "/Users/dawsonpitcher/School/intex2/backend/backend.csproj"
+              "/Users/dawsonpitcher/School/intex2-social-media-automation/backend/backend.csproj": {
+                "projectPath": "/Users/dawsonpitcher/School/intex2-social-media-automation/backend/backend.csproj"
               }
             }
           }
@@ -371,14 +371,14 @@
         }
       }
     },
-    "/Users/dawsonpitcher/School/intex2/backend/backend.csproj": {
+    "/Users/dawsonpitcher/School/intex2-social-media-automation/backend/backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/dawsonpitcher/School/intex2/backend/backend.csproj",
+        "projectUniqueName": "/Users/dawsonpitcher/School/intex2-social-media-automation/backend/backend.csproj",
         "projectName": "backend",
-        "projectPath": "/Users/dawsonpitcher/School/intex2/backend/backend.csproj",
+        "projectPath": "/Users/dawsonpitcher/School/intex2-social-media-automation/backend/backend.csproj",
         "packagesPath": "/Users/dawsonpitcher/.nuget/packages/",
-        "outputPath": "/Users/dawsonpitcher/School/intex2/backend/obj/",
+        "outputPath": "/Users/dawsonpitcher/School/intex2-social-media-automation/backend/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/dawsonpitcher/.nuget/NuGet/NuGet.Config"
@@ -411,6 +411,10 @@
         "net10.0": {
           "targetAlias": "net10.0",
           "dependencies": {
+            "Azure.Storage.Blobs": {
+              "target": "Package",
+              "version": "[12.27.0, )"
+            },
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
               "version": "[10.0.1, )"
@@ -428,6 +432,10 @@
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[10.0.1, )"
+            },
+            "SixLabors.ImageSharp": {
+              "target": "Package",
+              "version": "[3.1.12, )"
             },
             "Stripe.net": {
               "target": "Package",

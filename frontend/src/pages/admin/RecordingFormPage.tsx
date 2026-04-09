@@ -32,6 +32,8 @@ interface RecordingData {
   needsCaseConference: boolean | null;
   readyForReintegration: boolean | null;
   notesRestricted: string | null;
+  needsCaseConference: boolean | null;
+  readyForReintegration: boolean | null;
 }
 
 interface GeminiResponse {

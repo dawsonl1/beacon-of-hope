@@ -29,6 +29,8 @@ public static class IdentitySeeder
                 "Elena", "Reyes", "Test1234!@#$", null);
             await CreateUserIfNotExists(userManager, "donor@beaconofhope.org", "Donor",
                 "Maria", "Chen", "Test1234!@#$", 1);
+            await CreateUserIfNotExists(userManager, "social@beaconofhope.org", "SocialMediaManager",
+                "Rosa", "Santos", "Test1234!@#$", null);
 
             // Deletable test donor
             await SeedDeleteTestDonorAsync(services, userManager);

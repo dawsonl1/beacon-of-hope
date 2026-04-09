@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using backend.Models;
+using backend.Models.SocialMedia;
 
 namespace backend.Data;
 
@@ -54,6 +55,21 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
     public virtual DbSet<UserSafehouse> UserSafehouses { get; set; }
     public virtual DbSet<StaffTask> StaffTasks { get; set; }
     public virtual DbSet<CalendarEvent> CalendarEvents { get; set; }
+
+    // Social Media Automation
+    public virtual DbSet<AwarenessDate> AwarenessDates { get; set; }
+    public virtual DbSet<CtaConfig> CtaConfigs { get; set; }
+    public virtual DbSet<GraphicTemplate> GraphicTemplates { get; set; }
+    public virtual DbSet<MediaLibraryItem> MediaLibraryItems { get; set; }
+    public virtual DbSet<ContentFact> ContentFacts { get; set; }
+    public virtual DbSet<ContentFactCandidate> ContentFactCandidates { get; set; }
+    public virtual DbSet<ContentTalkingPoint> ContentTalkingPoints { get; set; }
+    public virtual DbSet<VoiceGuide> VoiceGuides { get; set; }
+    public virtual DbSet<HashtagSet> HashtagSets { get; set; }
+    public virtual DbSet<SocialMediaSettings> SocialMediaSettings { get; set; }
+    public virtual DbSet<GeneratedGraphic> GeneratedGraphics { get; set; }
+    public virtual DbSet<MilestoneRule> MilestoneRules { get; set; }
+    public virtual DbSet<AutomatedPost> AutomatedPosts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -703,6 +719,242 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.HasOne(e => e.Safehouse).WithMany(s => s.CalendarEvents).HasForeignKey(e => e.SafehouseId).OnDelete(DeleteBehavior.Cascade).HasConstraintName("calendar_events_safehouse_id_fkey");
             entity.HasOne(e => e.Resident).WithMany(r => r.CalendarEvents).HasForeignKey(e => e.ResidentId).OnDelete(DeleteBehavior.SetNull).HasConstraintName("calendar_events_resident_id_fkey");
             entity.HasOne(e => e.SourceTask).WithMany().HasForeignKey(e => e.SourceTaskId).OnDelete(DeleteBehavior.SetNull).HasConstraintName("calendar_events_source_task_id_fkey");
+        });
+
+        // ── Social Media Automation Tables ──
+
+        modelBuilder.Entity<AwarenessDate>(entity =>
+        {
+            entity.HasKey(e => e.AwarenessDateId).HasName("awareness_dates_pkey");
+            entity.ToTable("awareness_dates");
+            entity.Property(e => e.AwarenessDateId).HasColumnName("awareness_date_id");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.DateStart).HasColumnName("date_start");
+            entity.Property(e => e.DateEnd).HasColumnName("date_end");
+            entity.Property(e => e.Recurrence).HasColumnName("recurrence");
+            entity.Property(e => e.PillarEmphasis).HasColumnName("pillar_emphasis");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+        });
+
+        modelBuilder.Entity<CtaConfig>(entity =>
+        {
+            entity.HasKey(e => e.CtaConfigId).HasName("cta_configs_pkey");
+            entity.ToTable("cta_configs");
+            entity.Property(e => e.CtaConfigId).HasColumnName("cta_config_id");
+            entity.Property(e => e.Title).HasColumnName("title");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.GoalAmount).HasColumnName("goal_amount").HasColumnType("numeric(12,2)");
+            entity.Property(e => e.CurrentAmount).HasColumnName("current_amount").HasColumnType("numeric(12,2)");
+            entity.Property(e => e.Url).HasColumnName("url");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.Priority).HasColumnName("priority");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<GraphicTemplate>(entity =>
+        {
+            entity.HasKey(e => e.GraphicTemplateId).HasName("graphic_templates_pkey");
+            entity.ToTable("graphic_templates");
+            entity.Property(e => e.GraphicTemplateId).HasColumnName("graphic_template_id");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.FilePath).HasColumnName("file_path");
+            entity.Property(e => e.TextColor).HasColumnName("text_color");
+            entity.Property(e => e.TextPosition).HasColumnName("text_position");
+            entity.Property(e => e.SuitableFor).HasColumnName("suitable_for").HasColumnType("jsonb");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+        });
+
+        modelBuilder.Entity<MediaLibraryItem>(entity =>
+        {
+            entity.HasKey(e => e.MediaLibraryItemId).HasName("media_library_pkey");
+            entity.ToTable("media_library");
+            entity.HasIndex(e => e.SafehouseId).HasDatabaseName("media_library_safehouse_id_idx");
+            entity.HasIndex(e => e.ActivityType).HasDatabaseName("media_library_activity_type_idx");
+            entity.Property(e => e.MediaLibraryItemId).HasColumnName("media_library_item_id");
+            entity.Property(e => e.FilePath).HasColumnName("file_path");
+            entity.Property(e => e.ThumbnailPath).HasColumnName("thumbnail_path");
+            entity.Property(e => e.Caption).HasColumnName("caption");
+            entity.Property(e => e.ActivityType).HasColumnName("activity_type");
+            entity.Property(e => e.SafehouseId).HasColumnName("safehouse_id");
+            entity.Property(e => e.UploadedBy).HasColumnName("uploaded_by");
+            entity.Property(e => e.ConsentConfirmed).HasColumnName("consent_confirmed");
+            entity.Property(e => e.UsedCount).HasColumnName("used_count");
+            entity.Property(e => e.UploadedAt).HasColumnName("uploaded_at");
+            entity.HasOne(e => e.Safehouse).WithMany().HasForeignKey(e => e.SafehouseId).OnDelete(DeleteBehavior.SetNull).HasConstraintName("media_library_safehouse_id_fkey");
+        });
+
+        modelBuilder.Entity<ContentFact>(entity =>
+        {
+            entity.HasKey(e => e.ContentFactId).HasName("content_facts_pkey");
+            entity.ToTable("content_facts");
+            entity.HasIndex(e => e.Category).HasDatabaseName("content_facts_category_idx");
+            entity.HasIndex(e => e.Pillar).HasDatabaseName("content_facts_pillar_idx");
+            entity.Property(e => e.ContentFactId).HasColumnName("content_fact_id");
+            entity.Property(e => e.FactText).HasColumnName("fact_text");
+            entity.Property(e => e.SourceName).HasColumnName("source_name");
+            entity.Property(e => e.SourceUrl).HasColumnName("source_url");
+            entity.Property(e => e.Category).HasColumnName("category");
+            entity.Property(e => e.Pillar).HasColumnName("pillar");
+            entity.Property(e => e.UsageCount).HasColumnName("usage_count");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.AddedBy).HasColumnName("added_by");
+            entity.Property(e => e.AddedAt).HasColumnName("added_at");
+        });
+
+        modelBuilder.Entity<ContentFactCandidate>(entity =>
+        {
+            entity.HasKey(e => e.ContentFactCandidateId).HasName("content_fact_candidates_pkey");
+            entity.ToTable("content_fact_candidates");
+            entity.HasIndex(e => e.Status).HasDatabaseName("content_fact_candidates_status_idx");
+            entity.Property(e => e.ContentFactCandidateId).HasColumnName("content_fact_candidate_id");
+            entity.Property(e => e.FactText).HasColumnName("fact_text");
+            entity.Property(e => e.SourceName).HasColumnName("source_name");
+            entity.Property(e => e.SourceUrl).HasColumnName("source_url");
+            entity.Property(e => e.Category).HasColumnName("category");
+            entity.Property(e => e.SearchQuery).HasColumnName("search_query");
+            entity.Property(e => e.Status).HasColumnName("status");
+            entity.Property(e => e.ReviewedBy).HasColumnName("reviewed_by");
+            entity.Property(e => e.ReviewedAt).HasColumnName("reviewed_at");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+        });
+
+        modelBuilder.Entity<ContentTalkingPoint>(entity =>
+        {
+            entity.HasKey(e => e.ContentTalkingPointId).HasName("content_talking_points_pkey");
+            entity.ToTable("content_talking_points");
+            entity.HasIndex(e => e.Topic).HasDatabaseName("content_talking_points_topic_idx");
+            entity.Property(e => e.ContentTalkingPointId).HasColumnName("content_talking_point_id");
+            entity.Property(e => e.Text).HasColumnName("text");
+            entity.Property(e => e.Topic).HasColumnName("topic");
+            entity.Property(e => e.UsageCount).HasColumnName("usage_count");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<VoiceGuide>(entity =>
+        {
+            entity.HasKey(e => e.VoiceGuideId).HasName("voice_guide_pkey");
+            entity.ToTable("voice_guide");
+            entity.Property(e => e.VoiceGuideId).HasColumnName("voice_guide_id");
+            entity.Property(e => e.OrgDescription).HasColumnName("org_description");
+            entity.Property(e => e.ToneDescription).HasColumnName("tone_description");
+            entity.Property(e => e.PreferredTerms).HasColumnName("preferred_terms").HasColumnType("jsonb");
+            entity.Property(e => e.AvoidedTerms).HasColumnName("avoided_terms").HasColumnType("jsonb");
+            entity.Property(e => e.StructuralRules).HasColumnName("structural_rules");
+            entity.Property(e => e.VisualRules).HasColumnName("visual_rules");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<HashtagSet>(entity =>
+        {
+            entity.HasKey(e => e.HashtagSetId).HasName("hashtag_sets_pkey");
+            entity.ToTable("hashtag_sets");
+            entity.HasIndex(e => new { e.Pillar, e.Platform }).HasDatabaseName("hashtag_sets_pillar_platform_idx");
+            entity.Property(e => e.HashtagSetId).HasColumnName("hashtag_set_id");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.Category).HasColumnName("category");
+            entity.Property(e => e.Pillar).HasColumnName("pillar");
+            entity.Property(e => e.Platform).HasColumnName("platform");
+            entity.Property(e => e.Hashtags).HasColumnName("hashtags").HasColumnType("jsonb");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<SocialMediaSettings>(entity =>
+        {
+            entity.HasKey(e => e.SocialMediaSettingsId).HasName("social_media_settings_pkey");
+            entity.ToTable("social_media_settings");
+            entity.Property(e => e.SocialMediaSettingsId).HasColumnName("social_media_settings_id");
+            entity.Property(e => e.PostsPerWeek).HasColumnName("posts_per_week");
+            entity.Property(e => e.PlatformsActive).HasColumnName("platforms_active").HasColumnType("jsonb");
+            entity.Property(e => e.Timezone).HasColumnName("timezone");
+            entity.Property(e => e.RecyclingEnabled).HasColumnName("recycling_enabled");
+            entity.Property(e => e.DailyGenerationTime).HasColumnName("daily_generation_time");
+            entity.Property(e => e.DailySpendCapUsd).HasColumnName("daily_spend_cap_usd").HasColumnType("numeric(8,2)");
+            entity.Property(e => e.MaxBatchSize).HasColumnName("max_batch_size");
+            entity.Property(e => e.NotificationMethod).HasColumnName("notification_method");
+            entity.Property(e => e.NotificationEmail).HasColumnName("notification_email");
+            entity.Property(e => e.PillarRatioSafehouseLife).HasColumnName("pillar_ratio_safehouse_life");
+            entity.Property(e => e.PillarRatioTheProblem).HasColumnName("pillar_ratio_the_problem");
+            entity.Property(e => e.PillarRatioTheSolution).HasColumnName("pillar_ratio_the_solution");
+            entity.Property(e => e.PillarRatioDonorImpact).HasColumnName("pillar_ratio_donor_impact");
+            entity.Property(e => e.PillarRatioCallToAction).HasColumnName("pillar_ratio_call_to_action");
+            entity.Property(e => e.RecyclingCooldownDays).HasColumnName("recycling_cooldown_days");
+            entity.Property(e => e.RecyclingMinEngagement).HasColumnName("recycling_min_engagement");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<GeneratedGraphic>(entity =>
+        {
+            entity.HasKey(e => e.GeneratedGraphicId).HasName("generated_graphics_pkey");
+            entity.ToTable("generated_graphics");
+            entity.Property(e => e.GeneratedGraphicId).HasColumnName("generated_graphic_id");
+            entity.Property(e => e.FilePath).HasColumnName("file_path");
+            entity.Property(e => e.TemplateId).HasColumnName("template_id");
+            entity.Property(e => e.OverlayText).HasColumnName("overlay_text");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.HasOne(e => e.Template).WithMany(t => t.GeneratedGraphics).HasForeignKey(e => e.TemplateId).OnDelete(DeleteBehavior.SetNull).HasConstraintName("generated_graphics_template_id_fkey");
+        });
+
+        modelBuilder.Entity<MilestoneRule>(entity =>
+        {
+            entity.HasKey(e => e.MilestoneRuleId).HasName("milestone_rules_pkey");
+            entity.ToTable("milestone_rules");
+            entity.Property(e => e.MilestoneRuleId).HasColumnName("milestone_rule_id");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.MetricName).HasColumnName("metric_name");
+            entity.Property(e => e.ThresholdType).HasColumnName("threshold_type");
+            entity.Property(e => e.ThresholdValue).HasColumnName("threshold_value").HasColumnType("numeric(12,2)");
+            entity.Property(e => e.CooldownDays).HasColumnName("cooldown_days");
+            entity.Property(e => e.PostTemplate).HasColumnName("post_template");
+            entity.Property(e => e.LastTriggeredAt).HasColumnName("last_triggered_at");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<AutomatedPost>(entity =>
+        {
+            entity.HasKey(e => e.AutomatedPostId).HasName("automated_posts_pkey");
+            entity.ToTable("automated_posts");
+            entity.HasIndex(e => e.Status).HasDatabaseName("automated_posts_status_idx");
+            entity.HasIndex(e => e.ContentPillar).HasDatabaseName("automated_posts_pillar_idx");
+            entity.HasIndex(e => e.Platform).HasDatabaseName("automated_posts_platform_idx");
+            entity.HasIndex(e => e.ScheduledAt).HasDatabaseName("automated_posts_scheduled_at_idx");
+            entity.Property(e => e.AutomatedPostId).HasColumnName("automated_post_id");
+            entity.Property(e => e.Content).HasColumnName("content");
+            entity.Property(e => e.OriginalContent).HasColumnName("original_content");
+            entity.Property(e => e.ContentPillar).HasColumnName("content_pillar");
+            entity.Property(e => e.Source).HasColumnName("source");
+            entity.Property(e => e.Status).HasColumnName("status");
+            entity.Property(e => e.SnoozedUntil).HasColumnName("snoozed_until");
+            entity.Property(e => e.Platform).HasColumnName("platform");
+            entity.Property(e => e.MediaId).HasColumnName("media_id");
+            entity.Property(e => e.GeneratedGraphicId).HasColumnName("generated_graphic_id");
+            entity.Property(e => e.FactId).HasColumnName("fact_id");
+            entity.Property(e => e.TalkingPointId).HasColumnName("talking_point_id");
+            entity.Property(e => e.ScheduledAt).HasColumnName("scheduled_at");
+            entity.Property(e => e.ApprovedBy).HasColumnName("approved_by");
+            entity.Property(e => e.ApprovedAt).HasColumnName("approved_at");
+            entity.Property(e => e.RejectionReason).HasColumnName("rejection_reason");
+            entity.Property(e => e.MilestoneRuleId).HasColumnName("milestone_rule_id");
+            entity.Property(e => e.RecycledFromId).HasColumnName("recycled_from_id");
+            entity.Property(e => e.EngagementLikes).HasColumnName("engagement_likes");
+            entity.Property(e => e.EngagementShares).HasColumnName("engagement_shares");
+            entity.Property(e => e.EngagementComments).HasColumnName("engagement_comments");
+            entity.Property(e => e.EngagementDonations).HasColumnName("engagement_donations").HasColumnType("numeric(12,2)");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+            entity.HasOne(e => e.Media).WithMany(m => m.AutomatedPosts).HasForeignKey(e => e.MediaId).OnDelete(DeleteBehavior.SetNull).HasConstraintName("automated_posts_media_id_fkey");
+            entity.HasOne(e => e.GeneratedGraphic).WithMany(g => g.AutomatedPosts).HasForeignKey(e => e.GeneratedGraphicId).OnDelete(DeleteBehavior.SetNull).HasConstraintName("automated_posts_generated_graphic_id_fkey");
+            entity.HasOne(e => e.Fact).WithMany(f => f.AutomatedPosts).HasForeignKey(e => e.FactId).OnDelete(DeleteBehavior.SetNull).HasConstraintName("automated_posts_fact_id_fkey");
+            entity.HasOne(e => e.TalkingPoint).WithMany(t => t.AutomatedPosts).HasForeignKey(e => e.TalkingPointId).OnDelete(DeleteBehavior.SetNull).HasConstraintName("automated_posts_talking_point_id_fkey");
+            entity.HasOne(e => e.MilestoneRule).WithMany(m => m.AutomatedPosts).HasForeignKey(e => e.MilestoneRuleId).OnDelete(DeleteBehavior.SetNull).HasConstraintName("automated_posts_milestone_rule_id_fkey");
+            entity.HasOne(e => e.RecycledFrom).WithMany().HasForeignKey(e => e.RecycledFromId).OnDelete(DeleteBehavior.SetNull).HasConstraintName("automated_posts_recycled_from_id_fkey");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:17
+    container_name: intex2_social_media_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: devpassword
+      POSTGRES_DB: intex2_social_media
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

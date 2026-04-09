@@ -16,6 +16,9 @@ import {
   Inbox,
   MessageSquare,
   HomeIcon,
+  Share2,
+  CameraIcon,
+  Settings,
   ChevronDown,
   Check,
   CalendarDays,
@@ -93,6 +96,14 @@ const navGroups: NavGroup[] = [
     items: [
       { to: '/admin/recordings', icon: AudioLines, label: 'Recordings' },
       { to: '/admin/visitations', icon: Eye, label: 'Visitations' },
+    ],
+  },
+  {
+    label: 'Social Media',
+    items: [
+      { to: '/admin/social/posts', icon: Share2, label: 'Posts' },
+      { to: '/admin/social/photos', icon: CameraIcon, label: 'Photos' },
+      { to: '/admin/social/setup', icon: Settings, label: 'Setup' },
     ],
   },
   {
