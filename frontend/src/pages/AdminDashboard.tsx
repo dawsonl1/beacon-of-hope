@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowUpRight, AlertTriangle, Calendar, UserPlus, DollarSign, FileText, Sparkles, HeartCrack, ShieldAlert, CircleCheckBig } from 'lucide-react';
+import { ArrowUpRight, AlertTriangle, Calendar, UserPlus, DollarSign, FileText } from 'lucide-react';
 import { useSafehouse } from '../contexts/SafehouseContext';
 import { useAuth } from '../contexts/AuthContext';
 import { apiFetch } from '../api';
@@ -243,40 +243,28 @@ export default function AdminDashboard() {
           </div>
           <span className={styles.metricSub}>upcoming</span>
         </div>
+        <div className={styles.metricCard} style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/donors')}>
+          <span className={styles.metricLabel}>Donors at Risk</span>
+          <div className={styles.metricRow}>
+            <span className={styles.metricNumber}>{donorsAtRisk}</span>
+          </div>
+          <span className={styles.metricSub}>predicted to churn</span>
+        </div>
+        <div className={styles.metricCard} style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/caseload')}>
+          <span className={styles.metricLabel}>High-Risk Residents</span>
+          <div className={styles.metricRow}>
+            <span className={styles.metricNumber}>{incidentAlerts}</span>
+          </div>
+          <span className={styles.metricSub}>need attention</span>
+        </div>
+        <div className={styles.metricCard} style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/caseload')}>
+          <span className={styles.metricLabel}>Reintegration Ready</span>
+          <div className={styles.metricRow}>
+            <span className={styles.metricNumber}>{reintegrationReady}</span>
+          </div>
+          <span className={styles.metricSub}>predicted ready</span>
+        </div>
       </section>}
-
-      {/* ── ML Insights ──────────────────────────────────── */}
-      <section className={styles.mlInsightsCard}>
-        <div className={styles.mlInsightsHeader}>
-          <Sparkles size={18} className={styles.mlInsightsIcon} />
-          <span className={styles.mlInsightsTitle}>ML-Powered Insights</span>
-          <button className={styles.mlViewAll} onClick={() => navigate('/admin/reports?tab=ml')}>View Details <ArrowUpRight size={12} /></button>
-        </div>
-        <div className={styles.mlInsightsDivider} />
-        <div className={styles.mlInsightsStats}>
-          <div className={styles.mlStat} style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/donors')}>
-            <div className={styles.mlStatIconRisk}><HeartCrack size={16} /></div>
-            <div className={styles.mlStatText}>
-              <span className={styles.mlStatNumber}>{donorsAtRisk}</span>
-              <span className={styles.mlStatLabel}>donors predicted to churn</span>
-            </div>
-          </div>
-          <div className={styles.mlStat} style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/caseload')}>
-            <div className={styles.mlStatIconAlert}><ShieldAlert size={16} /></div>
-            <div className={styles.mlStatText}>
-              <span className={styles.mlStatNumber}>{incidentAlerts}</span>
-              <span className={styles.mlStatLabel}>high-risk residents</span>
-            </div>
-          </div>
-          <div className={styles.mlStat} style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/caseload')}>
-            <div className={styles.mlStatIconReady}><CircleCheckBig size={16} /></div>
-            <div className={styles.mlStatText}>
-              <span className={styles.mlStatNumber}>{reintegrationReady}</span>
-              <span className={styles.mlStatLabel}>predicted reintegration-ready</span>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ── Two-column: Table + Donations ──────────────── */}
       <section className={styles.mainGrid}>
