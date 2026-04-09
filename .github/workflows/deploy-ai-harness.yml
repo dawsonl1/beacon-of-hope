@@ -1,10 +1,12 @@
 name: Deploy AI Harness to Azure
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
       - 'ai_harness/**'
+      - '.github/workflows/deploy-ai-harness.yml'
 
 jobs:
   deploy:
