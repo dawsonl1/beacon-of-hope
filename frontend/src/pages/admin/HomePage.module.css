@@ -329,6 +329,12 @@
   position: relative;
 }
 
+.dragOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+}
+
 .dropTimeIndicator {
   position: absolute;
   left: 0;
