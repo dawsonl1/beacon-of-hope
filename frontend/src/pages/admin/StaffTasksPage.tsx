@@ -10,6 +10,8 @@ interface StaffTaskItem {
   staffTaskId: number;
   residentId: number | null;
   residentCode: string | null;
+  residentFirstName: string | null;
+  residentLastName: string | null;
   safehouseId: number;
   taskType: string;
   title: string;

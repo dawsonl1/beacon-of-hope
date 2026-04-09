@@ -502,6 +502,8 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(e => e.HasSpecialNeeds).HasColumnName("has_special_needs");
             entity.Property(e => e.InitialCaseAssessment).HasColumnName("initial_case_assessment");
             entity.Property(e => e.InitialRiskLevel).HasColumnName("initial_risk_level");
+            entity.Property(e => e.FirstName).HasColumnName("first_name");
+            entity.Property(e => e.LastName).HasColumnName("last_name");
             entity.Property(e => e.InternalCode).HasColumnName("internal_code");
             entity.Property(e => e.IsPwd).HasColumnName("is_pwd");
             entity.Property(e => e.LengthOfStay).HasColumnName("length_of_stay");

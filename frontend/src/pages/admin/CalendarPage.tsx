@@ -30,6 +30,8 @@ interface CalendarEventItem {
   safehouseId: number;
   residentId: number | null;
   residentCode: string | null;
+  residentFirstName: string | null;
+  residentLastName: string | null;
   eventType: string;
   title: string;
   description: string | null;
