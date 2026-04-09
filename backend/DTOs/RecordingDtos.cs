@@ -26,4 +26,6 @@ public class RecordingRequest
     public string? NotesRestricted { get; set; }
     public bool? NeedsCaseConference { get; set; }
     public bool? ReadyForReintegration { get; set; }
+    [StringLength(20)]
+    public string? UpdatedRiskLevel { get; set; }
 }

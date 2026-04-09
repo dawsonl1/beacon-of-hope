@@ -12,8 +12,6 @@ import {
   LogOut,
   Menu,
   X,
-  CheckSquare,
-  Calendar,
   AlertTriangle,
   Inbox,
   MessageSquare,
@@ -71,20 +69,14 @@ interface NavGroup {
   items: NavItem[];
 }
 
+const homeLink: NavItem = { to: '/admin', icon: LayoutDashboard, label: 'Home', end: true };
+
 const navGroups: NavGroup[] = [
-  {
-    label: 'Work',
-    items: [
-      { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
-      { to: '/admin/tasks', icon: CheckSquare, label: 'To-Do' },
-      { to: '/admin/calendar', icon: Calendar, label: 'Calendar' },
-      { to: '/admin/queue', icon: Inbox, label: 'Queue' },
-    ],
-  },
   {
     label: 'Cases',
     items: [
       { to: '/admin/caseload', icon: Users, label: 'Caseload' },
+      { to: '/admin/queue', icon: Inbox, label: 'Queue' },
       { to: '/admin/incidents', icon: AlertTriangle, label: 'Incidents' },
       { to: '/admin/conferences', icon: MessageSquare, label: 'Conferences' },
       { to: '/admin/post-placement', icon: HomeIcon, label: 'Placed' },
@@ -95,13 +87,13 @@ const navGroups: NavGroup[] = [
     items: [
       { to: '/admin/recordings', icon: AudioLines, label: 'Recordings' },
       { to: '/admin/visitations', icon: Eye, label: 'Visitations' },
-      { to: '/admin/donors', icon: HandHeart, label: 'Donors' },
     ],
   },
   {
     label: 'Admin',
     items: [
       { to: '/admin/reports', icon: BarChart3, label: 'Reports' },
+      { to: '/admin/donors', icon: HandHeart, label: 'Donors' },
       { to: '/admin/users', icon: Shield, label: 'Users' },
     ],
   },
@@ -198,8 +190,18 @@ function AdminLayoutInner() {
             <span className={styles.logoText}>Beacon of Hope</span>
           </NavLink>
 
-          {/* Desktop nav: category hover dropdowns */}
+          {/* Desktop nav: Home link + category hover dropdowns */}
           <nav className={styles.nav}>
+            <NavLink
+              to={homeLink.to}
+              end={homeLink.end}
+              className={({ isActive }) =>
+                `${styles.homeLink} ${isActive ? styles.homeLinkActive : ''}`
+              }
+            >
+              <homeLink.icon size={15} />
+              <span>{homeLink.label}</span>
+            </NavLink>
             {navGroups.map(group => {
               const groupActive = group.items.some(item =>
                 item.end ? location.pathname === item.to : location.pathname.startsWith(item.to)
@@ -256,6 +258,17 @@ function AdminLayoutInner() {
 
       {/* Mobile nav: grouped sections — placed outside header to avoid backdrop-filter containment */}
       <nav className={`${styles.mobileNav} ${menuOpen ? styles.navOpen : ''}`}>
+        <NavLink
+          to={homeLink.to}
+          end={homeLink.end}
+          className={({ isActive }) =>
+            `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
+          }
+          onClick={() => setMenuOpen(false)}
+        >
+          <homeLink.icon size={16} />
+          <span>{homeLink.label}</span>
+        </NavLink>
         {navGroups.map(group => (
           <div key={group.label} className={styles.mobileNavSection}>
             <span className={styles.mobileNavLabel}>{group.label}</span>

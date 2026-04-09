@@ -129,6 +129,13 @@ public static class RecordingEndpoints
             EntityMapper.MapRecording(recording, body);
 
             db.ProcessRecordings.Add(recording);
+
+            if (!string.IsNullOrWhiteSpace(body.UpdatedRiskLevel))
+            {
+                var res = await db.Residents.FindAsync(body.ResidentId);
+                if (res != null) res.CurrentRiskLevel = body.UpdatedRiskLevel;
+            }
+
             await db.SaveChangesAsync();
 
             return Results.Created($"/api/admin/recordings/{recording.RecordingId}", new { recording.RecordingId });
@@ -147,6 +154,12 @@ public static class RecordingEndpoints
                 return Results.NotFound(new { error = "Recording not found." });
 
             EntityMapper.MapRecording(recording, body);
+
+            if (!string.IsNullOrWhiteSpace(body.UpdatedRiskLevel))
+            {
+                var res = await db.Residents.FindAsync(recording.ResidentId);
+                if (res != null) res.CurrentRiskLevel = body.UpdatedRiskLevel;
+            }
 
             await db.SaveChangesAsync();
             return Results.Ok(new { recording.RecordingId });

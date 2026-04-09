@@ -72,7 +72,7 @@ const VolunteerPage = lazyRetry(() => import('./pages/VolunteerPage'));
 const PartnerPage = lazyRetry(() => import('./pages/PartnerPage'));
 // Admin pages — lazy loaded (code-split)
 const AdminLayout = lazyRetry(() => import('./layouts/AdminLayout'));
-const AdminDashboard = lazyRetry(() => import('./pages/AdminDashboard'));
+const AdminHomePage = lazyRetry(() => import('./pages/admin/HomePage'));
 const ReportsPage = lazyRetry(() => import('./pages/admin/ReportsPage'));
 const VisitationsPage = lazyRetry(() => import('./pages/admin/VisitationsPage'));
 const VisitationDetailPage = lazyRetry(() => import('./pages/admin/VisitationDetailPage'));
@@ -90,8 +90,6 @@ const PartnerDetailPage = lazyRetry(() => import('./pages/admin/PartnerDetailPag
 const PartnerFormPage = lazyRetry(() => import('./pages/admin/PartnerFormPage'));
 const DonationFormPage = lazyRetry(() => import('./pages/admin/DonationFormPage'));
 const UsersPage = lazyRetry(() => import('./pages/admin/UsersPage'));
-const StaffTasksPage = lazyRetry(() => import('./pages/admin/StaffTasksPage'));
-const CalendarPage = lazyRetry(() => import('./pages/admin/CalendarPage'));
 const IncidentsPage = lazyRetry(() => import('./pages/admin/IncidentsPage'));
 const IncidentFormPage = lazyRetry(() => import('./pages/admin/IncidentFormPage'));
 const IncidentDetailPage = lazyRetry(() => import('./pages/admin/IncidentDetailPage'));
@@ -162,9 +160,7 @@ function App() {
                 </Suspense>
               </ProtectedRoute>
             }>
-              <Route index element={<AdminDashboard />} />
-              <Route path="tasks" element={<StaffTasksPage />} />
-              <Route path="calendar" element={<CalendarPage />} />
+              <Route index element={<AdminHomePage />} />
               <Route path="incidents" element={<IncidentsPage />} />
               <Route path="incidents/new" element={<IncidentFormPage />} />
               <Route path="incidents/:id" element={<IncidentDetailPage />} />
