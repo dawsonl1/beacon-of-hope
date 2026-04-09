@@ -441,6 +441,14 @@ export default function HomePage() {
 
   async function scheduleTaskToCalendar(task: StaffTaskItem, eventDate: string, startTime: string | null) {
     const eventType = TASK_TYPE_TO_EVENT_TYPE[task.taskType] || 'Other';
+    const code = task.residentCode || '';
+    const eventTitle: Record<string, string> = {
+      DoctorApt: `Doctor appt — ${code}`,
+      DentistApt: `Dentist appt — ${code}`,
+      HomeVisit: `Home visit — ${code}`,
+      ReintegrationVisit: `Reintegration visit — ${code}`,
+      PostPlacementVisit: `Post-placement visit — ${code}`,
+    };
     try {
       await apiFetch('/api/staff/calendar', {
         method: 'POST',
@@ -448,7 +456,7 @@ export default function HomePage() {
           safehouseId: task.safehouseId || activeSafehouseId || safehouses[0]?.safehouseId || 1,
           residentId: task.residentId,
           eventType,
-          title: task.title,
+          title: eventTitle[eventType] || task.title,
           description: task.description || null,
           eventDate,
           startTime: startTime || null,
