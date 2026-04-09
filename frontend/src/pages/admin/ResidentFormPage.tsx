@@ -275,7 +275,19 @@ export default function ResidentFormPage() {
   }, [id, isEdit]);
 
   function updateField(key: keyof FormData, value: string | boolean) {
-    setForm((prev) => ({ ...prev, [key]: value }));
+    setForm((prev) => {
+      const next = { ...prev, [key]: value };
+      // Auto-compute ages when dates change
+      if (key === 'dateOfBirth' || key === 'dateOfAdmission') {
+        const dob = key === 'dateOfBirth' ? (value as string) : prev.dateOfBirth;
+        const admission = key === 'dateOfAdmission' ? (value as string) : prev.dateOfAdmission;
+        if (dob && admission) {
+          const age = calcAge(dob, admission);
+          if (age !== null) next.ageUponAdmission = String(age);
+        }
+      }
+      return next;
+    });
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -412,19 +424,15 @@ export default function ResidentFormPage() {
             </label>
             <label className={styles.label}>
               Age upon Admission
-              <input type="number" min="0" max="25" className={styles.input} value={form.ageUponAdmission} onChange={(e) => updateField('ageUponAdmission', e.target.value)} placeholder="e.g. 14" />
-              {form.dateOfBirth && form.dateOfAdmission && (() => {
-                const computed = calcAge(form.dateOfBirth, form.dateOfAdmission);
-                return computed !== null && form.ageUponAdmission !== String(computed) ? (
-                  <button type="button" style={{ fontSize: '0.7rem', color: 'var(--color-sage)', background: 'none', border: 'none', cursor: 'pointer', padding: '0.15rem 0', fontWeight: 600 }} onClick={() => updateField('ageUponAdmission', String(computed))}>
-                    Auto-fill: {computed} years
-                  </button>
-                ) : null;
-              })()}
+              {form.dateOfBirth && form.dateOfAdmission ? (
+                <input type="number" className={styles.input} readOnly value={form.ageUponAdmission} style={{ background: 'var(--surface-2)', color: 'var(--text-muted)' }} />
+              ) : (
+                <input type="number" min="0" max="25" className={styles.input} value={form.ageUponAdmission} onChange={(e) => updateField('ageUponAdmission', e.target.value)} placeholder="e.g. 14" />
+              )}
             </label>
             <label className={styles.label}>
               Present Age
-              <input className={styles.input} readOnly value={form.dateOfBirth ? `${calcAge(form.dateOfBirth, new Date().toISOString().slice(0, 10)) ?? '--'} years` : form.presentAge || '--'} style={{ background: 'var(--surface-2)', color: 'var(--text-muted)' }} />
+              <input className={styles.input} readOnly value={form.dateOfBirth ? `${calcAge(form.dateOfBirth, new Date().toISOString().slice(0, 10)) ?? '--'}` : form.presentAge || '--'} style={{ background: 'var(--surface-2)', color: 'var(--text-muted)' }} />
             </label>
             <label className={styles.label}>
               Place of Birth
