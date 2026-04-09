@@ -104,6 +104,7 @@ export default function CaseConferencesPage() {
   const [createDate, setCreateDate] = useState('');
   const [createNotes, setCreateNotes] = useState('');
   const [creating, setCreating] = useState(false);
+  const [createResidentIds, setCreateResidentIds] = useState<string[]>([]);
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
@@ -130,6 +131,11 @@ export default function CaseConferencesPage() {
     }
   }, [showCreate, safehouses.length]);
 
+  // Fetch residents when safehouse is selected in the create form
+  useEffect(() => {
+    if (createSafehouseId) fetchSafehouseResidents(Number(createSafehouseId));
+  }, [createSafehouseId]);
+
   async function loadConferenceDetail(id: number) {
     if (expandedId === id) { setExpandedId(null); return; }
     setExpandedId(id);
@@ -146,7 +152,7 @@ export default function CaseConferencesPage() {
     if (!createSafehouseId || !createDate) return;
     setCreating(true);
     try {
-      await apiFetch('/api/admin/case-conferences', {
+      const result = await apiFetch<{ conferenceId: number }>('/api/admin/case-conferences', {
         method: 'POST',
         body: JSON.stringify({
           safehouseId: Number(createSafehouseId),
@@ -154,10 +160,19 @@ export default function CaseConferencesPage() {
           notes: createNotes || null,
         }),
       });
+      // Add selected residents if any
+      const resIds = createResidentIds.map(Number).filter(n => n > 0);
+      if (resIds.length > 0) {
+        await apiFetch(`/api/admin/case-conferences/${result.conferenceId}/residents`, {
+          method: 'POST',
+          body: JSON.stringify({ residentIds: resIds, source: 'Manual' }),
+        });
+      }
       setShowCreate(false);
       setCreateSafehouseId('');
       setCreateDate('');
       setCreateNotes('');
+      setCreateResidentIds([]);
       fetchAll();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create');
@@ -236,24 +251,6 @@ export default function CaseConferencesPage() {
     } catch {}
   }
 
-  async function addResidentsToConference(confId: number, residentIds: number[]) {
-    if (residentIds.length === 0) return;
-    try {
-      await apiFetch(`/api/admin/case-conferences/${confId}/residents`, {
-        method: 'POST',
-        body: JSON.stringify({ residentIds, source: 'Manual' }),
-      });
-      // Refresh
-      fetchAll();
-      if (expandedId === confId) {
-        const data = await apiFetch<Conference>(`/api/admin/case-conferences/${confId}`);
-        setExpandedData(data);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add residents');
-    }
-  }
-
   const upcoming = conferences.filter(c => c.status === 'Scheduled' || c.status === 'InProgress');
   const past = conferences.filter(c => c.status === 'Completed' || c.status === 'Cancelled');
 
@@ -295,6 +292,17 @@ export default function CaseConferencesPage() {
             <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.3rem' }}>Notes (optional)</label>
             <input type="text" value={createNotes} onChange={e => setCreateNotes(e.target.value)} placeholder="e.g. Weekly review" style={{ width: '100%', padding: '0.5rem', borderRadius: '8px', border: '1px solid #ccc', fontSize: '0.82rem' }} />
           </div>
+          {createSafehouseId && (safehouseResidents[Number(createSafehouseId)] ?? []).length > 0 && (
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.3rem' }}>Residents (optional)</label>
+              <MultiSelectDropdown
+                values={createResidentIds}
+                placeholder="Select residents to add..."
+                options={(safehouseResidents[Number(createSafehouseId)] ?? []).map(r => ({ value: String(r.residentId), label: r.internalCode }))}
+                onChange={setCreateResidentIds}
+              />
+            </div>
+          )}
           <div style={{ gridColumn: '1 / -1' }}>
             <button type="submit" disabled={creating} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.82rem', fontWeight: 700, color: '#fff', background: 'var(--color-sage)', border: 'none', padding: '0.55rem 1.1rem', borderRadius: '999px', cursor: 'pointer' }}>
               {creating ? 'Creating...' : 'Create Conference'}
@@ -382,9 +390,6 @@ export default function CaseConferencesPage() {
                 onClickResident={(rid) => navigate(`/admin/caseload/${rid}`)}
                 onMarkDiscussed={(rid, d) => markDiscussed(conf.conferenceId, rid, d)}
                 onUpdateStatus={(s) => updateConferenceStatus(conf.conferenceId, s)}
-                safehouseResidents={safehouseResidents[conf.safehouseId] ?? null}
-                onLoadResidents={() => fetchSafehouseResidents(conf.safehouseId)}
-                onAddResidents={(ids) => addResidentsToConference(conf.conferenceId, ids)}
               />
             ))}
           </div>
@@ -411,9 +416,6 @@ export default function CaseConferencesPage() {
                 onClickResident={(rid) => navigate(`/admin/caseload/${rid}`)}
                 onMarkDiscussed={(rid, d) => markDiscussed(conf.conferenceId, rid, d)}
                 onUpdateStatus={(s) => updateConferenceStatus(conf.conferenceId, s)}
-                safehouseResidents={safehouseResidents[conf.safehouseId] ?? null}
-                onLoadResidents={() => fetchSafehouseResidents(conf.safehouseId)}
-                onAddResidents={(ids) => addResidentsToConference(conf.conferenceId, ids)}
               />
             ))}
           </div>
@@ -434,32 +436,12 @@ interface ConferenceCardProps {
   onClickResident: (residentId: number) => void;
   onMarkDiscussed: (residentId: number, discussed: boolean) => void;
   onUpdateStatus: (status: string) => void;
-  safehouseResidents: ResidentOption[] | null;
-  onLoadResidents: () => void;
-  onAddResidents: (residentIds: number[]) => void;
 }
 
-function ConferenceCard({ conf, isExpanded, expandedData, expandedLoading, onToggle, onClickResident, onMarkDiscussed, onUpdateStatus, safehouseResidents, onLoadResidents, onAddResidents }: ConferenceCardProps) {
-  const [addResidentIds, setAddResidentIds] = useState<string[]>([]);
+function ConferenceCard({ conf, isExpanded, expandedData, expandedLoading, onToggle, onClickResident, onMarkDiscussed, onUpdateStatus }: ConferenceCardProps) {
   const color = STATUS_COLORS[conf.status] || '#95a5a6';
   const isActive = conf.status === 'Scheduled' || conf.status === 'InProgress';
   const isCompleted = conf.status === 'Completed';
-
-  // Load residents for this safehouse when expanded
-  useEffect(() => {
-    if (isExpanded && isActive) onLoadResidents();
-  }, [isExpanded, isActive]);
-
-  // Filter out residents already in the conference
-  const alreadyInConference = new Set(expandedData?.residents.map(r => r.residentId) ?? []);
-  const availableResidents = (safehouseResidents ?? []).filter(r => !alreadyInConference.has(r.residentId));
-
-  function handleAddResidents() {
-    const ids = addResidentIds.map(Number).filter(n => n > 0);
-    if (ids.length === 0) return;
-    onAddResidents(ids);
-    setAddResidentIds([]);
-  }
 
   return (
     <div style={{ background: '#fff', border: isExpanded ? '2px solid var(--color-sage)' : '1px solid rgba(15,27,45,0.08)', borderRadius: '12px', overflow: 'hidden', transition: 'border-color 0.2s' }}>
@@ -522,36 +504,6 @@ function ConferenceCard({ conf, isExpanded, expandedData, expandedLoading, onTog
               {isCompleted && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.45rem 0.75rem', borderRadius: '8px', background: 'rgba(39,174,96,0.06)', border: '1px solid rgba(39,174,96,0.15)', marginBottom: '0.75rem', fontSize: '0.78rem', fontWeight: 600, color: '#27ae60' }}>
                   <CheckCircle size={14} /> Meeting Completed
-                </div>
-              )}
-
-              {/* Add residents multi-select — only for active conferences */}
-              {isActive && availableResidents.length > 0 && (
-                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end', marginBottom: '0.75rem' }}>
-                  <div style={{ flex: 1, maxWidth: '360px' }}>
-                    <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.25rem' }}>Add Residents</label>
-                    <MultiSelectDropdown
-                      values={addResidentIds}
-                      placeholder="Select residents to add..."
-                      options={availableResidents.map(r => ({ value: String(r.residentId), label: r.internalCode }))}
-                      onChange={setAddResidentIds}
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleAddResidents}
-                    disabled={addResidentIds.length === 0}
-                    style={{
-                      display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
-                      padding: '0.5rem 0.85rem', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 700,
-                      border: 'none', cursor: addResidentIds.length > 0 ? 'pointer' : 'default',
-                      background: addResidentIds.length > 0 ? 'var(--color-sage)' : 'rgba(15,27,45,0.08)',
-                      color: addResidentIds.length > 0 ? '#fff' : 'var(--text-muted)',
-                      transition: 'all 0.15s',
-                    }}
-                  >
-                    <UserPlus size={14} /> Add
-                  </button>
                 </div>
               )}
 
