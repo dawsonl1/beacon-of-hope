@@ -453,9 +453,22 @@ export default function HomePage() {
 
   function handleEventDrop(hour: number, date: string, e?: React.DragEvent) {
     if (!dragEventId) return;
+    const evt = events.find(ev => ev.calendarEventId === dragEventId);
     const minute = e ? getQuarterFromEvent(e) : dropMinuteRef.current;
     const startTime = formatDropTime(hour, minute);
-    handleUpdateEvent(dragEventId, { startTime, eventDate: date });
+
+    // Preserve duration: shift end time by the same amount
+    let endTime: string | null = null;
+    if (evt && startTime) {
+      const duration = getEventDuration(evt);
+      const newStartMin = hour * 60 + minute;
+      const newEndMin = newStartMin + duration;
+      const endH = Math.floor(newEndMin / 60);
+      const endM = newEndMin % 60;
+      endTime = `${endH.toString().padStart(2, '0')}:${endM.toString().padStart(2, '0')}`;
+    }
+
+    handleUpdateEvent(dragEventId, { startTime, endTime, eventDate: date });
     setDragEventId(null);
     setDropHour(null);
     dropMinuteRef.current = 0;
