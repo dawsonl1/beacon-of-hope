@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Plus, Eye, AlertTriangle, Calendar, ClipboardList } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { formatDate } from '../../constants';
@@ -79,6 +79,7 @@ function getCoopClass(level: string | null): string {
 
 export default function VisitationsPage() {
   useDocumentTitle('Visitations');
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') === 'conferences' ? 'conferences' : 'visitations';
 
@@ -230,14 +231,11 @@ export default function VisitationsPage() {
                       <tr
                         key={v.visitationId}
                         className={v.safetyConcernsNoted ? styles.rowSafety : ''}
+                        onClick={() => navigate(`/admin/visitations/${v.visitationId}`)}
+                        style={{ cursor: 'pointer' }}
                       >
-                        <td>
-                          <Link
-                            to={`/admin/visitations/${v.visitationId}`}
-                            style={{ color: 'inherit', textDecoration: 'none', fontWeight: 600 }}
-                          >
-                            {formatDate(v.visitDate)}
-                          </Link>
+                        <td style={{ fontWeight: 600 }}>
+                          {formatDate(v.visitDate)}
                         </td>
                         <td style={{ fontWeight: 600, color: 'var(--color-deep-navy)' }}>
                           {v.residentCode ?? `#${v.residentId}`}
