@@ -159,6 +159,7 @@ export default function ResidentFormPage() {
 
   const [form, setForm] = useState<FormData>(EMPTY_FORM);
   const [options, setOptions] = useState<FilterOptions | null>(null);
+  const [staffForSafehouse, setStaffForSafehouse] = useState<string[]>([]);
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -184,6 +185,17 @@ export default function ResidentFormPage() {
       setForm((prev) => ({ ...prev, safehouseId: String(availableSafehouses[0].safehouseId) }));
     }
   }, [availableSafehouses.length, isEdit, form.safehouseId]);
+
+  // Fetch staff assigned to the selected safehouse for the social worker dropdown
+  useEffect(() => {
+    if (!form.safehouseId) {
+      setStaffForSafehouse([]);
+      return;
+    }
+    apiFetch<{ name: string }[]>(`/api/admin/safehouses/${form.safehouseId}/staff`)
+      .then((data) => setStaffForSafehouse(data.map((s) => s.name)))
+      .catch(() => setStaffForSafehouse([]));
+  }, [form.safehouseId]);
 
   useEffect(() => {
     if (!isEdit) return;
@@ -308,7 +320,7 @@ export default function ResidentFormPage() {
           <div className={styles.fieldGrid}>
             <label className={styles.label}>
               Safehouse *
-              <select className={styles.select} value={form.safehouseId} onChange={(e) => updateField('safehouseId', e.target.value)} required>
+              <select className={styles.select} value={form.safehouseId} onChange={(e) => setForm((prev) => ({ ...prev, safehouseId: e.target.value, assignedSocialWorker: '' }))} required>
                 <option value="">Select safehouse</option>
                 {availableSafehouses.map((s) => (
                   <option key={s.safehouseId} value={String(s.safehouseId)}>{s.name}</option>
@@ -326,9 +338,9 @@ export default function ResidentFormPage() {
             </label>
             <label className={styles.label}>
               Assigned Social Worker *
-              <select className={styles.select} value={form.assignedSocialWorker} onChange={(e) => updateField('assignedSocialWorker', e.target.value)} required>
-                <option value="">Select social worker</option>
-                {options?.socialWorkers.map((sw) => (
+              <select className={styles.select} value={form.assignedSocialWorker} onChange={(e) => updateField('assignedSocialWorker', e.target.value)} required disabled={!form.safehouseId}>
+                <option value="">{form.safehouseId ? 'Select social worker' : 'Select a safehouse first'}</option>
+                {staffForSafehouse.map((sw) => (
                   <option key={sw} value={sw}>{sw}</option>
                 ))}
               </select>
