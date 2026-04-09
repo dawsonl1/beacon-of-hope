@@ -394,8 +394,9 @@
   padding: 0.75rem;
   display: flex;
   gap: 0.65rem;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, opacity 0.25s ease, transform 0.25s ease, max-height 0.3s ease, padding 0.3s ease;
   cursor: grab;
+  max-height: 200px;
 }
 
 .taskCard:hover {
@@ -406,6 +407,17 @@
   composes: taskCard;
   opacity: 0.5;
   box-shadow: 0 8px 24px rgba(15, 27, 45, 0.12);
+}
+
+.taskCardExiting {
+  opacity: 0;
+  transform: translateX(40px) scale(0.95);
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  overflow: hidden;
+  transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.3s ease 0.1s, padding 0.3s ease 0.1s, margin 0.3s ease 0.1s;
 }
 
 .taskIcon {
