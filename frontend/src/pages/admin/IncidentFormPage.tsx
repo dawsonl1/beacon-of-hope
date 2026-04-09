@@ -300,7 +300,7 @@ export default function IncidentFormPage() {
           <div className={styles.toggleRow} style={{ marginTop: '1rem' }}>
             <button
               type="button"
-              className={`${styles.toggle} ${form.followUpRequired ? styles.toggleDanger : ''}`}
+              className={`${styles.toggle} ${form.followUpRequired ? styles.toggleActive : ''}`}
               onClick={() => updateField('followUpRequired', !form.followUpRequired)}
             />
             <div>
