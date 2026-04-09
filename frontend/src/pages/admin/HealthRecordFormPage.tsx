@@ -6,6 +6,7 @@ import { APP_TODAY_STR } from '../../constants';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Dropdown from '../../components/admin/Dropdown';
 import DatePicker from '../../components/admin/DatePicker';
+import TextArea from '../../components/admin/TextArea';
 import styles from './VisitationFormPage.module.css';
 
 interface FormData {
@@ -173,7 +174,7 @@ export default function HealthRecordFormPage() {
 
         <label className={styles.label} style={{ marginTop: '0.75rem' }}>
           Notes
-          <textarea className={styles.textarea} rows={3} value={form.notes} onChange={e => handleChange('notes', e.target.value)} placeholder="Additional notes..." />
+          <TextArea className={styles.textarea} rows={3} value={form.notes} onChange={e => handleChange('notes', e.target.value)} placeholder="Additional notes..." />
         </label>
 
         {error && <p className={styles.error} role="alert">{error}</p>}

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Loader2, Save, Plus, Trash2, X, Check, RefreshCw, HelpCircle } from 'lucide-react';
 import { apiFetch } from '../../../api';
+import TextArea from '../../../components/admin/TextArea';
 import styles from './SocialSetupPage.module.css';
 
 interface VoiceGuide { orgDescription: string; toneDescription: string; preferredTerms: string; avoidedTerms: string; structuralRules: string; visualRules: string; }
@@ -108,12 +109,12 @@ export default function SocialSetupPage() {
           <div className={styles.field}>
             <label>About Your Organization</label>
             <p className={styles.hint}>Describe your mission. The AI uses this to understand who you are.</p>
-            <textarea rows={3} value={guide.orgDescription} onChange={e => setGuide({ ...guide, orgDescription: e.target.value })} placeholder="We operate safe homes for girls who are survivors of trafficking, providing shelter, counseling, education, and a path to a new life." />
+            <TextArea rows={3} value={guide.orgDescription} onChange={e => setGuide({ ...guide, orgDescription: e.target.value })} placeholder="We operate safe homes for girls who are survivors of trafficking, providing shelter, counseling, education, and a path to a new life." />
           </div>
           <div className={styles.field}>
             <label>Tone</label>
             <p className={styles.hint}>How should your posts sound?</p>
-            <textarea rows={2} value={guide.toneDescription} onChange={e => setGuide({ ...guide, toneDescription: e.target.value })} placeholder="Warm, hopeful, and direct. Never clinical or bureaucratic." />
+            <TextArea rows={2} value={guide.toneDescription} onChange={e => setGuide({ ...guide, toneDescription: e.target.value })} placeholder="Warm, hopeful, and direct. Never clinical or bureaucratic." />
           </div>
           <div className={styles.field}>
             <label>Preferred Language</label>
@@ -128,12 +129,12 @@ export default function SocialSetupPage() {
           <div className={styles.field}>
             <label>Content Rules</label>
             <p className={styles.hint}>Rules the AI follows. One per line.</p>
-            <textarea rows={3} value={guide.structuralRules} onChange={e => setGuide({ ...guide, structuralRules: e.target.value })} placeholder={"Always end awareness posts with hope.\nNever post just a sad statistic alone."} />
+            <TextArea rows={3} value={guide.structuralRules} onChange={e => setGuide({ ...guide, structuralRules: e.target.value })} placeholder={"Always end awareness posts with hope.\nNever post just a sad statistic alone."} />
           </div>
           <div className={styles.field}>
             <label>Photo Rules</label>
             <p className={styles.hint}>Rules for which photos can be used.</p>
-            <textarea rows={2} value={guide.visualRules} onChange={e => setGuide({ ...guide, visualRules: e.target.value })} placeholder="No identifiable faces without consent." />
+            <TextArea rows={2} value={guide.visualRules} onChange={e => setGuide({ ...guide, visualRules: e.target.value })} placeholder="No identifiable faces without consent." />
           </div>
           <button className={styles.saveBtn} onClick={saveVoice} disabled={saving}>{saving ? <Loader2 className={styles.spin} size={16} /> : saved ? 'Saved!' : <><Save size={16} /> Save</>}</button>
         </div>
@@ -154,7 +155,7 @@ export default function SocialSetupPage() {
             <p className={styles.hint}>Facts the AI uses in awareness posts. Add your own or let AI find them.</p>
             {showAddFact && (
               <div className={styles.addBlock}>
-                <textarea placeholder="The fact or statistic..." value={newFact.factText} onChange={e => setNewFact({ ...newFact, factText: e.target.value })} rows={2} />
+                <TextArea placeholder="The fact or statistic..." value={newFact.factText} onChange={e => setNewFact({ ...newFact, factText: e.target.value })} rows={2} />
                 <div className={styles.addRow}>
                   <input placeholder="Source" value={newFact.sourceName} onChange={e => setNewFact({ ...newFact, sourceName: e.target.value })} />
                   <button onClick={addFact} className={styles.saveBtn}>Add Fact</button>

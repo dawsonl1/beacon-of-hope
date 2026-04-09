@@ -11,6 +11,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
 import MlBadge from '../../components/admin/MlBadge';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import TextArea from '../../components/admin/TextArea';
 import styles from './ResidentDetailPage.module.css';
 
 /* ── Types ───────────────────────────────────────── */
@@ -722,7 +723,7 @@ function PlanTab({ resident, conferences, setConferences, id }: {
           </div>
           <div style={{ marginBottom: '0.5rem' }}>
             <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Description</label>
-            <textarea value={planDescription} onChange={e => setPlanDescription(e.target.value)} rows={2} placeholder="What should be achieved..." style={{ width: '100%', padding: '0.35rem', borderRadius: '6px', border: '1px solid rgba(15,27,45,0.12)', fontSize: '0.78rem', resize: 'vertical' }} />
+            <TextArea value={planDescription} onChange={e => setPlanDescription(e.target.value)} rows={2} placeholder="What should be achieved..." style={{ width: '100%', padding: '0.35rem', borderRadius: '6px', border: '1px solid rgba(15,27,45,0.12)', fontSize: '0.78rem', resize: 'vertical' }} />
           </div>
           <div style={{ marginBottom: '0.5rem' }}>
             <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Services Provided</label>

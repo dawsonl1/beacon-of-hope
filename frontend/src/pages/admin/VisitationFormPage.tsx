@@ -6,6 +6,7 @@ import { VISIT_TYPES, COOPERATION_LEVELS } from '../../domain';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Dropdown from '../../components/admin/Dropdown';
 import DatePicker from '../../components/admin/DatePicker';
+import TextArea from '../../components/admin/TextArea';
 import styles from './VisitationFormPage.module.css';
 
 interface ResidentOption {
@@ -252,7 +253,7 @@ export default function VisitationFormPage() {
           <div className={styles.fieldGrid}>
             <div className={`${styles.field} ${styles.fieldFull}`}>
               <label className={styles.label}>Purpose of Visit</label>
-              <textarea
+              <TextArea
                 className={styles.textarea}
                 value={form.purpose}
                 onChange={(e) => updateField('purpose', e.target.value)}
@@ -261,7 +262,7 @@ export default function VisitationFormPage() {
             </div>
             <div className={`${styles.field} ${styles.fieldFull}`}>
               <label className={styles.label}>Observations</label>
-              <textarea
+              <TextArea
                 className={styles.textarea}
                 value={form.observations}
                 onChange={(e) => updateField('observations', e.target.value)}
@@ -324,7 +325,7 @@ export default function VisitationFormPage() {
           {form.followUpNeeded && (
             <div className={`${styles.field} ${styles.fieldFull}`} style={{ marginTop: '0.75rem' }}>
               <label className={styles.label}>Follow-Up Notes</label>
-              <textarea
+              <TextArea
                 className={styles.textarea}
                 value={form.followUpNotes}
                 onChange={(e) => updateField('followUpNotes', e.target.value)}
@@ -335,7 +336,7 @@ export default function VisitationFormPage() {
 
           <div className={`${styles.field} ${styles.fieldFull}`} style={{ marginTop: '1rem' }}>
             <label className={styles.label}>Visit Outcome</label>
-            <textarea
+            <TextArea
               className={styles.textarea}
               value={form.visitOutcome}
               onChange={(e) => updateField('visitOutcome', e.target.value)}

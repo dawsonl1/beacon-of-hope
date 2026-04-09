@@ -3,6 +3,7 @@ import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { ArrowLeft, AlertTriangle, Shield } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { APP_TODAY_STR } from '../../constants';
+import TextArea from '../../components/admin/TextArea';
 import { INCIDENT_TYPES, SEVERITY_LEVELS } from '../../domain';
 import { useSafehouse } from '../../contexts/SafehouseContext';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
@@ -210,7 +211,7 @@ export default function IncidentFormPage() {
               <label className={styles.label}>
                 Description <span className={styles.required}>*</span>
               </label>
-              <textarea
+              <TextArea
                 className={styles.textarea}
                 rows={4}
                 value={form.description}
@@ -221,7 +222,7 @@ export default function IncidentFormPage() {
             </div>
             <div className={`${styles.field} ${styles.fieldFull}`}>
               <label className={styles.label}>Response Taken</label>
-              <textarea
+              <TextArea
                 className={styles.textarea}
                 rows={3}
                 value={form.responseTaken}

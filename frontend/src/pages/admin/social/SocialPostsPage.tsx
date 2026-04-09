@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Loader2, Check, X, Clock, Edit3, ThumbsUp, ThumbsDown, Copy, ExternalLink, BarChart2, ChevronLeft, ChevronRight, Sparkles, CameraIcon } from 'lucide-react';
 import { apiFetch, getApiUrl } from '../../../api';
+import TextArea from '../../../components/admin/TextArea';
 import styles from './SocialPostsPage.module.css';
 
 interface Post {
@@ -375,7 +376,7 @@ export default function SocialPostsPage() {
                       ) : null}
                       <button className={styles.changePhotoBtn} onClick={openPhotoPicker}><CameraIcon size={13} /> {editMediaThumb || post.mediaThumbPath ? 'Change Photo' : 'Add Photo'}</button>
                     </div>
-                    <textarea className={styles.editArea} value={editContent} onChange={e => setEditContent(e.target.value)} rows={5} />
+                    <TextArea className={styles.editArea} value={editContent} onChange={e => setEditContent(e.target.value)} rows={5} />
                   </>
                 ) : (
                   <>
@@ -511,7 +512,7 @@ export default function SocialPostsPage() {
                   <p className={styles.popoverDate}>{new Date(selectedPost.scheduledAt).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })} · {new Date(selectedPost.scheduledAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</p>
                 )}
                 {calEditing ? (
-                  <textarea className={styles.popoverEdit} value={calEditContent} onChange={e => setCalEditContent(e.target.value)} rows={6} />
+                  <TextArea className={styles.popoverEdit} value={calEditContent} onChange={e => setCalEditContent(e.target.value)} rows={6} />
                 ) : (
                   <p className={styles.popoverContent}>{selectedPost.content}</p>
                 )}

@@ -2,6 +2,7 @@ import { useState, useEffect, type FormEvent } from 'react';
 import { HandHeart, CheckCircle } from 'lucide-react';
 import { apiFetch } from '../api';
 import Dropdown from '../components/admin/Dropdown';
+import TextArea from '../components/admin/TextArea';
 import styles from './PartnerPage.module.css';
 
 const PARTNER_TYPES = ['Organization', 'Individual'] as const;
@@ -197,7 +198,7 @@ export default function PartnerPage() {
 
           <div className={styles.fieldGroup}>
             <label className={styles.label} htmlFor="notes">Anything else? (optional)</label>
-            <textarea
+            <TextArea
               id="notes"
               className={styles.textarea}
               placeholder="Tell us about your organization and how you'd like to partner..."
