@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { UserPlus, Trash2, Loader2, Shield, User, Heart } from 'lucide-react';
+import { UserPlus, Trash2, Loader2, Shield, User, Heart, Pencil, Save } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
@@ -51,6 +51,16 @@ export default function UsersPage() {
   // Delete
   const [deleteTarget, setDeleteTarget] = useState<AppUser | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  // Edit
+  const [editTarget, setEditTarget] = useState<AppUser | null>(null);
+  const [editFirst, setEditFirst] = useState('');
+  const [editLast, setEditLast] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editRole, setEditRole] = useState('');
+  const [editSafehouses, setEditSafehouses] = useState<number[]>([]);
+  const [saving, setSaving] = useState(false);
+  const [editError, setEditError] = useState('');
 
   const filteredUsers = useMemo(() => {
     if (roleFilter === 'All') return users;
@@ -135,6 +145,45 @@ export default function UsersPage() {
       setDeleteTarget(null);
     } finally {
       setDeleting(false);
+    }
+  }
+
+  function openEdit(u: AppUser) {
+    setEditTarget(u);
+    setEditFirst(u.firstName);
+    setEditLast(u.lastName);
+    setEditEmail(u.email);
+    setEditRole(u.roles[0] || 'Staff');
+    setEditSafehouses(u.safehouses?.map(s => s.safehouseId) ?? []);
+    setEditError('');
+  }
+
+  async function handleEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editTarget) return;
+    setEditError('');
+    if (!editEmail) {
+      setEditError('Email is required.');
+      return;
+    }
+    setSaving(true);
+    try {
+      await apiFetch(`/api/admin/users/${editTarget.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          firstName: editFirst,
+          lastName: editLast,
+          email: editEmail,
+          role: editRole,
+          safehouseIds: editSafehouses,
+        }),
+      });
+      setEditTarget(null);
+      fetchUsers();
+    } catch (e) {
+      setEditError(e instanceof Error ? e.message : 'Failed to update user.');
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -282,7 +331,10 @@ export default function UsersPage() {
                         <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{isDonor ? '—' : 'None'}</span>
                       )}
                     </td>
-                    <td>
+                    <td className={styles.actionsCell}>
+                      <button className={styles.editBtn} onClick={() => openEdit(u)} title="Edit user">
+                        <Pencil size={14} />
+                      </button>
                       {u.email !== currentUser?.email && (
                         <button className={styles.deleteBtn} onClick={() => setDeleteTarget(u)} title="Delete user">
                           <Trash2 size={14} />
@@ -305,6 +357,66 @@ export default function UsersPage() {
           onCancel={() => setDeleteTarget(null)}
           isDeleting={deleting}
         />
+      )}
+
+      {editTarget && (
+        <div className={styles.modalOverlay} onClick={() => setEditTarget(null)}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <h2 className={styles.formTitle}>Edit Account</h2>
+            <form onSubmit={handleEdit} className={styles.form}>
+              <div className={styles.formGrid}>
+                <label className={styles.label}>
+                  First Name
+                  <input className={styles.input} value={editFirst} onChange={e => setEditFirst(e.target.value)} placeholder="First name" />
+                </label>
+                <label className={styles.label}>
+                  Last Name
+                  <input className={styles.input} value={editLast} onChange={e => setEditLast(e.target.value)} placeholder="Last name" />
+                </label>
+                <label className={styles.label}>
+                  Email *
+                  <input className={styles.input} type="email" required value={editEmail} onChange={e => setEditEmail(e.target.value)} />
+                </label>
+                <label className={styles.label}>
+                  Role *
+                  <select className={styles.select} value={editRole} onChange={e => setEditRole(e.target.value)}>
+                    <option value="Staff">Staff</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Donor">Donor</option>
+                  </select>
+                </label>
+              </div>
+              {allSafehouses.length > 0 && (
+                <div style={{ marginTop: '0.75rem' }}>
+                  <label className={styles.label}>Assigned Safehouses</label>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.35rem' }}>
+                    {allSafehouses.map(s => (
+                      <label key={s.safehouseId} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.85rem', cursor: 'pointer' }}>
+                        <input
+                          type="checkbox"
+                          checked={editSafehouses.includes(s.safehouseId)}
+                          onChange={e => {
+                            if (e.target.checked) setEditSafehouses(prev => [...prev, s.safehouseId]);
+                            else setEditSafehouses(prev => prev.filter(id => id !== s.safehouseId));
+                          }}
+                        />
+                        {s.safehouseCode} - {s.name}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {editError && <p className={styles.formError} role="alert">{editError}</p>}
+              <div className={styles.formActions}>
+                <button type="button" className={styles.cancelBtn} onClick={() => setEditTarget(null)}>Cancel</button>
+                <button type="submit" className={styles.saveBtn} disabled={saving}>
+                  {saving ? <Loader2 size={14} className={styles.spinner} /> : <Save size={14} />}
+                  {saving ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

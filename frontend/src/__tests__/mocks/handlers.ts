@@ -326,6 +326,9 @@ export const newFeatureHandlers = [
       { id: '3', email: 'donor@beaconofhope.org', firstName: 'Maria', lastName: 'Chen', roles: ['Donor'], safehouses: [] },
     ]),
   ),
+  http.put(`${API}/api/admin/users/:id`, () =>
+    HttpResponse.json({ updated: true }),
+  ),
 ];
 
 export const handlers = [...authHandlers, ...publicHandlers, ...adminHandlers, ...newFeatureHandlers];

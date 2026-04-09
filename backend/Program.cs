@@ -1094,6 +1094,59 @@ app.MapDelete("/api/admin/users/{id}", async (
     return Results.Ok(new { deleted = true });
 }).RequireAuthorization("AdminOnly");
 
+app.MapPut("/api/admin/users/{id}", async (
+    string id,
+    UserManager<ApplicationUser> userManager,
+    AppDbContext db,
+    HttpContext httpContext) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<UpdateUserRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+
+    var user = await userManager.FindByIdAsync(id);
+    if (user == null) return Results.NotFound();
+
+    // Update basic fields
+    if (body.FirstName != null) user.FirstName = body.FirstName;
+    if (body.LastName != null) user.LastName = body.LastName;
+
+    if (!string.IsNullOrWhiteSpace(body.Email) && body.Email != user.Email)
+    {
+        var existing = await userManager.FindByEmailAsync(body.Email);
+        if (existing != null && existing.Id != id)
+            return Results.BadRequest(new { error = "A user with this email already exists." });
+        user.Email = body.Email;
+        user.UserName = body.Email;
+    }
+
+    var updateResult = await userManager.UpdateAsync(user);
+    if (!updateResult.Succeeded)
+        return Results.BadRequest(new { error = string.Join("; ", updateResult.Errors.Select(e => e.Description)) });
+
+    // Update role if changed
+    if (!string.IsNullOrWhiteSpace(body.Role))
+    {
+        var currentRoles = await userManager.GetRolesAsync(user);
+        if (!currentRoles.Contains(body.Role))
+        {
+            await userManager.RemoveFromRolesAsync(user, currentRoles);
+            await userManager.AddToRoleAsync(user, body.Role);
+        }
+    }
+
+    // Update safehouse assignments if provided
+    if (body.SafehouseIds != null)
+    {
+        var existingAssignments = await db.UserSafehouses.Where(us => us.UserId == id).ToListAsync();
+        db.UserSafehouses.RemoveRange(existingAssignments);
+        foreach (var sid in body.SafehouseIds)
+            db.UserSafehouses.Add(new UserSafehouse { UserId = id, SafehouseId = sid });
+        await db.SaveChangesAsync();
+    }
+
+    return Results.Ok(new { updated = true });
+}).RequireAuthorization("AdminOnly");
+
 // ── Global data reference date ──────────────────────────────
 // All queries should treat this as "today" so dashboards are consistent
 var DATA_CUTOFF = new DateOnly(2026, 2, 16);
@@ -2947,6 +3000,16 @@ public class CreateUserRequest
 }
 
 public class UpdateSafehousesRequest { public List<int>? SafehouseIds { get; set; } }
+
+public class UpdateUserRequest
+{
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    [EmailAddress]
+    public string? Email { get; set; }
+    public string? Role { get; set; }
+    public List<int>? SafehouseIds { get; set; }
+}
 
 public class CreateStaffTaskRequest { public int? ResidentId { get; set; } public int SafehouseId { get; set; } public string? TaskType { get; set; } public string? Title { get; set; } public string? Description { get; set; } public string? ContextJson { get; set; } }
 

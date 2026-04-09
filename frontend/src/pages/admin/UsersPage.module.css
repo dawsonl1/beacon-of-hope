@@ -282,6 +282,27 @@
   background: rgba(203, 87, 104, 0.1);
 }
 
+.actionsCell {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.editBtn {
+  background: none;
+  border: none;
+  color: var(--color-light-gray);
+  cursor: pointer;
+  padding: 0.3rem;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.editBtn:hover {
+  color: var(--color-sage);
+  background: rgba(15, 143, 125, 0.08);
+}
+
 .deleteBtn {
   background: none;
   border: none;
@@ -295,6 +316,29 @@
 .deleteBtn:hover {
   color: var(--color-rose);
   background: rgba(203, 87, 104, 0.08);
+}
+
+/* ── Edit Modal ───────────────────────────────────────── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 27, 45, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modalContent {
+  background: var(--surface-1);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 /* ── States ────────────────────────────────────────────── */

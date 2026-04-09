@@ -43,7 +43,6 @@ describe('UsersPage — Enhancements', () => {
     await waitFor(() => {
       const createBtn = screen.queryByText('Create Account');
       if (createBtn) {
-        // Click to open form
         createBtn.click();
       }
     });
@@ -53,5 +52,32 @@ describe('UsersPage — Enhancements', () => {
         expect(donorOption).toBeTruthy();
       }
     });
+  });
+
+  it('renders edit buttons for users', async () => {
+    renderWithProviders(<UsersPage />);
+    await waitFor(() => {
+      const editBtns = screen.queryAllByTitle('Edit user');
+      // If the page rendered as admin with users, edit buttons should exist
+      if (screen.queryByText('User Management')) {
+        expect(editBtns.length).toBeGreaterThan(0);
+      }
+    });
+  });
+
+  it('opens edit modal when edit button is clicked', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<UsersPage />);
+    await waitFor(() => {
+      expect(screen.queryByText('User Management') || screen.queryByText(/Access denied/)).toBeTruthy();
+    });
+    const editBtns = screen.queryAllByTitle('Edit user');
+    if (editBtns.length > 0) {
+      await user.click(editBtns[0]);
+      await waitFor(() => {
+        expect(screen.queryByText('Edit Account')).toBeTruthy();
+        expect(screen.queryByText('Save Changes')).toBeTruthy();
+      });
+    }
   });
 });
