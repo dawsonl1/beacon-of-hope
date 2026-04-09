@@ -766,6 +766,24 @@ export default function HomePage() {
                               {hour.toString().padStart(2, '0')}:00
                             </div>
                           )}
+                          {(dragEventId || dragTaskId) && (
+                            <div
+                              className={styles.dragOverlay}
+                              onDragOver={e => {
+                                e.preventDefault();
+                                e.dataTransfer.dropEffect = 'move';
+                                const minute = getQuarterFromEvent(e);
+                                dropMinuteRef.current = minute;
+                                if (dropIndicatorRef.current) {
+                                  dropIndicatorRef.current.style.top = `${(minute / 60) * 100}%`;
+                                  dropIndicatorRef.current.textContent = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                                }
+                              }}
+                              onDragEnter={() => handleSlotDragEnter(hour, dayStr)}
+                              onDragLeave={handleSlotDragLeave}
+                              onDrop={e => { e.preventDefault(); handleEventDrop(hour, dayStr, e); handleSlotDrop(hour, dayStr, e); }}
+                            />
+                          )}
                         </div>
                       );
                     })}
