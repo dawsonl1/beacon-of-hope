@@ -183,6 +183,48 @@
   margin-left: 0.15rem;
 }
 
+/* ── Resolve Toggle ──────────────────────────────────── */
+.resolveToggle {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  background: rgba(231, 76, 60, 0.2);
+  border-radius: 11px;
+  cursor: pointer;
+  border: none;
+  transition: background 0.25s;
+  flex-shrink: 0;
+}
+
+.resolveToggle:hover {
+  background: rgba(231, 76, 60, 0.35);
+}
+
+.resolveToggleOn {
+  background: rgba(46, 204, 113, 0.3);
+}
+
+.resolveToggleOn:hover {
+  background: rgba(46, 204, 113, 0.45);
+}
+
+.resolveToggleKnob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: #e74c3c;
+  border-radius: 50%;
+  transition: transform 0.25s, background 0.25s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.resolveToggleOn .resolveToggleKnob {
+  transform: translateX(18px);
+  background: #27ae60;
+}
+
 @media (max-width: 700px) {
   .page { padding: 1rem; }
 }

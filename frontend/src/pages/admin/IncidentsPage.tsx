@@ -93,6 +93,20 @@ export default function IncidentsPage() {
     setPage(1);
   }
 
+  async function toggleResolved(e: React.MouseEvent, inc: IncidentRow) {
+    e.stopPropagation();
+    const newResolved = !inc.resolved;
+    setIncidents(prev => prev.map(i => i.incidentId === inc.incidentId ? { ...i, resolved: newResolved } : i));
+    try {
+      await apiFetch(`/api/admin/incidents/${inc.incidentId}/resolve`, {
+        method: 'PATCH',
+        body: JSON.stringify({ resolved: newResolved }),
+      });
+    } catch {
+      setIncidents(prev => prev.map(i => i.incidentId === inc.incidentId ? { ...i, resolved: inc.resolved } : i));
+    }
+  }
+
   return (
     <div className={styles.page}>
       <header className={styles.header}>
@@ -193,9 +207,14 @@ export default function IncidentsPage() {
                     </td>
                     <td>{inc.reportedBy || '-'}</td>
                     <td>
-                      <span className={`${styles.resolvedBadge} ${inc.resolved ? styles.resolvedYes : styles.resolvedNo}`}>
-                        {inc.resolved ? 'Resolved' : 'Open'}
-                      </span>
+                      <button
+                        type="button"
+                        className={`${styles.resolveToggle} ${inc.resolved ? styles.resolveToggleOn : ''}`}
+                        onClick={(e) => toggleResolved(e, inc)}
+                        title={inc.resolved ? 'Mark as open' : 'Mark as resolved'}
+                      >
+                        <span className={styles.resolveToggleKnob} />
+                      </button>
                     </td>
                     <td>{inc.followUpRequired ? 'Yes' : 'No'}</td>
                   </tr>
