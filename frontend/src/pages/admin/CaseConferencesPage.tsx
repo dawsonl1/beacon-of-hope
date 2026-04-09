@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Loader2, Users, Plus, X } from 'lucide-react';
+import { Loader2, Users, Plus, X, ArrowLeft } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { APP_TODAY } from '../../constants';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
@@ -28,7 +28,7 @@ interface ResidentOption {
 export default function CaseConferencesPage() {
   useDocumentTitle('Case Conferences');
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [plans, setPlans] = useState<ConferenceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -86,12 +86,15 @@ export default function CaseConferencesPage() {
           status: 'Open',
         }),
       });
+      if (scheduleFor) {
+        navigate(`/admin/caseload/${scheduleFor}`);
+        return;
+      }
       setShowForm(false);
       setFormResidentId('');
       setFormCategory('');
       setFormDescription('');
       setFormDate('');
-      if (searchParams.has('scheduleFor')) { searchParams.delete('scheduleFor'); setSearchParams(searchParams, { replace: true }); }
       fetchPlans();
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Failed to schedule');
@@ -145,12 +148,23 @@ export default function CaseConferencesPage() {
 
   return (
     <div className={styles.page}>
+      {scheduleFor && (
+        <button
+          onClick={() => navigate(`/admin/caseload/${scheduleFor}`)}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', background: 'none', border: 'none', color: 'var(--color-sage)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer', padding: '0', marginBottom: '0.75rem' }}
+        >
+          <ArrowLeft size={14} /> Back to Resident
+        </button>
+      )}
       <header className={styles.header}>
         <div>
           <h1 className={styles.title}>Case Conferences</h1>
           <p className={styles.subtitle}>Intervention plans and case conference scheduling</p>
         </div>
-        <button className={styles.addBtn} onClick={() => setShowForm(f => !f)}>
+        <button className={styles.addBtn} onClick={() => {
+          if (showForm && scheduleFor) { navigate(`/admin/caseload/${scheduleFor}`); return; }
+          setShowForm(f => !f);
+        }}>
           {showForm ? <><X size={16} /> Cancel</> : <><Plus size={16} /> Schedule Conference</>}
         </button>
       </header>
