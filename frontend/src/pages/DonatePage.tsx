@@ -1,14 +1,23 @@
-import { useState, useEffect } from 'react';
-import { Heart, Users } from 'lucide-react';
+import { useState } from 'react';
+import { Heart } from 'lucide-react';
 import { apiFetch } from '../api';
 import styles from './DonatePage.module.css';
 
 const PRESET_AMOUNTS: { amount: number; impact: string }[] = [
-  { amount: 250, impact: 'Provides school supplies and tutoring for a child' },
-  { amount: 500, impact: 'Covers counseling and therapy for a survivor' },
-  { amount: 750, impact: 'Funds medical care and wellness support' },
-  { amount: 1000, impact: "Supports a child's full monthly care" },
-  { amount: 1500, impact: 'Shelters and rehabilitates a child for a month' },
+  { amount: 250, impact: 'Enough to provide school supplies and tutoring for a child' },
+  { amount: 500, impact: 'Enough to cover counseling and therapy for a survivor' },
+  { amount: 750, impact: 'Enough to fund medical care and wellness support' },
+  { amount: 1000, impact: "Enough to support a child's full monthly care" },
+  { amount: 1500, impact: 'Enough to shelter and rehabilitate a child for a month' },
+];
+
+const IMPACT_TIERS = [
+  { threshold: 100, label: 'Essential supplies', icon: '📦' },
+  { threshold: 250, label: 'School supplies & tutoring', icon: '📚' },
+  { threshold: 500, label: 'Counseling & therapy', icon: '💛' },
+  { threshold: 750, label: 'Medical care & wellness', icon: '🏥' },
+  { threshold: 1000, label: 'Full monthly care', icon: '🏠' },
+  { threshold: 1500, label: 'Shelter & rehabilitation', icon: '🌟' },
 ];
 
 type Mode = 'one-time' | 'recurring';
@@ -23,13 +32,6 @@ export default function DonatePage() {
   const [newsletter, setNewsletter] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [goalData, setGoalData] = useState<{ raised: number; goal: number; donorCount: number } | null>(null);
-
-  useEffect(() => {
-    apiFetch<{ raised: number; goal: number; donorCount: number }>('/api/donate/monthly-progress')
-      .then(setGoalData)
-      .catch(() => {});
-  }, []);
 
   const amountCents = customAmount
     ? Math.round(parseFloat(customAmount) * 100)
@@ -166,6 +168,37 @@ export default function DonatePage() {
               />
             </div>
           </div>
+
+          {/* Impact meter */}
+          {displayAmount > 0 && (
+            <div className={styles.impactMeter}>
+              <p className={styles.impactMeterTitle}>Your impact at ${displayAmount.toLocaleString()}</p>
+              <div className={styles.impactTiers}>
+                {IMPACT_TIERS.map((tier, i) => {
+                  const active = displayAmount >= tier.threshold;
+                  const isHighest = active && (i === IMPACT_TIERS.length - 1 || displayAmount < IMPACT_TIERS[i + 1].threshold);
+                  return (
+                    <div
+                      key={tier.threshold}
+                      className={`${styles.impactTier} ${active ? styles.impactTierActive : ''} ${isHighest ? styles.impactTierHighest : ''}`}
+                    >
+                      <span className={styles.tierIcon}>{tier.icon}</span>
+                      <div className={styles.tierContent}>
+                        <span className={styles.tierLabel}>{tier.label}</span>
+                        <span className={styles.tierThreshold}>${tier.threshold.toLocaleString()}+</span>
+                      </div>
+                      <div className={styles.tierBar}>
+                        <div
+                          className={styles.tierBarFill}
+                          style={{ width: active ? '100%' : `${Math.min(100, (displayAmount / tier.threshold) * 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Email (optional) */}
           <div className={styles.fieldGroup}>
