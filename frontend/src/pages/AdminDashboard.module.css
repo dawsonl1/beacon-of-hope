@@ -422,6 +422,17 @@
   color: #B5913A;
 }
 
+/* ── Empty state ─────────────────────────────────────── */
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
 /* ── Tooltip ──────────────────────────────────────────── */
 .tooltip {
   background: rgba(15, 27, 45, 0.95);

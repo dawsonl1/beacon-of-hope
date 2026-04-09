@@ -237,53 +237,59 @@ export default function AdminDashboard() {
               ))}
             </div>
           </div>
-          <div className={styles.tableWrapper}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Resident</th>
-                  <th>Safehouse</th>
-                  <th>Category</th>
-                  <th>Last Session</th>
-                  <th>Risk</th>
-                </tr>
-              </thead>
-              <tbody>
-                {residents.slice(0, 8).map((r, i) => (
-                  <tr key={`${r.code}-${i}`} className={r.riskLevel === 'Critical' ? styles.rowCritical : ''}>
-                    <td>
-                      <span className={styles.residentCode}>{r.code}</span>
-                      <span className={styles.residentWorker}>{r.socialWorker}</span>
-                    </td>
-                    <td>{r.safehouse}</td>
-                    <td>{r.category}</td>
-                    <td className={
-                      r.lastSession.includes('week') ? styles.cellOverdue : ''
-                    }>{r.lastSession}</td>
-                    <td>
-                      <span
-                        className={styles.severityBadge}
-                        style={{
-                          background: severityConfig[r.riskLevel].bg,
-                          color: severityConfig[r.riskLevel].color,
-                          borderColor: severityConfig[r.riskLevel].border,
-                        }}
-                      >
-                        <span className={styles.severityDot} style={{ background: severityConfig[r.riskLevel].color }} />
-                        {r.riskLevel}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {totalResidents > 8 && (
-            <div className={styles.viewAllRow}>
-              <button className={styles.viewAllBtn} onClick={() => navigate('/admin/caseload')}>
-                View all {totalResidents} residents
-              </button>
-            </div>
+          {residents.length === 0 ? (
+            <div className={styles.emptyState}>No resident data for this safehouse</div>
+          ) : (
+            <>
+              <div className={styles.tableWrapper}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Resident</th>
+                      <th>Safehouse</th>
+                      <th>Category</th>
+                      <th>Last Session</th>
+                      <th>Risk</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {residents.slice(0, 8).map((r, i) => (
+                      <tr key={`${r.code}-${i}`} className={r.riskLevel === 'Critical' ? styles.rowCritical : ''}>
+                        <td>
+                          <span className={styles.residentCode}>{r.code}</span>
+                          <span className={styles.residentWorker}>{r.socialWorker}</span>
+                        </td>
+                        <td>{r.safehouse}</td>
+                        <td>{r.category}</td>
+                        <td className={
+                          r.lastSession.includes('week') ? styles.cellOverdue : ''
+                        }>{r.lastSession}</td>
+                        <td>
+                          <span
+                            className={styles.severityBadge}
+                            style={{
+                              background: severityConfig[r.riskLevel].bg,
+                              color: severityConfig[r.riskLevel].color,
+                              borderColor: severityConfig[r.riskLevel].border,
+                            }}
+                          >
+                            <span className={styles.severityDot} style={{ background: severityConfig[r.riskLevel].color }} />
+                            {r.riskLevel}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {totalResidents > 8 && (
+                <div className={styles.viewAllRow}>
+                  <button className={styles.viewAllBtn} onClick={() => navigate('/admin/caseload')}>
+                    View all {totalResidents} residents
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
 
@@ -336,45 +342,53 @@ export default function AdminDashboard() {
         <div className={styles.chartCard}>
           <div className={styles.chartMeta}>
             <h2 className={styles.cardTitle}>Active Residents</h2>
-            <span className={styles.chartCallout}>+3 admitted this month</span>
+            {activeResidentsChart.length > 0 && <span className={styles.chartCallout}>+3 admitted this month</span>}
           </div>
-          <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={activeResidentsChart}>
-              <defs>
-                <linearGradient id="gradActive" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#1B2838" stopOpacity={0.12} />
-                  <stop offset="100%" stopColor="#1B2838" stopOpacity={0.01} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E8E0D4" vertical={false} />
-              <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#8A8078' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: '#8A8078' }} axisLine={false} tickLine={false} domain={['dataMin - 5', 'dataMax + 3']} />
-              <Tooltip content={<ChartTooltip />} />
-              <Area type="monotone" dataKey="count" stroke="#1B2838" strokeWidth={2} fill="url(#gradActive)" />
-            </AreaChart>
-          </ResponsiveContainer>
+          {activeResidentsChart.length === 0 ? (
+            <div className={styles.emptyState}>No trend data for this safehouse</div>
+          ) : (
+            <ResponsiveContainer width="100%" height={200}>
+              <AreaChart data={activeResidentsChart}>
+                <defs>
+                  <linearGradient id="gradActive" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#1B2838" stopOpacity={0.12} />
+                    <stop offset="100%" stopColor="#1B2838" stopOpacity={0.01} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E8E0D4" vertical={false} />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#8A8078' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: '#8A8078' }} axisLine={false} tickLine={false} domain={['dataMin - 5', 'dataMax + 3']} />
+                <Tooltip content={<ChartTooltip />} />
+                <Area type="monotone" dataKey="count" stroke="#1B2838" strokeWidth={2} fill="url(#gradActive)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
         </div>
 
         <div className={styles.chartCard}>
           <div className={styles.chartMeta}>
             <h2 className={styles.cardTitle}>Incidents Reported</h2>
-            <span className={styles.chartCalloutWarning}>{metrics?.openIncidents ?? 0} currently open</span>
+            {flaggedChart.length > 0 && <span className={styles.chartCalloutWarning}>{metrics?.openIncidents ?? 0} currently open</span>}
           </div>
-          <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={flaggedChart}>
-              <defs>
-                <linearGradient id="gradIncidents" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#D4A853" stopOpacity={0.15} />
-                  <stop offset="100%" stopColor="#D4A853" stopOpacity={0.01} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E8E0D4" vertical={false} />
-              <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#8A8078' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: '#8A8078' }} axisLine={false} tickLine={false} domain={[0, 'dataMax + 2']} />
-              <Tooltip content={<ChartTooltip />} />
-              <Area type="monotone" dataKey="count" stroke="#D4A853" strokeWidth={2} fill="url(#gradIncidents)" />
-            </AreaChart>
-          </ResponsiveContainer>
+          {flaggedChart.length === 0 ? (
+            <div className={styles.emptyState}>No incident data for this safehouse</div>
+          ) : (
+            <ResponsiveContainer width="100%" height={200}>
+              <AreaChart data={flaggedChart}>
+                <defs>
+                  <linearGradient id="gradIncidents" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#D4A853" stopOpacity={0.15} />
+                    <stop offset="100%" stopColor="#D4A853" stopOpacity={0.01} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E8E0D4" vertical={false} />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#8A8078' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: '#8A8078' }} axisLine={false} tickLine={false} domain={[0, 'dataMax + 2']} />
+                <Tooltip content={<ChartTooltip />} />
+                <Area type="monotone" dataKey="count" stroke="#D4A853" strokeWidth={2} fill="url(#gradIncidents)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </section>
 

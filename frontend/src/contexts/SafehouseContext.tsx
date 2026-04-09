@@ -22,17 +22,17 @@ export function SafehouseProvider({ children }: { children: ReactNode }) {
   const isAdmin = user?.roles?.includes('Admin') ?? false;
   const safehouses: SafehouseOption[] = (user as any)?.safehouses ?? [];
 
-  const [activeSafehouseId, setActiveSafehouseId] = useState<number | null>(null);
+  // Admins default to "All" (null); Staff default to their first safehouse
+  const [activeSafehouseId, setActiveSafehouseId] = useState<number | null>(() =>
+    isAdmin ? null : safehouses.length > 0 ? safehouses[0].safehouseId : null
+  );
 
+  // Only set default for staff on initial load (when they have no selection yet)
   useEffect(() => {
-    if (isAdmin) {
-      // Admins default to "All" (null)
-      setActiveSafehouseId(null);
-    } else if (safehouses.length > 0 && activeSafehouseId === null) {
-      // Staff default to their first safehouse
+    if (!isAdmin && safehouses.length > 0 && activeSafehouseId === null) {
       setActiveSafehouseId(safehouses[0].safehouseId);
     }
-  }, [isAdmin, safehouses, activeSafehouseId]);
+  }, [isAdmin, safehouses]); // deliberately exclude activeSafehouseId to avoid reset loop
 
   return (
     <SafehouseContext.Provider value={{ safehouses, activeSafehouseId, setActiveSafehouseId, isAdmin }}>
