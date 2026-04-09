@@ -77,6 +77,10 @@ const PostPlacementPage = lazy(() => import('./pages/admin/PostPlacementPage'));
 const SocialQueuePage = lazy(() => import('./pages/admin/social/SocialQueuePage'));
 const PhotoUploadPage = lazy(() => import('./pages/admin/social/PhotoUploadPage'));
 const SocialSettingsPage = lazy(() => import('./pages/admin/social/SocialSettingsPage'));
+const MediaLibraryPage = lazy(() => import('./pages/admin/social/MediaLibraryPage'));
+const SocialCalendarPage = lazy(() => import('./pages/admin/social/SocialCalendarPage'));
+const VoiceBrandPage = lazy(() => import('./pages/admin/social/VoiceBrandPage'));
+const FactsPage = lazy(() => import('./pages/admin/social/FactsPage'));
 const DonorPortal = lazy(() => import('./pages/DonorPortal'));
 const DonatePage = lazy(() => import('./pages/DonatePage'));
 const DonateSuccessPage = lazy(() => import('./pages/DonateSuccessPage'));
@@ -168,6 +172,10 @@ function App() {
               <Route path="users" element={<UsersPage />} />
               <Route path="social/queue" element={<SocialQueuePage />} />
               <Route path="social/upload" element={<PhotoUploadPage />} />
+              <Route path="social/calendar" element={<SocialCalendarPage />} />
+              <Route path="social/media" element={<MediaLibraryPage />} />
+              <Route path="social/facts" element={<FactsPage />} />
+              <Route path="social/voice" element={<VoiceBrandPage />} />
               <Route path="social/settings" element={<SocialSettingsPage />} />
             </Route>
           </Routes>

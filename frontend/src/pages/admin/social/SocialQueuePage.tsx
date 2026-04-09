@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Loader2, Check, X, Clock, Edit3, ThumbsUp, ThumbsDown, Copy, ExternalLink } from 'lucide-react';
+import { Loader2, Check, X, Clock, Edit3, ThumbsUp, ThumbsDown, Copy, ExternalLink, BarChart2 } from 'lucide-react';
 import { apiFetch } from '../../../api';
 import styles from './SocialQueuePage.module.css';
 
@@ -50,6 +50,8 @@ export default function SocialQueuePage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState('');
   const [generating, setGenerating] = useState(false);
+  const [engagementId, setEngagementId] = useState<number | null>(null);
+  const [engagement, setEngagement] = useState({ likes: 0, shares: 0, comments: 0, donations: 0 });
 
   const fetchPosts = useCallback(async () => {
     setLoading(true);
@@ -104,6 +106,21 @@ export default function SocialQueuePage() {
 
   async function handleCopy(content: string) {
     await navigator.clipboard.writeText(content);
+  }
+
+  async function handleLogEngagement(id: number) {
+    await apiFetch(`/api/admin/social/posts/${id}/engagement`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        engagementLikes: engagement.likes,
+        engagementShares: engagement.shares,
+        engagementComments: engagement.comments,
+        engagementDonations: engagement.donations,
+      }),
+    });
+    setEngagementId(null);
+    setEngagement({ likes: 0, shares: 0, comments: 0, donations: 0 });
+    fetchPosts();
   }
 
   async function handleGenerate() {
@@ -220,6 +237,28 @@ export default function SocialQueuePage() {
                     <button className={styles.publishBtn} onClick={() => handlePublish(post.automatedPostId)}>
                       <ExternalLink size={14} /> Mark Published
                     </button>
+                  </>
+                )}
+                {activeTab === 'published' && (
+                  <>
+                    {post.engagementLikes != null ? (
+                      <div className={styles.engagementDisplay}>
+                        {post.engagementLikes}L · {post.engagementShares ?? 0}S · {post.engagementComments ?? 0}C
+                        {post.engagementDonations ? ` · $${post.engagementDonations}` : ''}
+                      </div>
+                    ) : engagementId === post.automatedPostId ? (
+                      <div className={styles.engagementForm}>
+                        <input type="number" placeholder="Likes" min={0} value={engagement.likes} onChange={e => setEngagement({ ...engagement, likes: +e.target.value })} />
+                        <input type="number" placeholder="Shares" min={0} value={engagement.shares} onChange={e => setEngagement({ ...engagement, shares: +e.target.value })} />
+                        <input type="number" placeholder="Comments" min={0} value={engagement.comments} onChange={e => setEngagement({ ...engagement, comments: +e.target.value })} />
+                        <input type="number" placeholder="$ Donations" min={0} step="0.01" value={engagement.donations} onChange={e => setEngagement({ ...engagement, donations: +e.target.value })} />
+                        <button className={styles.approveBtn} onClick={() => handleLogEngagement(post.automatedPostId)}><Check size={14} /> Save</button>
+                      </div>
+                    ) : (
+                      <button className={styles.editBtn} onClick={() => { setEngagementId(post.automatedPostId); setEngagement({ likes: 0, shares: 0, comments: 0, donations: 0 }); }}>
+                        <BarChart2 size={14} /> Log Engagement
+                      </button>
+                    )}
                   </>
                 )}
               </div>

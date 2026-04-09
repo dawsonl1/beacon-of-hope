@@ -43,5 +43,10 @@
 .publishBtn { color: #fff; background: var(--color-sage) !important; border-color: var(--color-sage) !important; }
 .publishBtn:hover { opacity: 0.9; }
 
+.engagementDisplay { font-size: 0.75rem; color: var(--text-muted); padding: 0.3rem 0; }
+.engagementForm { display: flex; gap: 0.3rem; flex-wrap: wrap; align-items: center; }
+.engagementForm input { width: 70px; padding: 0.3rem 0.4rem; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.75rem; text-align: center; }
+.engagementForm input:focus { outline: none; border-color: var(--color-sage); }
+
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }

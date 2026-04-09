@@ -21,6 +21,10 @@ import {
   Share2,
   CameraIcon,
   Settings,
+  CalendarDays,
+  ImageIcon,
+  BookOpen,
+  Mic,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { SafehouseProvider, useSafehouse } from '../contexts/SafehouseContext';
@@ -74,8 +78,12 @@ const navItems = [
   { to: '/admin/donors', icon: HandHeart, label: 'Donors' },
   { to: '/admin/reports', icon: BarChart3, label: 'Reports' },
   { to: '/admin/users', icon: Shield, label: 'Users' },
-  { to: '/admin/social/queue', icon: Share2, label: 'Social Media' },
+  { to: '/admin/social/queue', icon: Share2, label: 'Social Queue' },
+  { to: '/admin/social/calendar', icon: CalendarDays, label: 'Social Calendar' },
   { to: '/admin/social/upload', icon: CameraIcon, label: 'Photo Upload' },
+  { to: '/admin/social/media', icon: ImageIcon, label: 'Media Library' },
+  { to: '/admin/social/facts', icon: BookOpen, label: 'Facts' },
+  { to: '/admin/social/voice', icon: Mic, label: 'Voice & Brand' },
   { to: '/admin/social/settings', icon: Settings, label: 'Social Settings' },
 ];
 
