@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Shield, Mic, Square, Sparkles, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { APP_TODAY, APP_TODAY_STR } from '../../constants';
@@ -131,7 +131,9 @@ export default function RecordingFormPage() {
   const { id } = useParams<{ id: string }>();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
+  const sourceCalendarEventId = searchParams.get('sourceCalendarEventId');
 
   const [residents, setResidents] = useState<ResidentOption[]>([]);
   const [loading, setLoading] = useState(isEdit);
@@ -405,12 +407,16 @@ export default function RecordingFormPage() {
     }
   }
 
-  // Pre-fill social worker name from current user
+  // Pre-fill social worker name and residentId from URL params
   useEffect(() => {
     if (!isEdit && user) {
       setSocialWorker(`${user.firstName} ${user.lastName}`.trim());
     }
-  }, [user, isEdit]);
+    if (!isEdit) {
+      const urlResidentId = searchParams.get('residentId');
+      if (urlResidentId) setResidentId(urlResidentId);
+    }
+  }, [user, isEdit, searchParams]);
 
   // Load residents for dropdown
   useEffect(() => {
@@ -496,6 +502,7 @@ export default function RecordingFormPage() {
         needsCaseConference,
         readyForReintegration,
         updatedRiskLevel: updatedRiskLevel || null,
+        sourceCalendarEventId: sourceCalendarEventId ? Number(sourceCalendarEventId) : null,
       };
 
       if (isEdit) {

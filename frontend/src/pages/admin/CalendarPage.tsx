@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Loader2, Plus, GripVertical } from 'lucide-react';
 import {
   DndContext,
@@ -192,6 +192,7 @@ function TodoQueue({ children }: { children: React.ReactNode }) {
 export default function CalendarPage() {
   useDocumentTitle('Calendar');
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { activeSafehouseId, safehouses } = useSafehouse();
   const [view, setView] = useState<'day' | 'week'>('day');
   const [currentDate, setCurrentDate] = useState(new Date(APP_TODAY));
@@ -200,10 +201,29 @@ export default function CalendarPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEventItem | null>(null);
   const [showNewForm, setShowNewForm] = useState(false);
+  const [sourceTaskId, setSourceTaskId] = useState<number | null>(null);
   const [newEvent, setNewEvent] = useState<NewEventForm>({
     eventType: 'Counseling', title: '', description: '',
     eventDate: APP_TODAY_STR, startTime: '', endTime: '', residentId: '',
   });
+
+  // Pre-fill form from URL params (e.g. from incident follow-up task)
+  useEffect(() => {
+    const taskId = searchParams.get('sourceTaskId');
+    const resId = searchParams.get('residentId');
+    const title = searchParams.get('title');
+    if (taskId) {
+      setSourceTaskId(Number(taskId));
+      setNewEvent(prev => ({
+        ...prev,
+        residentId: resId || prev.residentId,
+        title: title || prev.title,
+        eventType: 'Counseling',
+      }));
+      setShowNewForm(true);
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
   const [residents, setResidents] = useState<{ residentId: number; internalCode: string }[]>([]);
 
   // dnd-kit state
@@ -258,9 +278,11 @@ export default function CalendarPage() {
           eventType: newEvent.eventType, title: newEvent.title,
           description: newEvent.description || null, eventDate: newEvent.eventDate,
           startTime: newEvent.startTime || null, endTime: newEvent.endTime || null,
+          sourceTaskId: sourceTaskId || undefined,
         }),
       });
       setShowNewForm(false);
+      setSourceTaskId(null);
       setNewEvent({ eventType: 'Counseling', title: '', description: '', eventDate: formatDate(currentDate), startTime: '', endTime: '', residentId: '' });
       fetchEvents();
     } catch { /* ignore */ }
@@ -472,7 +494,7 @@ export default function CalendarPage() {
                 <>
                   <button className={styles.modalBtnPrimary} onClick={() => updateEvent(selectedEvent.calendarEventId, { status: 'Completed' })}>Mark Complete</button>
                   {selectedEvent.eventType === 'Counseling' && (
-                    <button className={styles.modalBtn} onClick={() => { navigate(`/admin/recordings/new?residentId=${selectedEvent.residentId || ''}`); setSelectedEvent(null); }}>Log Recording</button>
+                    <button className={styles.modalBtn} onClick={() => { navigate(`/admin/recordings/new?residentId=${selectedEvent.residentId || ''}&sourceCalendarEventId=${selectedEvent.calendarEventId}`); setSelectedEvent(null); }}>Log Recording</button>
                   )}
                   {selectedEvent.eventType === 'HomeVisit' && (
                     <button className={styles.modalBtn} onClick={() => { navigate(`/admin/visitations/new?residentId=${selectedEvent.residentId || ''}`); setSelectedEvent(null); }}>Log Visit</button>
