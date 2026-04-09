@@ -14,7 +14,7 @@ public static class IdentitySeeder
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var env = services.GetRequiredService<IWebHostEnvironment>();
 
-        string[] roles = { "Admin", "Staff", "Donor" };
+        string[] roles = { "Admin", "Staff", "Donor", "SocialMediaManager" };
         foreach (var role in roles)
         {
             if (!await roleManager.RoleExistsAsync(role))
