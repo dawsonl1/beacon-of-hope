@@ -204,8 +204,8 @@
   font-weight: 600;
   padding: 0.2rem 0.4rem;
   border-radius: 5px;
-  cursor: grab;
-  transition: top 0.2s ease, left 0.2s ease, width 0.2s ease, height 0.2s ease, filter 0.15s, box-shadow 0.15s, opacity 0.15s;
+  cursor: pointer;
+  transition: top 0.2s ease, left 0.2s ease, width 0.2s ease, height 0.2s ease, filter 0.15s, box-shadow 0.15s;
   overflow: hidden;
   box-sizing: border-box;
   color: #fff;
@@ -230,7 +230,6 @@
 .eventReintegrationVisit { background: #16a085; }
 .eventPostPlacementVisit { background: #2980b9; }
 .eventCompleted { opacity: 0.5; text-decoration: line-through; }
-.eventDragging { opacity: 0; pointer-events: none; height: 0 !important; min-height: 0 !important; padding: 0 !important; overflow: hidden; }
 .eventDropThrough { pointer-events: none; }
 
 /* ── Week view (Google Calendar-style grid) ──────── */
@@ -329,28 +328,6 @@
   position: relative;
 }
 
-.dragOverlay {
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-}
-
-.dropTimeIndicator {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--color-sage);
-  pointer-events: none;
-  z-index: 1;
-  font-size: 0.58rem;
-  font-weight: 700;
-  color: var(--color-sage);
-  display: flex;
-  align-items: flex-start;
-  padding-left: 0.2rem;
-  padding-top: 0.1rem;
-}
 
 /* ── Tasks panel (right sidebar) ─────────────────── */
 .tasksPanel {
