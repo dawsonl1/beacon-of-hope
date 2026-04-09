@@ -9,7 +9,8 @@ import styles from './ResidentFormPage.module.css';
 
 interface SafehouseOption {
   safehouseId: number;
-  label: string;
+  safehouseCode: string;
+  name: string;
 }
 
 interface FilterOptions {
@@ -310,7 +311,7 @@ export default function ResidentFormPage() {
               <select className={styles.select} value={form.safehouseId} onChange={(e) => updateField('safehouseId', e.target.value)} required>
                 <option value="">Select safehouse</option>
                 {availableSafehouses.map((s) => (
-                  <option key={s.safehouseId} value={String(s.safehouseId)}>{s.label}</option>
+                  <option key={s.safehouseId} value={String(s.safehouseId)}>{s.name}</option>
                 ))}
               </select>
             </label>
