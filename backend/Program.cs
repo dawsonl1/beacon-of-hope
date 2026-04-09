@@ -9,6 +9,7 @@ using backend.DTOs;
 using backend.Endpoints;
 using backend.Mapping;
 using backend.Models;
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,10 +37,14 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opts =>
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "dp-keys")))
+    .SetApplicationName("BeaconOfHope");
+
 builder.Services.ConfigureApplicationCookie(opts =>
 {
     opts.Cookie.HttpOnly = true;
-    opts.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    opts.Cookie.SecurePolicy = builder.Environment.IsDevelopment() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
     opts.Cookie.SameSite = SameSiteMode.None;
     opts.Cookie.Name = "BeaconAuth";
     opts.ExpireTimeSpan = TimeSpan.FromHours(8);
@@ -68,6 +73,9 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
                 "http://localhost:5173",
+                "http://localhost:5174",
+                "http://localhost:5175",
+                "http://localhost:5176",
                 "https://intex2-1.vercel.app",
                 "https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net")
               .AllowAnyHeader()
@@ -88,7 +96,8 @@ using (var scope = app.Services.CreateScope())
         await db.Database.EnsureCreatedAsync();
     else
         await db.Database.MigrateAsync();
-    await IdentitySeeder.SeedAsync(scope.ServiceProvider);
+    try { await IdentitySeeder.SeedAsync(scope.ServiceProvider); }
+    catch (Exception ex) { Console.WriteLine($"Seeder skipped (data already exists): {ex.Message}"); }
 }
 
 if (app.Environment.IsDevelopment())

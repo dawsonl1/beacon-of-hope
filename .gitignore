@@ -41,4 +41,4 @@ models/*.pkl
 ml/social_media_content/context.md
 ml/social_media_content/sample_migration.sql
 
-bugs.txt
+bugs.txtdp-keys/
