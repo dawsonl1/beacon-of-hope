@@ -164,6 +164,27 @@
 .photoPickerItem:hover { border-color: var(--color-sage); }
 .photoPickerSelected { border-color: var(--color-sage); box-shadow: 0 0 0 2px rgba(15, 143, 125, 0.3); }
 
+/* Inline dialog */
+.dialogBackdrop { position: fixed; inset: 0; background: rgba(15, 27, 45, 0.35); z-index: 200; backdrop-filter: blur(2px); }
+.dialog {
+  position: fixed; z-index: 201;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: #fff; border-radius: var(--radius-md, 14px);
+  box-shadow: 0 20px 60px rgba(15, 27, 45, 0.2);
+  padding: 1.5rem; width: 360px; max-width: 90vw;
+}
+.dialogTitle { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--color-deep-navy); margin: 0 0 0.5rem; }
+.dialogMessage { font-size: 0.85rem; color: var(--text-muted); margin: 0 0 1rem; line-height: 1.5; }
+.dialogInputWrap { margin-bottom: 1rem; }
+.dialogInputWrap label { display: block; font-size: 0.8rem; font-weight: 500; color: #374151; margin-bottom: 0.3rem; }
+.dialogInput { width: 100%; padding: 0.6rem; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem; font-family: var(--font-body); }
+.dialogInput:focus { outline: none; border-color: var(--color-sage); box-shadow: 0 0 0 3px rgba(15, 143, 125, 0.1); }
+.dialogActions { display: flex; gap: 0.5rem; justify-content: flex-end; }
+.dialogCancel { padding: 0.5rem 1rem; border: 1px solid #d1d5db; border-radius: 8px; background: #fff; font-size: 0.85rem; cursor: pointer; color: #374151; }
+.dialogCancel:hover { background: #f3f4f6; }
+.dialogConfirm { padding: 0.5rem 1rem; border: none; border-radius: 8px; background: var(--color-sage); color: #fff; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+.dialogConfirm:hover { opacity: 0.9; }
+
 /* Empty state */
 .emptyState { text-align: center; padding: 4rem 1rem; color: var(--text-muted); }
 .emptyState h3 { font-family: var(--font-display); font-size: 1.2rem; color: var(--color-deep-navy); margin: 1rem 0 0.5rem; }

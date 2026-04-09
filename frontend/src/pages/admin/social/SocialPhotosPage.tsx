@@ -31,6 +31,7 @@ export default function SocialPhotosPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
   const [showUpload, setShowUpload] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -98,10 +99,11 @@ export default function SocialPhotosPage() {
     } finally { setUploading(false); }
   }
 
-  async function handleDelete(id: number) {
-    if (!confirm('Delete this photo?')) return;
-    await apiFetch(`/api/admin/social/media/${id}`, { method: 'DELETE' });
-    setItems(prev => prev.filter(i => i.mediaLibraryItemId !== id));
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    await apiFetch(`/api/admin/social/media/${deleteTarget}`, { method: 'DELETE' });
+    setItems(prev => prev.filter(i => i.mediaLibraryItemId !== deleteTarget));
+    setDeleteTarget(null);
   }
 
 
@@ -181,7 +183,7 @@ export default function SocialPhotosPage() {
               <div className={styles.photoWrap}>
                 <img src={`${getApiUrl()}${item.thumbnailPath || item.filePath}`} alt={item.caption || 'Photo'} className={styles.photo} />
                 {item.usedCount > 0 && <span className={styles.usedBadge}>Used {item.usedCount}x</span>}
-                <button className={styles.deleteBtn} onClick={() => handleDelete(item.mediaLibraryItemId)} title="Delete"><Trash2 size={14} /></button>
+                <button className={styles.deleteBtn} onClick={() => setDeleteTarget(item.mediaLibraryItemId)} title="Delete"><Trash2 size={14} /></button>
               </div>
               <div className={styles.photoMeta}>
                 <span className={styles.activityTag}>{ACTIVITY_LABELS[item.activityType] || item.activityType}</span>
@@ -190,6 +192,21 @@ export default function SocialPhotosPage() {
             </div>
           ))}
         </div>
+      )}
+
+      {/* Delete confirmation dialog */}
+      {deleteTarget && (
+        <>
+          <div className={styles.dialogBackdrop} onClick={() => setDeleteTarget(null)} />
+          <div className={styles.dialog}>
+            <h3 className={styles.dialogTitle}>Delete Photo</h3>
+            <p className={styles.dialogMessage}>This photo will be permanently removed from the library.</p>
+            <div className={styles.dialogActions}>
+              <button className={styles.dialogCancel} onClick={() => setDeleteTarget(null)}>Cancel</button>
+              <button className={styles.dialogConfirm} onClick={confirmDelete}>Delete</button>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

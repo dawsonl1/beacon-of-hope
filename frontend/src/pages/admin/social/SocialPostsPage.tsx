@@ -74,6 +74,18 @@ export default function SocialPostsPage() {
   const [toast, setToast] = useState<string | null>(null);
 
   function showToast(msg: string) { setToast(msg); setTimeout(() => setToast(null), 2500); }
+
+  // Inline dialog (replaces native confirm/prompt)
+  const [dialog, setDialog] = useState<{
+    title: string;
+    message: string;
+    inputLabel?: string;
+    inputDefault?: string;
+    confirmLabel: string;
+    onConfirm: (inputValue?: string) => void;
+  } | null>(null);
+  const [dialogInput, setDialogInput] = useState('');
+
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState('');
   const [editMediaId, setEditMediaId] = useState<number | null>(null);
@@ -160,28 +172,51 @@ export default function SocialPostsPage() {
     fetchAll();
   }
 
-  async function handleReject(id: number) {
-    if (!confirm('Reject this post? It will be removed from the queue.')) return;
-    await apiFetch(`/api/admin/social/posts/${id}/reject`, { method: 'PATCH', body: JSON.stringify({ rejectionReason: '' }) });
-    showToast('Post rejected');
-    fetchAll();
+  function handleReject(id: number) {
+    setDialog({
+      title: 'Reject Post',
+      message: 'This post will be removed from the queue.',
+      confirmLabel: 'Reject',
+      onConfirm: async () => {
+        setDialog(null);
+        await apiFetch(`/api/admin/social/posts/${id}/reject`, { method: 'PATCH', body: JSON.stringify({ rejectionReason: '' }) });
+        showToast('Post rejected');
+        fetchAll();
+      },
+    });
   }
 
-  async function handleSnooze(id: number) {
-    const hours = prompt('Snooze for how many hours?', '4');
-    if (!hours) return;
-    const parsed = parseInt(hours);
-    if (isNaN(parsed) || parsed < 1 || parsed > 168) { setError('Enter a number between 1 and 168 hours.'); return; }
-    await apiFetch(`/api/admin/social/posts/${id}/snooze`, { method: 'PATCH', body: JSON.stringify({ snoozedUntil: new Date(Date.now() + parsed * 3600000).toISOString() }) });
-    showToast(`Snoozed for ${parsed} hours`);
-    fetchAll();
+  function handleSnooze(id: number) {
+    setDialogInput('4');
+    setDialog({
+      title: 'Snooze Post',
+      message: 'How many hours should this post be snoozed?',
+      inputLabel: 'Hours',
+      inputDefault: '4',
+      confirmLabel: 'Snooze',
+      onConfirm: async (val) => {
+        setDialog(null);
+        const parsed = parseInt(val || '4');
+        if (isNaN(parsed) || parsed < 1 || parsed > 168) { setError('Enter a number between 1 and 168.'); return; }
+        await apiFetch(`/api/admin/social/posts/${id}/snooze`, { method: 'PATCH', body: JSON.stringify({ snoozedUntil: new Date(Date.now() + parsed * 3600000).toISOString() }) });
+        showToast(`Snoozed for ${parsed} hours`);
+        fetchAll();
+      },
+    });
   }
 
-  async function handlePublish(id: number) {
-    if (!confirm('Mark this post as published?')) return;
-    await apiFetch(`/api/admin/social/posts/${id}/publish`, { method: 'PATCH', body: '{}' });
-    showToast('Post marked as published');
-    fetchAll();
+  function handlePublish(id: number) {
+    setDialog({
+      title: 'Mark as Published',
+      message: 'Confirm that you\'ve posted this content to the social media platform.',
+      confirmLabel: 'Yes, it\'s published',
+      onConfirm: async () => {
+        setDialog(null);
+        await apiFetch(`/api/admin/social/posts/${id}/publish`, { method: 'PATCH', body: '{}' });
+        showToast('Post marked as published');
+        fetchAll();
+      },
+    });
   }
 
   async function handleCopy(content: string) {
@@ -498,6 +533,36 @@ export default function SocialPostsPage() {
                   <img src={`${getApiUrl()}${photo.thumbnailPath}`} alt={photo.caption} />
                 </button>
               ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Inline dialog (replaces native confirm/prompt) */}
+      {dialog && (
+        <>
+          <div className={styles.dialogBackdrop} onClick={() => setDialog(null)} />
+          <div className={styles.dialog}>
+            <h3 className={styles.dialogTitle}>{dialog.title}</h3>
+            <p className={styles.dialogMessage}>{dialog.message}</p>
+            {dialog.inputLabel && (
+              <div className={styles.dialogInputWrap}>
+                <label>{dialog.inputLabel}</label>
+                <input
+                  type="number"
+                  value={dialogInput}
+                  onChange={e => setDialogInput(e.target.value)}
+                  autoFocus
+                  min={1}
+                  max={168}
+                  className={styles.dialogInput}
+                  onKeyDown={e => e.key === 'Enter' && dialog.onConfirm(dialogInput)}
+                />
+              </div>
+            )}
+            <div className={styles.dialogActions}>
+              <button className={styles.dialogCancel} onClick={() => setDialog(null)}>Cancel</button>
+              <button className={styles.dialogConfirm} onClick={() => dialog.onConfirm(dialogInput)}>{dialog.confirmLabel}</button>
             </div>
           </div>
         </>

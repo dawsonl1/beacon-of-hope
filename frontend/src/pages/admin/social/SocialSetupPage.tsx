@@ -49,6 +49,7 @@ export default function SocialSetupPage() {
   const [guide, setGuide] = useState<VoiceGuide>({ orgDescription: '', toneDescription: '', preferredTerms: '{}', avoidedTerms: '{}', structuralRules: '', visualRules: '' });
   const [points, setPoints] = useState<TalkingPoint[]>([]);
   const [facts, setFacts] = useState<ContentFact[]>([]);
+  const [deleteFactId, setDeleteFactId] = useState<number | null>(null);
   const [candidates, setCandidates] = useState<FactCandidate[]>([]);
   const [, setHashtagSets] = useState<HashtagSet[]>([]);
   const [settings, setSettings] = useState<Settings | null>(null);
@@ -83,7 +84,7 @@ export default function SocialSetupPage() {
   async function addPoint() { if (!newPoint.text.trim()) return; await apiFetch('/api/admin/social/talking-points', { method: 'POST', body: JSON.stringify(newPoint) }); setNewPoint({ text: '', topic: 'general' }); fetchAll(); }
   async function deletePoint(id: number) { await apiFetch(`/api/admin/social/talking-points/${id}`, { method: 'DELETE' }); setPoints(p => p.filter(x => x.contentTalkingPointId !== id)); }
   async function addFact() { if (!newFact.factText.trim()) return; await apiFetch('/api/admin/social/facts', { method: 'POST', body: JSON.stringify(newFact) }); setNewFact({ factText: '', sourceName: '', category: 'trafficking_stats', pillar: 'the_problem' }); setShowAddFact(false); fetchAll(); }
-  async function deleteFact(id: number) { if (!confirm('Delete this fact?')) return; await apiFetch(`/api/admin/social/facts/${id}`, { method: 'DELETE' }); setFacts(f => f.filter(x => x.contentFactId !== id)); }
+  async function confirmDeleteFact() { if (!deleteFactId) return; await apiFetch(`/api/admin/social/facts/${deleteFactId}`, { method: 'DELETE' }); setFacts(f => f.filter(x => x.contentFactId !== deleteFactId)); setDeleteFactId(null); }
   async function approveCandidate(id: number) { await apiFetch(`/api/admin/social/fact-candidates/${id}/approve`, { method: 'PATCH', body: JSON.stringify({ pillar: 'the_problem' }) }); fetchAll(); }
   async function rejectCandidate(id: number) { await apiFetch(`/api/admin/social/fact-candidates/${id}/reject`, { method: 'PATCH', body: '{}' }); setCandidates(c => c.filter(x => x.contentFactCandidateId !== id)); }
   async function refreshResearch() { setRefreshing(true); try { await apiFetch('/api/admin/social/research-refresh', { method: 'POST', body: '{}' }); fetchAll(); } finally { setRefreshing(false); } }
@@ -178,7 +179,7 @@ export default function SocialSetupPage() {
               {facts.map(f => (
                 <div key={`f${f.contentFactId}`} className={styles.itemRow}>
                   <div className={styles.itemContent}><p>{f.factText}</p><span className={styles.itemMeta}>{f.sourceName}{f.usageCount > 0 ? ` · Used ${f.usageCount}x` : ''}</span></div>
-                  <button onClick={() => deleteFact(f.contentFactId)} className={styles.deleteChip}><Trash2 size={13} /></button>
+                  <button onClick={() => setDeleteFactId(f.contentFactId)} className={styles.deleteChip}><Trash2 size={13} /></button>
                 </div>
               ))}
               {facts.length === 0 && candidates.length === 0 && <p className={styles.emptyHint}>No facts yet. Add some or click "Research" to find them.</p>}
@@ -279,6 +280,21 @@ export default function SocialSetupPage() {
           </div>
           <button className={styles.saveBtn} onClick={saveSettings} disabled={saving}>{saving ? <Loader2 className={styles.spin} size={16} /> : saved ? 'Saved!' : <><Save size={16} /> Save Preferences</>}</button>
         </div>
+      )}
+
+      {/* Delete fact confirmation */}
+      {deleteFactId && (
+        <>
+          <div className={styles.dialogBackdrop} onClick={() => setDeleteFactId(null)} />
+          <div className={styles.dialog}>
+            <h3 className={styles.dialogTitle}>Delete Fact</h3>
+            <p className={styles.dialogMessage}>This fact will be permanently removed.</p>
+            <div className={styles.dialogActions}>
+              <button className={styles.dialogCancel} onClick={() => setDeleteFactId(null)}>Cancel</button>
+              <button className={styles.dialogConfirm} onClick={confirmDeleteFact}>Delete</button>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
