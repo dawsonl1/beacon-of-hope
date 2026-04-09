@@ -327,6 +327,7 @@ export default function HomePage() {
       if (activeSafehouseId) params.set('safehouseId', String(activeSafehouseId));
       params.set('weekStart', fmtDate(getWeekStart(currentDate)));
       const data = await apiFetch<CalendarEventItem[]>(`/api/staff/calendar?${params}`);
+      console.log('[HomePage] calendar events sample:', data.slice(0, 2).map(e => ({ id: e.calendarEventId, residentCode: e.residentCode, residentId: e.residentId })));
       setEvents(data);
     } catch { /* ignore */ } finally { setEventsLoading(false); }
   }, [activeSafehouseId, currentDate]);
@@ -336,6 +337,7 @@ export default function HomePage() {
     try {
       const params = activeSafehouseId ? `?safehouseId=${activeSafehouseId}` : '';
       const data = await apiFetch<StaffTaskItem[]>(`/api/staff/tasks${params}`);
+      console.log('[HomePage] tasks sample:', data.slice(0, 2).map(t => ({ id: t.staffTaskId, residentCode: t.residentCode, residentId: t.residentId })));
       setTasks(data);
     } catch { /* ignore */ } finally { setTasksLoading(false); }
   }, [activeSafehouseId]);
