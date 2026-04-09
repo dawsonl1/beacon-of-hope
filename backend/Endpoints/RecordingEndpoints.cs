@@ -3,6 +3,7 @@ using backend.DTOs;
 using backend.Mapping;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
+using backend.Endpoints;
 
 namespace backend.Endpoints;
 
@@ -139,6 +140,36 @@ public static class RecordingEndpoints
             }
 
             await db.SaveChangesAsync();
+
+            // Auto-add resident to next Monday's case conference if flagged
+            if (body.NeedsCaseConference == true)
+            {
+                var resEntity = await db.Residents.FindAsync(body.ResidentId);
+                if (resEntity?.SafehouseId != null)
+                {
+                    var nextMonday = CaseConferenceEndpoints.GetNextMonday();
+                    var conf = await db.CaseConferences
+                        .FirstOrDefaultAsync(c => c.SafehouseId == resEntity.SafehouseId && c.ScheduledDate == nextMonday && c.Status == "Scheduled");
+                    if (conf == null)
+                    {
+                        conf = new CaseConference { SafehouseId = resEntity.SafehouseId.Value, ScheduledDate = nextMonday, Status = "Scheduled" };
+                        db.CaseConferences.Add(conf);
+                        await db.SaveChangesAsync();
+                    }
+                    var alreadyAdded = await db.CaseConferenceResidents
+                        .AnyAsync(cr => cr.ConferenceId == conf.ConferenceId && cr.ResidentId == body.ResidentId);
+                    if (!alreadyAdded)
+                    {
+                        db.CaseConferenceResidents.Add(new CaseConferenceResident
+                        {
+                            ConferenceId = conf.ConferenceId,
+                            ResidentId = body.ResidentId,
+                            Source = "NeedsConference",
+                        });
+                        await db.SaveChangesAsync();
+                    }
+                }
+            }
 
             return Results.Created($"/api/admin/recordings/{recording.RecordingId}", new { recording.RecordingId });
         }).RequireAuthorization(policy => policy.RequireRole("Admin", "Staff"));

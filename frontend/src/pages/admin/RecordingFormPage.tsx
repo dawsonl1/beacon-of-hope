@@ -6,8 +6,27 @@ import { APP_TODAY, APP_TODAY_STR } from '../../constants';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Dropdown from '../../components/admin/Dropdown';
+import MultiSelectDropdown from '../../components/admin/MultiSelectDropdown';
 import DatePicker from '../../components/admin/DatePicker';
 import styles from './RecordingFormPage.module.css';
+
+const GROUP_SESSION_TYPES = ['Group Therapy', 'Family Counseling', 'Psychoeducation'];
+
+interface ResidentFlags {
+  progressNoted: boolean;
+  concernsFlagged: boolean;
+  referralMade: boolean;
+  needsCaseConference: boolean;
+  readyForReintegration: boolean;
+}
+
+const DEFAULT_FLAGS: ResidentFlags = {
+  progressNoted: false,
+  concernsFlagged: false,
+  referralMade: false,
+  needsCaseConference: false,
+  readyForReintegration: false,
+};
 
 interface ResidentOption {
   residentId: number;
@@ -32,8 +51,6 @@ interface RecordingData {
   needsCaseConference: boolean | null;
   readyForReintegration: boolean | null;
   notesRestricted: string | null;
-  needsCaseConference: boolean | null;
-  readyForReintegration: boolean | null;
 }
 
 interface GeminiResponse {
@@ -147,9 +164,11 @@ export default function RecordingFormPage() {
 
   // Form state
   const [residentId, setResidentId] = useState('');
+  const [residentIds, setResidentIds] = useState<string[]>([]);
   const [sessionDate, setSessionDate] = useState(APP_TODAY_STR);
   const [socialWorker, setSocialWorker] = useState('');
   const [sessionType, setSessionType] = useState('');
+  const isGroupSession = GROUP_SESSION_TYPES.includes(sessionType);
   const [duration, setDuration] = useState('');
   const [emotionalStart, setEmotionalStart] = useState('');
   const [emotionalEnd, setEmotionalEnd] = useState('');
@@ -163,6 +182,32 @@ export default function RecordingFormPage() {
   const [needsCaseConference, setNeedsCaseConference] = useState(false);
   const [readyForReintegration, setReadyForReintegration] = useState(false);
   const [updatedRiskLevel, setUpdatedRiskLevel] = useState('');
+
+  // Per-resident flags for group sessions
+  const [perResidentFlags, setPerResidentFlags] = useState<Record<string, ResidentFlags>>({});
+
+  function getFlags(rid: string): ResidentFlags {
+    return perResidentFlags[rid] ?? { ...DEFAULT_FLAGS };
+  }
+
+  function setFlag(rid: string, flag: keyof ResidentFlags, value: boolean) {
+    setPerResidentFlags(prev => ({
+      ...prev,
+      [rid]: { ...(prev[rid] ?? { ...DEFAULT_FLAGS }), [flag]: value },
+    }));
+  }
+
+  // Keep perResidentFlags in sync with selected residents
+  function handleResidentIdsChange(ids: string[]) {
+    setResidentIds(ids);
+    setPerResidentFlags(prev => {
+      const next = { ...prev };
+      for (const rid of ids) {
+        if (!next[rid]) next[rid] = { ...DEFAULT_FLAGS };
+      }
+      return next;
+    });
+  }
 
   // Voice memo state
   const [memoState, setMemoState] = useState<'idle' | 'requesting_mic' | 'recording' | 'processing' | 'done'>('idle');
@@ -470,8 +515,10 @@ export default function RecordingFormPage() {
     e.preventDefault();
     setErrorMsg('');
 
-    if (!residentId) {
-      setErrorMsg('Please select a resident.');
+    const selectedResidentIds = isGroupSession ? residentIds : residentId ? [residentId] : [];
+
+    if (selectedResidentIds.length === 0) {
+      setErrorMsg(isGroupSession ? 'Please select at least one resident.' : 'Please select a resident.');
       return;
     }
     if (!sessionDate) {
@@ -485,37 +532,48 @@ export default function RecordingFormPage() {
 
     setSaving(true);
     try {
-      const body = {
-        residentId: Number(residentId),
-        sessionDate,
-        socialWorker: socialWorker || null,
-        sessionType: sessionType || null,
-        sessionDurationMinutes: duration ? Number(duration) : null,
-        emotionalStateObserved: emotionalStart || null,
-        emotionalStateEnd: emotionalEnd || null,
-        sessionNarrative: narrative || null,
-        interventionsApplied: interventions || null,
-        followUpActions: followUp || null,
-        progressNoted,
-        concernsFlagged,
-        referralMade,
-        notesRestricted: notesRestricted || null,
-        needsCaseConference,
-        readyForReintegration,
-        updatedRiskLevel: updatedRiskLevel || null,
-      };
+      function buildBody(rid: number) {
+        // Use per-resident flags for group sessions, shared flags for individual
+        const flags = isGroupSession ? getFlags(String(rid)) : {
+          progressNoted, concernsFlagged, referralMade, needsCaseConference, readyForReintegration,
+        };
+        return {
+          residentId: rid,
+          sessionDate,
+          socialWorker: socialWorker || null,
+          sessionType: sessionType || null,
+          sessionDurationMinutes: duration ? Number(duration) : null,
+          emotionalStateObserved: emotionalStart || null,
+          emotionalStateEnd: emotionalEnd || null,
+          sessionNarrative: narrative || null,
+          interventionsApplied: interventions || null,
+          followUpActions: followUp || null,
+          progressNoted: flags.progressNoted,
+          concernsFlagged: flags.concernsFlagged,
+          referralMade: flags.referralMade,
+          notesRestricted: notesRestricted || null,
+          needsCaseConference: flags.needsCaseConference,
+          readyForReintegration: flags.readyForReintegration,
+          updatedRiskLevel: updatedRiskLevel || null,
+        };
+      }
 
       if (isEdit) {
         await apiFetch(`/api/admin/recordings/${id}`, {
           method: 'PUT',
-          body: JSON.stringify(body),
+          body: JSON.stringify(buildBody(Number(residentId))),
         });
         navigate(`/admin/recordings/${id}`, { replace: true });
       } else {
-        await apiFetch<{ recordingId: number }>('/api/admin/recordings', {
-          method: 'POST',
-          body: JSON.stringify(body),
-        });
+        // Create one recording per selected resident
+        await Promise.all(
+          selectedResidentIds.map((rid) =>
+            apiFetch<{ recordingId: number }>('/api/admin/recordings', {
+              method: 'POST',
+              body: JSON.stringify(buildBody(Number(rid))),
+            })
+          )
+        );
         // Mark calendar event as completed if linked
         if (calendarEventId) {
           await apiFetch(`/api/staff/calendar/${calendarEventId}`, {
@@ -662,8 +720,21 @@ export default function RecordingFormPage() {
           <h2 className={styles.sectionTitle}>Session Details</h2>
           <div className={styles.fieldGrid}>
             <div className={styles.field}>
-              <label>Resident <span className={styles.required}>*</span></label>
-              <Dropdown value={residentId} placeholder="Select resident..." options={residents.map(r => ({ value: String(r.residentId), label: r.internalCode }))} onChange={v => setResidentId(v)} />
+              <label>Session Type <span className={styles.required}>*</span></label>
+              <Dropdown value={sessionType} placeholder="Select type..." options={SESSION_TYPES.map(t => ({ value: t, label: t }))} onChange={v => setSessionType(v)} />
+            </div>
+            <div className={styles.field}>
+              <label>{isGroupSession ? 'Residents' : 'Resident'} <span className={styles.required}>*</span></label>
+              {isGroupSession ? (
+                <MultiSelectDropdown
+                  values={residentIds}
+                  placeholder="Select residents..."
+                  options={residents.map(r => ({ value: String(r.residentId), label: r.internalCode }))}
+                  onChange={handleResidentIdsChange}
+                />
+              ) : (
+                <Dropdown value={residentId} placeholder="Select resident..." options={residents.map(r => ({ value: String(r.residentId), label: r.internalCode }))} onChange={v => setResidentId(v)} />
+              )}
             </div>
             <div className={styles.field}>
               <label>Session Date <span className={styles.required}>*</span></label>
@@ -672,10 +743,6 @@ export default function RecordingFormPage() {
             <div className={styles.field}>
               <label>Social Worker</label>
               <input type="text" value={socialWorker} onChange={e => setSocialWorker(e.target.value)} placeholder="Name of social worker" />
-            </div>
-            <div className={styles.field}>
-              <label>Session Type <span className={styles.required}>*</span></label>
-              <Dropdown value={sessionType} placeholder="Select type..." options={SESSION_TYPES.map(t => ({ value: t, label: t }))} onChange={v => setSessionType(v)} />
             </div>
             <div className={styles.field}>
               <label>Duration (minutes)</label>
@@ -734,33 +801,81 @@ export default function RecordingFormPage() {
         {/* ── Session Flags ───────────────────────── */}
         <div className={styles.formCard}>
           <h2 className={styles.sectionTitle}>Session Flags</h2>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-            {([
-              { checked: progressNoted, set: setProgressNoted, label: 'Progress Noted' },
-              { checked: concernsFlagged, set: setConcernsFlagged, label: 'Concerns Flagged' },
-              { checked: referralMade, set: setReferralMade, label: 'Referral Made' },
-              { checked: needsCaseConference, set: setNeedsCaseConference, label: 'Needs Case Conference' },
-              { checked: readyForReintegration, set: setReadyForReintegration, label: 'Ready for Reintegration' },
-            ] as const).map(({ checked, set, label }) => (
-              <button
-                key={label}
-                type="button"
-                onClick={() => set(!checked)}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
-                  padding: '0.4rem 0.75rem', borderRadius: '999px', fontSize: '0.78rem',
-                  fontWeight: 600, fontFamily: 'var(--font-body)', cursor: 'pointer',
-                  border: checked ? '1px solid var(--color-sage)' : '1px solid rgba(15,27,45,0.12)',
-                  background: checked ? 'rgba(15,143,125,0.1)' : '#fff',
-                  color: checked ? 'var(--color-sage)' : 'var(--text-muted)',
-                  transition: 'all 0.15s',
-                }}
-              >
-                {checked && <span style={{ fontSize: '0.65rem' }}>&#10003;</span>}
-                {label}
-              </button>
-            ))}
-          </div>
+          {isGroupSession && residentIds.length > 0 ? (
+            /* Per-resident flags for group sessions */
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {residentIds.map(rid => {
+                const code = residents.find(r => String(r.residentId) === rid)?.internalCode || `Resident #${rid}`;
+                const flags = getFlags(rid);
+                return (
+                  <div key={rid} style={{ padding: '0.75rem 1rem', background: 'rgba(15,143,125,0.03)', border: '1px solid rgba(15,27,45,0.08)', borderRadius: '10px' }}>
+                    <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-sage)', marginBottom: '0.5rem' }}>{code}</div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                      {([
+                        { key: 'progressNoted' as const, label: 'Progress Noted' },
+                        { key: 'concernsFlagged' as const, label: 'Concerns Flagged' },
+                        { key: 'referralMade' as const, label: 'Referral Made' },
+                        { key: 'needsCaseConference' as const, label: 'Needs Case Conference' },
+                        { key: 'readyForReintegration' as const, label: 'Ready for Reintegration' },
+                      ]).map(({ key, label }) => {
+                        const checked = flags[key];
+                        return (
+                          <button
+                            key={label}
+                            type="button"
+                            onClick={() => setFlag(rid, key, !checked)}
+                            style={{
+                              display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
+                              padding: '0.4rem 0.75rem', borderRadius: '999px', fontSize: '0.78rem',
+                              fontWeight: 600, fontFamily: 'var(--font-body)', cursor: 'pointer',
+                              border: checked ? '1px solid var(--color-sage)' : '1px solid rgba(15,27,45,0.12)',
+                              background: checked ? 'rgba(15,143,125,0.1)' : '#fff',
+                              color: checked ? 'var(--color-sage)' : 'var(--text-muted)',
+                              transition: 'all 0.15s',
+                            }}
+                          >
+                            {checked && <span style={{ fontSize: '0.65rem' }}>&#10003;</span>}
+                            {label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : isGroupSession ? (
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Select residents above to set individual flags.</p>
+          ) : (
+            /* Single-resident flags */
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+              {([
+                { checked: progressNoted, set: setProgressNoted, label: 'Progress Noted' },
+                { checked: concernsFlagged, set: setConcernsFlagged, label: 'Concerns Flagged' },
+                { checked: referralMade, set: setReferralMade, label: 'Referral Made' },
+                { checked: needsCaseConference, set: setNeedsCaseConference, label: 'Needs Case Conference' },
+                { checked: readyForReintegration, set: setReadyForReintegration, label: 'Ready for Reintegration' },
+              ] as const).map(({ checked, set, label }) => (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => set(!checked)}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
+                    padding: '0.4rem 0.75rem', borderRadius: '999px', fontSize: '0.78rem',
+                    fontWeight: 600, fontFamily: 'var(--font-body)', cursor: 'pointer',
+                    border: checked ? '1px solid var(--color-sage)' : '1px solid rgba(15,27,45,0.12)',
+                    background: checked ? 'rgba(15,143,125,0.1)' : '#fff',
+                    color: checked ? 'var(--color-sage)' : 'var(--text-muted)',
+                    transition: 'all 0.15s',
+                  }}
+                >
+                  {checked && <span style={{ fontSize: '0.65rem' }}>&#10003;</span>}
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* ── Restricted Notes ─────────────────────── */}

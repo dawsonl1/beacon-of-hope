@@ -55,6 +55,8 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
     public virtual DbSet<UserSafehouse> UserSafehouses { get; set; }
     public virtual DbSet<StaffTask> StaffTasks { get; set; }
     public virtual DbSet<CalendarEvent> CalendarEvents { get; set; }
+    public virtual DbSet<CaseConference> CaseConferences { get; set; }
+    public virtual DbSet<CaseConferenceResident> CaseConferenceResidents { get; set; }
 
     // Social Media Automation
     public virtual DbSet<AwarenessDate> AwarenessDates { get; set; }
@@ -719,6 +721,39 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.HasOne(e => e.Safehouse).WithMany(s => s.CalendarEvents).HasForeignKey(e => e.SafehouseId).OnDelete(DeleteBehavior.Cascade).HasConstraintName("calendar_events_safehouse_id_fkey");
             entity.HasOne(e => e.Resident).WithMany(r => r.CalendarEvents).HasForeignKey(e => e.ResidentId).OnDelete(DeleteBehavior.SetNull).HasConstraintName("calendar_events_resident_id_fkey");
             entity.HasOne(e => e.SourceTask).WithMany().HasForeignKey(e => e.SourceTaskId).OnDelete(DeleteBehavior.SetNull).HasConstraintName("calendar_events_source_task_id_fkey");
+        });
+
+        // ── Case Conference Tables ──
+
+        modelBuilder.Entity<CaseConference>(entity =>
+        {
+            entity.HasKey(e => e.ConferenceId).HasName("case_conferences_pkey");
+            entity.ToTable("case_conferences");
+            entity.HasIndex(e => e.SafehouseId).HasDatabaseName("case_conferences_safehouse_id_idx");
+            entity.HasIndex(e => e.ScheduledDate).HasDatabaseName("case_conferences_scheduled_date_idx");
+            entity.Property(e => e.ConferenceId).HasColumnName("conference_id");
+            entity.Property(e => e.SafehouseId).HasColumnName("safehouse_id");
+            entity.Property(e => e.ScheduledDate).HasColumnName("scheduled_date");
+            entity.Property(e => e.Status).HasColumnName("status");
+            entity.Property(e => e.Notes).HasColumnName("notes");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("now()");
+            entity.HasOne(e => e.Safehouse).WithMany().HasForeignKey(e => e.SafehouseId).OnDelete(DeleteBehavior.Cascade).HasConstraintName("case_conferences_safehouse_id_fkey");
+        });
+
+        modelBuilder.Entity<CaseConferenceResident>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("case_conference_residents_pkey");
+            entity.ToTable("case_conference_residents");
+            entity.HasIndex(e => new { e.ConferenceId, e.ResidentId }).IsUnique().HasDatabaseName("case_conference_residents_unique");
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ConferenceId).HasColumnName("conference_id");
+            entity.Property(e => e.ResidentId).HasColumnName("resident_id");
+            entity.Property(e => e.Source).HasColumnName("source");
+            entity.Property(e => e.Discussed).HasColumnName("discussed");
+            entity.Property(e => e.Notes).HasColumnName("notes");
+            entity.Property(e => e.AddedAt).HasColumnName("added_at").HasDefaultValueSql("now()");
+            entity.HasOne(e => e.Conference).WithMany(c => c.Residents).HasForeignKey(e => e.ConferenceId).OnDelete(DeleteBehavior.Cascade).HasConstraintName("case_conference_residents_conference_id_fkey");
+            entity.HasOne(e => e.Resident).WithMany().HasForeignKey(e => e.ResidentId).OnDelete(DeleteBehavior.Cascade).HasConstraintName("case_conference_residents_resident_id_fkey");
         });
 
         // ── Social Media Automation Tables ──
