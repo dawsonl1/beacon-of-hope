@@ -73,6 +73,12 @@ interface FormData {
 
 const today = APP_TODAY_STR;
 
+/** Safely extract YYYY-MM-DD from an ISO date string or return '' */
+function toDateStr(v: unknown): string {
+  if (typeof v !== 'string' || !v) return '';
+  return v.slice(0, 10);
+}
+
 const EMPTY_FORM: FormData = {
   caseControlNo: '', internalCode: '', safehouseId: '', caseStatus: 'Active',
   sex: 'Female', dateOfBirth: '', birthStatus: '', placeOfBirth: '', religion: '',
@@ -208,7 +214,7 @@ export default function ResidentFormPage() {
           safehouseId: data.safehouseId != null ? String(data.safehouseId) : '',
           caseStatus: (data.caseStatus as string) ?? '',
           sex: (data.sex as string) ?? '',
-          dateOfBirth: (data.dateOfBirth as string) ?? '',
+          dateOfBirth: toDateStr(data.dateOfBirth),
           birthStatus: (data.birthStatus as string) ?? '',
           placeOfBirth: (data.placeOfBirth as string) ?? '',
           religion: (data.religion as string) ?? '',
@@ -232,23 +238,23 @@ export default function ResidentFormPage() {
           familyIndigenous: !!data.familyIndigenous,
           familyParentPwd: !!data.familyParentPwd,
           familyInformalSettler: !!data.familyInformalSettler,
-          dateOfAdmission: (data.dateOfAdmission as string) ?? '',
+          dateOfAdmission: toDateStr(data.dateOfAdmission),
           ageUponAdmission: (data.ageUponAdmission as string) ?? '',
           presentAge: (data.presentAge as string) ?? '',
           lengthOfStay: (data.lengthOfStay as string) ?? '',
           referralSource: (data.referralSource as string) ?? '',
           referringAgencyPerson: (data.referringAgencyPerson as string) ?? '',
-          dateColbRegistered: (data.dateColbRegistered as string) ?? '',
-          dateColbObtained: (data.dateColbObtained as string) ?? '',
+          dateColbRegistered: toDateStr(data.dateColbRegistered),
+          dateColbObtained: toDateStr(data.dateColbObtained),
           assignedSocialWorker: (data.assignedSocialWorker as string) ?? '',
           initialCaseAssessment: (data.initialCaseAssessment as string) ?? '',
-          dateCaseStudyPrepared: (data.dateCaseStudyPrepared as string) ?? '',
+          dateCaseStudyPrepared: toDateStr(data.dateCaseStudyPrepared),
           reintegrationType: (data.reintegrationType as string) ?? '',
           reintegrationStatus: (data.reintegrationStatus as string) ?? '',
           initialRiskLevel: (data.initialRiskLevel as string) ?? '',
           currentRiskLevel: (data.currentRiskLevel as string) ?? '',
-          dateEnrolled: (data.dateEnrolled as string) ?? '',
-          dateClosed: (data.dateClosed as string) ?? '',
+          dateEnrolled: toDateStr(data.dateEnrolled),
+          dateClosed: toDateStr(data.dateClosed),
           notesRestricted: (data.notesRestricted as string) ?? '',
         });
       })
@@ -320,7 +326,7 @@ export default function ResidentFormPage() {
           <div className={styles.fieldGrid}>
             <label className={styles.label}>
               Safehouse *
-              <select className={styles.select} value={form.safehouseId} onChange={(e) => setForm((prev) => ({ ...prev, safehouseId: e.target.value, assignedSocialWorker: '' }))} required>
+              <select className={styles.select} value={form.safehouseId} onChange={(e) => { const v = e.target.value; setForm((prev) => prev.safehouseId === v ? prev : { ...prev, safehouseId: v, assignedSocialWorker: '' }); }} required>
                 <option value="">Select safehouse</option>
                 {availableSafehouses.map((s) => (
                   <option key={s.safehouseId} value={String(s.safehouseId)}>{s.name}</option>
@@ -343,6 +349,9 @@ export default function ResidentFormPage() {
                 {staffForSafehouse.map((sw) => (
                   <option key={sw} value={sw}>{sw}</option>
                 ))}
+                {form.assignedSocialWorker && !staffForSafehouse.includes(form.assignedSocialWorker) && (
+                  <option key={form.assignedSocialWorker} value={form.assignedSocialWorker}>{form.assignedSocialWorker}</option>
+                )}
               </select>
             </label>
             <label className={styles.label}>
@@ -391,7 +400,7 @@ export default function ResidentFormPage() {
             </label>
             <label className={styles.label}>
               Age upon Admission
-              <input className={styles.input} type="number" min="0" max="18" value={form.ageUponAdmission} onChange={(e) => updateField('ageUponAdmission', e.target.value)} placeholder="e.g. 14" />
+              <input className={styles.input} value={form.ageUponAdmission} onChange={(e) => updateField('ageUponAdmission', e.target.value)} placeholder="e.g. 14" />
             </label>
             <label className={styles.label}>
               Place of Birth
