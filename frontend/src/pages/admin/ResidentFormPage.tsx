@@ -169,21 +169,21 @@ export default function ResidentFormPage() {
       .catch(() => {});
   }, []);
 
-  // Filter safehouses to only those assigned to the current staff member
-  const userSafehouseIds = new Set(
-    (user?.safehouses ?? []).map((s) => s.safehouseId),
-  );
+  // Staff see only their assigned safehouses (from auth); admins see all
+  const userSafehouses: SafehouseOption[] = (user?.safehouses ?? []).map((s) => ({
+    safehouseId: s.safehouseId,
+    safehouseCode: s.safehouseCode,
+    name: s.name,
+  }));
   const availableSafehouses =
-    isAdmin || userSafehouseIds.size === 0
-      ? options?.safehouses ?? []
-      : (options?.safehouses ?? []).filter((s) => userSafehouseIds.has(s.safehouseId));
+    isAdmin ? (options?.safehouses ?? []) : userSafehouses;
 
   // Auto-select safehouse when user has exactly one
   useEffect(() => {
     if (!isEdit && availableSafehouses.length === 1 && !form.safehouseId) {
       setForm((prev) => ({ ...prev, safehouseId: String(availableSafehouses[0].safehouseId) }));
     }
-  }, [availableSafehouses, isEdit, form.safehouseId]);
+  }, [availableSafehouses.length, isEdit, form.safehouseId]);
 
   useEffect(() => {
     if (!isEdit) return;
