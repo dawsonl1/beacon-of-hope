@@ -86,6 +86,8 @@ const RecordingFormPage = lazyRetry(() => import('./pages/admin/RecordingFormPag
 const DonorsPage = lazyRetry(() => import('./pages/admin/DonorsPage'));
 const SupporterDetailPage = lazyRetry(() => import('./pages/admin/SupporterDetailPage'));
 const SupporterFormPage = lazyRetry(() => import('./pages/admin/SupporterFormPage'));
+const PartnerDetailPage = lazyRetry(() => import('./pages/admin/PartnerDetailPage'));
+const PartnerFormPage = lazyRetry(() => import('./pages/admin/PartnerFormPage'));
 const DonationFormPage = lazyRetry(() => import('./pages/admin/DonationFormPage'));
 const UsersPage = lazyRetry(() => import('./pages/admin/UsersPage'));
 const StaffTasksPage = lazyRetry(() => import('./pages/admin/StaffTasksPage'));
@@ -188,6 +190,9 @@ function App() {
               <Route path="donors/new" element={<SupporterFormPage />} />
               <Route path="donors/:id" element={<SupporterDetailPage />} />
               <Route path="donors/:id/edit" element={<SupporterFormPage />} />
+              <Route path="partners/new" element={<PartnerFormPage />} />
+              <Route path="partners/:id" element={<PartnerDetailPage />} />
+              <Route path="partners/:id/edit" element={<PartnerFormPage />} />
               <Route path="donations/new" element={<DonationFormPage />} />
               <Route path="donations/:id/edit" element={<DonationFormPage />} />
               <Route path="users" element={<UsersPage />} />

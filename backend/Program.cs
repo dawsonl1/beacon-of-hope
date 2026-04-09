@@ -1341,7 +1341,7 @@ app.MapPost("/api/partner", async (AppDbContext db, HttpContext httpContext) =>
         {
             PartnerName = string.IsNullOrEmpty(partnerName) ? contactName : partnerName,
             PartnerType = body.PartnerType?.Trim() ?? "Organization",
-            RoleType = "Prospective",
+            RoleType = body.RoleType?.Trim() ?? "Prospective",
             ContactName = contactName,
             Email = email,
             Phone = body.Phone?.Trim(),
@@ -1407,6 +1407,89 @@ app.MapGet("/api/admin/partners", async (AppDbContext db, string? search, string
 
     return new { items, totalCount, page, pageSize };
 }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
+
+app.MapGet("/api/admin/partners/{id:int}", async (int id, AppDbContext db) =>
+{
+    var p = await db.Partners.FindAsync(id);
+    if (p == null) return Results.NotFound();
+    return Results.Ok(new
+    {
+        p.PartnerId,
+        p.PartnerName,
+        p.PartnerType,
+        p.RoleType,
+        p.ContactName,
+        p.Email,
+        p.Phone,
+        p.Region,
+        p.Status,
+        p.StartDate,
+        p.EndDate,
+        p.Notes
+    });
+}).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
+
+app.MapPost("/api/admin/partners", async (AppDbContext db, HttpContext httpContext) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<PartnerAdminRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+
+    if (string.IsNullOrWhiteSpace(body.PartnerName) && string.IsNullOrWhiteSpace(body.ContactName))
+        return Results.BadRequest(new { error = "Partner name or contact name is required." });
+
+    await db.Database.ExecuteSqlRawAsync(
+        "SELECT setval(pg_get_serial_sequence('partners', 'partner_id'), (SELECT COALESCE(MAX(partner_id), 0) FROM partners))");
+
+    var partner = new backend.Models.Partner
+    {
+        PartnerName = body.PartnerName?.Trim() ?? body.ContactName?.Trim(),
+        PartnerType = body.PartnerType?.Trim() ?? "Organization",
+        RoleType = body.RoleType?.Trim(),
+        ContactName = body.ContactName?.Trim(),
+        Email = body.Email?.Trim(),
+        Phone = body.Phone?.Trim(),
+        Region = body.Region?.Trim(),
+        Status = body.Status?.Trim() ?? "Prospective",
+        StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+        Notes = body.Notes?.Trim(),
+    };
+
+    db.Partners.Add(partner);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { partner.PartnerId });
+}).RequireAuthorization("AdminOnly");
+
+app.MapPut("/api/admin/partners/{id:int}", async (int id, AppDbContext db, HttpContext httpContext) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<PartnerAdminRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+
+    var partner = await db.Partners.FindAsync(id);
+    if (partner == null) return Results.NotFound();
+
+    partner.PartnerName = body.PartnerName?.Trim() ?? partner.PartnerName;
+    partner.PartnerType = body.PartnerType?.Trim() ?? partner.PartnerType;
+    partner.RoleType = body.RoleType?.Trim();
+    partner.ContactName = body.ContactName?.Trim();
+    partner.Email = body.Email?.Trim();
+    partner.Phone = body.Phone?.Trim();
+    partner.Region = body.Region?.Trim();
+    partner.Status = body.Status?.Trim() ?? partner.Status;
+    partner.Notes = body.Notes?.Trim();
+
+    await db.SaveChangesAsync();
+    return Results.Ok(new { partner.PartnerId });
+}).RequireAuthorization("AdminOnly");
+
+app.MapDelete("/api/admin/partners/{id:int}", async (int id, AppDbContext db) =>
+{
+    var partner = await db.Partners.FindAsync(id);
+    if (partner == null) return Results.NotFound();
+
+    db.Partners.Remove(partner);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { deleted = true });
+}).RequireAuthorization("AdminOnly");
 
 // ── Admin endpoints ────────────────────────────────────────
 
@@ -3078,6 +3161,20 @@ public class PartnerSignupRequest
     public string? ContactName { get; set; }
     public string? Email { get; set; }
     public string? Phone { get; set; }
+    public string? RoleType { get; set; }
+    public string? Notes { get; set; }
+}
+
+public class PartnerAdminRequest
+{
+    public string? PartnerName { get; set; }
+    public string? PartnerType { get; set; }
+    public string? RoleType { get; set; }
+    public string? ContactName { get; set; }
+    public string? Email { get; set; }
+    public string? Phone { get; set; }
+    public string? Region { get; set; }
+    public string? Status { get; set; }
     public string? Notes { get; set; }
 }
 

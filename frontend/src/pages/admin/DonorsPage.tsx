@@ -256,6 +256,10 @@ export default function DonorsPage() {
               <Plus size={15} />
               Log Donation
             </button>
+            <button className={styles.btnSecondary} onClick={() => navigate('/admin/partners/new')}>
+              <Plus size={15} />
+              Add Partner
+            </button>
             <button className={styles.btnPrimary} onClick={() => navigate('/admin/donors/new')}>
               <Plus size={15} />
               Add Supporter
@@ -451,7 +455,7 @@ export default function DonorsPage() {
                   </thead>
                   <tbody>
                     {partners.items.map(p => (
-                      <tr key={p.partnerId}>
+                      <tr key={p.partnerId} onClick={() => navigate(`/admin/partners/${p.partnerId}`)} style={{ cursor: 'pointer' }}>
                         <td>
                           <span className={styles.supporterName}>{p.partnerName ?? 'Unnamed'}</span>
                           {p.partnerName !== p.contactName && p.contactName && (
