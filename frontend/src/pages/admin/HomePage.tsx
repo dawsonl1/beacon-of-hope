@@ -156,7 +156,6 @@ export default function HomePage() {
   const { activeSafehouseId, safehouses } = useSafehouse();
 
   // Calendar state
-  const [view, setView] = useState<'day' | 'week'>('week');
   const [currentDate, setCurrentDate] = useState(new Date(APP_TODAY));
   const [events, setEvents] = useState<CalendarEventItem[]>([]);
   const [eventsLoading, setEventsLoading] = useState(true);
@@ -192,12 +191,11 @@ export default function HomePage() {
     try {
       const params = new URLSearchParams();
       if (activeSafehouseId) params.set('safehouseId', String(activeSafehouseId));
-      if (view === 'day') params.set('date', fmtDate(currentDate));
-      else params.set('weekStart', fmtDate(getWeekStart(currentDate)));
+      params.set('weekStart', fmtDate(getWeekStart(currentDate)));
       const data = await apiFetch<CalendarEventItem[]>(`/api/staff/calendar?${params}`);
       setEvents(data);
     } catch { /* ignore */ } finally { setEventsLoading(false); }
-  }, [activeSafehouseId, currentDate, view]);
+  }, [activeSafehouseId, currentDate]);
 
   const fetchTasks = useCallback(async () => {
     setTasksLoading(true);
@@ -220,8 +218,7 @@ export default function HomePage() {
   /* ── Calendar actions ──────────────────────────── */
 
   function navigateDate(delta: number) {
-    if (view === 'day') setCurrentDate(addDays(currentDate, delta));
-    else setCurrentDate(addDays(currentDate, delta * 7));
+    setCurrentDate(addDays(currentDate, delta * 7));
   }
 
   async function handleCreateEvent() {
@@ -400,17 +397,13 @@ export default function HomePage() {
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <h1>Home</h1>
-          <p>{view === 'week' ? fmtWeekRange(currentDate) : fmtDateDisplay(currentDate)}</p>
+          <p>{fmtWeekRange(currentDate)}</p>
         </div>
         <div className={styles.headerActions}>
           <div className={styles.dateControls}>
             <button className={styles.navBtn} onClick={() => navigateDate(-1)}><ChevronLeft size={16} /></button>
             <button className={styles.todayBtn} onClick={() => setCurrentDate(new Date(APP_TODAY))}>Today</button>
             <button className={styles.navBtn} onClick={() => navigateDate(1)}><ChevronRight size={16} /></button>
-          </div>
-          <div className={styles.viewToggle}>
-            <button className={view === 'day' ? styles.viewBtnActive : styles.viewBtn} onClick={() => setView('day')}>Day</button>
-            <button className={view === 'week' ? styles.viewBtnActive : styles.viewBtn} onClick={() => setView('week')}>Week</button>
           </div>
           <button className={styles.addBtn} onClick={() => { setNewEvent(e => ({ ...e, eventDate: fmtDate(currentDate) })); setShowNewForm(true); }}>
             <Plus size={14} /> New Event
@@ -424,43 +417,6 @@ export default function HomePage() {
         <div className={styles.calendarPanel}>
           {eventsLoading ? (
             <div className={styles.loading}><Loader2 size={20} className={styles.spinner} /> Loading calendar...</div>
-          ) : view === 'day' ? (
-            <>
-              {unscheduled.length > 0 && (
-                <div className={styles.unscheduledSection}>
-                  <div className={styles.sectionLabel}>Unscheduled</div>
-                  <div className={styles.unscheduledList}>
-                    {unscheduled.map(evt => (
-                      <div key={evt.calendarEventId} className={styles.unscheduledCard} onClick={e => handleEventClick(evt, e)}>
-                        {evt.title} {evt.residentCode && `(${evt.residentCode})`}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              <div className={styles.dayGrid}>
-                {HOURS.map(hour => {
-                  const hourStr = hour.toString().padStart(2, '0');
-                  const hourEvents = scheduled.filter(e => e.startTime?.startsWith(hourStr));
-                  const isDropTarget = dragTaskId !== null && dropHour === hour;
-                  return (
-                    <div
-                      key={hour}
-                      className={isDropTarget ? styles.timeSlotDropTarget : styles.timeSlot}
-                      onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }}
-                      onDragEnter={() => handleSlotDragEnter(hour)}
-                      onDragLeave={handleSlotDragLeave}
-                      onDrop={e => { e.preventDefault(); handleSlotDrop(hour); }}
-                    >
-                      <div className={styles.timeLabel}>{hourLabel(hour)}</div>
-                      <div className={styles.slotContent}>
-                        {hourEvents.map(renderEventChip)}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </>
           ) : (
             <>
               {unscheduled.length > 0 && (
@@ -475,49 +431,51 @@ export default function HomePage() {
                   </div>
                 </div>
               )}
-              <div className={styles.weekGrid}>
-                {/* Column headers */}
-                <div className={styles.weekCorner} />
-                {DAY_NAMES.map((_, i) => {
-                  const dayDate = addDays(getWeekStart(currentDate), i);
-                  const dayStr = fmtDate(dayDate);
-                  const isToday = dayStr === APP_TODAY_STR;
-                  const hdr = fmtDayHeader(dayDate);
-                  return (
-                    <div key={i} className={`${styles.weekColHeader} ${isToday ? styles.weekColHeaderToday : ''}`}>
-                      <span className={styles.weekColName}>{hdr.name}</span>
-                      <span className={`${styles.weekColDate} ${isToday ? styles.weekColDateToday : ''}`}>{hdr.date}</span>
-                    </div>
-                  );
-                })}
-                {/* Time rows */}
-                {HOURS.map(hour => {
-                  const hourStr = hour.toString().padStart(2, '0');
-                  return (
-                    <React.Fragment key={hour}>
-                      <div className={styles.weekTimeLabel}>{hourLabel(hour)}</div>
-                      {DAY_NAMES.map((_, i) => {
-                        const dayDate = addDays(getWeekStart(currentDate), i);
-                        const dayStr = fmtDate(dayDate);
-                        const isToday = dayStr === APP_TODAY_STR;
-                        const cellEvents = events.filter(e => e.eventDate === dayStr && e.startTime?.startsWith(hourStr));
-                        const isDropTarget = dragTaskId !== null && dropHour === hour && dropDate === dayStr;
-                        return (
-                          <div
-                            key={`${hour}-${i}`}
-                            className={`${styles.weekCell} ${isToday ? styles.weekCellToday : ''} ${isDropTarget ? styles.weekCellDropTarget : ''}`}
-                            onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }}
-                            onDragEnter={() => handleSlotDragEnter(hour, dayStr)}
-                            onDragLeave={handleSlotDragLeave}
-                            onDrop={e => { e.preventDefault(); handleSlotDrop(hour, dayStr); }}
-                          >
-                            {cellEvents.map(renderEventChip)}
-                          </div>
-                        );
-                      })}
-                    </React.Fragment>
-                  );
-                })}
+              <div className={styles.weekScrollContainer}>
+                <div className={styles.weekGrid}>
+                  {/* Column headers */}
+                  <div className={styles.weekCorner} />
+                  {DAY_NAMES.map((_, i) => {
+                    const dayDate = addDays(getWeekStart(currentDate), i);
+                    const dayStr = fmtDate(dayDate);
+                    const isToday = dayStr === APP_TODAY_STR;
+                    const hdr = fmtDayHeader(dayDate);
+                    return (
+                      <div key={i} className={`${styles.weekColHeader} ${isToday ? styles.weekColHeaderToday : ''}`}>
+                        <span className={styles.weekColName}>{hdr.name}</span>
+                        <span className={`${styles.weekColDate} ${isToday ? styles.weekColDateToday : ''}`}>{hdr.date}</span>
+                      </div>
+                    );
+                  })}
+                  {/* Time rows */}
+                  {HOURS.map(hour => {
+                    const hourStr = hour.toString().padStart(2, '0');
+                    return (
+                      <React.Fragment key={hour}>
+                        <div className={styles.weekTimeLabel}>{hourLabel(hour)}</div>
+                        {DAY_NAMES.map((_, i) => {
+                          const dayDate = addDays(getWeekStart(currentDate), i);
+                          const dayStr = fmtDate(dayDate);
+                          const isToday = dayStr === APP_TODAY_STR;
+                          const cellEvents = events.filter(e => e.eventDate === dayStr && e.startTime?.startsWith(hourStr));
+                          const isDropTarget = dragTaskId !== null && dropHour === hour && dropDate === dayStr;
+                          return (
+                            <div
+                              key={`${hour}-${i}`}
+                              className={`${styles.weekCell} ${isToday ? styles.weekCellToday : ''} ${isDropTarget ? styles.weekCellDropTarget : ''}`}
+                              onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }}
+                              onDragEnter={() => handleSlotDragEnter(hour, dayStr)}
+                              onDragLeave={handleSlotDragLeave}
+                              onDrop={e => { e.preventDefault(); handleSlotDrop(hour, dayStr); }}
+                            >
+                              {cellEvents.map(renderEventChip)}
+                            </div>
+                          );
+                        })}
+                      </React.Fragment>
+                    );
+                  })}
+                </div>
               </div>
             </>
           )}

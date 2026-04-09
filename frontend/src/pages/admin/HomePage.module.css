@@ -40,33 +40,6 @@
 }
 
 /* ── View toggle ─────────────────────────────────── */
-.viewToggle {
-  display: flex;
-  border: 1px solid rgba(15, 27, 45, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.viewBtn {
-  font-size: 0.75rem;
-  font-weight: 600;
-  font-family: var(--font-body);
-  padding: 0.3rem 0.65rem;
-  border: none;
-  background: #fff;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.viewBtn:hover { background: rgba(15, 27, 45, 0.03); }
-
-.viewBtnActive {
-  composes: viewBtn;
-  background: var(--color-sage);
-  color: #fff;
-}
-
 /* ── Date controls ───────────────────────────────── */
 .dateControls {
   display: flex;
@@ -150,13 +123,15 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 /* ── Unscheduled parking lot ─────────────────────── */
 .unscheduledSection {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   flex-shrink: 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(15, 27, 45, 0.06);
 }
 
 .sectionLabel {
@@ -192,49 +167,6 @@
   background: rgba(15, 143, 125, 0.03);
 }
 
-/* ── Day view grid ───────────────────────────────── */
-.dayGrid {
-  background: #fff;
-  border: 1px solid rgba(15, 27, 45, 0.08);
-  border-radius: 12px;
-}
-
-.timeSlot {
-  display: flex;
-  border-bottom: 1px solid rgba(15, 27, 45, 0.06);
-  height: 60px;
-  transition: background 0.2s;
-}
-
-.timeSlot:hover { background: rgba(15, 143, 125, 0.02); }
-
-.timeSlotDropTarget {
-  composes: timeSlot;
-  background: rgba(15, 143, 125, 0.08);
-  outline: 2px dashed var(--color-sage);
-  outline-offset: -2px;
-}
-
-.timeLabel {
-  width: 52px;
-  padding: 0.35rem 0.4rem;
-  font-size: 0.68rem;
-  color: var(--text-muted);
-  font-weight: 600;
-  text-align: right;
-  flex-shrink: 0;
-  border-right: 1px solid rgba(15, 27, 45, 0.06);
-}
-
-.slotContent {
-  flex: 1;
-  padding: 0.2rem 0.4rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-  align-items: flex-start;
-}
-
 /* ── Event chips ─────────────────────────────────── */
 .eventChip {
   display: inline-flex;
@@ -266,6 +198,12 @@
 .eventCompleted { opacity: 0.5; text-decoration: line-through; }
 
 /* ── Week view (Google Calendar-style grid) ──────── */
+.weekScrollContainer {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
 .weekGrid {
   display: grid;
   grid-template-columns: 52px repeat(7, 1fr);
