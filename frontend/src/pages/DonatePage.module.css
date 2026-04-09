@@ -32,77 +32,8 @@
 
 .formSection {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
   padding: 2.5rem 1.5rem 4rem;
-  gap: 1.25rem;
-}
-
-/* ── Monthly Goal Progress ─────────────────────────── */
-.goalCard {
-  width: 100%;
-  max-width: 520px;
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
-  padding: 1.25rem 1.5rem;
-}
-
-.goalHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 0.6rem;
-}
-
-.goalTitle {
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-slate);
-}
-
-.goalNumbers {
-  font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-strong);
-}
-
-.goalBar {
-  height: 10px;
-  background: rgba(15, 143, 125, 0.1);
-  border-radius: 999px;
-  overflow: hidden;
-  margin-bottom: 0.6rem;
-}
-
-.goalFill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--color-sage), #13a490);
-  border-radius: 999px;
-  transition: width 0.8s ease;
-}
-
-.goalFooter {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.goalPct {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--color-sage);
-}
-
-.goalDonors {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.82rem;
-  color: var(--color-slate);
 }
 
 .card {

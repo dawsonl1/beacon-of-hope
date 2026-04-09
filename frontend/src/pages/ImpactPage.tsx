@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useReveal } from '../hooks/useReveal';
-import { Heart, GraduationCap, Home, Stethoscope, ShieldCheck } from 'lucide-react';
+import { Heart, GraduationCap, Home, Stethoscope, ShieldCheck, Users } from 'lucide-react';
 import { apiFetch } from '../api';
 import type { ImpactSummary } from '../types';
 import { ApiError } from '../components/ApiError';
@@ -82,17 +82,23 @@ const IMPACT_CARDS = [
 
 export default function ImpactPage() {
   const heroRef = useReveal();
+  const goalRef = useReveal();
   const impactRef = useReveal();
   const storiesRef = useReveal();
   const ctaRef = useReveal();
 
   const [summary, setSummary] = useState<ImpactSummary | null>(null);
+  const [goalData, setGoalData] = useState<{ raised: number; goal: number; donorCount: number } | null>(null);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     apiFetch<ImpactSummary>('/api/impact/summary')
       .then(setSummary)
       .catch(e => { console.error('API fetch failed', e); setError(true); });
+
+    apiFetch<{ raised: number; goal: number; donorCount: number }>('/api/donate/monthly-progress')
+      .then(setGoalData)
+      .catch(() => {});
   }, []);
 
   return (
@@ -141,6 +147,46 @@ export default function ImpactPage() {
           )}
         </div>
       </section>
+
+      {/* ── Monthly Goal ────────────────────────────────────── */}
+      {goalData && (
+        <section className={styles.goalSection} ref={goalRef}>
+          <div className={`${styles.goalInner} reveal`}>
+            <h2 className={styles.goalHeadline}>Help us reach our monthly goal</h2>
+            <p className={styles.goalSub}>
+              We need ${goalData.goal.toLocaleString()} each month to keep our safehouses
+              running and our programs funded. Here's where we are this month.
+            </p>
+            <div className={styles.goalCard}>
+              <div className={styles.goalHeader}>
+                <span className={styles.goalTitle}>This month's progress</span>
+                <span className={styles.goalNumbers}>
+                  ${Math.round(goalData.raised).toLocaleString()} of ${goalData.goal.toLocaleString()}
+                </span>
+              </div>
+              <div className={styles.goalBar}>
+                <div
+                  className={styles.goalFill}
+                  style={{ width: `${Math.min(100, (goalData.raised / goalData.goal) * 100)}%` }}
+                />
+              </div>
+              <div className={styles.goalFooter}>
+                <span className={styles.goalPct}>
+                  {Math.round((goalData.raised / goalData.goal) * 100)}% funded
+                </span>
+                <span className={styles.goalDonors}>
+                  <Users size={14} />
+                  {goalData.donorCount} donor{goalData.donorCount !== 1 ? 's' : ''} this month
+                </span>
+              </div>
+            </div>
+            <Link to="/donate" className={styles.goalCta}>
+              <Heart size={16} />
+              Help Us Get There
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* ── What Your Donation Provides ───────────────────── */}
       <section className={styles.impactSection} ref={impactRef}>

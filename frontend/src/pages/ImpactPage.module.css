@@ -97,6 +97,121 @@
   text-align: center;
 }
 
+/* ── Monthly Goal Section ────────────────────────────── */
+.goalSection {
+  padding: 3rem 1.25rem;
+  background: var(--surface-2);
+  text-align: center;
+}
+
+.goalInner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.goalHeadline {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 600;
+  color: var(--text-strong);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.goalSub {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.goalCard {
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem 1.5rem;
+  text-align: left;
+  margin-bottom: 1.5rem;
+}
+
+.goalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.6rem;
+}
+
+.goalTitle {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.goalNumbers {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.goalBar {
+  height: 10px;
+  background: rgba(15, 143, 125, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 0.6rem;
+}
+
+.goalFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-sage), #13a490);
+  border-radius: 999px;
+  transition: width 0.8s ease;
+}
+
+.goalFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.goalPct {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-sage);
+}
+
+.goalDonors {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.goalCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 46px;
+  border-radius: 999px;
+  padding: 0.8rem 1.6rem;
+  background: linear-gradient(120deg, var(--color-sage), #13a490);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.24s, filter 0.24s;
+  box-shadow: 0 10px 24px rgba(15, 143, 125, 0.24);
+}
+
+.goalCta:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
 /* ── Section Headings ────────────────────────────────── */
 .sectionTitle {
   font-family: var(--font-display);
