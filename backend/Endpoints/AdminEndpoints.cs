@@ -447,6 +447,30 @@ public static class AdminEndpoints
             return new { caseStatuses, safehouses, categories, riskLevels, socialWorkers };
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
+        // Returns staff members assigned to a specific safehouse
+        app.MapGet("/api/admin/safehouses/{safehouseId:int}/staff", async (int safehouseId, AppDbContext db, UserManager<ApplicationUser> userManager) =>
+        {
+            var staffUsers = await db.UserSafehouses
+                .Where(us => us.SafehouseId == safehouseId)
+                .Join(db.Users, us => us.UserId, u => u.Id,
+                    (us, u) => new { u.Id, u.FirstName, u.LastName })
+                .OrderBy(u => u.LastName).ThenBy(u => u.FirstName)
+                .ToListAsync();
+
+            var result = new List<object>();
+            foreach (var u in staffUsers)
+            {
+                var user = await userManager.FindByIdAsync(u.Id);
+                if (user != null)
+                {
+                    var roles = await userManager.GetRolesAsync(user);
+                    if (roles.Contains("Staff") || roles.Contains("Admin"))
+                        result.Add(new { name = $"{u.FirstName} {u.LastName}" });
+                }
+            }
+            return Results.Ok(result);
+        }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
+
         app.MapGet("/api/admin/residents/{id:int}", async (int id, AppDbContext db) =>
         {
             var r = await db.Residents
@@ -617,9 +641,14 @@ public static class AdminEndpoints
 
         // ── Safehouses & Residents list ──────────────────────────
 
-        app.MapGet("/api/admin/residents-list", async (AppDbContext db) =>
+        app.MapGet("/api/admin/residents-list", async (HttpContext httpContext, AppDbContext db) =>
         {
-            var data = await db.Residents
+            var allowed = await SafehouseAuth.GetAllowedSafehouseIds(httpContext, db);
+            var query = db.Residents.AsQueryable();
+            if (allowed != null)
+                query = query.Where(r => r.SafehouseId.HasValue && allowed.Contains(r.SafehouseId.Value));
+
+            var data = await query
                 .OrderBy(r => r.InternalCode)
                 .Select(r => new
                 {

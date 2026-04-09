@@ -69,4 +69,25 @@ public static class SafehouseAuth
         }
         return query;
     }
+
+    /// <summary>
+    /// Validates that a resident belongs to the user's assigned safehouses.
+    /// Returns null if allowed, or an error IResult if not.
+    /// </summary>
+    public static async Task<IResult?> ValidateResidentAccess(
+        HttpContext httpContext, AppDbContext db, int residentId)
+    {
+        var allowed = await GetAllowedSafehouseIds(httpContext, db);
+        if (allowed == null) return null;
+
+        var safehouseId = await db.Residents
+            .Where(r => r.ResidentId == residentId)
+            .Select(r => r.SafehouseId)
+            .FirstOrDefaultAsync();
+
+        if (!safehouseId.HasValue || !allowed.Contains(safehouseId.Value))
+            return Results.BadRequest(new { error = "Resident is not in your assigned safehouses." });
+
+        return null;
+    }
 }
