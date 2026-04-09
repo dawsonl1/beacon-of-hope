@@ -4,7 +4,7 @@ All AI/LLM logic lives here. The .NET backend calls these endpoints.
 """
 
 import logging
-from fastapi import FastAPI, HTTPException, Header
+from fastapi import Depends, FastAPI, HTTPException, Header
 from pydantic import BaseModel
 from ai_harness.config import HARNESS_API_KEY
 from ai_harness import db
@@ -17,19 +17,23 @@ from ai_harness.graphics import generate_graphic
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Social Media AI Harness", version="0.1.0")
-
 
 # ── Auth ────────────────────────────────────────────────────────────────────
 
 def verify_key(authorization: str = Header(default="")):
-    if HARNESS_API_KEY and authorization != f"Bearer {HARNESS_API_KEY}":
+    if not HARNESS_API_KEY:
+        raise HTTPException(status_code=500, detail="HARNESS_API_KEY not configured")
+    if authorization != f"Bearer {HARNESS_API_KEY}":
         raise HTTPException(status_code=401, detail="Invalid API key")
 
 
-# ── Health ──────────────────────────────────────────────────────────────────
+# All endpoints require auth by default
+app = FastAPI(title="Social Media AI Harness", version="0.1.0", dependencies=[Depends(verify_key)])
 
-@app.get("/health")
+
+# ── Health (no auth) ───────────────────────────────────────────────────────
+
+@app.get("/health", dependencies=[])  # override global auth
 def health():
     """Health check — verifies DB connectivity and API key presence."""
     try:
@@ -38,15 +42,7 @@ def health():
     except Exception:
         db_ok = False
 
-    from ai_harness.config import OPENAI_API_KEY
-    api_ok = bool(OPENAI_API_KEY)
-
-    if not db_ok or not api_ok:
-        raise HTTPException(status_code=503, detail={
-            "db": "ok" if db_ok else "unreachable",
-            "openai_key": "configured" if api_ok else "missing",
-        })
-    return {"status": "healthy", "db": "ok", "openai_key": "configured"}
+    return {"status": "healthy" if db_ok else "degraded", "db": "ok" if db_ok else "unreachable"}
 
 
 # ── Request/Response Models ─────────────────────────────────────────────────

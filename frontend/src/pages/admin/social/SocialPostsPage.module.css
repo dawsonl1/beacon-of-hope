@@ -6,6 +6,50 @@
 .generateBtn:hover { opacity: 0.9; }
 .generateBtn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+/* Generate — expanding pillar buttons */
+.genExpanded {
+  display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;
+}
+.genExpandedOpen { animation: genExpandIn 0.25s ease-out; }
+.genExpandedClosing { animation: genExpandOut 0.2s ease-in forwards; }
+@keyframes genExpandIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+@keyframes genExpandOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.92); } }
+.genOption {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.5rem 0.85rem; border: 1px solid #e5e7eb; border-radius: 10px;
+  background: #fff; font-size: 0.8rem; font-weight: 500;
+  color: var(--color-deep-navy); cursor: pointer; transition: all 0.15s;
+  white-space: nowrap; position: relative;
+}
+.genOption:hover { border-color: var(--color-sage); background: #f0fdf9; }
+.genOptionSuggested { border-color: var(--color-sage); background: #f0fdf9; box-shadow: 0 0 0 2px rgba(15, 143, 125, 0.12); }
+.genDot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.genTooltip {
+  display: none; position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+  background: var(--color-deep-navy); color: #fff;
+  padding: 0.5rem 0.7rem; border-radius: 8px;
+  font-size: 0.72rem; font-weight: 400; line-height: 1.4;
+  width: 220px; text-align: center; z-index: 10;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  pointer-events: none; white-space: normal;
+}
+.genTooltip::before {
+  content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+  border: 6px solid transparent; border-bottom-color: var(--color-deep-navy);
+}
+.genOption:hover .genTooltip { display: block; }
+.genSuggestedTag {
+  font-size: 0.55rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--color-sage); background: rgba(15, 143, 125, 0.1);
+  padding: 0.1rem 0.35rem; border-radius: 4px; margin-left: 0.1rem;
+}
+.genCloseBtn {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border: 1px solid #e5e7eb; border-radius: 8px;
+  background: #fff; cursor: pointer; color: #9ca3af; transition: all 0.15s;
+}
+.genCloseBtn:hover { background: #f3f4f6; color: var(--color-deep-navy); }
+
 .error { padding: 0.7rem 1rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; color: #991b1b; font-size: 0.85rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
 .error button { background: none; border: none; color: #991b1b; cursor: pointer; font-size: 1.1rem; font-weight: 600; }
 .loading { display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 4rem; color: var(--text-muted); }
@@ -155,14 +199,58 @@
 .changePhotoBtn:hover { background: #fff; }
 
 /* Photo Picker */
-.photoPicker { position: fixed; z-index: 101; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); width: 520px; max-width: 92vw; max-height: 70vh; overflow-y: auto; padding: 1.2rem; }
-.photoPickerHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-.photoPickerHeader h3 { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--color-deep-navy); margin: 0; }
-.photoPickerGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.5rem; }
-.photoPickerItem { border: 2px solid transparent; border-radius: 8px; overflow: hidden; cursor: pointer; padding: 0; background: none; aspect-ratio: 1; }
-.photoPickerItem img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.photoPickerItem:hover { border-color: var(--color-sage); }
-.photoPickerSelected { border-color: var(--color-sage); box-shadow: 0 0 0 2px rgba(15, 143, 125, 0.3); }
+.photoPicker {
+  position: fixed; z-index: 201;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: var(--color-cream, #f8f7f3);
+  border-radius: var(--radius-md, 14px);
+  box-shadow: 0 24px 80px rgba(15, 27, 45, 0.22);
+  width: 560px; max-width: 94vw; max-height: 80vh;
+  display: flex; flex-direction: column;
+}
+.photoPickerHeader {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 1.3rem 1.5rem 1rem; border-bottom: 1px solid rgba(15, 27, 45, 0.06);
+}
+.photoPickerHeader h3 { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; color: var(--color-deep-navy); margin: 0; }
+.photoPickerHeader p { font-size: 0.8rem; color: var(--text-muted); margin: 0.2rem 0 0; }
+.photoPickerToolbar {
+  display: flex; gap: 0.3rem; padding: 0.75rem 1.5rem;
+  overflow-x: auto; flex-shrink: 0;
+  border-bottom: 1px solid rgba(15, 27, 45, 0.04);
+}
+.photoPickerFilter {
+  padding: 0.3rem 0.65rem; border: 1px solid #d1d5db; border-radius: 20px;
+  font-size: 0.7rem; font-weight: 500; background: #fff; color: #6b7280;
+  cursor: pointer; white-space: nowrap; transition: all 0.15s;
+}
+.photoPickerFilter:hover { border-color: var(--color-sage); color: var(--color-sage); }
+.photoPickerFilterActive { background: var(--color-sage); color: #fff; border-color: var(--color-sage); }
+.photoPickerGrid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.6rem; padding: 1rem 1.5rem; overflow-y: auto; flex: 1;
+}
+.photoPickerItem {
+  border: 2px solid transparent; border-radius: 10px; overflow: hidden;
+  cursor: pointer; padding: 0; background: #fff;
+  display: flex; flex-direction: column; transition: all 0.15s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.photoPickerItem img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+.photoPickerItem:hover { border-color: var(--color-sage); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.photoPickerSelected { border-color: var(--color-sage); box-shadow: 0 0 0 3px rgba(15, 143, 125, 0.25); }
+.photoPickerCaption {
+  padding: 0.35rem 0.5rem; font-size: 0.65rem; color: #6b7280;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.photoPickerNoPhoto {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  aspect-ratio: 4/3; color: #9ca3af; gap: 0.3rem; border: 2px dashed #d1d5db;
+  background: #f9fafb;
+}
+.photoPickerNoPhoto span { font-size: 0.7rem; font-weight: 500; }
+.photoPickerNoPhoto:hover { border-color: #9ca3af; color: #6b7280; }
+.photoPickerEmpty { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.85rem; }
 
 /* Inline dialog */
 .dialogBackdrop { position: fixed; inset: 0; background: rgba(15, 27, 45, 0.35); z-index: 200; backdrop-filter: blur(2px); }

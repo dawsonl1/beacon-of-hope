@@ -47,3 +47,10 @@ bugs.txt
 # Data protection keys
 backend/dp-keys/
 dp-keys/
+
+# Playwright MCP artifacts
+.playwright-mcp/
+
+# Media files (stored in Azure Blob Storage in production)
+backend/wwwroot/media/generated/
+backend/wwwroot/media/library/

@@ -75,6 +75,27 @@ export default function SocialPostsPage() {
 
   function showToast(msg: string) { setToast(msg); setTimeout(() => setToast(null), 2500); }
 
+  const [showGeneratePanel, setShowGeneratePanel] = useState(false);
+  const [genClosing, setGenClosing] = useState(false);
+
+  function closeGeneratePanel() {
+    setGenClosing(true);
+    setTimeout(() => { setShowGeneratePanel(false); setGenClosing(false); }, 200);
+  }
+
+  // Determine which pillar to suggest based on what's least represented in drafts
+  function getSuggestedPillar(): string {
+    const counts: Record<string, number> = { safehouse_life: 0, the_problem: 0, the_solution: 0, donor_impact: 0, call_to_action: 0 };
+    [...drafts, ...ready, ...scheduled].forEach(p => { if (counts[p.contentPillar] !== undefined) counts[p.contentPillar]++; });
+    const ratios: Record<string, number> = { safehouse_life: 30, the_problem: 25, the_solution: 20, donor_impact: 15, call_to_action: 10 };
+    let best = 'safehouse_life'; let bestGap = -Infinity;
+    for (const [key, target] of Object.entries(ratios)) {
+      const gap = target - (counts[key] || 0) * 10;
+      if (gap > bestGap) { bestGap = gap; best = key; }
+    }
+    return best;
+  }
+
   // Inline dialog (replaces native confirm/prompt)
   const [dialog, setDialog] = useState<{
     title: string;
@@ -91,7 +112,8 @@ export default function SocialPostsPage() {
   const [editMediaId, setEditMediaId] = useState<number | null>(null);
   const [editMediaThumb, setEditMediaThumb] = useState<string | null>(null);
   const [showPhotoPicker, setShowPhotoPicker] = useState(false);
-  const [availablePhotos, setAvailablePhotos] = useState<{ mediaLibraryItemId: number; thumbnailPath: string; caption: string }[]>([]);
+  const [pickerFilter, setPickerFilter] = useState('');
+  const [availablePhotos, setAvailablePhotos] = useState<{ mediaLibraryItemId: number; thumbnailPath: string; caption: string; activityType: string }[]>([]);
   const [engagementId, setEngagementId] = useState<number | null>(null);
   const [engagement, setEngagement] = useState({ likes: 0, shares: 0, comments: 0, donations: 0 });
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
@@ -122,9 +144,16 @@ export default function SocialPostsPage() {
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
+  // Lock body scroll when any modal is open
+  useEffect(() => {
+    const locked = showPhotoPicker || !!dialog || !!selectedPost;
+    document.body.style.overflow = locked ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [showPhotoPicker, dialog, selectedPost]);
+
   async function openPhotoPicker() {
     if (availablePhotos.length === 0) {
-      const photos = await apiFetch<{ mediaLibraryItemId: number; thumbnailPath: string; caption: string }[]>('/api/admin/social/media?pageSize=50');
+      const photos = await apiFetch<{ mediaLibraryItemId: number; thumbnailPath: string; caption: string; activityType: string }[]>('/api/admin/social/media?pageSize=50');
       setAvailablePhotos(photos);
     }
     setShowPhotoPicker(true);
@@ -232,13 +261,17 @@ export default function SocialPostsPage() {
     fetchAll();
   }
 
-  async function handleGenerate() {
+  async function handleGenerate(pillar?: string) {
+    setShowGeneratePanel(false);
     setGenerating(true);
     setError(null);
     try {
-      const result = await apiFetch<{ generated: number }>('/api/admin/social/generate', { method: 'POST', body: JSON.stringify({ maxPosts: 4 }) });
+      const result = await apiFetch<{ generated: number }>('/api/admin/social/generate', {
+        method: 'POST',
+        body: JSON.stringify({ maxPosts: 1, pillar }),
+      });
       if (result.generated === 0) setError('No posts generated. Try adding more photos or facts first.');
-      else showToast(`${result.generated} post${result.generated !== 1 ? 's' : ''} generated`);
+      else showToast('Post generated');
       fetchAll();
     } catch {
       setError('Generation failed. Is the AI harness running?');
@@ -265,9 +298,42 @@ export default function SocialPostsPage() {
             {ready.length > 0 && ` · ${ready.length} ready to publish`}
           </p>
         </div>
-        <button className={styles.generateBtn} onClick={handleGenerate} disabled={generating}>
-          {generating ? <><Loader2 className={styles.spin} size={16} /> Generating...</> : <><Sparkles size={16} /> Generate Posts</>}
-        </button>
+        {generating ? (
+          <div className={styles.generateBtn} style={{ opacity: 0.5, cursor: 'not-allowed' }}>
+            <Loader2 className={styles.spin} size={16} /> Generating...
+          </div>
+        ) : !showGeneratePanel ? (
+          <button className={styles.generateBtn} onClick={() => setShowGeneratePanel(true)}>
+            <Sparkles size={16} /> Generate Post
+          </button>
+        ) : (
+          <div className={`${styles.genExpanded} ${genClosing ? styles.genExpandedClosing : styles.genExpandedOpen}`}>
+            {([
+              ['safehouse_life', 'Safehouse Life', 'Photos and stories from daily safehouse life — art therapy, meals, celebrations'],
+              ['the_problem', 'Awareness', 'Educational content about trafficking, abuse, and the need for action'],
+              ['the_solution', 'Our Work', 'What your organization does — counseling, education, rehabilitation'],
+              ['donor_impact', 'Impact', 'Shows supporters how their donations fund real operations'],
+              ['call_to_action', 'Call to Action', 'Fundraising asks, volunteer recruitment, event promotion'],
+            ] as [string, string, string][]).map(([key, label, desc]) => {
+              const suggested = getSuggestedPillar() === key;
+              return (
+                <button
+                  key={key}
+                  className={`${styles.genOption} ${suggested ? styles.genOptionSuggested : ''}`}
+                  onClick={() => handleGenerate(key)}
+                >
+                  <span className={styles.genDot} style={{ background: PILLAR_COLORS[key] }} />
+                  {label}
+                  {suggested && <span className={styles.genSuggestedTag}>Suggested</span>}
+                  <span className={styles.genTooltip}>{desc}</span>
+                </button>
+              );
+            })}
+            <button className={styles.genCloseBtn} onClick={closeGeneratePanel}>
+              <X size={14} />
+            </button>
+          </div>
+        )}
       </div>
 
       {error && <div className={styles.error}>{error} <button onClick={() => setError(null)}>×</button></div>}
@@ -513,14 +579,34 @@ export default function SocialPostsPage() {
       {/* Photo Picker Modal */}
       {showPhotoPicker && (
         <>
-          <div className={styles.popoverBackdrop} onClick={() => setShowPhotoPicker(false)} />
+          <div className={styles.dialogBackdrop} onClick={() => setShowPhotoPicker(false)} />
           <div className={styles.photoPicker}>
             <div className={styles.photoPickerHeader}>
-              <h3>Choose a photo</h3>
-              <button onClick={() => setShowPhotoPicker(false)} className={styles.popoverClose}><X size={18} /></button>
+              <div>
+                <h3>Choose a photo</h3>
+                <p>Select an image from your media library to use with this post.</p>
+              </div>
+              <button onClick={() => setShowPhotoPicker(false)} className={styles.popoverClose}><X size={20} /></button>
+            </div>
+            <div className={styles.photoPickerToolbar}>
+              <button className={`${styles.photoPickerFilter} ${!pickerFilter ? styles.photoPickerFilterActive : ''}`} onClick={() => setPickerFilter('')}>All</button>
+              {['art_therapy', 'daily_life', 'celebration', 'meal', 'sports', 'facility', 'outing'].map(t => (
+                <button key={t} className={`${styles.photoPickerFilter} ${pickerFilter === t ? styles.photoPickerFilterActive : ''}`} onClick={() => setPickerFilter(t)}>
+                  {t.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                </button>
+              ))}
             </div>
             <div className={styles.photoPickerGrid}>
-              {availablePhotos.map(photo => (
+              <button
+                className={`${styles.photoPickerItem} ${styles.photoPickerNoPhoto} ${editMediaId === 0 ? styles.photoPickerSelected : ''}`}
+                onClick={() => { setEditMediaId(0); setEditMediaThumb(null); setShowPhotoPicker(false); }}
+              >
+                <X size={24} />
+                <span>No photo</span>
+              </button>
+              {availablePhotos
+                .filter(p => !pickerFilter || p.activityType === pickerFilter)
+                .map(photo => (
                 <button
                   key={photo.mediaLibraryItemId}
                   className={`${styles.photoPickerItem} ${editMediaId === photo.mediaLibraryItemId ? styles.photoPickerSelected : ''}`}
@@ -530,10 +616,14 @@ export default function SocialPostsPage() {
                     setShowPhotoPicker(false);
                   }}
                 >
-                  <img src={`${getApiUrl()}${photo.thumbnailPath}`} alt={photo.caption} />
+                  <img src={`${getApiUrl()}${photo.thumbnailPath}`} alt={photo.caption || 'Photo'} />
+                  {photo.caption && <span className={styles.photoPickerCaption}>{photo.caption}</span>}
                 </button>
               ))}
             </div>
+            {availablePhotos.length === 0 && (
+              <p className={styles.photoPickerEmpty}>No photos in the library yet. Upload some on the Photos page first.</p>
+            )}
           </div>
         </>
       )}
