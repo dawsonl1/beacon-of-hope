@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Loader2, Users, Plus, X } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { APP_TODAY } from '../../constants';
@@ -28,16 +28,18 @@ interface ResidentOption {
 export default function CaseConferencesPage() {
   useDocumentTitle('Case Conferences');
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [plans, setPlans] = useState<ConferenceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const pageSize = 20;
 
-  // Form state
-  const [showForm, setShowForm] = useState(false);
+  // Form state — auto-open if scheduleFor param is present
+  const scheduleFor = searchParams.get('scheduleFor') || '';
+  const [showForm, setShowForm] = useState(!!scheduleFor);
   const [residents, setResidents] = useState<ResidentOption[]>([]);
-  const [formResidentId, setFormResidentId] = useState('');
+  const [formResidentId, setFormResidentId] = useState(scheduleFor);
   const [formCategory, setFormCategory] = useState('');
   const [formDescription, setFormDescription] = useState('');
   const [formDate, setFormDate] = useState('');
@@ -89,6 +91,7 @@ export default function CaseConferencesPage() {
       setFormCategory('');
       setFormDescription('');
       setFormDate('');
+      if (searchParams.has('scheduleFor')) { searchParams.delete('scheduleFor'); setSearchParams(searchParams, { replace: true }); }
       fetchPlans();
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Failed to schedule');

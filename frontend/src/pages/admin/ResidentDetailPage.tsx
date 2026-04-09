@@ -276,7 +276,7 @@ export default function ResidentDetailPage() {
           <AlertTriangle size={16} />
           <div>
             <strong>Case Closed</strong>
-            <span>This resident's case is closed. ML risk assessments are not generated for closed cases.</span>
+            <span>This resident's case is closed. Risk assessments are not generated for closed cases.</span>
           </div>
         </div>
       )}
@@ -287,6 +287,7 @@ export default function ResidentDetailPage() {
           {predictions.map(p => {
             const color = ML_SCORE_COLORS[p.scoreLabel || ''] || '#95a5a6';
             const isIncidentModel = p.modelName.includes('incident');
+            const isHighRisk = isIncidentModel && (p.scoreLabel === 'High' || p.scoreLabel === 'Critical');
             const label = p.modelName
               .replace('incident-early-warning-', '')
               .replace('reintegration-readiness', 'Reintegration Readiness')
@@ -322,7 +323,7 @@ export default function ResidentDetailPage() {
                     <Activity size={20} style={{ color }} />
                   )}
                 </div>
-                <div>
+                <div style={{ flex: 1 }}>
                   <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                     {label}
                   </div>
@@ -334,6 +335,14 @@ export default function ResidentDetailPage() {
                       {p.scoreLabel}
                     </span>
                   </div>
+                  {isHighRisk && (
+                    <button
+                      onClick={() => navigate(`/admin/conferences?scheduleFor=${id}`)}
+                      className={styles.scheduleBtn}
+                    >
+                      Schedule Conference
+                    </button>
+                  )}
                 </div>
               </div>
             );
