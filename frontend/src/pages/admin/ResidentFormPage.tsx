@@ -79,6 +79,18 @@ function toDateStr(v: unknown): string {
   return v.slice(0, 10);
 }
 
+/** Calculate age in whole years between two date strings */
+function calcAge(birthDate: string, refDate: string): number | null {
+  if (!birthDate || !refDate) return null;
+  const b = new Date(birthDate);
+  const r = new Date(refDate);
+  if (isNaN(b.getTime()) || isNaN(r.getTime())) return null;
+  let age = r.getFullYear() - b.getFullYear();
+  const monthDiff = r.getMonth() - b.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && r.getDate() < b.getDate())) age--;
+  return age >= 0 ? age : null;
+}
+
 const EMPTY_FORM: FormData = {
   caseControlNo: '', internalCode: '', safehouseId: '', caseStatus: 'Active',
   sex: 'Female', dateOfBirth: '', birthStatus: '', placeOfBirth: '', religion: '',
@@ -141,7 +153,7 @@ function toPayload(form: FormData) {
     pwdType: form.pwdType || null,
     specialNeedsDiagnosis: form.specialNeedsDiagnosis || null,
     ageUponAdmission: form.ageUponAdmission || null,
-    presentAge: form.presentAge || null,
+    presentAge: (form.dateOfBirth ? String(calcAge(form.dateOfBirth, new Date().toISOString().slice(0, 10)) ?? '') : form.presentAge) || null,
     lengthOfStay: form.lengthOfStay || null,
     referralSource: form.referralSource || null,
     referringAgencyPerson: form.referringAgencyPerson || null,
@@ -400,7 +412,19 @@ export default function ResidentFormPage() {
             </label>
             <label className={styles.label}>
               Age upon Admission
-              <input className={styles.input} value={form.ageUponAdmission} onChange={(e) => updateField('ageUponAdmission', e.target.value)} placeholder="e.g. 14" />
+              <input type="number" min="0" max="25" className={styles.input} value={form.ageUponAdmission} onChange={(e) => updateField('ageUponAdmission', e.target.value)} placeholder="e.g. 14" />
+              {form.dateOfBirth && form.dateOfAdmission && (() => {
+                const computed = calcAge(form.dateOfBirth, form.dateOfAdmission);
+                return computed !== null && form.ageUponAdmission !== String(computed) ? (
+                  <button type="button" style={{ fontSize: '0.7rem', color: 'var(--color-sage)', background: 'none', border: 'none', cursor: 'pointer', padding: '0.15rem 0', fontWeight: 600 }} onClick={() => updateField('ageUponAdmission', String(computed))}>
+                    Auto-fill: {computed} years
+                  </button>
+                ) : null;
+              })()}
+            </label>
+            <label className={styles.label}>
+              Present Age
+              <input className={styles.input} readOnly value={form.dateOfBirth ? `${calcAge(form.dateOfBirth, new Date().toISOString().slice(0, 10)) ?? '--'} years` : form.presentAge || '--'} style={{ background: 'var(--surface-2)', color: 'var(--text-muted)' }} />
             </label>
             <label className={styles.label}>
               Place of Birth
