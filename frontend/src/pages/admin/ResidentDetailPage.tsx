@@ -9,7 +9,6 @@ import { apiFetch } from '../../api';
 import { formatDate } from '../../constants';
 import { useAuth } from '../../contexts/AuthContext';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
-import MlBadge from '../../components/admin/MlBadge';
 import Dropdown from '../../components/admin/Dropdown';
 import DatePicker from '../../components/admin/DatePicker';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
@@ -307,17 +306,17 @@ export default function ResidentDetailPage() {
         <div>
           {/* Risk & Predictions */}
           <div className={styles.card}>
-            <div className={styles.cardHeader}><Shield size={15} className={styles.cardIcon} /> Risk & Predictions <MlBadge /></div>
+            <div className={styles.cardHeader}><Shield size={15} className={styles.cardIcon} /> Risk & Predictions</div>
             <div className={styles.cardBody}>
               <div className={styles.riskPair}>
                 <div className={styles.riskItem}>
-                  <span className={styles.riskLabel}>Initial Risk</span>
+                  <span className={styles.riskLabel}>Initial Predicted Risk</span>
                   <span className={`${styles.badge} ${styles[`badgeRisk${resident.initialRiskLevel}`] ?? styles.badgeRiskDefault}`}>
                     {resident.initialRiskLevel || '--'}
                   </span>
                 </div>
                 <div className={styles.riskItem}>
-                  <span className={styles.riskLabel}>Current Risk</span>
+                  <span className={styles.riskLabel}>Perceived Current Risk</span>
                   <span className={`${styles.badge} ${styles[`badgeRisk${resident.currentRiskLevel}`] ?? styles.badgeRiskDefault}`}>
                     {resident.currentRiskLevel || '--'}
                   </span>
@@ -343,7 +342,6 @@ export default function ResidentDetailPage() {
                           <div>
                             <div className={styles.predictionLabel}>{label}</div>
                             <div className={styles.predictionValue}>
-                              {p.score !== null && <span className={styles.predictionScore} style={{ color }}>{Math.round(p.score)}</span>}
                               <span className={styles.predictionTier} style={{ color }}>{p.scoreLabel}</span>
                             </div>
                           </div>
