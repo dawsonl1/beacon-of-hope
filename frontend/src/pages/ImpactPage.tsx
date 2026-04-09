@@ -82,7 +82,6 @@ const IMPACT_CARDS = [
 
 export default function ImpactPage() {
   const heroRef = useReveal();
-  const goalRef = useReveal();
   const impactRef = useReveal();
   const storiesRef = useReveal();
   const ctaRef = useReveal();
@@ -150,8 +149,8 @@ export default function ImpactPage() {
 
       {/* ── Monthly Goal ────────────────────────────────────── */}
       {goalData && (
-        <section className={styles.goalSection} ref={goalRef}>
-          <div className={`${styles.goalInner} reveal`}>
+        <section className={styles.goalSection}>
+          <div className={styles.goalInner}>
             <h2 className={styles.goalHeadline}>Help us reach our monthly goal</h2>
             <p className={styles.goalSub}>
               We need ${goalData.goal.toLocaleString()} each month to keep our safehouses
