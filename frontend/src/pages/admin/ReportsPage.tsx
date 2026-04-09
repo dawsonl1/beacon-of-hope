@@ -12,7 +12,6 @@ import { formatMonthLabel, formatEnumLabel } from '../../constants';
 import { useSafehouse } from '../../contexts/SafehouseContext';
 import { ChartTooltip } from '../../components/ChartTooltip';
 import KpiCard from '../../components/admin/KpiCard';
-import MlBadge from '../../components/admin/MlBadge';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './ReportsPage.module.css';
 
@@ -667,7 +666,6 @@ function MlInsightsTab() {
         <div style={cardStyle}>
           <div style={headerStyle}>
             <h3 className={styles.chartTitle} style={{ margin: 0 }}>What Drives Reintegration Success</h3>
-            <MlBadge />
           </div>
           <div style={{ marginBottom: '1rem' }}>
             <ResponsiveContainer width="100%" height={Math.max(reintDrivers.length * 32, 120)}>
@@ -707,7 +705,6 @@ function MlInsightsTab() {
         <div style={cardStyle}>
           <div style={headerStyle}>
             <h3 className={styles.chartTitle} style={{ margin: 0 }}>What Drives Donor Retention</h3>
-            <MlBadge />
           </div>
           {donorDrivers.map((d, i) => (
             <div key={d.feature} style={rowStyle}>
@@ -735,7 +732,6 @@ function MlInsightsTab() {
         <div style={cardStyle}>
           <div style={headerStyle}>
             <h3 className={styles.chartTitle} style={{ margin: 0 }}>Incident Risk Factors</h3>
-            <MlBadge />
           </div>
 
           {selfharmDrivers.length > 0 && (
@@ -793,7 +789,6 @@ function MlInsightsTab() {
         <div style={cardStyle}>
           <div style={headerStyle}>
             <h3 className={styles.chartTitle} style={{ margin: 0 }}>Social Media Insights</h3>
-            <MlBadge />
           </div>
 
           {contentFindings.length > 0 && (
@@ -877,7 +872,6 @@ export default function ReportsPage() {
             onClick={() => handleTabChange(t.key)}
           >
             {t.label}
-            {t.key === 'ml' && <> <MlBadge /></>}
           </button>
         ))}
       </div>

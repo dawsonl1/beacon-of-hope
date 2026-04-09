@@ -7,7 +7,6 @@ import {
 import { apiFetch } from '../../api';
 import { useSafehouse } from '../../contexts/SafehouseContext';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
-import MlBadge from '../../components/admin/MlBadge';
 import Dropdown from '../../components/admin/Dropdown';
 import MultiSelectDropdown from '../../components/admin/MultiSelectDropdown';
 import DatePicker from '../../components/admin/DatePicker';
@@ -315,7 +314,7 @@ export default function CaseConferencesPage() {
       {alerts.length > 0 && (
         <div style={{ marginBottom: '2rem' }}>
           <h2 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-strong)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            Residents Needing Review ({alerts.length}) <MlBadge />
+            Residents Needing Review ({alerts.length})
           </h2>
           <div className={styles.tableCard}>
             <table className={styles.table}>

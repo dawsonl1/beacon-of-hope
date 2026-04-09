@@ -5,7 +5,6 @@ import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import { formatDate, formatAmount, formatEnumLabel } from '../../constants';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
-import MlBadge from '../../components/admin/MlBadge';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './SupporterDetailPage.module.css';
 
@@ -216,7 +215,6 @@ export default function SupporterDetailPage() {
         <div className={styles.riskCard}>
           <div className={styles.riskHeader}>
             <h2 className={styles.riskTitle}>Retention Risk</h2>
-            <MlBadge />
           </div>
           <div className={styles.riskBody}>
             <div className={styles.riskScore}>

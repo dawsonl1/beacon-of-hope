@@ -7,7 +7,6 @@ import { apiFetch } from '../api';
 import { formatMonthLabel, formatEnumLabel } from '../constants';
 import { ChartTooltip } from '../components/ChartTooltip';
 import { ApiError } from '../components/ApiError';
-import MlBadge from '../components/admin/MlBadge';
 import {
   AreaChart,
   Area,
@@ -251,7 +250,6 @@ export default function AdminDashboard() {
         <div className={styles.mlInsightsHeader}>
           <Sparkles size={18} className={styles.mlInsightsIcon} />
           <span className={styles.mlInsightsTitle}>ML-Powered Insights</span>
-          <MlBadge />
           <button className={styles.mlViewAll} onClick={() => navigate('/admin/reports?tab=ml')}>View Details <ArrowUpRight size={12} /></button>
         </div>
         <div className={styles.mlInsightsDivider} />
