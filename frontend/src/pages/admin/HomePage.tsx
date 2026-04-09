@@ -321,8 +321,9 @@ export default function HomePage() {
 
   // Schedule modal state
   const [scheduleTask, setScheduleTask] = useState<StaffTaskItem | null>(null);
-  const [setTimeValue, setSetTimeValue] = useState<string>('09:00');
-  const [showSetTime, setShowSetTime] = useState(false);
+  const [editStartTime, setEditStartTime] = useState<string>('');
+  const [editEndTime, setEditEndTime] = useState<string>('');
+  const [showEditTime, setShowEditTime] = useState(false);
   const [scheduleForm, setScheduleForm] = useState<ScheduleForm>({ eventDate: APP_TODAY_STR, startTime: '' });
 
   const dragCounterRef = useRef(0);
@@ -638,7 +639,7 @@ export default function HomePage() {
   function closePopover() {
     setSelectedEvent(null);
     setPopoverPos(null);
-    setShowSetTime(false);
+    setShowEditTime(false);
   }
 
   // Close popover on click outside
@@ -971,17 +972,25 @@ export default function HomePage() {
                       Complete
                     </button>
                   )}
-                  {!selectedEvent.startTime && !showSetTime && (
-                    <button className={styles.modalBtn} onClick={() => setShowSetTime(true)}>
-                      Set Time
+                  {!showEditTime && (
+                    <button className={styles.modalBtn} onClick={() => {
+                      setEditStartTime(selectedEvent.startTime || '09:00');
+                      setEditEndTime(selectedEvent.endTime || '');
+                      setShowEditTime(true);
+                    }}>
+                      {selectedEvent.startTime ? 'Edit Time' : 'Set Time'}
                     </button>
                   )}
-                  {!selectedEvent.startTime && showSetTime && (
+                  {showEditTime && (
                     <div className={styles.setTimeRow}>
-                      <TimePicker value={setTimeValue} onChange={v => setSetTimeValue(v)} placeholder="Pick time..." />
+                      <TimePicker value={editStartTime} onChange={setEditStartTime} placeholder="Start..." />
+                      <TimePicker value={editEndTime} onChange={setEditEndTime} placeholder="End..." />
                       <button className={styles.modalBtnPrimary} onClick={() => {
-                        if (setTimeValue) handleUpdateEvent(selectedEvent.calendarEventId, { startTime: setTimeValue });
-                        setShowSetTime(false);
+                        handleUpdateEvent(selectedEvent.calendarEventId, {
+                          startTime: editStartTime || null,
+                          endTime: editEndTime || null,
+                        });
+                        setShowEditTime(false);
                       }}>
                         Save
                       </button>
