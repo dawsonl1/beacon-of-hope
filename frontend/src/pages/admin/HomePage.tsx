@@ -451,7 +451,7 @@ export default function HomePage() {
 
   function getQuarterFromEvent(e: React.DragEvent): number {
     const rect = e.currentTarget.getBoundingClientRect();
-    const y = e.clientY - rect.top;
+    const y = e.clientY - dragOffsetY.current - rect.top;
     const quarter = Math.round((y / rect.height) * 4);
     return [0, 15, 30, 45][Math.min(Math.max(quarter, 0), 3)];
   }
@@ -591,7 +591,7 @@ export default function HomePage() {
         }}
         onClick={e => handleEventClick(evt, e)}
         draggable
-        onDragStart={e => { e.stopPropagation(); dragOffsetY.current = e.clientY - (e.currentTarget as HTMLElement).getBoundingClientRect().top; setTimeout(() => setDragEventId(evt.calendarEventId), 0); }}
+        onDragStart={e => { e.stopPropagation(); dragOffsetY.current = Math.min(e.clientY - (e.currentTarget as HTMLElement).getBoundingClientRect().top, 45); setTimeout(() => setDragEventId(evt.calendarEventId), 0); }}
         onDragEnd={() => setDragEventId(null)}
       >
         {heightPx >= 40 ? (
@@ -700,7 +700,7 @@ export default function HomePage() {
                         key={evt.calendarEventId}
                         className={styles.allDayChip}
                         draggable
-                        onDragStart={e => { dragOffsetY.current = e.clientY - (e.currentTarget as HTMLElement).getBoundingClientRect().top; setTimeout(() => setDragEventId(evt.calendarEventId), 0); }}
+                        onDragStart={e => { dragOffsetY.current = Math.min(e.clientY - (e.currentTarget as HTMLElement).getBoundingClientRect().top, 45); setTimeout(() => setDragEventId(evt.calendarEventId), 0); }}
                         onDragEnd={() => setDragEventId(null)}
                         onClick={e => handleEventClick(evt, e)}
                       >
