@@ -13,9 +13,8 @@ on:
         default: 'all'
         type: choice
         options:
-          - all           # smoke test ETL + run inference
-          - smoke-test    # ETL only (no DB writes)
-          - predictions   # inference only (writes to DB)
+          - all           # full pipeline: train + infer for all models
+          - predictions   # inference only (skip training, use existing .sav files)
 
 jobs:
   ml:
@@ -37,16 +36,12 @@ jobs:
       - name: Install dependencies
         run: pip install -r ml/requirements.txt
 
-      - name: Smoke test ETL (build training frames)
+      - name: Run full pipeline (train + infer)
         if: >-
           github.event_name == 'schedule' ||
-          github.event.inputs.mode == 'all' ||
-          github.event.inputs.mode == 'smoke-test'
+          github.event.inputs.mode == 'all'
         run: python -m ml.run_all
 
-      - name: Run inference (write predictions to DB)
-        if: >-
-          github.event_name == 'schedule' ||
-          github.event.inputs.mode == 'all' ||
-          github.event.inputs.mode == 'predictions'
+      - name: Run inference only (use existing models)
+        if: github.event.inputs.mode == 'predictions'
         run: python -m ml.run_predictions
