@@ -255,6 +255,7 @@ export default function HomePage() {
   // Tasks state
   const [tasks, setTasks] = useState<StaffTaskItem[]>([]);
   const [tasksLoading, setTasksLoading] = useState(true);
+  const [exitingTaskIds, setExitingTaskIds] = useState<Set<number>>(new Set());
 
   // Drag-and-drop state
   const [dragTaskId, setDragTaskId] = useState<number | null>(null);
@@ -349,6 +350,8 @@ export default function HomePage() {
   /* ── Task actions ──────────────────────────────── */
 
   async function handleTaskAction(taskId: number, action: 'Completed' | 'Dismissed' | 'Snoozed', snoozeDays?: number) {
+    // Animate out first
+    setExitingTaskIds(prev => new Set(prev).add(taskId));
     try {
       const body: Record<string, unknown> = { status: action };
       if (action === 'Snoozed' && snoozeDays) {
@@ -356,8 +359,14 @@ export default function HomePage() {
         body.status = undefined;
       }
       await apiFetch(`/api/staff/tasks/${taskId}`, { method: 'PUT', body: JSON.stringify(body) });
-      fetchTasks();
-    } catch { /* ignore */ }
+      // Wait for animation to finish before removing from list
+      setTimeout(() => {
+        setExitingTaskIds(prev => { const next = new Set(prev); next.delete(taskId); return next; });
+        fetchTasks();
+      }, 300);
+    } catch {
+      setExitingTaskIds(prev => { const next = new Set(prev); next.delete(taskId); return next; });
+    }
   }
 
   async function scheduleTaskToCalendar(task: StaffTaskItem, eventDate: string, startTime: string | null) {
@@ -817,7 +826,7 @@ export default function HomePage() {
                 return (
                   <div
                     key={task.staffTaskId}
-                    className={isDragging ? styles.taskCardDragging : styles.taskCard}
+                    className={`${isDragging ? styles.taskCardDragging : styles.taskCard} ${exitingTaskIds.has(task.staffTaskId) ? styles.taskCardExiting : ''}`}
                     draggable
                     onDragStart={e => {
                       // Create a small drag image so it looks like collapsing to a line
