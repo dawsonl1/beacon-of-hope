@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { ChevronDown, Sparkles, Users } from 'lucide-react';
+import { ChevronDown, Sparkles, Users, Loader2, AlertCircle } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import TextArea from '../../components/admin/TextArea';
@@ -44,6 +44,7 @@ export default function AdminNewsletterPage() {
   const [editSubject, setEditSubject] = useState('');
   const [editHtml, setEditHtml] = useState('');
   const [actionLoading, setActionLoading] = useState<number | null>(null);
+  const [generateError, setGenerateError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -61,10 +62,13 @@ export default function AdminNewsletterPage() {
 
   async function handleGenerate() {
     setGenerating(true);
+    setGenerateError(null);
     try {
       await apiFetch('/api/admin/newsletters/generate', { method: 'POST' });
       await fetchData();
-    } catch { /* ignore */ }
+    } catch (e) {
+      setGenerateError(e instanceof Error ? e.message : 'Failed to generate newsletter. Please try again.');
+    }
     setGenerating(false);
   }
 
@@ -138,7 +142,24 @@ export default function AdminNewsletterPage() {
 
       {loading && <div className={styles.loadingBar} />}
 
-      {!loading && newsletters.length === 0 && (
+      {generating && (
+        <div className={styles.generatingCard}>
+          <Loader2 size={20} className={styles.spin} />
+          <div>
+            <p className={styles.generatingTitle}>Generating newsletter...</p>
+            <p className={styles.generatingDesc}>The AI is writing your monthly newsletter. This can take up to a minute.</p>
+          </div>
+        </div>
+      )}
+
+      {generateError && (
+        <div className={styles.errorCard}>
+          <AlertCircle size={16} />
+          <span>{generateError}</span>
+        </div>
+      )}
+
+      {!loading && !generating && newsletters.length === 0 && (
         <div className={styles.empty}>
           No newsletters yet. Generate one to get started.
         </div>

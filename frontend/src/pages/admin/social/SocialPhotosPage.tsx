@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Loader2, Camera, Upload, Check, Trash2, AlertCircle, Image } from 'lucide-react';
 import { apiFetch, getApiUrl } from '../../../api';
 import Dropdown from '../../../components/admin/Dropdown';
+import Checkbox from '../../../components/admin/Checkbox';
 import styles from './SocialPhotosPage.module.css';
 
 interface MediaItem {
@@ -157,10 +158,11 @@ export default function SocialPhotosPage() {
                   compact
                 />
               </div>
-              <label className={styles.consentLabel}>
-                <input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} />
-                Everyone pictured has given consent for this photo to be shared publicly
-              </label>
+              <Checkbox
+                checked={consent}
+                onChange={setConsent}
+                label="Everyone pictured has given consent for this photo to be shared publicly"
+              />
               {uploadError && <div className={styles.uploadError}><AlertCircle size={14} /> {uploadError}</div>}
               <button className={styles.submitBtn} onClick={handleUpload} disabled={uploading || !preview || !consent}>
                 {uploading ? 'Uploading...' : 'Upload'}

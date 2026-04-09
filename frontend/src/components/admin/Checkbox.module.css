@@ -1,0 +1,54 @@
+.wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.box {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid rgba(15, 27, 45, 0.2);
+  border-radius: 5px;
+  background: #fff;
+  color: #fff;
+  cursor: inherit;
+  transition: all 0.15s;
+  padding: 0;
+}
+
+.box:hover {
+  border-color: var(--color-sage);
+}
+
+.box:focus-visible {
+  outline: 2px solid var(--color-sage);
+  outline-offset: 1px;
+}
+
+.boxChecked {
+  background: var(--color-sage);
+  border-color: var(--color-sage);
+}
+
+.boxChecked:hover {
+  background: var(--color-sage-dark, #0d7a6b);
+  border-color: var(--color-sage-dark, #0d7a6b);
+}
+
+.label {
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+  color: var(--text-strong);
+  line-height: 1.3;
+}

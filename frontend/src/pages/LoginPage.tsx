@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import Checkbox from '../components/admin/Checkbox';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import styles from './LoginPage.module.css';
 
@@ -141,15 +142,12 @@ export default function LoginPage() {
             </div>
 
             <div className={styles.options}>
-              <label className={styles.rememberMe}>
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={e => setRememberMe(e.target.checked)}
-                  disabled={isSubmitting}
-                />
-                <span>Remember me</span>
-              </label>
+              <Checkbox
+                checked={rememberMe}
+                onChange={setRememberMe}
+                label="Remember me"
+                disabled={isSubmitting}
+              />
             </div>
 
             <button

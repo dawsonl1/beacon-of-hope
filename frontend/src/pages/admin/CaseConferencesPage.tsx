@@ -8,6 +8,8 @@ import { apiFetch } from '../../api';
 
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import MlBadge from '../../components/admin/MlBadge';
+import Dropdown from '../../components/admin/Dropdown';
+import DatePicker from '../../components/admin/DatePicker';
 import styles from './IncidentsPage.module.css';
 
 /* ── Types ────────────────────────────────────────── */
@@ -233,14 +235,16 @@ export default function CaseConferencesPage() {
         <form onSubmit={handleCreate} style={{ background: '#fff', border: '1px solid rgba(15,27,45,0.08)', borderRadius: '12px', padding: '1.25rem', marginBottom: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
           <div>
             <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.3rem' }}>Safehouse</label>
-            <select value={createSafehouseId} onChange={e => setCreateSafehouseId(e.target.value)} style={{ width: '100%', padding: '0.5rem', borderRadius: '8px', border: '1px solid #ccc', fontSize: '0.82rem' }}>
-              <option value="">Select safehouse...</option>
-              {safehouses.map(s => <option key={s.safehouseId} value={s.safehouseId}>{s.name}</option>)}
-            </select>
+            <Dropdown
+              value={createSafehouseId}
+              placeholder="Select safehouse..."
+              options={safehouses.map(s => ({ value: s.safehouseId, label: s.name }))}
+              onChange={setCreateSafehouseId}
+            />
           </div>
           <div>
             <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.3rem' }}>Date</label>
-            <input type="date" value={createDate} onChange={e => setCreateDate(e.target.value)} style={{ width: '100%', padding: '0.5rem', borderRadius: '8px', border: '1px solid #ccc', fontSize: '0.82rem' }} />
+            <DatePicker value={createDate} onChange={setCreateDate} />
           </div>
           <div>
             <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.3rem' }}>Notes (optional)</label>

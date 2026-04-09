@@ -17,6 +17,9 @@ import { apiFetch } from '../../api';
 import { APP_TODAY, APP_TODAY_STR } from '../../constants';
 import { useSafehouse } from '../../contexts/SafehouseContext';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import Dropdown from '../../components/admin/Dropdown';
+import DatePicker from '../../components/admin/DatePicker';
+import TimePicker from '../../components/admin/TimePicker';
 import styles from './CalendarPage.module.css';
 
 /* ── Types ───────────────────────────────────────────────── */
@@ -520,37 +523,43 @@ export default function CalendarPage() {
           <div className={styles.formModal} onClick={e => e.stopPropagation()}>
             <h3 className={styles.modalTitle}>New Event</h3>
             <div className={styles.formGrid}>
-              <label className={styles.formLabel}>Type
-                <select className={styles.formSelect} value={newEvent.eventType} onChange={e => setNewEvent({ ...newEvent, eventType: e.target.value })}>
-                  <option value="Counseling">Counseling</option>
-                  <option value="DoctorApt">Doctor Appointment</option>
-                  <option value="DentistApt">Dentist Appointment</option>
-                  <option value="HomeVisit">Home Visit</option>
-                  <option value="CaseConference">Case Conference</option>
-                  <option value="GroupTherapy">Group Therapy</option>
-                  <option value="ReintegrationVisit">Reintegration Visit</option>
-                  <option value="PostPlacementVisit">Post-Placement Visit</option>
-                  <option value="Other">Other</option>
-                </select>
-              </label>
-              <label className={styles.formLabel}>Resident
-                <select className={styles.formSelect} value={newEvent.residentId} onChange={e => setNewEvent({ ...newEvent, residentId: e.target.value })}>
-                  <option value="">None</option>
-                  {residents.map(r => <option key={r.residentId} value={r.residentId}>{r.internalCode}</option>)}
-                </select>
-              </label>
+              <div className={styles.formLabel}>Type
+                <Dropdown
+                  value={newEvent.eventType}
+                  options={[
+                    { value: 'Counseling', label: 'Counseling' },
+                    { value: 'DoctorApt', label: 'Doctor Appointment' },
+                    { value: 'DentistApt', label: 'Dentist Appointment' },
+                    { value: 'HomeVisit', label: 'Home Visit' },
+                    { value: 'CaseConference', label: 'Case Conference' },
+                    { value: 'GroupTherapy', label: 'Group Therapy' },
+                    { value: 'ReintegrationVisit', label: 'Reintegration Visit' },
+                    { value: 'PostPlacementVisit', label: 'Post-Placement Visit' },
+                    { value: 'Other', label: 'Other' },
+                  ]}
+                  onChange={v => setNewEvent({ ...newEvent, eventType: v })}
+                />
+              </div>
+              <div className={styles.formLabel}>Resident
+                <Dropdown
+                  value={newEvent.residentId}
+                  placeholder="None"
+                  options={[{ value: '', label: 'None' }, ...residents.map(r => ({ value: r.residentId, label: r.internalCode }))]}
+                  onChange={v => setNewEvent({ ...newEvent, residentId: v })}
+                />
+              </div>
               <label className={`${styles.formLabel} ${styles.formFull}`}>Title
                 <input className={styles.formInput} value={newEvent.title} onChange={e => setNewEvent({ ...newEvent, title: e.target.value })} placeholder="Event title" />
               </label>
-              <label className={styles.formLabel}>Date
-                <input type="date" className={styles.formInput} value={newEvent.eventDate} onChange={e => setNewEvent({ ...newEvent, eventDate: e.target.value })} />
-              </label>
-              <label className={styles.formLabel}>Start Time
-                <input type="time" className={styles.formInput} value={newEvent.startTime} onChange={e => setNewEvent({ ...newEvent, startTime: e.target.value })} />
-              </label>
-              <label className={styles.formLabel}>End Time
-                <input type="time" className={styles.formInput} value={newEvent.endTime} onChange={e => setNewEvent({ ...newEvent, endTime: e.target.value })} />
-              </label>
+              <div className={styles.formLabel}>Date
+                <DatePicker value={newEvent.eventDate} onChange={v => setNewEvent({ ...newEvent, eventDate: v })} />
+              </div>
+              <div className={styles.formLabel}>Start Time
+                <TimePicker value={newEvent.startTime} onChange={v => setNewEvent({ ...newEvent, startTime: v })} />
+              </div>
+              <div className={styles.formLabel}>End Time
+                <TimePicker value={newEvent.endTime} onChange={v => setNewEvent({ ...newEvent, endTime: v })} />
+              </div>
               <label className={`${styles.formLabel} ${styles.formFull}`}>Description
                 <input className={styles.formInput} value={newEvent.description} onChange={e => setNewEvent({ ...newEvent, description: e.target.value })} placeholder="Optional" />
               </label>

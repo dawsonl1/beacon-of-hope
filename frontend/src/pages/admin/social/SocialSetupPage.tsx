@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { Loader2, Save, Plus, Trash2, X, Check, RefreshCw, HelpCircle } from 'lucide-react';
 import { apiFetch } from '../../../api';
 import TextArea from '../../../components/admin/TextArea';
+import Dropdown from '../../../components/admin/Dropdown';
+import Checkbox from '../../../components/admin/Checkbox';
 import styles from './SocialSetupPage.module.css';
 
 interface VoiceGuide { orgDescription: string; toneDescription: string; preferredTerms: string; avoidedTerms: string; structuralRules: string; visualRules: string; }
@@ -193,9 +195,11 @@ export default function SocialSetupPage() {
             <p className={styles.hint}>Statements about what your organization does. Used in "Our Work" posts.</p>
             <div className={styles.addRow}>
               <input placeholder="e.g. Each resident gets a personalized rehabilitation plan" value={newPoint.text} onChange={e => setNewPoint({ ...newPoint, text: e.target.value })} onKeyDown={e => e.key === 'Enter' && addPoint()} />
-              <select value={newPoint.topic} onChange={e => setNewPoint({ ...newPoint, topic: e.target.value })}>
-                {TOPICS.map(t => <option key={t} value={t}>{t.replace('_', ' ')}</option>)}
-              </select>
+              <Dropdown
+                value={newPoint.topic}
+                options={TOPICS.map(t => ({ value: t, label: t.replace('_', ' ') }))}
+                onChange={v => setNewPoint({ ...newPoint, topic: v })}
+              />
               <button onClick={addPoint} className={styles.saveBtn}>Add</button>
             </div>
             <div className={styles.itemList}>
@@ -225,37 +229,44 @@ export default function SocialSetupPage() {
               {['instagram', 'facebook', 'twitter'].map(p => {
                 const active = (settings.platformsActive || '').includes(p);
                 return (
-                  <label key={p} className={styles.checkboxLabel}>
-                    <input type="checkbox" checked={active} onChange={() => {
+                  <Checkbox
+                    key={p}
+                    checked={active}
+                    label={p.charAt(0).toUpperCase() + p.slice(1)}
+                    onChange={() => {
                       let cur: string[] = []; try { cur = JSON.parse(settings.platformsActive || '[]'); } catch {}
                       const next = active ? cur.filter(x => x !== p) : [...cur, p];
                       setSettings({ ...settings, platformsActive: JSON.stringify(next) });
-                    }} />
-                    {p.charAt(0).toUpperCase() + p.slice(1)}
-                  </label>
+                    }}
+                  />
                 );
               })}
             </div>
           </div>
           <div className={styles.field}>
             <label>Timezone</label>
-            <select value={settings.timezone || ''} onChange={e => setSettings({ ...settings, timezone: e.target.value })} className={styles.selectInput}>
-              <option value="">Select...</option>
-              <option value="America/Los_Angeles">Pacific (UTC-8)</option>
-              <option value="America/Denver">Mountain (UTC-7)</option>
-              <option value="America/Chicago">Central (UTC-6)</option>
-              <option value="America/New_York">Eastern (UTC-5)</option>
-              <option value="Asia/Manila">Manila (UTC+8)</option>
-              <option value="Asia/Tokyo">Tokyo (UTC+9)</option>
-              <option value="Europe/London">London (UTC+0)</option>
-            </select>
+            <Dropdown
+              value={settings.timezone || ''}
+              placeholder="Select..."
+              options={[
+                { value: 'America/Los_Angeles', label: 'Pacific (UTC-8)' },
+                { value: 'America/Denver', label: 'Mountain (UTC-7)' },
+                { value: 'America/Chicago', label: 'Central (UTC-6)' },
+                { value: 'America/New_York', label: 'Eastern (UTC-5)' },
+                { value: 'Asia/Manila', label: 'Manila (UTC+8)' },
+                { value: 'Asia/Tokyo', label: 'Tokyo (UTC+9)' },
+                { value: 'Europe/London', label: 'London (UTC+0)' },
+              ]}
+              onChange={v => setSettings({ ...settings, timezone: v })}
+            />
           </div>
           <div className={styles.field}>
             <label>Content recycling</label>
-            <label className={styles.toggleLabel}>
-              <input type="checkbox" checked={settings.recyclingEnabled} onChange={e => setSettings({ ...settings, recyclingEnabled: e.target.checked })} />
-              Reuse high-performing posts after rephrasing them
-            </label>
+            <Checkbox
+              checked={settings.recyclingEnabled}
+              label="Reuse high-performing posts after rephrasing them"
+              onChange={v => setSettings({ ...settings, recyclingEnabled: v })}
+            />
           </div>
           <div className={styles.field}>
             <label>Content mix <span className={styles.aiTag}>AI-managed</span></label>

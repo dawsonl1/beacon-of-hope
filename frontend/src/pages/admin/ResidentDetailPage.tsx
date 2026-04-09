@@ -10,6 +10,8 @@ import { formatDate } from '../../constants';
 import { useAuth } from '../../contexts/AuthContext';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
 import MlBadge from '../../components/admin/MlBadge';
+import Dropdown from '../../components/admin/Dropdown';
+import DatePicker from '../../components/admin/DatePicker';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import TextArea from '../../components/admin/TextArea';
 import styles from './ResidentDetailPage.module.css';
@@ -701,16 +703,20 @@ function PlanTab({ resident, conferences, setConferences, id }: {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Category *</label>
-              <select value={planCategory} onChange={e => setPlanCategory(e.target.value)} style={{ width: '100%', padding: '0.35rem', borderRadius: '6px', border: '1px solid rgba(15,27,45,0.12)', fontSize: '0.78rem' }}>
-                <option value="">Select...</option>
-                {PLAN_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
+              <Dropdown
+                value={planCategory}
+                placeholder="Select..."
+                options={PLAN_CATEGORIES.map(c => ({ value: c, label: c }))}
+                onChange={setPlanCategory}
+              />
             </div>
             <div>
               <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Status</label>
-              <select value={status} onChange={e => setStatus(e.target.value)} style={{ width: '100%', padding: '0.35rem', borderRadius: '6px', border: '1px solid rgba(15,27,45,0.12)', fontSize: '0.78rem' }}>
-                {PLAN_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
+              <Dropdown
+                value={status}
+                options={PLAN_STATUSES.map(s => ({ value: s, label: s }))}
+                onChange={setStatus}
+              />
             </div>
             <div>
               <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Target Value</label>
@@ -718,7 +724,7 @@ function PlanTab({ resident, conferences, setConferences, id }: {
             </div>
             <div>
               <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Target Date</label>
-              <input type="date" value={targetDate} onChange={e => setTargetDate(e.target.value)} style={{ width: '100%', padding: '0.35rem', borderRadius: '6px', border: '1px solid rgba(15,27,45,0.12)', fontSize: '0.78rem' }} />
+              <DatePicker value={targetDate} onChange={setTargetDate} />
             </div>
           </div>
           <div style={{ marginBottom: '0.5rem' }}>

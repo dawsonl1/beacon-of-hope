@@ -5,6 +5,7 @@ import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useSafehouse } from '../../contexts/SafehouseContext';
 import Pagination from '../../components/admin/Pagination';
+import Dropdown from '../../components/admin/Dropdown';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './CaseloadPage.module.css';
 
@@ -191,36 +192,27 @@ export default function CaseloadPage() {
           )}
         </div>
         <div className={styles.filters}>
-          <select
-            className={styles.filterSelect}
+          <Dropdown
             value={caseStatus}
-            onChange={(e) => updateParams({ caseStatus: e.target.value, page: '1' })}
-          >
-            <option value="">All Statuses</option>
-            {filterOptions?.caseStatuses.map((s) => (
-              <option key={s} value={s}>{s}</option>
-            ))}
-          </select>
-          <select
-            className={styles.filterSelect}
+            placeholder="All Statuses"
+            options={[{ value: '', label: 'All Statuses' }, ...(filterOptions?.caseStatuses.map(s => ({ value: s, label: s })) ?? [])]}
+            onChange={(v) => updateParams({ caseStatus: v, page: '1' })}
+            compact
+          />
+          <Dropdown
             value={caseCategory}
-            onChange={(e) => updateParams({ caseCategory: e.target.value, page: '1' })}
-          >
-            <option value="">All Categories</option>
-            {filterOptions?.categories.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-          <select
-            className={styles.filterSelect}
+            placeholder="All Categories"
+            options={[{ value: '', label: 'All Categories' }, ...(filterOptions?.categories.map(c => ({ value: c, label: c })) ?? [])]}
+            onChange={(v) => updateParams({ caseCategory: v, page: '1' })}
+            compact
+          />
+          <Dropdown
             value={riskLevel}
-            onChange={(e) => updateParams({ riskLevel: e.target.value, page: '1' })}
-          >
-            <option value="">All Risk Levels</option>
-            {filterOptions?.riskLevels.map((r) => (
-              <option key={r} value={r}>{r}</option>
-            ))}
-          </select>
+            placeholder="All Risk Levels"
+            options={[{ value: '', label: 'All Risk Levels' }, ...(filterOptions?.riskLevels.map(r => ({ value: r, label: r })) ?? [])]}
+            onChange={(v) => updateParams({ riskLevel: v, page: '1' })}
+            compact
+          />
         </div>
       </div>
 

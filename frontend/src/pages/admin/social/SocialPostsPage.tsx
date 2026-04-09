@@ -342,9 +342,9 @@ export default function SocialPostsPage() {
       {/* Drafts to Review (with skeleton cards prepended while generating) */}
       {(drafts.length > 0 || generating) && (
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>{generating ? 'Generating new posts...' : 'Review Drafts'}</h2>
+          <h2 className={styles.sectionTitle}>{generating ? 'Generating new post...' : 'Review Drafts'}</h2>
           <div className={styles.cardGrid}>
-            {generating && [1, 2, 3, 4].map(i => (
+            {generating && [1].map(i => (
               <div key={`skel-${i}`} className={styles.skeletonCard}>
                 <div className={styles.skeletonPulse}>
                   <div className={styles.skeletonPillar} />

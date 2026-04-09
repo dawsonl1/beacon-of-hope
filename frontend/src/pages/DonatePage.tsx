@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart } from 'lucide-react';
 import { apiFetch } from '../api';
+import Checkbox from '../components/admin/Checkbox';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import styles from './DonatePage.module.css';
 
@@ -238,14 +239,11 @@ export default function DonatePage() {
           </div>
 
           {/* Newsletter opt-in */}
-          <label className={styles.checkboxRow}>
-            <input
-              type="checkbox"
-              checked={newsletter}
-              onChange={e => setNewsletter(e.target.checked)}
-            />
-            <span>Sign me up for the monthly newsletter with impact updates</span>
-          </label>
+          <Checkbox
+            checked={newsletter}
+            onChange={setNewsletter}
+            label="Sign me up for the monthly newsletter with impact updates"
+          />
 
           {/* Post-donation info */}
           <p className={styles.infoNote}>

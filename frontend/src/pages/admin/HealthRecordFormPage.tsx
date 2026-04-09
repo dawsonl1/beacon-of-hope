@@ -7,6 +7,7 @@ import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Dropdown from '../../components/admin/Dropdown';
 import DatePicker from '../../components/admin/DatePicker';
 import TextArea from '../../components/admin/TextArea';
+import Checkbox from '../../components/admin/Checkbox';
 import styles from './VisitationFormPage.module.css';
 
 interface FormData {
@@ -158,18 +159,9 @@ export default function HealthRecordFormPage() {
         </div>
 
         <div style={{ display: 'flex', gap: '2rem', marginTop: '0.75rem' }}>
-          <label className={styles.checkLabel}>
-            <input type="checkbox" checked={form.medicalCheckupDone} onChange={e => handleChange('medicalCheckupDone', e.target.checked)} />
-            Medical Checkup Done
-          </label>
-          <label className={styles.checkLabel}>
-            <input type="checkbox" checked={form.dentalCheckupDone} onChange={e => handleChange('dentalCheckupDone', e.target.checked)} />
-            Dental Checkup Done
-          </label>
-          <label className={styles.checkLabel}>
-            <input type="checkbox" checked={form.psychologicalCheckupDone} onChange={e => handleChange('psychologicalCheckupDone', e.target.checked)} />
-            Psychological Checkup Done
-          </label>
+          <Checkbox checked={form.medicalCheckupDone} onChange={v => handleChange('medicalCheckupDone', v)} label="Medical Checkup Done" />
+          <Checkbox checked={form.dentalCheckupDone} onChange={v => handleChange('dentalCheckupDone', v)} label="Dental Checkup Done" />
+          <Checkbox checked={form.psychologicalCheckupDone} onChange={v => handleChange('psychologicalCheckupDone', v)} label="Psychological Checkup Done" />
         </div>
 
         <label className={styles.label} style={{ marginTop: '0.75rem' }}>

@@ -347,6 +347,55 @@
   50% { opacity: 1; }
 }
 
+/* ── Generating card ─────────────────────────────────── */
+.generatingCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(15, 143, 125, 0.04);
+  border: 1px solid rgba(15, 143, 125, 0.15);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.generatingTitle {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  margin: 0 0 0.2rem;
+}
+
+.generatingDesc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.spin {
+  animation: spin 0.7s linear infinite;
+  color: var(--color-sage);
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Error card ──────────────────────────────────────── */
+.errorCard {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(203, 87, 104, 0.06);
+  border: 1px solid rgba(203, 87, 104, 0.2);
+  border-radius: 10px;
+  padding: 0.85rem 1.25rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.82rem;
+  color: var(--color-rose);
+}
+
 /* Responsive */
 
 @media (max-width: 768px) {

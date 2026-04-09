@@ -186,17 +186,31 @@ def fetch_monthly_donation_stats(year: int, month: int) -> dict:
 
 def fetch_monthly_resident_metrics(year: int, month: int) -> dict | None:
     with get_engine().connect() as conn:
+        # Try exact month first, fall back to most recent month with data
         row = conn.execute(
             text("""
                 SELECT SUM(active_residents) as active_residents,
                        AVG(avg_education_progress) as avg_education_progress,
                        AVG(avg_health_score) as avg_health_score
                 FROM safehouse_monthly_metrics
-                WHERE EXTRACT(YEAR FROM month_start) = :year
-                  AND EXTRACT(MONTH FROM month_start) = :month
+                WHERE month_start = (
+                    SELECT MAX(month_start) FROM safehouse_monthly_metrics
+                    WHERE month_start <= make_date(:year, :month, 1)
+                )
             """),
             {"year": year, "month": month},
         ).mappings().first()
+        # If no data at or before requested month, use the latest available
+        if row and row["active_residents"] is None:
+            row = conn.execute(
+                text("""
+                    SELECT SUM(active_residents) as active_residents,
+                           AVG(avg_education_progress) as avg_education_progress,
+                           AVG(avg_health_score) as avg_health_score
+                    FROM safehouse_monthly_metrics
+                    WHERE month_start = (SELECT MAX(month_start) FROM safehouse_monthly_metrics)
+                """),
+            ).mappings().first()
         return dict(row) if row else None
 
 
