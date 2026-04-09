@@ -539,7 +539,7 @@ export default function HomePage() {
     return (
       <div
         key={evt.calendarEventId}
-        className={`${getEventStyle(evt.eventType, evt.status)} ${dragEventId === evt.calendarEventId ? styles.eventDragging : ''}`}
+        className={`${getEventStyle(evt.eventType, evt.status)} ${dragEventId === evt.calendarEventId ? styles.eventDragging : ''} ${(dragEventId || dragTaskId) && dragEventId !== evt.calendarEventId ? styles.eventDropThrough : ''}`}
         style={{
           position: 'absolute',
           top: `${topPx}px`,

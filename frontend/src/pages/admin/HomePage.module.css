@@ -230,7 +230,8 @@
 .eventReintegrationVisit { background: #16a085; }
 .eventPostPlacementVisit { background: #2980b9; }
 .eventCompleted { opacity: 0.5; text-decoration: line-through; }
-.eventDragging { opacity: 0.4; }
+.eventDragging { opacity: 0.4; pointer-events: none; }
+.eventDropThrough { pointer-events: none; }
 
 /* ── Week view (Google Calendar-style grid) ──────── */
 .weekGrid {
