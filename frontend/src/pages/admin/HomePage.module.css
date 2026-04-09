@@ -148,11 +148,11 @@
   border-top: 1px solid rgba(15, 27, 45, 0.06);
   border-bottom: 1px solid rgba(15, 27, 45, 0.1);
   border-left: 1px solid rgba(15, 27, 45, 0.04);
-  padding: 0.2rem 0.15rem;
+  padding: 0.25rem 0.2rem;
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
-  min-height: 28px;
+  gap: 0.2rem;
+  min-height: 32px;
 }
 
 .allDayCellToday {
@@ -160,21 +160,25 @@
 }
 
 .allDayChip {
-  font-size: 0.65rem;
+  display: block;
+  width: 100%;
+  font-size: 0.7rem;
   font-weight: 600;
-  padding: 0.12rem 0.35rem;
-  border-radius: 3px;
-  background: rgba(15, 143, 125, 0.12);
-  color: var(--color-sage);
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  border-left: 3px solid var(--color-sage);
+  background: rgba(15, 143, 125, 0.1);
+  color: var(--text-strong);
   cursor: grab;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: filter 0.15s;
+  transition: background 0.15s;
+  box-sizing: border-box;
 }
 
 .allDayChip:hover {
-  filter: brightness(0.92);
+  background: rgba(15, 143, 125, 0.18);
 }
 
 .allDayMore {
