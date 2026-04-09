@@ -157,6 +157,10 @@ export default function ResidentDetailPage() {
   const [recordings, setRecordings] = useState<any[]>([]);
   const [visitations, setVisitations] = useState<any[]>([]);
 
+  // Case conference scheduling
+  const [schedulingConference, setSchedulingConference] = useState(false);
+  const [conferenceResult, setConferenceResult] = useState<{ date: string } | null>(null);
+
   // Right panel tab
   const [activeTab, setActiveTab] = useState<'profile' | 'records' | 'incidents' | 'plan'>('profile');
 
@@ -184,6 +188,26 @@ export default function ResidentDetailPage() {
     p.modelName.includes('incident-early-warning') &&
     (p.scoreLabel === 'High' || p.scoreLabel === 'Critical')
   );
+
+  async function scheduleForNextConference() {
+    if (!resident?.safehouseId) return;
+    setSchedulingConference(true);
+    try {
+      const conf = await apiFetch<{ conferenceId: number; scheduledDate: string }>('/api/admin/case-conferences/ensure-next', {
+        method: 'POST',
+        body: JSON.stringify({ safehouseId: resident.safehouseId }),
+      });
+      await apiFetch(`/api/admin/case-conferences/${conf.conferenceId}/residents`, {
+        method: 'POST',
+        body: JSON.stringify({ residentIds: [resident.residentId], source: 'MlAlert' }),
+      });
+      setConferenceResult({ date: conf.scheduledDate });
+    } catch {
+      setConferenceResult(null);
+    } finally {
+      setSchedulingConference(false);
+    }
+  }
 
   // Build unified timeline from all record types
   const timeline = useMemo<TimelineEntry[]>(() => {
@@ -392,14 +416,20 @@ export default function ResidentDetailPage() {
                   })}
                 </div>
               )}
-              {hasHighRisk && (
+              {hasHighRisk && !conferenceResult && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginTop: '0.75rem', padding: '0.65rem 1rem', background: 'rgba(211,84,0,0.06)', border: '1px solid rgba(211,84,0,0.2)', borderRadius: 'var(--radius-sm)', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                   <AlertTriangle size={15} style={{ color: '#d35400', flexShrink: 0 }} />
                   <span>Elevated risk detected — consider scheduling a case conference.</span>
-                  <button onClick={() => navigate(`/admin/conferences?residentId=${resident.residentId}`)} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', marginLeft: 'auto', padding: '0.4rem 0.85rem', background: 'linear-gradient(120deg, var(--color-sage), #13a490)', color: '#fff', border: 'none', borderRadius: '999px', fontSize: '0.78rem', fontWeight: 600, fontFamily: 'var(--font-body)', cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                    <Users size={14} />
-                    Schedule Case Conference
+                  <button onClick={scheduleForNextConference} disabled={schedulingConference} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', marginLeft: 'auto', padding: '0.4rem 0.85rem', background: 'linear-gradient(120deg, var(--color-sage), #13a490)', color: '#fff', border: 'none', borderRadius: '999px', fontSize: '0.78rem', fontWeight: 600, fontFamily: 'var(--font-body)', cursor: 'pointer', whiteSpace: 'nowrap', opacity: schedulingConference ? 0.6 : 1 }}>
+                    {schedulingConference ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <Users size={14} />}
+                    {schedulingConference ? 'Adding...' : 'Add to Next Conference'}
                   </button>
+                </div>
+              )}
+              {conferenceResult && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.75rem', padding: '0.65rem 1rem', background: 'rgba(39,174,96,0.06)', border: '1px solid rgba(39,174,96,0.2)', borderRadius: 'var(--radius-sm)', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                  <Users size={15} style={{ color: '#27ae60', flexShrink: 0 }} />
+                  <span>Added to case conference on <strong>{formatDate(conferenceResult.date)}</strong></span>
                 </div>
               )}
             </div>
