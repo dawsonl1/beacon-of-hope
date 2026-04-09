@@ -182,6 +182,21 @@ public static class IncidentEndpoints
             return Results.Ok(new { updated = true });
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
+        app.MapPatch("/api/admin/incidents/{id}/resolve", async (int id, HttpContext httpContext, AppDbContext db) =>
+        {
+            var incident = await db.IncidentReports.FindAsync(id);
+            if (incident == null) return Results.NotFound();
+            var body = await httpContext.Request.ReadFromJsonAsync<Dictionary<string, bool>>();
+            if (body == null || !body.ContainsKey("resolved")) return Results.BadRequest(new { error = "resolved field is required." });
+            incident.Resolved = body["resolved"];
+            if (incident.Resolved == true && incident.ResolutionDate == null)
+                incident.ResolutionDate = AppConstants.DataCutoff;
+            if (incident.Resolved != true)
+                incident.ResolutionDate = null;
+            await db.SaveChangesAsync();
+            return Results.Ok(new { updated = true, resolved = incident.Resolved });
+        }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
+
         app.MapDelete("/api/admin/incidents/{id}", async (int id, AppDbContext db) =>
         {
             var incident = await db.IncidentReports.FindAsync(id);

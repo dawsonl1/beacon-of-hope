@@ -93,6 +93,7 @@ export default function IncidentsPage() {
     setPage(1);
   }
 
+
   return (
     <div className={styles.page}>
       <header className={styles.header}>
