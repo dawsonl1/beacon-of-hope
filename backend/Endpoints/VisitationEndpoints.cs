@@ -10,6 +10,7 @@ public static class VisitationEndpoints
     public static void MapVisitationEndpoints(this WebApplication app)
     {
         app.MapGet("/api/admin/visitations", async (
+            HttpContext httpContext,
             AppDbContext db,
             int? residentId,
             string? visitType,
@@ -19,7 +20,11 @@ public static class VisitationEndpoints
         {
             if (pageSize > 100) pageSize = 100;
 
+            var allowed = await SafehouseAuth.GetAllowedSafehouseIds(httpContext, db);
             var query = db.HomeVisitations.AsQueryable();
+
+            if (allowed != null)
+                query = query.Where(v => db.Residents.Any(r => r.ResidentId == v.ResidentId && r.SafehouseId.HasValue && allowed.Contains(r.SafehouseId.Value)));
 
             if (residentId.HasValue)
                 query = query.Where(v => v.ResidentId == residentId.Value);
@@ -92,6 +97,8 @@ public static class VisitationEndpoints
             if (body == null) return Results.BadRequest(new { error = "Request body is required." });
             var (valid, err) = DtoValidator.Validate(body);
             if (!valid) return Results.BadRequest(new { error = err });
+            var denied = await SafehouseAuth.ValidateResidentAccess(httpContext, db, body.ResidentId);
+            if (denied != null) return denied;
             var visitation = new HomeVisitation { ResidentId = body.ResidentId, VisitDate = body.VisitDate, SocialWorker = body.SocialWorker, VisitType = body.VisitType, LocationVisited = body.LocationVisited, FamilyMembersPresent = body.FamilyMembersPresent, Purpose = body.Purpose, Observations = body.Observations, FamilyCooperationLevel = body.FamilyCooperationLevel, SafetyConcernsNoted = body.SafetyConcernsNoted, FollowUpNeeded = body.FollowUpNeeded, FollowUpNotes = body.FollowUpNotes, VisitOutcome = body.VisitOutcome };
             db.HomeVisitations.Add(visitation);
             await db.SaveChangesAsync();
@@ -123,11 +130,16 @@ public static class VisitationEndpoints
 
         // ── Conferences ──────────────────────────────────────────
 
-        app.MapGet("/api/admin/conferences", async (AppDbContext db) =>
+        app.MapGet("/api/admin/conferences", async (HttpContext httpContext, AppDbContext db) =>
         {
+            var allowed = await SafehouseAuth.GetAllowedSafehouseIds(httpContext, db);
             var now = AppConstants.DataCutoff;
 
-            var upcoming = await db.InterventionPlans
+            var plansQuery = db.InterventionPlans.AsQueryable();
+            if (allowed != null)
+                plansQuery = plansQuery.Where(p => db.Residents.Any(r => r.ResidentId == p.ResidentId && r.SafehouseId.HasValue && allowed.Contains(r.SafehouseId.Value)));
+
+            var upcoming = await plansQuery
                 .Where(p => p.CaseConferenceDate != null && p.CaseConferenceDate > now)
                 .OrderBy(p => p.CaseConferenceDate)
                 .Take(50)
@@ -146,7 +158,7 @@ public static class VisitationEndpoints
                 })
                 .ToListAsync();
 
-            var past = await db.InterventionPlans
+            var past = await plansQuery
                 .Where(p => p.CaseConferenceDate != null && p.CaseConferenceDate <= now)
                 .OrderByDescending(p => p.CaseConferenceDate)
                 .Take(50)

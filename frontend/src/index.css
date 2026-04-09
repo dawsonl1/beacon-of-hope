@@ -110,3 +110,13 @@ button {
 .reveal-stagger > .reveal:nth-child(2) { transition-delay: 120ms; }
 .reveal-stagger > .reveal:nth-child(3) { transition-delay: 240ms; }
 .reveal-stagger > .reveal:nth-child(4) { transition-delay: 360ms; }
+
+/* ── Calendar drag-and-drop highlights (global, applied via DOM) ── */
+.dragHighlight {
+  background: rgba(15, 143, 125, 0.15) !important;
+}
+
+.dragQueueHighlight {
+  border-color: var(--color-sage) !important;
+  background: rgba(15, 143, 125, 0.06) !important;
+}

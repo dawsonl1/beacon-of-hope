@@ -282,6 +282,11 @@
   background: rgba(203, 87, 104, 0.1);
 }
 
+.roleSocialMedia {
+  color: #6366f1;
+  background: rgba(99, 102, 241, 0.1);
+}
+
 .actionsCell {
   display: flex;
   align-items: center;

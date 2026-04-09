@@ -28,4 +28,5 @@ public class RecordingRequest
     public bool? ReadyForReintegration { get; set; }
     [StringLength(20)]
     public string? UpdatedRiskLevel { get; set; }
+    public int? SourceCalendarEventId { get; set; }
 }

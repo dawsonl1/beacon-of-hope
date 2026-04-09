@@ -413,6 +413,17 @@
   cursor: default;
 }
 
+/* ── Retry warning ───────────────────────────────────── */
+.retryWarning {
+  font-size: 0.78rem;
+  color: #d4a853;
+  background: rgba(212, 168, 83, 0.08);
+  border: 1px solid rgba(212, 168, 83, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.85rem;
+  margin-bottom: 1rem;
+}
+
 /* ── Error ───────────────────────────────────────────── */
 .errorMsg {
   font-size: 0.78rem;

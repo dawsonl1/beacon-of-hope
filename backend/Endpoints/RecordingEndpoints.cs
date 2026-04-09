@@ -124,6 +124,8 @@ public static class RecordingEndpoints
             var resident = await db.Residents.AnyAsync(r => r.ResidentId == body.ResidentId);
             if (!resident)
                 return Results.BadRequest(new { error = "Resident not found." });
+            var denied = await SafehouseAuth.ValidateResidentAccess(httpContext, db, body.ResidentId);
+            if (denied != null) return denied;
 
             var recording = new ProcessRecording();
             EntityMapper.MapRecording(recording, body);

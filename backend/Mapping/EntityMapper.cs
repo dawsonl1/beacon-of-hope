@@ -74,6 +74,7 @@ public static class EntityMapper
         entity.NotesRestricted = body.NotesRestricted;
         entity.NeedsCaseConference = body.NeedsCaseConference;
         entity.ReadyForReintegration = body.ReadyForReintegration;
+        entity.SourceCalendarEventId = body.SourceCalendarEventId;
     }
 
     public static void MapSupporter(backend.Models.Supporter entity, SupporterRequest body)

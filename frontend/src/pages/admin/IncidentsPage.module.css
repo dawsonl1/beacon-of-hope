@@ -139,6 +139,36 @@
 .resolvedYes { background: rgba(46, 204, 113, 0.12); color: #27ae60; }
 .resolvedNo { background: rgba(231, 76, 60, 0.08); color: #e74c3c; }
 
+/* ── Tabs ─────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(15, 27, 45, 0.08);
+}
+
+.tab {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+}
+
+.tab:hover {
+  color: var(--text-strong);
+}
+
+.tabActive {
+  color: var(--text-strong);
+  border-bottom-color: var(--color-sage);
+}
+
 @media (max-width: 700px) {
   .page { padding: 1rem; }
 }
