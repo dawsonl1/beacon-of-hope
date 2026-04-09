@@ -234,7 +234,7 @@
 /* ── Week view (Google Calendar-style grid) ──────── */
 .weekGrid {
   display: grid;
-  grid-template-columns: 52px repeat(7, 1fr);
+  grid-template-columns: 52px repeat(7, minmax(0, 1fr));
   background: #fff;
   border: 1px solid rgba(15, 27, 45, 0.08);
   border-radius: 12px;
