@@ -104,15 +104,7 @@ export default function SocialPhotosPage() {
     setItems(prev => prev.filter(i => i.mediaLibraryItemId !== id));
   }
 
-  function resetUpload() {
-    setShowUpload(false);
-    setPreview(null);
-    setCaption('');
-    setConsent(false);
-    setUploadError(null);
-    setUploadSuccess(false);
-    if (fileRef.current) fileRef.current.value = '';
-  }
+
 
   return (
     <div className={styles.page}>

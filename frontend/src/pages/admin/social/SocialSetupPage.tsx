@@ -50,7 +50,7 @@ export default function SocialSetupPage() {
   const [points, setPoints] = useState<TalkingPoint[]>([]);
   const [facts, setFacts] = useState<ContentFact[]>([]);
   const [candidates, setCandidates] = useState<FactCandidate[]>([]);
-  const [hashtagSets, setHashtagSets] = useState<HashtagSet[]>([]);
+  const [, setHashtagSets] = useState<HashtagSet[]>([]);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

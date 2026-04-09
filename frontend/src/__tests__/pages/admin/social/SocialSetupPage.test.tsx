@@ -88,7 +88,7 @@ describe('SocialSetupPage', () => {
     await user.click(screen.getByText('Save'));
     await waitFor(() => {
       const calls = (fetch as unknown as ReturnType<typeof vi.fn>).mock.calls;
-      expect(calls.some((c: [string, RequestInit?]) => c[1]?.method === 'PUT')).toBe(true);
+      expect(calls.some((c: unknown[]) => (c[1] as RequestInit | undefined)?.method === 'PUT')).toBe(true);
     });
   });
 });

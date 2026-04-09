@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Loader2, Check, X, Clock, Edit3, ThumbsUp, ThumbsDown, Copy, ExternalLink, BarChart2, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
+import { Loader2, Check, Clock, Edit3, ThumbsUp, ThumbsDown, Copy, ExternalLink, BarChart2, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { apiFetch } from '../../../api';
 import styles from './SocialPostsPage.module.css';
 
@@ -38,15 +38,22 @@ const PILLAR_COLORS: Record<string, string> = {
   call_to_action: '#6c5ce7',
 };
 
-function getWeekDays(offset: number): Date[] {
+function getMonthDays(offset: number): { days: Date[]; month: number; year: number } {
   const now = new Date();
-  const start = new Date(now);
-  start.setDate(start.getDate() - start.getDay() + 1 + offset * 7);
-  return Array.from({ length: 7 }, (_, i) => {
+  const target = new Date(now.getFullYear(), now.getMonth() + offset, 1);
+  const month = target.getMonth();
+  const year = target.getFullYear();
+  const firstDay = new Date(year, month, 1);
+  const startPad = (firstDay.getDay() + 6) % 7; // Monday = 0
+  const start = new Date(firstDay);
+  start.setDate(start.getDate() - startPad);
+  // Always show 6 weeks (42 days) for consistent grid
+  const days = Array.from({ length: 42 }, (_, i) => {
     const d = new Date(start);
     d.setDate(d.getDate() + i);
     return d;
   });
+  return { days, month, year };
 }
 
 function isSameDay(a: Date, b: Date) {
@@ -65,7 +72,7 @@ export default function SocialPostsPage() {
   const [editContent, setEditContent] = useState('');
   const [engagementId, setEngagementId] = useState<number | null>(null);
   const [engagement, setEngagement] = useState({ likes: 0, shares: 0, comments: 0, donations: 0 });
-  const [weekOffset, setWeekOffset] = useState(0);
+  const [monthOffset, setMonthOffset] = useState(0);
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
@@ -136,8 +143,8 @@ export default function SocialPostsPage() {
     }
   }
 
-  const days = getWeekDays(weekOffset);
-  const weekLabel = `${days[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${days[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+  const { days: monthDays, month: calMonth, year: calYear } = getMonthDays(monthOffset);
+  const monthLabel = new Date(calYear, calMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
   if (loading && drafts.length === 0) {
     return <div className={styles.loading}><Loader2 className={styles.spin} size={24} /> Loading...</div>;
@@ -219,34 +226,32 @@ export default function SocialPostsPage() {
         </section>
       )}
 
-      {/* Week Calendar */}
+      {/* Month Calendar */}
       <section className={styles.section}>
         <div className={styles.calendarHeader}>
           <h2 className={styles.sectionTitle}>Schedule</h2>
-          <div className={styles.weekNav}>
-            <button onClick={() => setWeekOffset(w => w - 1)} className={styles.weekBtn}><ChevronLeft size={16} /></button>
-            <span className={styles.weekLabel}>{weekLabel}</span>
-            <button onClick={() => setWeekOffset(w => w + 1)} className={styles.weekBtn}><ChevronRight size={16} /></button>
-            {weekOffset !== 0 && <button onClick={() => setWeekOffset(0)} className={styles.todayBtn}>Today</button>}
+          <div className={styles.monthNav}>
+            <button onClick={() => setMonthOffset(m => m - 1)} className={styles.weekBtn}><ChevronLeft size={16} /></button>
+            <span className={styles.monthLabel}>{monthLabel}</span>
+            <button onClick={() => setMonthOffset(m => m + 1)} className={styles.weekBtn}><ChevronRight size={16} /></button>
+            {monthOffset !== 0 && <button onClick={() => setMonthOffset(0)} className={styles.todayBtn}>Today</button>}
           </div>
         </div>
-        <div className={styles.weekGrid}>
-          {days.map(day => {
+        <div className={styles.monthDayNames}>
+          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => (
+            <span key={d} className={styles.monthDayName}>{d}</span>
+          ))}
+        </div>
+        <div className={styles.monthGrid}>
+          {monthDays.map(day => {
             const dayPosts = scheduled.filter(p => p.scheduledAt && isSameDay(new Date(p.scheduledAt), day));
             const isToday = isSameDay(day, new Date());
+            const isOtherMonth = day.getMonth() !== calMonth;
             return (
-              <div key={day.toISOString()} className={`${styles.dayCol} ${isToday ? styles.dayToday : ''}`}>
-                <div className={styles.dayHead}>
-                  <span className={styles.dayName}>{day.toLocaleDateString('en-US', { weekday: 'short' })}</span>
-                  <span className={styles.dayNum}>{day.getDate()}</span>
-                </div>
-                {dayPosts.length === 0 ? (
-                  <div className={styles.dayEmpty} />
-                ) : dayPosts.map(p => (
-                  <div key={p.automatedPostId} className={styles.dayPost} style={{ borderLeftColor: PILLAR_COLORS[p.contentPillar] }}>
-                    <span className={styles.dayPostLabel}>{PILLAR_LABELS[p.contentPillar]}</span>
-                    <span className={styles.dayPostPlatform}>{p.platform}</span>
-                  </div>
+              <div key={day.toISOString()} className={`${styles.monthCell} ${isToday ? styles.dayToday : ''} ${isOtherMonth ? styles.otherMonth : ''}`}>
+                <span className={styles.monthCellNum}>{day.getDate()}</span>
+                {dayPosts.map(p => (
+                  <div key={p.automatedPostId} className={styles.monthPost} style={{ background: PILLAR_COLORS[p.contentPillar] }} title={`${PILLAR_LABELS[p.contentPillar]} · ${p.platform}`} />
                 ))}
               </div>
             );

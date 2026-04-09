@@ -43,22 +43,23 @@
 
 /* Calendar */
 .calendarHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem; }
-.weekNav { display: flex; align-items: center; gap: 0.4rem; }
+.monthNav { display: flex; align-items: center; gap: 0.4rem; }
 .weekBtn { background: none; border: 1px solid #d1d5db; border-radius: 6px; padding: 0.25rem; cursor: pointer; display: flex; color: var(--color-deep-navy); }
 .weekBtn:hover { background: #f3f4f6; }
-.weekLabel { font-size: 0.8rem; font-weight: 500; min-width: 160px; text-align: center; color: var(--color-deep-navy); }
+.monthLabel { font-size: 0.85rem; font-weight: 600; min-width: 160px; text-align: center; color: var(--color-deep-navy); }
 .todayBtn { font-size: 0.7rem; padding: 0.2rem 0.5rem; background: var(--color-sage); color: #fff; border: none; border-radius: 4px; cursor: pointer; }
 
-.weekGrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.4rem; }
-.dayCol { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; min-height: 70px; padding: 0.4rem; }
-.dayToday { border-color: var(--color-sage); border-width: 2px; }
-.dayHead { display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.3rem; margin-bottom: 0.3rem; border-bottom: 1px solid #f3f4f6; }
-.dayName { font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
-.dayNum { font-size: 0.8rem; font-weight: 600; color: var(--color-deep-navy); }
-.dayEmpty { height: 20px; }
-.dayPost { padding: 0.25rem 0.4rem; border-left: 3px solid #ccc; border-radius: 0 4px 4px 0; background: #f9fafb; margin-bottom: 0.2rem; display: flex; justify-content: space-between; align-items: center; }
-.dayPostLabel { font-size: 0.6rem; font-weight: 600; color: #374151; }
-.dayPostPlatform { font-size: 0.55rem; color: var(--text-muted); text-transform: capitalize; }
+.monthDayNames { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; margin-bottom: 0.25rem; }
+.monthDayName { text-align: center; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted); padding: 0.3rem 0; }
+
+.monthGrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: #e5e7eb; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+.monthCell { background: #fff; min-height: 60px; padding: 0.3rem; display: flex; flex-direction: column; gap: 0.15rem; }
+.dayToday { background: #f0fdf9; }
+.otherMonth { background: #f9fafb; }
+.otherMonth .monthCellNum { color: #d1d5db; }
+.monthCellNum { font-size: 0.7rem; font-weight: 500; color: #6b7280; margin-bottom: 0.1rem; }
+.dayToday .monthCellNum { color: var(--color-sage); font-weight: 700; }
+.monthPost { width: 100%; height: 5px; border-radius: 3px; cursor: default; }
 
 /* Engagement */
 .engagementList { display: flex; flex-direction: column; gap: 0.5rem; }
