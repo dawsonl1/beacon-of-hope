@@ -779,7 +779,7 @@ export default function HomePage() {
                 );
               })}
               {/* All-day row (sticky) */}
-              <div className={styles.allDayLabel}>all-day</div>
+              <div className={styles.allDayLabel}>unscheduled</div>
               {DAY_NAMES.map((_, i) => {
                 const dayDate = addDays(getWeekStart(currentDate), i);
                 const dayStr = fmtDate(dayDate);
