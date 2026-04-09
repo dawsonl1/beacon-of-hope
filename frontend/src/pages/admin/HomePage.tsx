@@ -5,6 +5,11 @@ import {
   CheckCircle, Clock, X,
   Stethoscope, GraduationCap, Heart, AlertTriangle, Home, ClipboardList, User,
 } from 'lucide-react';
+import {
+  DndContext, DragOverlay, useDroppable, useDraggable,
+  PointerSensor, useSensor, useSensors,
+  type DragStartEvent, type DragEndEvent, type DragOverEvent,
+} from '@dnd-kit/core';
 import { apiFetch } from '../../api';
 import { APP_TODAY, APP_TODAY_STR } from '../../constants';
 import { useSafehouse } from '../../contexts/SafehouseContext';
@@ -255,6 +260,29 @@ function formatContextLabel(key: string): string {
     .trim();
 }
 
+/* ── @dnd-kit sub-components ─────────────────────── */
+
+function DroppableCell({ cellId, className, children }: { cellId: string; className: string; children: React.ReactNode }) {
+  const { setNodeRef, isOver } = useDroppable({ id: cellId });
+  return (
+    <div ref={setNodeRef} className={`${className} ${isOver ? styles.weekCellDropTarget : ''}`}>
+      {children}
+    </div>
+  );
+}
+
+function DraggableTaskCard({ task, children }: { task: StaffTaskItem; children: React.ReactNode }) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: `task-${task.staffTaskId}`,
+    data: { task },
+  });
+  return (
+    <div ref={setNodeRef} style={{ opacity: isDragging ? 0.4 : 1, touchAction: 'none' }} {...listeners} {...attributes}>
+      {children}
+    </div>
+  );
+}
+
 /* ── Component ───────────────────────────────────── */
 
 export default function HomePage() {
@@ -282,10 +310,14 @@ export default function HomePage() {
   const [tasksLoading, setTasksLoading] = useState(true);
   const [exitingTaskIds, setExitingTaskIds] = useState<Set<number>>(new Set());
 
-  // Drag-and-drop state
-  const [dragTaskId, setDragTaskId] = useState<number | null>(null);
-  const [dropHour, setDropHour] = useState<number | null>(null);
-  const [dropDate, setDropDate] = useState<string | null>(null);
+  // @dnd-kit drag state
+  const [dragTask, setDragTask] = useState<StaffTaskItem | null>(null);
+  const [overCellId, setOverCellId] = useState<string | null>(null);
+  const dndSensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+  // Compat aliases for existing CSS logic
+  const dragTaskId = dragTask?.staffTaskId ?? null;
+  const dropHour: number | null = overCellId ? parseInt(overCellId.split('|')[0]) : null;
+  const dropDate: string | null = overCellId ? overCellId.split('|')[1] : null;
 
   // All-day expand state (tracks which days are expanded)
   const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set());
@@ -296,7 +328,7 @@ export default function HomePage() {
   const [showSetTime, setShowSetTime] = useState(false);
   const [scheduleForm, setScheduleForm] = useState<ScheduleForm>({ eventDate: APP_TODAY_STR, startTime: '' });
 
-  const dragCounterRef = useRef(0);
+  const dragCounterRef = useRef(0); // legacy, unused
 
   /* ── Data fetching ─────────────────────────────── */
 
@@ -413,47 +445,39 @@ export default function HomePage() {
     } catch { /* ignore */ }
   }
 
-  /* ── Drag-and-drop handlers ────────────────────── */
+  /* ── @dnd-kit handlers ──────────────────────────── */
 
-  function handleDragStart(taskId: number) {
-    setDragTaskId(taskId);
+  function handleDndStart(event: DragStartEvent) {
+    const task = event.active.data.current?.task as StaffTaskItem | undefined;
+    if (task) setDragTask(task);
   }
 
-  function handleDragEnd() {
-    setDragTaskId(null);
-    setDropHour(null);
-    setDropDate(null);
-    dragCounterRef.current = 0;
+  function handleDndOver(event: DragOverEvent) {
+    setOverCellId(event.over ? String(event.over.id) : null);
   }
 
-  function handleSlotDragEnter(hour: number, date?: string) {
-    dragCounterRef.current++;
-    setDropHour(hour);
-    if (date) setDropDate(date);
-  }
-
-  function handleSlotDragLeave() {
-    dragCounterRef.current--;
-    if (dragCounterRef.current <= 0) {
-      setDropHour(null);
-      setDropDate(null);
-      dragCounterRef.current = 0;
-    }
-  }
-
-
-  function handleSlotDrop(hour: number, date?: string) {
-    if (!dragTaskId) return;
-    const task = tasks.find(t => t.staffTaskId === dragTaskId);
-    if (!task) return;
+  function handleDndEnd(event: DragEndEvent) {
+    const task = dragTask;
+    const overId = event.over ? String(event.over.id) : null;
+    setDragTask(null);
+    setOverCellId(null);
+    if (!task || !overId) return;
+    // Parse cell id: "hour|date" e.g. "9|2026-02-16" or "-1|2026-02-16" for all-day
+    const [hourStr, date] = overId.split('|');
+    const hour = parseInt(hourStr);
     const startTime = hour >= 0 ? `${hour.toString().padStart(2, '0')}:00` : null;
-    const targetDate = date || fmtDate(currentDate);
-    scheduleTaskToCalendar(task, targetDate, startTime);
-    setDragTaskId(null);
-    setDropHour(null);
-    setDropDate(null);
-    dragCounterRef.current = 0;
+    scheduleTaskToCalendar(task, date || fmtDate(currentDate), startTime);
   }
+
+  function handleDndCancel() {
+    setDragTask(null);
+    setOverCellId(null);
+  }
+
+  // Stubs to keep existing onDrag* attributes from crashing (they're still in the JSX for all-day row)
+  function handleSlotDragEnter(_hour: number, _date?: string) {}
+  function handleSlotDragLeave() {}
+  function handleSlotDrop(_hour: number, _date?: string) {}
 
 
   function handleScheduleSubmit() {
@@ -605,6 +629,7 @@ export default function HomePage() {
       </header>
 
       {/* Body: calendar + tasks side by side */}
+      <DndContext sensors={dndSensors} onDragStart={handleDndStart} onDragOver={handleDndOver} onDragEnd={handleDndEnd} onDragCancel={handleDndCancel}>
       <div className={styles.body}>
         {/* Calendar panel */}
         <div className={styles.calendarPanel} ref={calendarPanelRef}>
@@ -686,21 +711,17 @@ export default function HomePage() {
                       const dayStr = fmtDate(dayDate);
                       const isToday = dayStr === APP_TODAY_STR;
                       const cellEvents = events.filter(e => e.eventDate === dayStr && e.startTime?.startsWith(hourStr));
-                      const isDropTarget = dragTaskId !== null && dropHour === hour && dropDate === dayStr;
                       return (
-                        <div
+                        <DroppableCell
                           key={`${hour}-${i}`}
-                          className={`${styles.weekCell} ${isToday ? styles.weekCellToday : ''} ${isDropTarget ? styles.weekCellDropTarget : ''}`}
-                          onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }}
-                          onDragEnter={() => handleSlotDragEnter(hour, dayStr)}
-                          onDragLeave={handleSlotDragLeave}
-                          onDrop={e => { e.preventDefault(); handleSlotDrop(hour, dayStr); }}
+                          cellId={`${hour}|${dayStr}`}
+                          className={`${styles.weekCell} ${isToday ? styles.weekCellToday : ''}`}
                         >
                           {cellEvents.map(evt => {
                             const layout = dayLayouts.get(dayStr)?.get(evt.calendarEventId);
                             return renderEventChip(evt, layout);
                           })}
-                        </div>
+                        </DroppableCell>
                       );
                     })}
                   </React.Fragment>
@@ -803,20 +824,9 @@ export default function HomePage() {
                 const ctx = parseContext(task.contextJson);
                 const isDragging = dragTaskId === task.staffTaskId;
                 return (
+                  <DraggableTaskCard key={task.staffTaskId} task={task}>
                   <div
-                    key={task.staffTaskId}
                     className={`${isDragging ? styles.taskCardDragging : styles.taskCard} ${exitingTaskIds.has(task.staffTaskId) ? styles.taskCardExiting : ''}`}
-                    draggable
-                    onDragStart={e => {
-                      // Create a small drag image so it looks like collapsing to a line
-                      const ghost = document.createElement('div');
-                      ghost.style.cssText = 'width:120px;height:2px;background:var(--color-sage,#0f8f7d);border-radius:1px;position:absolute;top:-9999px;';
-                      document.body.appendChild(ghost);
-                      e.dataTransfer.setDragImage(ghost, 60, 1);
-                      setTimeout(() => document.body.removeChild(ghost), 0);
-                      handleDragStart(task.staffTaskId);
-                    }}
-                    onDragEnd={handleDragEnd}
                   >
                     {getTaskIcon(task.taskType)}
                     <div className={styles.taskBody}>
@@ -860,12 +870,25 @@ export default function HomePage() {
                       </div>
                     </div>
                   </div>
+                  </DraggableTaskCard>
                 );
               })}
             </div>
           )}
         </div>
       </div>
+      {/* Drag overlay ghost */}
+      <DragOverlay dropAnimation={null}>
+        {dragTask && (
+          <div className={styles.taskCard} style={{ boxShadow: '0 8px 24px rgba(0,0,0,0.18)', opacity: 0.9, transform: 'scale(1.02)' }}>
+            {getTaskIcon(dragTask.taskType)}
+            <div className={styles.taskBody}>
+              <p className={styles.taskTitle}>{dragTask.title}</p>
+            </div>
+          </div>
+        )}
+      </DragOverlay>
+      </DndContext>
 
       {/* Schedule task modal */}
       {scheduleTask && (
