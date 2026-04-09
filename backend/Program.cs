@@ -89,6 +89,7 @@ builder.Services.AddCors(options =>
                 "http://localhost:5175",
                 "http://localhost:5176",
                 "https://intex2-1.vercel.app",
+                "https://intex2.dawsonsprojects.com",
                 "https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net")
               .AllowAnyHeader()
               .AllowAnyMethod()
