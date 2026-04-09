@@ -1,10 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
-import { UserPlus, Trash2, Loader2, Shield, User, Heart, Pencil, Save } from 'lucide-react';
+import { UserPlus, Trash2, Loader2, Shield, User, Heart, Pencil, Save, Search, Megaphone } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
 import Dropdown from '../../components/admin/Dropdown';
-import Checkbox from '../../components/admin/Checkbox';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './UsersPage.module.css';
 
@@ -23,7 +22,20 @@ interface AppUser {
   safehouses?: SafehouseRef[];
 }
 
-type RoleFilter = 'All' | 'Staff' | 'Donors';
+const ROLE_OPTIONS = [
+  { value: 'Staff', label: 'Staff' },
+  { value: 'Admin', label: 'Admin' },
+  { value: 'Donor', label: 'Donor' },
+  { value: 'SocialMediaManager', label: 'Social Media Manager' },
+];
+
+const ROLE_FILTER_OPTIONS = [
+  { value: 'All', label: 'All Roles' },
+  { value: 'Staff', label: 'Staff' },
+  { value: 'Admin', label: 'Admin' },
+  { value: 'Donor', label: 'Donor' },
+  { value: 'SocialMediaManager', label: 'Social Media Manager' },
+];
 
 export default function UsersPage() {
   useDocumentTitle('User Management');
@@ -35,8 +47,9 @@ export default function UsersPage() {
   const [error, setError] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  // Role filter
-  const [roleFilter, setRoleFilter] = useState<RoleFilter>('All');
+  // Role filter + search
+  const [roleFilter, setRoleFilter] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Available safehouses
   const [allSafehouses, setAllSafehouses] = useState<SafehouseRef[]>([]);
@@ -67,11 +80,21 @@ export default function UsersPage() {
   const [editError, setEditError] = useState('');
 
   const filteredUsers = useMemo(() => {
-    if (roleFilter === 'All') return users;
-    if (roleFilter === 'Staff')
-      return users.filter(u => u.roles.includes('Admin') || u.roles.includes('Staff'));
-    return users.filter(u => u.roles.includes('Donor'));
-  }, [users, roleFilter]);
+    let result = users;
+    if (roleFilter !== 'All') {
+      result = result.filter(u => u.roles.includes(roleFilter));
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(u =>
+        u.firstName.toLowerCase().includes(q) ||
+        u.lastName.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q) ||
+        `${u.firstName} ${u.lastName}`.toLowerCase().includes(q)
+      );
+    }
+    return result;
+  }, [users, roleFilter, searchQuery]);
 
   async function fetchUsers() {
     if (!isAdmin) return;
@@ -205,22 +228,24 @@ export default function UsersPage() {
       </header>
 
       <div className={styles.filterBar}>
-        {(['All', 'Staff', 'Donors'] as RoleFilter[]).map(f => (
-          <button
-            key={f}
-            className={`${styles.filterBtn} ${roleFilter === f ? styles.filterActive : ''}`}
-            onClick={() => setRoleFilter(f)}
-          >
-            {f}
-            <span className={styles.filterCount}>
-              {f === 'All'
-                ? users.length
-                : f === 'Staff'
-                  ? users.filter(u => u.roles.includes('Admin') || u.roles.includes('Staff')).length
-                  : users.filter(u => u.roles.includes('Donor')).length}
-            </span>
-          </button>
-        ))}
+        <div className={styles.searchWrap}>
+          <Search size={14} className={styles.searchIcon} />
+          <input
+            className={styles.searchInput}
+            type="text"
+            placeholder="Search by name or email..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+          />
+        </div>
+        <Dropdown
+          value={roleFilter}
+          placeholder="Filter by role"
+          compact
+          options={ROLE_FILTER_OPTIONS}
+          onChange={v => setRoleFilter(v)}
+        />
+        <span className={styles.filterCount}>{filteredUsers.length} user{filteredUsers.length !== 1 ? 's' : ''}</span>
       </div>
 
       {/* Create form */}
@@ -250,11 +275,7 @@ export default function UsersPage() {
                 <Dropdown
                   value={formRole}
                   placeholder="Select role"
-                  options={[
-                    { value: 'Staff', label: 'Staff' },
-                    { value: 'Admin', label: 'Admin' },
-                    { value: 'Donor', label: 'Donor' },
-                  ]}
+                  options={ROLE_OPTIONS}
                   onChange={(v) => setFormRole(v)}
                 />
               </div>
@@ -262,17 +283,21 @@ export default function UsersPage() {
             {allSafehouses.length > 0 && (
               <div style={{ marginTop: '0.75rem' }}>
                 <label className={styles.label}>Assigned Safehouses</label>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.35rem' }}>
+                <div className={styles.safehouseGrid}>
                   {allSafehouses.map(s => (
-                    <Checkbox
-                      key={s.safehouseId}
-                      checked={formSafehouses.includes(s.safehouseId)}
-                      label={`${s.safehouseCode} - ${s.name}`}
-                      onChange={checked => {
-                        if (checked) setFormSafehouses(prev => [...prev, s.safehouseId]);
-                        else setFormSafehouses(prev => prev.filter(id => id !== s.safehouseId));
-                      }}
-                    />
+                    <label key={s.safehouseId} className={`${styles.safehouseCard} ${formSafehouses.includes(s.safehouseId) ? styles.safehouseCardActive : ''}`}>
+                      <input
+                        type="checkbox"
+                        className={styles.safehouseCheckbox}
+                        checked={formSafehouses.includes(s.safehouseId)}
+                        onChange={e => {
+                          if (e.target.checked) setFormSafehouses(prev => [...prev, s.safehouseId]);
+                          else setFormSafehouses(prev => prev.filter(id => id !== s.safehouseId));
+                        }}
+                      />
+                      <span className={styles.safehouseCode}>{s.safehouseCode}</span>
+                      <span className={styles.safehouseName}>{s.name}</span>
+                    </label>
                   ))}
                 </div>
               </div>
@@ -313,16 +338,19 @@ export default function UsersPage() {
                 const role = u.roles[0] || 'Staff';
                 const isDonor = u.roles.includes('Donor');
                 const isAdminRole = u.roles.includes('Admin');
+                const isSocialMedia = u.roles.includes('SocialMediaManager');
+                const roleClass = isAdminRole ? styles.roleAdmin : isDonor ? styles.roleDonor : isSocialMedia ? styles.roleSocialMedia : styles.roleStaff;
+                const roleLabel = role === 'SocialMediaManager' ? 'Social Media' : role;
                 return (
                   <tr key={u.id}>
                     <td className={styles.nameCell}>
-                      {isAdminRole ? <Shield size={15} /> : isDonor ? <Heart size={15} /> : <User size={15} />}
+                      {isAdminRole ? <Shield size={15} /> : isDonor ? <Heart size={15} /> : isSocialMedia ? <Megaphone size={15} /> : <User size={15} />}
                       <span>{u.firstName} {u.lastName}</span>
                     </td>
                     <td>{u.email}</td>
                     <td>
-                      <span className={`${styles.roleBadge} ${isAdminRole ? styles.roleAdmin : isDonor ? styles.roleDonor : styles.roleStaff}`}>
-                        {role}
+                      <span className={`${styles.roleBadge} ${roleClass}`}>
+                        {roleLabel}
                       </span>
                     </td>
                     <td>
@@ -389,11 +417,7 @@ export default function UsersPage() {
                   <Dropdown
                     value={editRole}
                     placeholder="Select role"
-                    options={[
-                      { value: 'Staff', label: 'Staff' },
-                      { value: 'Admin', label: 'Admin' },
-                      { value: 'Donor', label: 'Donor' },
-                    ]}
+                    options={ROLE_OPTIONS}
                     onChange={(v) => setEditRole(v)}
                   />
                 </div>
@@ -401,17 +425,21 @@ export default function UsersPage() {
               {allSafehouses.length > 0 && (
                 <div style={{ marginTop: '0.75rem' }}>
                   <label className={styles.label}>Assigned Safehouses</label>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.35rem' }}>
+                  <div className={styles.safehouseGrid}>
                     {allSafehouses.map(s => (
-                      <Checkbox
-                        key={s.safehouseId}
-                        checked={editSafehouses.includes(s.safehouseId)}
-                        label={`${s.safehouseCode} - ${s.name}`}
-                        onChange={checked => {
-                          if (checked) setEditSafehouses(prev => [...prev, s.safehouseId]);
-                          else setEditSafehouses(prev => prev.filter(id => id !== s.safehouseId));
-                        }}
-                      />
+                      <label key={s.safehouseId} className={`${styles.safehouseCard} ${editSafehouses.includes(s.safehouseId) ? styles.safehouseCardActive : ''}`}>
+                        <input
+                          type="checkbox"
+                          className={styles.safehouseCheckbox}
+                          checked={editSafehouses.includes(s.safehouseId)}
+                          onChange={e => {
+                            if (e.target.checked) setEditSafehouses(prev => [...prev, s.safehouseId]);
+                            else setEditSafehouses(prev => prev.filter(id => id !== s.safehouseId));
+                          }}
+                        />
+                        <span className={styles.safehouseCode}>{s.safehouseCode}</span>
+                        <span className={styles.safehouseName}>{s.name}</span>
+                      </label>
                     ))}
                   </div>
                 </div>

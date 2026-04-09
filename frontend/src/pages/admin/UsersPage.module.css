@@ -53,53 +53,52 @@
 /* ── Filter Bar ────────────────────────────────────────── */
 .filterBar {
   display: flex;
-  gap: 0.35rem;
+  align-items: center;
+  gap: 0.65rem;
   margin-bottom: 1.25rem;
 }
 
-.filterBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  font-family: var(--font-body);
+.searchWrap {
+  position: relative;
+  flex: 1;
+  max-width: 320px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
   color: var(--text-muted);
-  background: var(--surface-1);
-  border: 1px solid rgba(15, 27, 45, 0.08);
-  padding: 0.4rem 0.85rem;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all 0.18s;
+  pointer-events: none;
 }
 
-.filterBtn:hover {
-  border-color: rgba(15, 27, 45, 0.18);
+.searchInput {
+  width: 100%;
+  padding: 0.45rem 0.7rem 0.45rem 2rem;
+  border: 1px solid rgba(15, 27, 45, 0.12);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-family: var(--font-body);
   color: var(--text-strong);
+  background: var(--surface-1);
+  transition: border-color 0.15s;
 }
 
-.filterActive {
-  background: var(--color-sage);
-  color: #fff;
+.searchInput:focus {
+  outline: none;
   border-color: var(--color-sage);
 }
 
-.filterActive:hover {
-  color: #fff;
+.searchInput::placeholder {
+  color: var(--text-muted);
 }
 
 .filterCount {
-  font-size: 0.7rem;
-  font-weight: 700;
-  min-width: 1.3rem;
-  text-align: center;
-  padding: 0.05rem 0.3rem;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.08);
-}
-
-.filterActive .filterCount {
-  background: rgba(255, 255, 255, 0.25);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
 }
 
 /* ── Create Form ───────────────────────────────────────── */
@@ -371,4 +370,59 @@
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+/* ── Safehouse Checkboxes ────────────────────────────── */
+.safehouseGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.safehouseCard {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(15, 27, 45, 0.1);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.safehouseCard:hover {
+  border-color: rgba(15, 143, 125, 0.3);
+  background: rgba(15, 143, 125, 0.02);
+}
+
+.safehouseCardActive {
+  border-color: var(--color-sage);
+  background: rgba(15, 143, 125, 0.06);
+  box-shadow: 0 0 0 1px var(--color-sage);
+}
+
+.safehouseCheckbox {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--color-sage);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.safehouseCode {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-sage);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.safehouseName {
+  font-size: 0.8rem;
+  color: var(--text-strong);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
