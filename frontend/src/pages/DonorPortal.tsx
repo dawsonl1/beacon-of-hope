@@ -43,6 +43,15 @@ interface DonorData {
 
 type Tab = 'impact' | 'history' | 'settings';
 
+const PROGRAM_DESCRIPTIONS: Record<string, string> = {
+  Education: 'Tutoring, school supplies, and equivalency programs helping girls build a future through learning.',
+  Wellbeing: 'Counseling, therapy, and health services supporting physical and emotional recovery.',
+  Operations: 'Day-to-day safehouse operations including meals, utilities, and staffing.',
+  Transport: 'Safe transportation for school, medical appointments, and family visits.',
+  Maintenance: 'Keeping safehouses safe and comfortable with repairs, furnishings, and upkeep.',
+  Outreach: 'Community education, awareness campaigns, and identifying at-risk youth.',
+};
+
 export default function DonorPortal() {
   const { user } = useAuth();
   const [data, setData] = useState<DonorData | null>(null);
@@ -88,10 +97,6 @@ export default function DonorPortal() {
           <p className={styles.heroSub}>
             Your generosity is changing lives. Here's the impact you're making.
           </p>
-          <Link to="/donate" className={styles.heroCta}>
-            <Heart size={16} />
-            {hasRecurring ? 'Increase Your Impact' : 'Make Another Donation'}
-          </Link>
         </div>
       </header>
 
@@ -180,18 +185,24 @@ export default function DonorPortal() {
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Where Your Donations Go</h2>
               <div className={styles.allocGrid}>
-                {programAllocations.map(([program, amount]) => (
-                  <div key={program} className={styles.allocCard}>
-                    <span className={styles.allocProgram}>{program}</span>
-                    <span className={styles.allocAmount}>{formatAmount(amount)}</span>
-                    <div className={styles.allocBar}>
-                      <div
-                        className={styles.allocBarFill}
-                        style={{ width: `${Math.min(100, (amount / programAllocations[0][1]) * 100)}%` }}
-                      />
+                {programAllocations.map(([program, amount]) => {
+                  const pct = totalDonated > 0 ? Math.round((amount / totalDonated) * 100) : 0;
+                  return (
+                    <div key={program} className={styles.allocCard}>
+                      <span className={styles.allocProgram}>{program}</span>
+                      <span className={styles.allocAmount}>{formatAmount(amount)} <span className={styles.allocPct}>({pct}%)</span></span>
+                      <div className={styles.allocBar}>
+                        <div
+                          className={styles.allocBarFill}
+                          style={{ width: `${Math.min(100, pct)}%` }}
+                        />
+                      </div>
+                      {PROGRAM_DESCRIPTIONS[program] && (
+                        <p className={styles.allocDesc}>{PROGRAM_DESCRIPTIONS[program]}</p>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
           )}

@@ -256,6 +256,12 @@
   margin-bottom: 0.5rem;
 }
 
+.allocPct {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
 .allocBar {
   height: 6px;
   background: rgba(15, 27, 45, 0.06);
@@ -268,6 +274,13 @@
   background: var(--color-teal);
   border-radius: 3px;
   transition: width 0.6s ease;
+}
+
+.allocDesc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-top: 0.6rem;
 }
 
 /* ── Inspire CTA ──────────────────────────────────────────── */
