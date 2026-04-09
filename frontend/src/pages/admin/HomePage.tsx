@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   ChevronLeft, ChevronRight, Plus, Loader2,
   CheckCircle, Clock, X, Calendar,
-  Stethoscope, GraduationCap, Heart, AlertTriangle, Home, ClipboardList,
+  Stethoscope, GraduationCap, Heart, AlertTriangle, Home, ClipboardList, User,
 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { APP_TODAY, APP_TODAY_STR } from '../../constants';
@@ -844,12 +844,12 @@ export default function HomePage() {
                         </p>
                       )}
                       <div className={styles.taskActions}>
-                        {TASK_TYPE_TO_EVENT_TYPE[task.taskType] && (
+                        {task.residentId && (
                           <button
-                            className={styles.scheduleBtn}
-                            onClick={e => { e.stopPropagation(); setScheduleTask(task); setScheduleForm({ eventDate: fmtDate(currentDate), startTime: '' }); }}
+                            className={styles.completeBtn}
+                            onClick={e => { e.stopPropagation(); navigate(`/admin/caseload/${task.residentId}`); }}
                           >
-                            <Calendar size={12} /> Schedule
+                            <User size={12} /> View Patient
                           </button>
                         )}
                         <button
