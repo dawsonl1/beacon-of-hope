@@ -92,3 +92,5 @@ intex2/
 6. [DATA] The database is Azure Database for PostgreSQL Flexible Server (`intex-db.postgres.database.azure.com`), managed entirely by EF Core. `MigrateAsync()` runs at startup in Program.cs. To add/change tables: edit C# models → `dotnet ef migrations add <Name>` → the backend applies it on next startup. Only manage your own tables (AspNet*, domain tables) in the DbContext.
 
 7. [DATA] For Npgsql connection strings, use camelCase key names without spaces: `SslMode` (not `SSL Mode`), `TrustServerCertificate` (not `Trust Server Certificate`), `Username` (not `User Id`). Npgsql 10.x is strict about this.
+
+8. [PROCESS] Never push directly to main. Always create a feature branch, push to it, and open a PR — because direct pushes bypass review and can break the shared branch.

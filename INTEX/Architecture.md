@@ -572,7 +572,7 @@ Residents, safehouses, supporters, partners, donations, allocations, in-kind ite
 | Cookie consent | GDPR-compliant 3-category consent (necessary/analytics/functional), 365-day versioned cookie |
 | Analytics | Google Analytics 4 loaded only after consent via `useConsentScript` hook |
 | Image processing | Upload: validate type (JPEG/PNG/WebP/GIF), max 10MB, compress to 1920px, thumbnail at 400px |
-| Email | SMTP via `EmailNotificationService` — post-ready alerts, generation failures, engagement reminders, donor welcome emails |
+| Email | SendGrid (SMTP relay at `smtp.sendgrid.net:587`) via `EmailNotificationService` — post-ready alerts, generation failures, engagement reminders, newsletter delivery |
 | Chat widget | Client-side decision tree (not AI) — guides visitors to donate/volunteer/learn |
 | Timestamps | UTC only throughout; ISO 8601 in JSON |
 | File storage | Azure Blob in production; local `wwwroot/media/` in development |
