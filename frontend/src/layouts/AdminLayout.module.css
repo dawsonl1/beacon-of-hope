@@ -417,7 +417,28 @@
     display: none;
   }
 
+  .logoutBtn {
+    padding: 0.42rem 0.55rem;
+  }
+
   .roleBadge {
     display: none;
+  }
+
+  .logoText {
+    display: none;
+  }
+
+  .shDropdownBtn {
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .shDropdownLabel {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
   }
 }

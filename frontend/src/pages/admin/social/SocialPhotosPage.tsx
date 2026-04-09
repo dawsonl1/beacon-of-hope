@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Loader2, Camera, Upload, Check, Trash2, Filter, AlertCircle, Image } from 'lucide-react';
+import { Loader2, Camera, Upload, Check, Trash2, AlertCircle, Image } from 'lucide-react';
 import { apiFetch, getApiUrl } from '../../../api';
+import Dropdown from '../../../components/admin/Dropdown';
 import styles from './SocialPhotosPage.module.css';
 
 interface MediaItem {
@@ -116,13 +117,13 @@ export default function SocialPhotosPage() {
           <p className={styles.subtitle}>{items.length} photo{items.length !== 1 ? 's' : ''} in the library</p>
         </div>
         <div className={styles.headerActions}>
-          <div className={styles.filterWrap}>
-            <Filter size={14} />
-            <select value={filter} onChange={e => setFilter(e.target.value)} className={styles.filterSelect}>
-              <option value="">All types</option>
-              {ACTIVITY_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-            </select>
-          </div>
+          <Dropdown
+            value={filter}
+            placeholder="All types"
+            options={[{ value: '', label: 'All types' }, ...ACTIVITY_TYPES]}
+            onChange={setFilter}
+            compact
+          />
           <button className={styles.uploadBtn} onClick={() => setShowUpload(!showUpload)}>
             <Camera size={16} /> {showUpload ? 'Cancel' : 'Upload Photo'}
           </button>
@@ -149,9 +150,12 @@ export default function SocialPhotosPage() {
               </div>
               <div className={styles.uploadFields}>
                 <input type="text" placeholder="Caption (optional)" value={caption} onChange={e => setCaption(e.target.value)} className={styles.captionInput} />
-                <select value={activityType} onChange={e => setActivityType(e.target.value)} className={styles.activitySelect}>
-                  {ACTIVITY_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                </select>
+                <Dropdown
+                  value={activityType}
+                  options={ACTIVITY_TYPES}
+                  onChange={setActivityType}
+                  compact
+                />
               </div>
               <label className={styles.consentLabel}>
                 <input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} />
