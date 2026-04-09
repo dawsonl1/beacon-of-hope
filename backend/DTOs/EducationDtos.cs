@@ -10,7 +10,7 @@ public class EducationRecordRequest
     public DateOnly? RecordDate { get; set; }
     [StringLength(100)]
     public string? EducationLevel { get; set; }
-    [Range(0, 100, ErrorMessage = "AttendanceRate must be between 0 and 100.")]
+    [Range(0, 1, ErrorMessage = "AttendanceRate must be between 0 and 1.")]
     public decimal? AttendanceRate { get; set; }
     [Range(0, 100, ErrorMessage = "ProgressPercent must be between 0 and 100.")]
     public decimal? ProgressPercent { get; set; }

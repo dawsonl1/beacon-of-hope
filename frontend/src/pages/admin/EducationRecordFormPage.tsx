@@ -67,7 +67,7 @@ export default function EducationRecordFormPage() {
           residentId: Number(form.residentId),
           recordDate: form.recordDate || null,
           educationLevel: form.educationLevel || null,
-          attendanceRate: form.attendanceRate ? Number(form.attendanceRate) : null,
+          attendanceRate: form.attendanceRate ? Number(form.attendanceRate) / 100 : null,
           progressPercent: form.progressPercent ? Number(form.progressPercent) : null,
           completionStatus: form.completionStatus || null,
           schoolName: form.schoolName || null,

@@ -139,20 +139,20 @@ export default function HealthRecordFormPage() {
             <input type="number" step="0.1" className={styles.input} value={form.bmi} readOnly style={{ background: '#f5f5f5' }} />
           </label>
           <label className={styles.label}>
-            Nutrition Score (1-10)
-            <input type="number" min="1" max="10" step="0.1" className={styles.input} value={form.nutritionScore} onChange={e => handleChange('nutritionScore', e.target.value)} />
+            Nutrition Score (1-5)
+            <input type="number" min="1" max="5" step="0.1" className={styles.input} value={form.nutritionScore} onChange={e => handleChange('nutritionScore', e.target.value)} />
           </label>
           <label className={styles.label}>
-            Sleep Quality (1-10)
-            <input type="number" min="1" max="10" step="0.1" className={styles.input} value={form.sleepQualityScore} onChange={e => handleChange('sleepQualityScore', e.target.value)} />
+            Sleep Quality (1-5)
+            <input type="number" min="1" max="5" step="0.1" className={styles.input} value={form.sleepQualityScore} onChange={e => handleChange('sleepQualityScore', e.target.value)} />
           </label>
           <label className={styles.label}>
-            Energy Level (1-10)
-            <input type="number" min="1" max="10" step="0.1" className={styles.input} value={form.energyLevelScore} onChange={e => handleChange('energyLevelScore', e.target.value)} />
+            Energy Level (1-5)
+            <input type="number" min="1" max="5" step="0.1" className={styles.input} value={form.energyLevelScore} onChange={e => handleChange('energyLevelScore', e.target.value)} />
           </label>
           <label className={styles.label}>
-            General Health (1-10)
-            <input type="number" min="1" max="10" step="0.1" className={styles.input} value={form.generalHealthScore} onChange={e => handleChange('generalHealthScore', e.target.value)} />
+            General Health (1-5)
+            <input type="number" min="1" max="5" step="0.1" className={styles.input} value={form.generalHealthScore} onChange={e => handleChange('generalHealthScore', e.target.value)} />
           </label>
         </div>
 
