@@ -161,6 +161,7 @@ export default function RecordingFormPage() {
 
   // Voice memo state
   const [memoState, setMemoState] = useState<'idle' | 'requesting_mic' | 'recording' | 'processing' | 'done'>('idle');
+  const [retryWarning, setRetryWarning] = useState('');
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [audioLevel, setAudioLevel] = useState(0);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -293,38 +294,58 @@ export default function RecordingFormPage() {
     try {
       const base64Audio = await blobToBase64(audioBlob);
       const baseMime = mimeTypeRef.current.split(';')[0];
-
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  { inline_data: { mime_type: baseMime, data: base64Audio } },
-                  { text: GEMINI_PROMPT },
-                ],
-              },
+      const requestBody = JSON.stringify({
+        contents: [
+          {
+            parts: [
+              { inline_data: { mime_type: baseMime, data: base64Audio } },
+              { text: GEMINI_PROMPT },
             ],
-            generationConfig: { responseMimeType: 'application/json' },
-          }),
-        }
-      );
+          },
+        ],
+        generationConfig: { responseMimeType: 'application/json' },
+      });
 
-      if (!response.ok) {
+      const MAX_RETRIES = 3;
+      let response: Response | null = null;
+
+      for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+        if (attempt > 0) {
+          const delaySec = Math.pow(2, attempt);
+          setRetryWarning(`AI service is busy. Retrying... (attempt ${attempt + 1})`);
+          await new Promise((r) => setTimeout(r, delaySec * 1000));
+        }
+
+        response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: requestBody,
+          }
+        );
+
+        if (response.status !== 503 && response.status !== 429) break;
+        if (attempt === MAX_RETRIES) break;
+      }
+
+      setRetryWarning('');
+
+      if (!response || !response.ok) {
         let detail = '';
         try {
-          const errBody = await response.json();
+          const errBody = await response!.json();
           detail = errBody?.error?.message || '';
         } catch { /* ignore */ }
-        console.error(`Gemini API error ${response.status}:`, detail);
+        const status = response?.status ?? 0;
+        console.error(`Gemini API error ${status}:`, detail);
 
-        if (response.status === 400 || response.status === 403) {
+        if (status === 400 || status === 403) {
           setErrorMsg(`AI service error: ${detail || 'Check API key configuration.'}`);
+        } else if (status === 503 || status === 429) {
+          setErrorMsg('The AI service is currently overloaded. Please wait a moment and try again.');
         } else {
-          setErrorMsg(`AI service returned an error (${response.status}). ${detail || 'Please try again.'}`);
+          setErrorMsg(`AI service returned an error (${status}). ${detail || 'Please try again.'}`);
         }
         setMemoState('idle');
         return;
@@ -353,6 +374,7 @@ export default function RecordingFormPage() {
       setMemoState('done');
     } catch (err) {
       console.error('Gemini fetch error:', err);
+      setRetryWarning('');
       setErrorMsg("Couldn't reach the AI service. Check your connection and try again.");
       setMemoState('idle');
     }
@@ -510,7 +532,7 @@ export default function RecordingFormPage() {
           method: 'PUT',
           body: JSON.stringify(body),
         });
-        navigate(`/admin/recordings/${id}`, { replace: true });
+        navigate('/admin/recordings', { replace: true });
       } else {
         const result = await apiFetch<{ recordingId: number }>('/api/admin/recordings', {
           method: 'POST',
@@ -647,6 +669,7 @@ export default function RecordingFormPage() {
         </div>
       )}
 
+      {retryWarning && <div className={styles.retryWarning}>{retryWarning}</div>}
       {errorMsg && <div className={styles.errorMsg}>{errorMsg}</div>}
 
       <form className={styles.formCard} onSubmit={handleSubmit}>
@@ -866,16 +889,16 @@ export default function RecordingFormPage() {
 
         {/* Restricted Notes */}
         <div className={styles.section}>
-          <label className={styles.label}>
-            <span>Restricted Notes</span>
+          <h2 className={styles.sectionTitle}>Restricted Notes</h2>
+          <div className={`${styles.field} ${styles.fieldFull}`}>
+            <label>Sensitive Notes</label>
             <textarea
-              className={styles.textarea}
-              rows={3}
+              className={styles.textareaField}
               value={notesRestricted}
               onChange={(e) => setNotesRestricted(e.target.value)}
               placeholder="Sensitive notes visible only to authorized staff..."
             />
-          </label>
+          </div>
         </div>
 
         {/* Actions */}
