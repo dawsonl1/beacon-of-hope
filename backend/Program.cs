@@ -1286,7 +1286,8 @@ app.MapPost("/api/volunteer", async (AppDbContext db, HttpContext httpContext) =
         var logger = httpContext.RequestServices.GetRequiredService<ILoggerFactory>()
             .CreateLogger("VolunteerEndpoint");
         logger.LogError(ex, "Volunteer signup failed");
-        return Results.Problem("Volunteer signup failed: " + ex.Message);
+        var inner = ex.InnerException?.Message ?? "no inner exception";
+        return Results.Problem($"Volunteer signup failed: {ex.Message} | Inner: {inner}");
     }
 });
 
