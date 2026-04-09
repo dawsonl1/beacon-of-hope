@@ -39,15 +39,15 @@ interface ResidentOption {
 }
 
 const emotionalColor: Record<string, string> = {
-  'Severe Distress': '#A5524D',
-  'Distressed': '#C4756E',
-  'Struggling': '#D48C53',
+  'Severe Distress': '#C0392B',
+  'Distressed': '#D35400',
+  'Struggling': '#E67E22',
   'Unsettled': '#D4A853',
   'Neutral': '#8A8078',
   'Coping': '#7A9E7E',
-  'Stable': '#5A8A5E',
-  'Good': '#4A7A4E',
-  'Thriving': '#3A6A3E',
+  'Stable': '#27AE60',
+  'Good': '#1E8449',
+  'Thriving': '#196F3D',
 };
 
 function getEmotionalColor(state: string | null): string {

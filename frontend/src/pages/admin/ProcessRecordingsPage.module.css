@@ -222,14 +222,14 @@
 
 .flagConcern {
   background: rgba(203, 87, 104, 0.1);
-  color: var(--color-rose);
+  color: #C0392B;
   border: 1px solid rgba(203, 87, 104, 0.25);
 }
 
 .flagProgress {
-  background: rgba(212, 111, 21, 0.1);
-  color: var(--color-amber-dark);
-  border: 1px solid rgba(212, 111, 21, 0.25);
+  background: rgba(30, 132, 73, 0.1);
+  color: #1E8449;
+  border: 1px solid rgba(30, 132, 73, 0.25);
 }
 
 .flagsCell {
