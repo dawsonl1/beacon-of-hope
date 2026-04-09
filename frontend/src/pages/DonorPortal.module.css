@@ -119,6 +119,33 @@
   margin-top: 2px;
 }
 
+/* ── Top CTA (below highlight cards) ─────────────────────── */
+.topCta {
+  max-width: 960px;
+  margin: 1.5rem auto 0;
+  padding: 0 2.5rem;
+  text-align: center;
+}
+
+.topCtaBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.6rem;
+  background: var(--color-teal);
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.topCtaBtn:hover {
+  background: var(--color-teal-dark);
+  transform: translateY(-1px);
+}
+
 /* ── Tabs ─────────────────────────────────────────────────── */
 .tabs {
   display: flex;

@@ -132,6 +132,14 @@ export default function DonorPortal() {
         </div>
       </section>
 
+      {/* Donate CTA — after stats, before detailed tabs */}
+      <div className={styles.topCta}>
+        <Link to="/donate" className={styles.topCtaBtn}>
+          <Heart size={16} />
+          {hasRecurring ? 'Increase Your Impact' : 'Make Another Donation'}
+        </Link>
+      </div>
+
       {/* Tabs */}
       <nav className={styles.tabs}>
         <button className={`${styles.tab} ${activeTab === 'impact' ? styles.tabActive : ''}`} onClick={() => setActiveTab('impact')}>
