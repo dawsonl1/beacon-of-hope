@@ -258,6 +258,10 @@ export default function DonorsPage() {
               <Plus size={15} />
               Log Donation
             </button>
+            <button className={styles.btnSecondary} onClick={() => navigate('/admin/partners/new')}>
+              <Plus size={15} />
+              Add Partner
+            </button>
             <button className={styles.btnPrimary} onClick={() => navigate('/admin/donors/new')}>
               <Plus size={15} />
               Add Supporter
@@ -444,7 +448,7 @@ export default function DonorsPage() {
                     <tr>
                       <th>Name</th>
                       <th>Type</th>
-                      <th>Contact</th>
+                      <th>Area of Interest</th>
                       <th>Email</th>
                       <th>Status</th>
                       <th>Since</th>
@@ -453,7 +457,7 @@ export default function DonorsPage() {
                   </thead>
                   <tbody>
                     {partners.items.map(p => (
-                      <tr key={p.partnerId}>
+                      <tr key={p.partnerId} onClick={() => navigate(`/admin/partners/${p.partnerId}`)} style={{ cursor: 'pointer' }}>
                         <td>
                           <span className={styles.supporterName}>{p.partnerName ?? 'Unnamed'}</span>
                           {p.partnerName !== p.contactName && p.contactName && (
@@ -461,7 +465,7 @@ export default function DonorsPage() {
                           )}
                         </td>
                         <td>{p.partnerType ? <span className={styles.typeBadge}>{p.partnerType}</span> : '--'}</td>
-                        <td>{p.contactName ?? '--'}</td>
+                        <td>{p.roleType ? <span className={styles.typeBadge}>{formatEnumLabel(p.roleType)}</span> : '--'}</td>
                         <td>{p.email ?? '--'}</td>
                         <td><span className={statusClassName(p.status)}>{p.status ?? '--'}</span></td>
                         <td>{formatDate(p.startDate)}</td>

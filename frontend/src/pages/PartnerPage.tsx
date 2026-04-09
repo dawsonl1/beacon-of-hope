@@ -4,6 +4,17 @@ import { apiFetch } from '../api';
 import styles from './PartnerPage.module.css';
 
 const PARTNER_TYPES = ['Organization', 'Individual'] as const;
+const ROLE_OPTIONS = [
+  { value: '', label: 'Select an area of interest...' },
+  { value: 'SafehouseOps', label: 'Safehouse Operations' },
+  { value: 'Education', label: 'Education Services' },
+  { value: 'Evaluation', label: 'Assessments & Evaluations' },
+  { value: 'Logistics', label: 'Logistics & Supplies' },
+  { value: 'Maintenance', label: 'Facility Maintenance' },
+  { value: 'FindSafehouse', label: 'Locating New Safehouses' },
+  { value: 'Transport', label: 'Transportation' },
+  { value: 'Other', label: 'Other' },
+];
 
 export default function PartnerPage() {
   const [partnerType, setPartnerType] = useState<string>('Organization');
@@ -11,6 +22,7 @@ export default function PartnerPage() {
   const [contactName, setContactName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [roleType, setRoleType] = useState('');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -44,6 +56,7 @@ export default function PartnerPage() {
           contactName,
           email,
           phone: phone || undefined,
+          roleType: roleType || undefined,
           notes: notes || undefined,
         }),
       });
@@ -172,7 +185,21 @@ export default function PartnerPage() {
           </div>
 
           <div className={styles.fieldGroup}>
-            <label className={styles.label} htmlFor="notes">How would you like to help? (optional)</label>
+            <label className={styles.label} htmlFor="roleType">Area of Interest (optional)</label>
+            <select
+              id="roleType"
+              className={styles.select}
+              value={roleType}
+              onChange={e => setRoleType(e.target.value)}
+            >
+              {ROLE_OPTIONS.map(r => (
+                <option key={r.value} value={r.value}>{r.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.label} htmlFor="notes">Anything else? (optional)</label>
             <textarea
               id="notes"
               className={styles.textarea}
