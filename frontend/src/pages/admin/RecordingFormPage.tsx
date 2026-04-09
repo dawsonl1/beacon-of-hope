@@ -44,6 +44,7 @@ interface GeminiResponse {
   progressNoted: boolean;
   concernsFlagged: boolean;
   referralMade: boolean;
+  riskLevel: string | null;
 }
 
 const SESSION_TYPES = [
@@ -68,6 +69,8 @@ const EMOTIONAL_STATES = [
   'Thriving',
 ];
 
+const RISK_LEVELS = ['Critical', 'High', 'Medium', 'Low'];
+
 const GEMINI_PROMPT = `You are a clinical documentation assistant for a children's residential care facility. A social worker has just recorded a voice memo summarizing a counseling session with a resident. Your job is to extract structured data from the audio and return it as JSON.
 
 Return ONLY a JSON object with these exact keys. Use null for any field the speaker did not mention or that you cannot confidently determine:
@@ -85,7 +88,8 @@ Return ONLY a JSON object with these exact keys. Use null for any field the spea
   "followUpActions": string | null,
   "progressNoted": boolean,
   "concernsFlagged": boolean,
-  "referralMade": boolean
+  "referralMade": boolean,
+  "riskLevel": string | null
 }
 
 Rules:
@@ -95,6 +99,7 @@ Rules:
 - For socialWorker: this is the person recording.
 - For durationMinutes: integer, e.g. 45.
 - For the narrative field: clean up filler words, false starts, and verbal tics. Exclude filler words or pauses, but try to keep the recorder's voice. This should sound like a professional clinician, NOT AI. Do NOT fabricate details for any reason — only include what the speaker actually said.
+- For riskLevel: MUST be one of: "Critical", "High", "Medium", "Low". Only set if the speaker explicitly mentions a risk level change or assessment. If not mentioned, use null.
 - For boolean flags: only set to true if the speaker explicitly mentions progress, concerns, or a referral. Default to false.
 - If the audio is unclear, too short, or contains no session-relevant content, return all fields as null except the three booleans (which should be false).
 - DO NOT hallucinate under any circumstances or infer data that was not spoken. When in doubt, use null.`;
@@ -148,6 +153,7 @@ export default function RecordingFormPage() {
   const [notesRestricted, setNotesRestricted] = useState('');
   const [needsCaseConference, setNeedsCaseConference] = useState(false);
   const [readyForReintegration, setReadyForReintegration] = useState(false);
+  const [updatedRiskLevel, setUpdatedRiskLevel] = useState('');
 
   // Voice memo state
   const [memoState, setMemoState] = useState<'idle' | 'requesting_mic' | 'recording' | 'processing' | 'done'>('idle');
@@ -391,6 +397,10 @@ export default function RecordingFormPage() {
     if (data.progressNoted === true) setProgressNoted(true);
     if (data.concernsFlagged === true) setConcernsFlagged(true);
     if (data.referralMade === true) setReferralMade(true);
+
+    if (data.riskLevel && RISK_LEVELS.includes(data.riskLevel)) {
+      setUpdatedRiskLevel(data.riskLevel);
+    }
   }
 
   // Pre-fill social worker name from current user
@@ -483,6 +493,7 @@ export default function RecordingFormPage() {
         notesRestricted: notesRestricted || null,
         needsCaseConference,
         readyForReintegration,
+        updatedRiskLevel: updatedRiskLevel || null,
       };
 
       if (isEdit) {
@@ -779,6 +790,28 @@ export default function RecordingFormPage() {
                 onChange={(e) => setFollowUp(e.target.value)}
                 placeholder="Describe any follow-up actions needed after this session..."
               />
+            </div>
+          </div>
+        </div>
+
+        {/* Risk Level Update */}
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>Risk Assessment</h2>
+          <div className={styles.fieldGrid}>
+            <div className={styles.field}>
+              <label>Updated Risk Level</label>
+              <select
+                value={updatedRiskLevel}
+                onChange={(e) => setUpdatedRiskLevel(e.target.value)}
+              >
+                <option value="">No change</option>
+                {RISK_LEVELS.map((l) => (
+                  <option key={l} value={l}>{l}</option>
+                ))}
+              </select>
+              <span className={styles.fieldHint}>
+                Updates the resident's current risk level on the caseload inventory.
+              </span>
             </div>
           </div>
         </div>

@@ -323,6 +323,12 @@
   cursor: pointer;
 }
 
+.fieldHint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
 /* ── Narrative textarea ──────────────────────────────── */
 .narrativeField {
   min-height: 200px;
