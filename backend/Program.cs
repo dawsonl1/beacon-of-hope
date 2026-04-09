@@ -1240,39 +1240,54 @@ app.MapGet("/api/impact/snapshots", async (AppDbContext db) =>
 
 app.MapPost("/api/volunteer", async (AppDbContext db, HttpContext httpContext) =>
 {
-    var body = await httpContext.Request.ReadFromJsonAsync<VolunteerSignupRequest>();
-    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
-
-    if (string.IsNullOrWhiteSpace(body.FirstName) || string.IsNullOrWhiteSpace(body.LastName))
-        return Results.BadRequest(new { error = "First and last name are required." });
-    if (string.IsNullOrWhiteSpace(body.Email))
-        return Results.BadRequest(new { error = "Email is required." });
-    if (string.IsNullOrWhiteSpace(body.Region))
-        return Results.BadRequest(new { error = "Region is required." });
-
-    // Check if this email is already registered as a volunteer
-    var existing = await db.Supporters
-        .FirstOrDefaultAsync(s => s.Email == body.Email.Trim() && s.SupporterType == "Volunteer");
-    if (existing != null)
-        return Results.Ok(new { message = "You're already signed up. We'll be in touch!" });
-
-    var supporter = new backend.Models.Supporter
+    try
     {
-        SupporterType = "Volunteer",
-        FirstName = body.FirstName.Trim(),
-        LastName = body.LastName.Trim(),
-        DisplayName = $"{body.FirstName.Trim()} {body.LastName.Trim()}",
-        Email = body.Email.Trim(),
-        Region = body.Region.Trim(),
-        Country = "Guam",
-        Status = "Prospective",
-        AcquisitionChannel = "Direct",
-        CreatedAt = DateTime.UtcNow,
-    };
+        var body = await httpContext.Request.ReadFromJsonAsync<VolunteerSignupRequest>();
+        if (body == null) return Results.BadRequest(new { error = "Request body is required." });
 
-    db.Supporters.Add(supporter);
-    await db.SaveChangesAsync();
-    return Results.Ok(new { message = "Thank you for your interest!" });
+        var firstName = body.FirstName?.Trim() ?? "";
+        var lastName = body.LastName?.Trim() ?? "";
+        var email = body.Email?.Trim() ?? "";
+        var region = body.Region?.Trim() ?? "";
+
+        if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
+            return Results.BadRequest(new { error = "First and last name are required." });
+        if (string.IsNullOrEmpty(email))
+            return Results.BadRequest(new { error = "Email is required." });
+        if (string.IsNullOrEmpty(region))
+            return Results.BadRequest(new { error = "Region is required." });
+
+        // Check if this email is already registered as a volunteer
+        var existing = await db.Supporters
+            .AnyAsync(s => s.Email == email && s.SupporterType == "Volunteer");
+        if (existing)
+            return Results.Ok(new { message = "You're already signed up. We'll be in touch!" });
+
+        var supporter = new backend.Models.Supporter
+        {
+            SupporterType = "Volunteer",
+            FirstName = firstName,
+            LastName = lastName,
+            DisplayName = $"{firstName} {lastName}",
+            Email = email,
+            Region = region,
+            Country = "Guam",
+            Status = "Prospective",
+            AcquisitionChannel = "Direct",
+            CreatedAt = DateTime.UtcNow,
+        };
+
+        db.Supporters.Add(supporter);
+        await db.SaveChangesAsync();
+        return Results.Ok(new { message = "Thank you for your interest!" });
+    }
+    catch (Exception ex)
+    {
+        var logger = httpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+            .CreateLogger("VolunteerEndpoint");
+        logger.LogError(ex, "Volunteer signup failed");
+        return Results.Problem("Volunteer signup failed: " + ex.Message);
+    }
 });
 
 // ── Admin endpoints ────────────────────────────────────────
@@ -2921,13 +2936,9 @@ public class InterventionPlanRequest { public int ResidentId { get; set; } publi
 
 public class VolunteerSignupRequest
 {
-    [StringLength(100)]
     public string? FirstName { get; set; }
-    [StringLength(100)]
     public string? LastName { get; set; }
-    [EmailAddress]
     public string? Email { get; set; }
-    [StringLength(100)]
     public string? Region { get; set; }
 }
 
