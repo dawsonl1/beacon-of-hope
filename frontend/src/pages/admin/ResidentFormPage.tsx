@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { APP_TODAY_STR } from '../../constants';
+import { useAuth } from '../../contexts/AuthContext';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './ResidentFormPage.module.css';
 
@@ -151,7 +152,9 @@ export default function ResidentFormPage() {
   useDocumentTitle('Resident Form');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const isEdit = !!id;
+  const isAdmin = user?.roles?.includes('Admin') ?? false;
 
   const [form, setForm] = useState<FormData>(EMPTY_FORM);
   const [options, setOptions] = useState<FilterOptions | null>(null);
@@ -164,6 +167,22 @@ export default function ResidentFormPage() {
       .then(setOptions)
       .catch(() => {});
   }, []);
+
+  // Filter safehouses to only those assigned to the current staff member
+  const userSafehouseIds = new Set(
+    (user?.safehouses ?? []).map((s) => s.safehouseId),
+  );
+  const availableSafehouses =
+    isAdmin || userSafehouseIds.size === 0
+      ? options?.safehouses ?? []
+      : (options?.safehouses ?? []).filter((s) => userSafehouseIds.has(s.safehouseId));
+
+  // Auto-select safehouse when user has exactly one
+  useEffect(() => {
+    if (!isEdit && availableSafehouses.length === 1 && !form.safehouseId) {
+      setForm((prev) => ({ ...prev, safehouseId: String(availableSafehouses[0].safehouseId) }));
+    }
+  }, [availableSafehouses, isEdit, form.safehouseId]);
 
   useEffect(() => {
     if (!isEdit) return;
@@ -290,7 +309,7 @@ export default function ResidentFormPage() {
               Safehouse *
               <select className={styles.select} value={form.safehouseId} onChange={(e) => updateField('safehouseId', e.target.value)} required>
                 <option value="">Select safehouse</option>
-                {options?.safehouses.map((s) => (
+                {availableSafehouses.map((s) => (
                   <option key={s.safehouseId} value={String(s.safehouseId)}>{s.label}</option>
                 ))}
               </select>
@@ -301,15 +320,6 @@ export default function ResidentFormPage() {
                 <option value="">Select category</option>
                 {options?.categories.map((c) => (
                   <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-            </label>
-            <label className={styles.label}>
-              Risk Level *
-              <select className={styles.select} value={form.currentRiskLevel} onChange={(e) => { updateField('currentRiskLevel', e.target.value); if (!form.initialRiskLevel) updateField('initialRiskLevel', e.target.value); }} required>
-                <option value="">Select risk level</option>
-                {options?.riskLevels.map((r) => (
-                  <option key={r} value={r}>{r}</option>
                 ))}
               </select>
             </label>
