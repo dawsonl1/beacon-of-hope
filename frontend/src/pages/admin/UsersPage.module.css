@@ -50,6 +50,58 @@
   filter: brightness(1.03);
 }
 
+/* ── Filter Bar ────────────────────────────────────────── */
+.filterBar {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 1.25rem;
+}
+
+.filterBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  color: var(--text-muted);
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.filterBtn:hover {
+  border-color: rgba(15, 27, 45, 0.18);
+  color: var(--text-strong);
+}
+
+.filterActive {
+  background: var(--color-sage);
+  color: #fff;
+  border-color: var(--color-sage);
+}
+
+.filterActive:hover {
+  color: #fff;
+}
+
+.filterCount {
+  font-size: 0.7rem;
+  font-weight: 700;
+  min-width: 1.3rem;
+  text-align: center;
+  padding: 0.05rem 0.3rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.filterActive .filterCount {
+  background: rgba(255, 255, 255, 0.25);
+}
+
 /* ── Create Form ───────────────────────────────────────── */
 .formCard {
   background: var(--surface-1);
@@ -223,6 +275,11 @@
 .roleStaff {
   color: var(--color-sage);
   background: rgba(15, 143, 125, 0.1);
+}
+
+.roleDonor {
+  color: var(--color-rose);
+  background: rgba(203, 87, 104, 0.1);
 }
 
 .deleteBtn {

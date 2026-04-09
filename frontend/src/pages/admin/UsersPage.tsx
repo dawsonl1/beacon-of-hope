@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { UserPlus, Trash2, Loader2, Shield, User } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { UserPlus, Trash2, Loader2, Shield, User, Heart } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
@@ -20,6 +20,8 @@ interface AppUser {
   safehouses?: SafehouseRef[];
 }
 
+type RoleFilter = 'All' | 'Staff' | 'Donors';
+
 export default function UsersPage() {
   const { user: currentUser } = useAuth();
   const isAdmin = currentUser?.roles?.includes('Admin') ?? false;
@@ -28,6 +30,9 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  // Role filter
+  const [roleFilter, setRoleFilter] = useState<RoleFilter>('All');
 
   // Available safehouses
   const [allSafehouses, setAllSafehouses] = useState<SafehouseRef[]>([]);
@@ -46,6 +51,13 @@ export default function UsersPage() {
   // Delete
   const [deleteTarget, setDeleteTarget] = useState<AppUser | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  const filteredUsers = useMemo(() => {
+    if (roleFilter === 'All') return users;
+    if (roleFilter === 'Staff')
+      return users.filter(u => u.roles.includes('Admin') || u.roles.includes('Staff'));
+    return users.filter(u => u.roles.includes('Donor'));
+  }, [users, roleFilter]);
 
   async function fetchUsers() {
     if (!isAdmin) return;
@@ -131,13 +143,32 @@ export default function UsersPage() {
       <header className={styles.header}>
         <div>
           <h1 className={styles.title}>User Management</h1>
-          <p className={styles.subtitle}>Create and manage staff and admin accounts</p>
+          <p className={styles.subtitle}>Manage staff, admin, and donor accounts</p>
         </div>
         <button className={styles.addBtn} onClick={() => setShowForm(true)}>
           <UserPlus size={15} />
           Create Account
         </button>
       </header>
+
+      <div className={styles.filterBar}>
+        {(['All', 'Staff', 'Donors'] as RoleFilter[]).map(f => (
+          <button
+            key={f}
+            className={`${styles.filterBtn} ${roleFilter === f ? styles.filterActive : ''}`}
+            onClick={() => setRoleFilter(f)}
+          >
+            {f}
+            <span className={styles.filterCount}>
+              {f === 'All'
+                ? users.length
+                : f === 'Staff'
+                  ? users.filter(u => u.roles.includes('Admin') || u.roles.includes('Staff')).length
+                  : users.filter(u => u.roles.includes('Donor')).length}
+            </span>
+          </button>
+        ))}
+      </div>
 
       {/* Create form */}
       {showForm && (
@@ -166,6 +197,7 @@ export default function UsersPage() {
                 <select className={styles.select} value={formRole} onChange={e => setFormRole(e.target.value)}>
                   <option value="Staff">Staff</option>
                   <option value="Admin">Admin</option>
+                  <option value="Donor">Donor</option>
                 </select>
               </label>
             </div>
@@ -221,40 +253,45 @@ export default function UsersPage() {
               </tr>
             </thead>
             <tbody>
-              {users.map(u => (
-                <tr key={u.id}>
-                  <td className={styles.nameCell}>
-                    {u.roles.includes('Admin') ? <Shield size={15} /> : <User size={15} />}
-                    <span>{u.firstName} {u.lastName}</span>
-                  </td>
-                  <td>{u.email}</td>
-                  <td>
-                    <span className={`${styles.roleBadge} ${u.roles.includes('Admin') ? styles.roleAdmin : styles.roleStaff}`}>
-                      {u.roles[0] || 'Staff'}
-                    </span>
-                  </td>
-                  <td>
-                    {u.safehouses && u.safehouses.length > 0 ? (
-                      <span style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap' }}>
-                        {u.safehouses.map(s => (
-                          <span key={s.safehouseId} style={{ fontSize: '0.75rem', background: 'rgba(15,143,125,0.08)', padding: '0.15rem 0.4rem', borderRadius: '4px', whiteSpace: 'nowrap' }}>
-                            {s.safehouseCode}
-                          </span>
-                        ))}
+              {filteredUsers.map(u => {
+                const role = u.roles[0] || 'Staff';
+                const isDonor = u.roles.includes('Donor');
+                const isAdminRole = u.roles.includes('Admin');
+                return (
+                  <tr key={u.id}>
+                    <td className={styles.nameCell}>
+                      {isAdminRole ? <Shield size={15} /> : isDonor ? <Heart size={15} /> : <User size={15} />}
+                      <span>{u.firstName} {u.lastName}</span>
+                    </td>
+                    <td>{u.email}</td>
+                    <td>
+                      <span className={`${styles.roleBadge} ${isAdminRole ? styles.roleAdmin : isDonor ? styles.roleDonor : styles.roleStaff}`}>
+                        {role}
                       </span>
-                    ) : (
-                      <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>None</span>
-                    )}
-                  </td>
-                  <td>
-                    {u.email !== currentUser?.email && (
-                      <button className={styles.deleteBtn} onClick={() => setDeleteTarget(u)} title="Delete user">
-                        <Trash2 size={14} />
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td>
+                      {u.safehouses && u.safehouses.length > 0 ? (
+                        <span style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap' }}>
+                          {u.safehouses.map(s => (
+                            <span key={s.safehouseId} style={{ fontSize: '0.75rem', background: 'rgba(15,143,125,0.08)', padding: '0.15rem 0.4rem', borderRadius: '4px', whiteSpace: 'nowrap' }}>
+                              {s.safehouseCode}
+                            </span>
+                          ))}
+                        </span>
+                      ) : (
+                        <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{isDonor ? '—' : 'None'}</span>
+                      )}
+                    </td>
+                    <td>
+                      {u.email !== currentUser?.email && (
+                        <button className={styles.deleteBtn} onClick={() => setDeleteTarget(u)} title="Delete user">
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
