@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { APP_TODAY_STR } from '../../constants';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Dropdown from '../../components/admin/Dropdown';
 import DatePicker from '../../components/admin/DatePicker';
 import TextArea from '../../components/admin/TextArea';
-import Checkbox from '../../components/admin/Checkbox';
 import styles from './VisitationFormPage.module.css';
 
 interface FormData {
@@ -34,6 +33,20 @@ const emptyForm: FormData = {
   medicalCheckupDone: false, dentalCheckupDone: false, psychologicalCheckupDone: false,
   notes: '',
 };
+
+const SCORE_OPTIONS = [
+  { value: '1', label: '1 — Poor' },
+  { value: '2', label: '2 — Fair' },
+  { value: '3', label: '3 — Average' },
+  { value: '4', label: '4 — Good' },
+  { value: '5', label: '5 — Excellent' },
+];
+
+const CHECKUP_FIELDS = [
+  { key: 'medicalCheckupDone' as const, label: 'Medical Checkup Done' },
+  { key: 'dentalCheckupDone' as const, label: 'Dental Checkup Done' },
+  { key: 'psychologicalCheckupDone' as const, label: 'Psychological Checkup Done' },
+];
 
 export default function HealthRecordFormPage() {
   useDocumentTitle('Health Record');
@@ -148,39 +161,42 @@ export default function HealthRecordFormPage() {
             </div>
             <div className={styles.field}>
               <label className={styles.label}>BMI (auto-calculated)</label>
-              <input type="number" step="0.1" className={styles.input} value={form.bmi} readOnly style={{ background: 'var(--surface-2)', opacity: 0.7 }} />
+              <input type="text" className={`${styles.input} ${styles.readonlyInput}`} value={form.bmi} readOnly tabIndex={-1} />
             </div>
           </div>
         </div>
 
         <div className={styles.formCard}>
-          <h2 className={styles.formSection}>Health Scores (1-5)</h2>
+          <h2 className={styles.formSection}>Health Scores</h2>
           <div className={styles.fieldGrid}>
             <div className={styles.field}>
-              <label className={styles.label}>Nutrition Score</label>
-              <input type="number" min="1" max="5" step="0.1" className={styles.input} value={form.nutritionScore} onChange={e => handleChange('nutritionScore', e.target.value)} />
+              <div className={styles.label}>Nutrition</div>
+              <Dropdown value={form.nutritionScore} placeholder="Select score" options={SCORE_OPTIONS} onChange={v => handleChange('nutritionScore', v)} />
             </div>
             <div className={styles.field}>
-              <label className={styles.label}>Sleep Quality</label>
-              <input type="number" min="1" max="5" step="0.1" className={styles.input} value={form.sleepQualityScore} onChange={e => handleChange('sleepQualityScore', e.target.value)} />
+              <div className={styles.label}>Sleep Quality</div>
+              <Dropdown value={form.sleepQualityScore} placeholder="Select score" options={SCORE_OPTIONS} onChange={v => handleChange('sleepQualityScore', v)} />
             </div>
             <div className={styles.field}>
-              <label className={styles.label}>Energy Level</label>
-              <input type="number" min="1" max="5" step="0.1" className={styles.input} value={form.energyLevelScore} onChange={e => handleChange('energyLevelScore', e.target.value)} />
+              <div className={styles.label}>Energy Level</div>
+              <Dropdown value={form.energyLevelScore} placeholder="Select score" options={SCORE_OPTIONS} onChange={v => handleChange('energyLevelScore', v)} />
             </div>
             <div className={styles.field}>
-              <label className={styles.label}>General Health</label>
-              <input type="number" min="1" max="5" step="0.1" className={styles.input} value={form.generalHealthScore} onChange={e => handleChange('generalHealthScore', e.target.value)} />
+              <div className={styles.label}>General Health</div>
+              <Dropdown value={form.generalHealthScore} placeholder="Select score" options={SCORE_OPTIONS} onChange={v => handleChange('generalHealthScore', v)} />
             </div>
           </div>
         </div>
 
         <div className={styles.formCard}>
-          <h2 className={styles.formSection}>Checkups</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <Checkbox checked={form.medicalCheckupDone} onChange={v => handleChange('medicalCheckupDone', v)} label="Medical Checkup Done" />
-            <Checkbox checked={form.dentalCheckupDone} onChange={v => handleChange('dentalCheckupDone', v)} label="Dental Checkup Done" />
-            <Checkbox checked={form.psychologicalCheckupDone} onChange={v => handleChange('psychologicalCheckupDone', v)} label="Psychological Checkup Done" />
+          <h2 className={styles.formSection}>Checkups Completed</h2>
+          <div className={styles.toggleList}>
+            {CHECKUP_FIELDS.map(({ key, label }) => (
+              <div key={key} className={styles.toggleRow}>
+                <button type="button" className={`${styles.toggle} ${form[key] ? styles.toggleActive : ''}`} onClick={() => handleChange(key, !form[key])} />
+                <div className={styles.toggleLabel}>{label}</div>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -195,6 +211,7 @@ export default function HealthRecordFormPage() {
         <div className={styles.actions}>
           <button type="button" className={styles.cancelBtn} onClick={() => navigate(fromCalendar ? '/admin' : -1 as any)}>Cancel</button>
           <button type="submit" className={styles.submitBtn} disabled={saving}>
+            {saving ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <Save size={14} />}
             {saving ? 'Saving...' : 'Save Health Record'}
           </button>
         </div>

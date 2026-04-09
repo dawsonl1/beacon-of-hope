@@ -112,6 +112,18 @@
   cursor: pointer;
 }
 
+.readonlyInput {
+  background: var(--surface-2);
+  opacity: 0.7;
+  cursor: default;
+}
+
+.toggleList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 /* ── Toggle Row ───────────────────────────────────────── */
 .toggleRow {
   display: flex;

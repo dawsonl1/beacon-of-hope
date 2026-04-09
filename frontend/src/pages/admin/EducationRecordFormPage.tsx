@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { APP_TODAY_STR } from '../../constants';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
@@ -120,7 +120,7 @@ export default function EducationRecordFormPage() {
               <div className={styles.label}>Education Level</div>
               <Dropdown
                 value={form.educationLevel}
-                placeholder="Select"
+                placeholder="Select level"
                 options={[
                   { value: 'Bridge Program', label: 'Bridge Program' },
                   { value: 'Secondary Support', label: 'Secondary Support' },
@@ -144,17 +144,17 @@ export default function EducationRecordFormPage() {
           <div className={styles.fieldGrid}>
             <div className={styles.field}>
               <label className={styles.label}>Attendance Rate (%)</label>
-              <input type="number" min="0" max="100" step="0.1" className={styles.input} value={form.attendanceRate} onChange={e => handleChange('attendanceRate', e.target.value)} placeholder="0-100" />
+              <input type="number" min="0" max="100" step="0.1" className={styles.input} value={form.attendanceRate} onChange={e => handleChange('attendanceRate', e.target.value)} placeholder="0–100" />
             </div>
             <div className={styles.field}>
               <label className={styles.label}>Progress (%)</label>
-              <input type="number" min="0" max="100" step="0.1" className={styles.input} value={form.progressPercent} onChange={e => handleChange('progressPercent', e.target.value)} placeholder="0-100" />
+              <input type="number" min="0" max="100" step="0.1" className={styles.input} value={form.progressPercent} onChange={e => handleChange('progressPercent', e.target.value)} placeholder="0–100" />
             </div>
             <div className={styles.field}>
               <div className={styles.label}>Completion Status</div>
               <Dropdown
                 value={form.completionStatus}
-                placeholder="Select"
+                placeholder="Select status"
                 options={[
                   { value: 'In Progress', label: 'In Progress' },
                   { value: 'Completed', label: 'Completed' },
@@ -168,7 +168,7 @@ export default function EducationRecordFormPage() {
               <div className={styles.label}>Enrollment Status</div>
               <Dropdown
                 value={form.enrollmentStatus}
-                placeholder="Select"
+                placeholder="Select status"
                 options={[
                   { value: 'Enrolled', label: 'Enrolled' },
                   { value: 'Not Enrolled', label: 'Not Enrolled' },
@@ -190,8 +190,9 @@ export default function EducationRecordFormPage() {
         </div>
 
         <div className={styles.actions}>
-          <button type="button" className={styles.cancelBtn} onClick={() => navigate(-1)}>Cancel</button>
+          <button type="button" className={styles.cancelBtn} onClick={() => navigate(fromCalendar ? '/admin' : -1 as any)}>Cancel</button>
           <button type="submit" className={styles.submitBtn} disabled={saving}>
+            {saving ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <Save size={14} />}
             {saving ? 'Saving...' : 'Save Education Record'}
           </button>
         </div>
