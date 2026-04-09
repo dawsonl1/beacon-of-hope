@@ -161,6 +161,8 @@ export default function HomePage() {
   const [events, setEvents] = useState<CalendarEventItem[]>([]);
   const [eventsLoading, setEventsLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEventItem | null>(null);
+  const [popoverPos, setPopoverPos] = useState<{ top: number; left: number } | null>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
   const [showNewForm, setShowNewForm] = useState(false);
   const [newEvent, setNewEvent] = useState<NewEventForm>({
     eventType: 'Counseling', title: '', description: '',
@@ -344,9 +346,33 @@ export default function HomePage() {
     return classes.join(' ');
   }
 
+  function handleEventClick(evt: CalendarEventItem, e: React.MouseEvent) {
+    e.stopPropagation();
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    setPopoverPos({ top: rect.bottom + 4, left: rect.left });
+    setSelectedEvent(evt);
+  }
+
+  function closePopover() {
+    setSelectedEvent(null);
+    setPopoverPos(null);
+  }
+
+  // Close popover on click outside
+  useEffect(() => {
+    if (!selectedEvent) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+        closePopover();
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [selectedEvent]);
+
   function renderEventChip(evt: CalendarEventItem) {
     return (
-      <div key={evt.calendarEventId} className={getEventStyle(evt.eventType, evt.status)} onClick={() => setSelectedEvent(evt)}>
+      <div key={evt.calendarEventId} className={getEventStyle(evt.eventType, evt.status)} onClick={e => handleEventClick(evt, e)}>
         {evt.startTime && <span>{evt.startTime}</span>}
         <span>{evt.title}</span>
         {evt.residentCode && <span>({evt.residentCode})</span>}
@@ -405,7 +431,7 @@ export default function HomePage() {
                   <div className={styles.sectionLabel}>Unscheduled</div>
                   <div className={styles.unscheduledList}>
                     {unscheduled.map(evt => (
-                      <div key={evt.calendarEventId} className={styles.unscheduledCard} onClick={() => setSelectedEvent(evt)}>
+                      <div key={evt.calendarEventId} className={styles.unscheduledCard} onClick={e => handleEventClick(evt, e)}>
                         {evt.title} {evt.residentCode && `(${evt.residentCode})`}
                       </div>
                     ))}
@@ -442,7 +468,7 @@ export default function HomePage() {
                   <div className={styles.sectionLabel}>Unscheduled</div>
                   <div className={styles.unscheduledList}>
                     {unscheduled.map(evt => (
-                      <div key={evt.calendarEventId} className={styles.unscheduledCard} onClick={() => setSelectedEvent(evt)}>
+                      <div key={evt.calendarEventId} className={styles.unscheduledCard} onClick={e => handleEventClick(evt, e)}>
                         {evt.title} {evt.residentCode && `(${evt.residentCode})`}
                       </div>
                     ))}
@@ -571,49 +597,61 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Event detail modal */}
-      {selectedEvent && (
-        <div className={styles.modalOverlay} onClick={() => setSelectedEvent(null)}>
-          <div className={styles.modal} onClick={e => e.stopPropagation()}>
-            <h3 className={styles.modalTitle}>{selectedEvent.title}</h3>
-            <p className={styles.modalMeta}>Type: {selectedEvent.eventType}</p>
-            <p className={styles.modalMeta}>Date: {selectedEvent.eventDate}</p>
-            {selectedEvent.startTime && <p className={styles.modalMeta}>Time: {selectedEvent.startTime}{selectedEvent.endTime ? ` – ${selectedEvent.endTime}` : ''}</p>}
-            {selectedEvent.residentCode && <p className={styles.modalMeta}>Resident: {selectedEvent.residentCode}</p>}
-            {selectedEvent.description && <p className={styles.modalMeta}>{selectedEvent.description}</p>}
-            <p className={styles.modalMeta}>Status: {selectedEvent.status}</p>
-            <div className={styles.modalActions}>
-              {selectedEvent.status === 'Scheduled' && (
-                <>
-                  <button className={styles.modalBtnPrimary} onClick={() => handleUpdateEvent(selectedEvent.calendarEventId, { status: 'Completed' })}>
-                    Mark Complete
-                  </button>
-                  {selectedEvent.eventType === 'Counseling' && (
-                    <button className={styles.modalBtn} onClick={() => { navigate(`/admin/recordings/new?residentId=${selectedEvent.residentId || ''}`); setSelectedEvent(null); }}>
-                      Log Recording
-                    </button>
-                  )}
-                  {selectedEvent.eventType === 'HomeVisit' && (
-                    <button className={styles.modalBtn} onClick={() => { navigate(`/admin/visitations/new?residentId=${selectedEvent.residentId || ''}`); setSelectedEvent(null); }}>
-                      Log Visit
-                    </button>
-                  )}
-                  {!selectedEvent.startTime && (
-                    <button className={styles.modalBtn} onClick={() => {
-                      const time = prompt('Enter start time (HH:MM):', '09:00');
-                      if (time) handleUpdateEvent(selectedEvent.calendarEventId, { startTime: time });
-                    }}>
-                      Set Time
-                    </button>
-                  )}
-                  <button className={styles.modalBtnDanger} onClick={() => handleUpdateEvent(selectedEvent.calendarEventId, { status: 'Cancelled' })}>
-                    Cancel Event
-                  </button>
-                </>
-              )}
-              <button className={styles.modalBtn} onClick={() => setSelectedEvent(null)}>Close</button>
-            </div>
+      {/* Event detail popover */}
+      {selectedEvent && popoverPos && (
+        <div
+          ref={popoverRef}
+          className={styles.popover}
+          style={{ top: popoverPos.top, left: popoverPos.left }}
+        >
+          <div className={styles.popoverHeader}>
+            <div className={`${styles.popoverDot} ${styles[EVENT_TYPE_STYLES[selectedEvent.eventType] || 'eventOther']}`} />
+            <h3 className={styles.popoverTitle}>{selectedEvent.title}</h3>
+            <button className={styles.popoverClose} onClick={closePopover}><X size={16} /></button>
           </div>
+          <div className={styles.popoverBody}>
+            <p className={styles.popoverDetail}>
+              {selectedEvent.eventDate}
+              {selectedEvent.startTime && ` · ${selectedEvent.startTime}`}
+              {selectedEvent.endTime && ` – ${selectedEvent.endTime}`}
+            </p>
+            {selectedEvent.residentCode && (
+              <p className={styles.popoverDetail}>
+                Resident: <a href="#" className={styles.residentLink} onClick={e => { e.preventDefault(); navigate(`/admin/caseload/${selectedEvent.residentId}`); closePopover(); }}>{selectedEvent.residentCode}</a>
+              </p>
+            )}
+            <p className={styles.popoverDetail}>Type: {selectedEvent.eventType}</p>
+            {selectedEvent.description && <p className={styles.popoverDetail}>{selectedEvent.description}</p>}
+            <p className={styles.popoverDetail}>Status: <span className={styles.popoverStatus}>{selectedEvent.status}</span></p>
+          </div>
+          {selectedEvent.status === 'Scheduled' && (
+            <div className={styles.popoverActions}>
+              <button className={styles.modalBtnPrimary} onClick={() => handleUpdateEvent(selectedEvent.calendarEventId, { status: 'Completed' })}>
+                Complete
+              </button>
+              {selectedEvent.eventType === 'Counseling' && (
+                <button className={styles.modalBtn} onClick={() => { navigate(`/admin/recordings/new?residentId=${selectedEvent.residentId || ''}`); closePopover(); }}>
+                  Log Recording
+                </button>
+              )}
+              {selectedEvent.eventType === 'HomeVisit' && (
+                <button className={styles.modalBtn} onClick={() => { navigate(`/admin/visitations/new?residentId=${selectedEvent.residentId || ''}`); closePopover(); }}>
+                  Log Visit
+                </button>
+              )}
+              {!selectedEvent.startTime && (
+                <button className={styles.modalBtn} onClick={() => {
+                  const time = prompt('Enter start time (HH:MM):', '09:00');
+                  if (time) handleUpdateEvent(selectedEvent.calendarEventId, { startTime: time });
+                }}>
+                  Set Time
+                </button>
+              )}
+              <button className={styles.modalBtnDanger} onClick={() => handleUpdateEvent(selectedEvent.calendarEventId, { status: 'Cancelled' })}>
+                Cancel
+              </button>
+            </div>
+          )}
         </div>
       )}
 
