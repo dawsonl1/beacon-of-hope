@@ -390,9 +390,9 @@ export default function HomePage() {
         onDragStart={e => { e.stopPropagation(); setDragEventId(evt.calendarEventId); }}
         onDragEnd={() => setDragEventId(null)}
       >
-        {evt.startTime && <span>{evt.startTime}</span>}
         <span>{evt.title}</span>
         {evt.residentCode && <span>({evt.residentCode})</span>}
+        {evt.startTime && <span>{evt.startTime}</span>}
       </div>
     );
   }
