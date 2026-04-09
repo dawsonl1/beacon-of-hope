@@ -312,12 +312,10 @@ export default function HomePage() {
 
   // @dnd-kit drag state
   const [dragTask, setDragTask] = useState<StaffTaskItem | null>(null);
-  const [overCellId, setOverCellId] = useState<string | null>(null);
+  const [, setOverCellId] = useState<string | null>(null);
   const dndSensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
   // Compat aliases for existing CSS logic
   const dragTaskId = dragTask?.staffTaskId ?? null;
-  const dropHour: number | null = overCellId ? parseInt(overCellId.split('|')[0]) : null;
-  const dropDate: string | null = overCellId ? overCellId.split('|')[1] : null;
 
   // All-day expand state (tracks which days are expanded)
   const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set());
@@ -327,8 +325,6 @@ export default function HomePage() {
   const [setTimeValue, setSetTimeValue] = useState<string>('09:00');
   const [showSetTime, setShowSetTime] = useState(false);
   const [scheduleForm, setScheduleForm] = useState<ScheduleForm>({ eventDate: APP_TODAY_STR, startTime: '' });
-
-  const dragCounterRef = useRef(0); // legacy, unused
 
   /* ── Data fetching ─────────────────────────────── */
 
