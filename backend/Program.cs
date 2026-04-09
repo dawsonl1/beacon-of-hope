@@ -1263,6 +1263,10 @@ app.MapPost("/api/volunteer", async (AppDbContext db, HttpContext httpContext) =
         if (existing)
             return Results.Ok(new { message = "You're already signed up. We'll be in touch!" });
 
+        // Ensure the identity sequence is in sync (seed data uses explicit IDs)
+        await db.Database.ExecuteSqlRawAsync(
+            "SELECT setval(pg_get_serial_sequence('supporters', 'supporter_id'), (SELECT COALESCE(MAX(supporter_id), 0) FROM supporters))");
+
         var supporter = new backend.Models.Supporter
         {
             SupporterType = "Volunteer",
