@@ -10,6 +10,7 @@ import CookiePreferencesModal from './components/CookiePreferencesModal';
 import AnalyticsLoader from './components/AnalyticsLoader';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
+import ChatWidget from './components/ChatWidget';
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
   constructor(props: { children: ReactNode }) {
@@ -95,6 +96,7 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
         {children}
       </Suspense>
       <Footer />
+      <ChatWidget />
     </>
   );
 }
