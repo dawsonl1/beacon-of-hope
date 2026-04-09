@@ -175,6 +175,7 @@ export default function HomePage() {
   const [dragTaskId, setDragTaskId] = useState<number | null>(null);
   const [dragEventId, setDragEventId] = useState<number | null>(null);
   const [dropHour, setDropHour] = useState<number | null>(null);
+  const [dropMinute, setDropMinute] = useState<number>(0);
   const [dropDate, setDropDate] = useState<string | null>(null);
 
   // All-day expand state (tracks which days are expanded)
@@ -299,6 +300,7 @@ export default function HomePage() {
     setDragTaskId(null);
     setDragEventId(null);
     setDropHour(null);
+    setDropMinute(0);
     setDropDate(null);
     dragCounterRef.current = 0;
   }
@@ -318,25 +320,41 @@ export default function HomePage() {
     }
   }
 
-  function handleSlotDrop(hour: number, date?: string) {
+  function getQuarterFromEvent(e: React.DragEvent): number {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const y = e.clientY - rect.top;
+    const quarter = Math.floor((y / rect.height) * 4);
+    return [0, 15, 30, 45][Math.min(Math.max(quarter, 0), 3)];
+  }
+
+  function formatDropTime(hour: number, minute: number): string | null {
+    if (hour < 0) return null;
+    return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+  }
+
+  function handleSlotDrop(hour: number, date?: string, e?: React.DragEvent) {
     if (!dragTaskId) return;
     const task = tasks.find(t => t.staffTaskId === dragTaskId);
     if (!task) return;
-    const startTime = hour >= 0 ? `${hour.toString().padStart(2, '0')}:00` : null;
+    const minute = e ? getQuarterFromEvent(e) : 0;
+    const startTime = formatDropTime(hour, minute);
     const targetDate = date || fmtDate(currentDate);
     scheduleTaskToCalendar(task, targetDate, startTime);
     setDragTaskId(null);
     setDropHour(null);
+    setDropMinute(0);
     setDropDate(null);
     dragCounterRef.current = 0;
   }
 
-  function handleEventDrop(hour: number, date: string) {
+  function handleEventDrop(hour: number, date: string, e?: React.DragEvent) {
     if (!dragEventId) return;
-    const startTime = hour >= 0 ? `${hour.toString().padStart(2, '0')}:00` : null;
+    const minute = e ? getQuarterFromEvent(e) : 0;
+    const startTime = formatDropTime(hour, minute);
     handleUpdateEvent(dragEventId, { startTime, eventDate: date });
     setDragEventId(null);
     setDropHour(null);
+    setDropMinute(0);
     setDropDate(null);
     dragCounterRef.current = 0;
   }
@@ -521,12 +539,21 @@ export default function HomePage() {
                         <div
                           key={`${hour}-${i}`}
                           className={`${styles.weekCell} ${isToday ? styles.weekCellToday : ''} ${(isDropTarget || isEventDropTarget) ? styles.weekCellDropTarget : ''}`}
-                          onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }}
+                          onDragOver={e => {
+                            e.preventDefault();
+                            e.dataTransfer.dropEffect = 'move';
+                            setDropMinute(getQuarterFromEvent(e));
+                          }}
                           onDragEnter={() => handleSlotDragEnter(hour, dayStr)}
                           onDragLeave={handleSlotDragLeave}
-                          onDrop={e => { e.preventDefault(); handleEventDrop(hour, dayStr); handleSlotDrop(hour, dayStr); }}
+                          onDrop={e => { e.preventDefault(); handleEventDrop(hour, dayStr, e); handleSlotDrop(hour, dayStr, e); }}
                         >
                           {cellEvents.map(renderEventChip)}
+                          {(isDropTarget || isEventDropTarget) && (
+                            <div className={styles.dropTimeIndicator} style={{ top: `${(dropMinute / 60) * 100}%` }}>
+                              {hour.toString().padStart(2, '0')}:{dropMinute.toString().padStart(2, '0')}
+                            </div>
+                          )}
                         </div>
                       );
                     })}

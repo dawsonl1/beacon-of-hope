@@ -325,9 +325,25 @@
 }
 
 .weekCellDropTarget {
-  background: rgba(15, 143, 125, 0.1) !important;
-  outline: 2px dashed var(--color-sage);
-  outline-offset: -2px;
+  background: rgba(15, 143, 125, 0.06) !important;
+  position: relative;
+}
+
+.dropTimeIndicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-sage);
+  pointer-events: none;
+  z-index: 1;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--color-sage);
+  display: flex;
+  align-items: flex-start;
+  padding-left: 0.2rem;
+  padding-top: 0.1rem;
 }
 
 /* ── Tasks panel (right sidebar) ─────────────────── */
