@@ -14,6 +14,7 @@ import DatePicker from '../../components/admin/DatePicker';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import TextArea from '../../components/admin/TextArea';
 import styles from './ResidentDetailPage.module.css';
+import formStyles from './VisitationFormPage.module.css';
 
 /* ── Types ───────────────────────────────────────── */
 
@@ -808,49 +809,48 @@ function PlanTab({ resident, conferences, setConferences, id }: {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSave} style={{ background: 'rgba(15,143,125,0.03)', border: '1px solid rgba(15,27,45,0.08)', borderRadius: '10px', padding: '0.75rem 1rem', marginBottom: '0.5rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Category *</label>
+        <form onSubmit={handleSave} className={formStyles.formCard} style={{ marginBottom: '0.75rem' }}>
+          <h2 className={formStyles.formSection}>{editingPlan ? 'Edit Intervention Plan' : 'New Intervention Plan'}</h2>
+          <div className={formStyles.fieldGrid}>
+            <div className={formStyles.field}>
+              <div className={formStyles.label}>Category <span className={formStyles.required}>*</span></div>
               <Dropdown
                 value={planCategory}
-                placeholder="Select..."
+                placeholder="Select category..."
                 options={PLAN_CATEGORIES.map(c => ({ value: c, label: c }))}
                 onChange={setPlanCategory}
               />
             </div>
-            <div>
-              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Status</label>
+            <div className={formStyles.field}>
+              <div className={formStyles.label}>Status</div>
               <Dropdown
                 value={status}
                 options={PLAN_STATUSES.map(s => ({ value: s, label: s }))}
                 onChange={setStatus}
               />
             </div>
-            <div>
-              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Target Value</label>
-              <input type="number" step="0.01" value={targetValue} onChange={e => setTargetValue(e.target.value)} placeholder="e.g. 80" style={{ width: '100%', padding: '0.35rem', borderRadius: '6px', border: '1px solid rgba(15,27,45,0.12)', fontSize: '0.78rem' }} />
+            <div className={formStyles.field}>
+              <label className={formStyles.label}>Target Value</label>
+              <input type="number" step="0.01" className={formStyles.input} value={targetValue} onChange={e => setTargetValue(e.target.value)} placeholder="e.g. 80" />
             </div>
-            <div>
-              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Target Date</label>
-              <DatePicker value={targetDate} onChange={setTargetDate} />
+            <div className={formStyles.field}>
+              <div className={formStyles.label}>Target Date</div>
+              <DatePicker value={targetDate} onChange={setTargetDate} placeholder="Select date..." />
+            </div>
+            <div className={`${formStyles.field} ${formStyles.fieldFull}`}>
+              <label className={formStyles.label}>Description</label>
+              <TextArea className={formStyles.textarea} value={planDescription} onChange={e => setPlanDescription(e.target.value)} rows={2} placeholder="What should be achieved..." />
+            </div>
+            <div className={`${formStyles.field} ${formStyles.fieldFull}`}>
+              <label className={formStyles.label}>Services Provided</label>
+              <input className={formStyles.input} value={servicesProvided} onChange={e => setServicesProvided(e.target.value)} placeholder="e.g. CBT, tutoring, medical checkup" />
             </div>
           </div>
-          <div style={{ marginBottom: '0.5rem' }}>
-            <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Description</label>
-            <TextArea value={planDescription} onChange={e => setPlanDescription(e.target.value)} rows={2} placeholder="What should be achieved..." style={{ width: '100%', padding: '0.35rem', borderRadius: '6px', border: '1px solid rgba(15,27,45,0.12)', fontSize: '0.78rem', resize: 'vertical' }} />
-          </div>
-          <div style={{ marginBottom: '0.5rem' }}>
-            <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Services Provided</label>
-            <input type="text" value={servicesProvided} onChange={e => setServicesProvided(e.target.value)} placeholder="e.g. CBT, tutoring, medical checkup" style={{ width: '100%', padding: '0.35rem', borderRadius: '6px', border: '1px solid rgba(15,27,45,0.12)', fontSize: '0.78rem' }} />
-          </div>
-          {formError && <div style={{ color: '#c0392b', fontSize: '0.78rem', marginBottom: '0.3rem' }}>{formError}</div>}
-          <div style={{ display: 'flex', gap: '0.4rem' }}>
-            <button type="submit" disabled={saving} style={{ padding: '0.3rem 0.7rem', borderRadius: '6px', border: 'none', background: 'var(--color-sage)', color: '#fff', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}>
+          {formError && <div className={formStyles.error}>{formError}</div>}
+          <div className={formStyles.actions}>
+            <button type="button" className={formStyles.cancelBtn} onClick={() => { setShowForm(false); resetForm(); }}>Cancel</button>
+            <button type="submit" className={formStyles.submitBtn} disabled={saving}>
               {saving ? 'Saving...' : editingPlan ? 'Update Plan' : 'Create Plan'}
-            </button>
-            <button type="button" onClick={() => { setShowForm(false); resetForm(); }} style={{ padding: '0.3rem 0.7rem', borderRadius: '6px', border: '1px solid rgba(15,27,45,0.12)', background: '#fff', color: 'var(--text-muted)', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}>
-              Cancel
             </button>
           </div>
         </form>
