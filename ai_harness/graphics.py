@@ -4,17 +4,29 @@ Overlays text onto template backgrounds using Pillow.
 Used for stat posts, milestone announcements, and other non-photo content.
 """
 
+import io
 import os
 import uuid
 import logging
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
+from ai_harness.config import AZURE_STORAGE_CONNECTION_STRING, AZURE_STORAGE_CONTAINER
 
 logger = logging.getLogger(__name__)
 
-# Where generated graphics are saved
+# Local fallback dir (dev only)
 OUTPUT_DIR = Path(__file__).resolve().parents[1] / "backend" / "wwwroot" / "media" / "generated"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+# Azure Blob client (lazy-init)
+_blob_service = None
+
+def _get_blob_service():
+    global _blob_service
+    if _blob_service is None and AZURE_STORAGE_CONNECTION_STRING:
+        from azure.storage.blob import BlobServiceClient
+        _blob_service = BlobServiceClient.from_connection_string(AZURE_STORAGE_CONNECTION_STRING)
+    return _blob_service
 
 # Try to find a good font, fall back to default
 def _get_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
@@ -116,13 +128,23 @@ def generate_graphic(
 
     # Save
     filename = f"{uuid.uuid4()}.jpg"
-    abs_path = OUTPUT_DIR / filename
-    img.save(str(abs_path), "JPEG", quality=85)
+    blob_svc = _get_blob_service()
 
-    rel_path = f"/media/generated/{filename}"
-    logger.info(f"Generated graphic: {rel_path} ({len(lines)} lines)")
-
-    return {
-        "file_path": rel_path,
-        "absolute_path": str(abs_path),
-    }
+    if blob_svc:
+        # Production: upload to Azure Blob Storage
+        buf = io.BytesIO()
+        img.save(buf, "JPEG", quality=85)
+        buf.seek(0)
+        blob_name = f"generated/{filename}"
+        blob_client = blob_svc.get_blob_client(container=AZURE_STORAGE_CONTAINER, blob=blob_name)
+        blob_client.upload_blob(buf, content_type="image/jpeg", overwrite=True)
+        blob_url = blob_client.url
+        logger.info(f"Generated graphic uploaded to blob: {blob_url}")
+        return {"file_path": blob_url, "absolute_path": blob_url}
+    else:
+        # Dev: save to local disk
+        abs_path = OUTPUT_DIR / filename
+        img.save(str(abs_path), "JPEG", quality=85)
+        rel_path = f"/media/generated/{filename}"
+        logger.info(f"Generated graphic: {rel_path} ({len(lines)} lines)")
+        return {"file_path": rel_path, "absolute_path": str(abs_path)}

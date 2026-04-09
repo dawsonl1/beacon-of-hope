@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Text.Json;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 using Stripe.Checkout;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
+using Azure.Storage.Blobs;
 using backend.Data;
 using backend.DTOs;
 using backend.Endpoints;
@@ -39,11 +41,22 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opts =>
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "dp-keys")));
+
 builder.Services.ConfigureApplicationCookie(opts =>
 {
     opts.Cookie.HttpOnly = true;
-    opts.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    opts.Cookie.SameSite = SameSiteMode.None;
+    if (builder.Environment.IsDevelopment())
+    {
+        opts.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        opts.Cookie.SameSite = SameSiteMode.Lax;
+    }
+    else
+    {
+        opts.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        opts.Cookie.SameSite = SameSiteMode.None;
+    }
     opts.Cookie.Name = "BeaconAuth";
     opts.ExpireTimeSpan = TimeSpan.FromHours(8);
     opts.SlidingExpiration = true;
@@ -816,36 +829,75 @@ app.MapPost("/api/social/media/upload", async (HttpContext ctx, AppDbContext db,
         if (file == null || file.Length == 0) return Results.BadRequest(new { error = "Photo file is required." });
         if (file.Length > 10 * 1024 * 1024) return Results.BadRequest(new { error = "Photo must be under 10MB." });
 
+        // Validate file type
+        var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp", "image/gif" };
+        if (!allowedTypes.Contains(file.ContentType.ToLowerInvariant()))
+            return Results.BadRequest(new { error = "Only JPEG, PNG, WebP, and GIF images are allowed." });
+
         // Save and compress
-        var mediaDir = Path.Combine(env.WebRootPath ?? Path.Combine(env.ContentRootPath, "wwwroot"), "media", "library");
-        Directory.CreateDirectory(mediaDir);
         var fileName = $"{Guid.NewGuid()}.jpg";
         var thumbName = $"thumb_{fileName}";
-        var fullPath = Path.Combine(mediaDir, fileName);
-        var thumbPath = Path.Combine(mediaDir, thumbName);
+        var blobConnStr = builder.Configuration["AzureStorage:ConnectionString"] ?? "";
+        var blobContainer = builder.Configuration["AzureStorage:ContainerName"] ?? "media";
 
-        using (var image = await SixLabors.ImageSharp.Image.LoadAsync(file.OpenReadStream()))
+        using var image = await SixLabors.ImageSharp.Image.LoadAsync(file.OpenReadStream());
+
+        // Compress to max 1920px wide
+        if (image.Width > 1920)
+            image.Mutate(x => x.Resize(new SixLabors.ImageSharp.Processing.ResizeOptions
+            {
+                Size = new SixLabors.ImageSharp.Size(1920, 0),
+                Mode = SixLabors.ImageSharp.Processing.ResizeMode.Max
+            }));
+
+        if (!string.IsNullOrEmpty(blobConnStr))
         {
-            // Compress to max 1920px wide
-            if (image.Width > 1920)
-                image.Mutate(x => x.Resize(new SixLabors.ImageSharp.Processing.ResizeOptions
-                {
-                    Size = new SixLabors.ImageSharp.Size(1920, 0),
-                    Mode = SixLabors.ImageSharp.Processing.ResizeMode.Max
-                }));
+            // Production: upload to Azure Blob Storage
+            var blobService = new BlobServiceClient(blobConnStr);
+            var container = blobService.GetBlobContainerClient(blobContainer);
+
+            // Upload full image
+            using var fullStream = new MemoryStream();
+            await image.SaveAsJpegAsync(fullStream, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder { Quality = 80 });
+            fullStream.Position = 0;
+            var fullBlob = container.GetBlobClient($"library/{fileName}");
+            await fullBlob.UploadAsync(fullStream, new Azure.Storage.Blobs.Models.BlobHttpHeaders { ContentType = "image/jpeg" });
+
+            // Upload thumbnail
+            image.Mutate(x => x.Resize(new SixLabors.ImageSharp.Processing.ResizeOptions
+            {
+                Size = new SixLabors.ImageSharp.Size(400, 0),
+                Mode = SixLabors.ImageSharp.Processing.ResizeMode.Max
+            }));
+            using var thumbStream = new MemoryStream();
+            await image.SaveAsJpegAsync(thumbStream, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder { Quality = 75 });
+            thumbStream.Position = 0;
+            var thumbBlob = container.GetBlobClient($"library/{thumbName}");
+            await thumbBlob.UploadAsync(thumbStream, new Azure.Storage.Blobs.Models.BlobHttpHeaders { ContentType = "image/jpeg" });
+
+            filePath = fullBlob.Uri.ToString();
+            thumbnailPath = thumbBlob.Uri.ToString();
+        }
+        else
+        {
+            // Dev: save to local disk
+            var mediaDir = Path.Combine(env.WebRootPath ?? Path.Combine(env.ContentRootPath, "wwwroot"), "media", "library");
+            Directory.CreateDirectory(mediaDir);
+            var fullPath = Path.Combine(mediaDir, fileName);
+            var thumbPath = Path.Combine(mediaDir, thumbName);
+
             await image.SaveAsJpegAsync(fullPath, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder { Quality = 80 });
 
-            // Generate 400px thumbnail
             image.Mutate(x => x.Resize(new SixLabors.ImageSharp.Processing.ResizeOptions
             {
                 Size = new SixLabors.ImageSharp.Size(400, 0),
                 Mode = SixLabors.ImageSharp.Processing.ResizeMode.Max
             }));
             await image.SaveAsJpegAsync(thumbPath, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder { Quality = 75 });
-        }
 
-        filePath = $"/media/library/{fileName}";
-        thumbnailPath = $"/media/library/{thumbName}";
+            filePath = $"/media/library/{fileName}";
+            thumbnailPath = $"/media/library/{thumbName}";
+        }
     }
     else
     {
@@ -970,7 +1022,7 @@ app.MapPost("/api/admin/social/research-refresh", async (HttpContext ctx, AppDbC
     var harnessUrl = config["AiHarness:Url"] ?? "http://localhost:8001";
     var harnessKey = config["AiHarness:ApiKey"] ?? "";
 
-    using var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(120) };
+    using var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(300) };
     if (!string.IsNullOrEmpty(harnessKey))
         httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {harnessKey}");
 
@@ -1050,10 +1102,11 @@ app.MapPost("/api/admin/social/generate", async (HttpContext ctx, AppDbContext d
         maxPosts = mp.GetInt32();
 
     var harnessUrl = config["AiHarness:Url"] ?? "http://localhost:8001";
-    var harnessKey = config["AiHarness:ApiKey"] ?? "dev-harness-key";
+    var harnessKey = config["AiHarness:ApiKey"] ?? "";
 
-    using var httpClient = new HttpClient();
-    httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {harnessKey}");
+    using var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(300) };
+    if (!string.IsNullOrEmpty(harnessKey))
+        httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {harnessKey}");
 
     try
     {

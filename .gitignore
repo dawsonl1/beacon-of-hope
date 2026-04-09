@@ -32,6 +32,7 @@ Thumbs.db
 # Python artifacts
 __pycache__/
 *.py[cod]
+ai_harness/.venv/
 
 # ML model artifact policy
 models/*.pkl
@@ -42,3 +43,6 @@ ml/social_media_content/context.md
 ml/social_media_content/sample_migration.sql
 
 bugs.txt
+
+# Data protection keys
+backend/dp-keys/
