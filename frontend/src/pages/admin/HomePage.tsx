@@ -745,9 +745,9 @@ export default function HomePage() {
         </div>
         <div className={styles.headerActions}>
           <div className={styles.dateControls}>
-            <button className={styles.navBtn} onClick={() => navigateDate(-1)}><ChevronLeft size={16} /></button>
+            <button className={styles.navBtn} onClick={() => navigateDate(-1)} title="Previous week"><ChevronLeft size={16} /></button>
             <button className={styles.todayBtn} onClick={() => setCurrentDate(new Date(APP_TODAY))}>Today</button>
-            <button className={styles.navBtn} onClick={() => navigateDate(1)}><ChevronRight size={16} /></button>
+            <button className={styles.navBtn} onClick={() => navigateDate(1)} title="Next week"><ChevronRight size={16} /></button>
           </div>
           <button className={styles.addBtn} onClick={() => { setNewEvent(e => ({ ...e, eventDate: fmtDate(currentDate) })); setShowNewForm(true); }}>
             <Plus size={14} /> New Event
@@ -934,7 +934,7 @@ export default function HomePage() {
               <div className={styles.popoverHeader}>
                 <div className={`${styles.popoverDot} ${styles[EVENT_TYPE_STYLES[selectedEvent.eventType] || 'eventOther']}`} />
                 <h3 className={styles.popoverTitle}>{selectedEvent.title}</h3>
-                <button className={styles.popoverClose} onClick={closePopover}><X size={16} /></button>
+                <button className={styles.popoverClose} onClick={closePopover} title="Close"><X size={16} /></button>
               </div>
               <div className={styles.popoverBody}>
                 <p className={styles.popoverDetail}>
@@ -944,7 +944,7 @@ export default function HomePage() {
                 </p>
                 {residentName(selectedEvent) && (
                   <p className={styles.popoverDetail}>
-                    Resident: <a href="#" className={styles.residentLink} onClick={e => { e.preventDefault(); navigate(`/admin/caseload/${selectedEvent.residentId}`); closePopover(); }}{residentName(selectedEvent)}</a>
+                    Resident: <a href="#" className={styles.residentLink} onClick={e => { e.preventDefault(); navigate(`/admin/caseload/${selectedEvent.residentId}`); closePopover(); }}>{residentName(selectedEvent)}</a>
                   </p>
                 )}
                 <p className={styles.popoverDetail}>Type: {selectedEvent.eventType}</p>
@@ -1138,18 +1138,18 @@ export default function HomePage() {
                   <h3 className={styles.scheduleTitle}>{scheduleTask.title}</h3>
                   {residentName(scheduleTask) && <p className={styles.scheduleMeta}>{residentName(scheduleTask)}</p>}
                 </div>
-                <button className={styles.popoverClose} onClick={() => setScheduleTask(null)}><X size={16} /></button>
+                <button className={styles.popoverClose} onClick={() => setScheduleTask(null)} title="Close"><X size={16} /></button>
               </div>
 
               <div className={styles.scheduleBody}>
                 {/* Mini calendar */}
                 <div className={styles.miniCal}>
                   <div className={styles.miniCalNav}>
-                    <button className={styles.navBtn} onClick={() => shiftMonth(-1)}><ChevronLeft size={14} /></button>
+                    <button className={styles.navBtn} onClick={() => shiftMonth(-1)} title="Previous month"><ChevronLeft size={14} /></button>
                     <span className={styles.miniCalMonth}>
                       {calMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                     </span>
-                    <button className={styles.navBtn} onClick={() => shiftMonth(1)}><ChevronRight size={14} /></button>
+                    <button className={styles.navBtn} onClick={() => shiftMonth(1)} title="Next month"><ChevronRight size={14} /></button>
                   </div>
                   <div className={styles.miniCalGrid}>
                     {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
