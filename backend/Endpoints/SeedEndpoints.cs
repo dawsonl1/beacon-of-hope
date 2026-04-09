@@ -622,13 +622,76 @@ public static class SeedEndpoints
             await db.SaveChangesAsync();
             results.Add($"Admin/staff pending tasks added");
 
-            // ── 7. Ensure every safehouse has unclaimed residents + every SW has claimed residents ──
+            // ── 7. Fix mismatched residents (SW assigned to safehouse they don't belong to) ──
+            var mismatchFixed = 0;
+            var swAssignedResidents = await db.Residents
+                .Where(r => r.CaseStatus == "Active" && r.AssignedSocialWorker != null && r.AssignedSocialWorker != "" && r.SafehouseId != null)
+                .ToListAsync();
+            foreach (var r in swAssignedResidents)
+            {
+                var sw = r.AssignedSocialWorker!;
+                if (!swToSafehouse.ContainsKey(sw)) continue;
+                var validSh = swToSafehouse[sw];
+                if (!validSh.Contains(r.SafehouseId!.Value))
+                {
+                    r.SafehouseId = validSh[random.Next(validSh.Length)];
+                    mismatchFixed++;
+                }
+            }
+            if (mismatchFixed > 0)
+            {
+                await db.SaveChangesAsync();
+                results.Add($"Fixed {mismatchFixed} residents with mismatched safehouse/SW assignments");
+            }
+
+            // Also fix calendar events that point to wrong safehouses
+            var mismatchEvents = 0;
+            foreach (var (sw, shIds) in swToSafehouse)
+            {
+                if (!staffUserIds.ContainsKey(sw)) continue;
+                var uid = staffUserIds[sw];
+                var badEvents = await db.CalendarEvents
+                    .Where(e => e.StaffUserId == uid && !shIds.Contains(e.SafehouseId))
+                    .ToListAsync();
+                foreach (var e in badEvents)
+                {
+                    e.SafehouseId = shIds[random.Next(shIds.Length)];
+                    mismatchEvents++;
+                }
+            }
+            if (mismatchEvents > 0)
+            {
+                await db.SaveChangesAsync();
+                results.Add($"Fixed {mismatchEvents} calendar events with mismatched safehouses");
+            }
+
+            // Also fix tasks
+            var mismatchTasks = 0;
+            foreach (var (sw, shIds) in swToSafehouse)
+            {
+                if (!staffUserIds.ContainsKey(sw)) continue;
+                var uid = staffUserIds[sw];
+                var badTasks = await db.StaffTasks
+                    .Where(t => t.StaffUserId == uid && !shIds.Contains(t.SafehouseId))
+                    .ToListAsync();
+                foreach (var t in badTasks)
+                {
+                    t.SafehouseId = shIds[random.Next(shIds.Length)];
+                    mismatchTasks++;
+                }
+            }
+            if (mismatchTasks > 0)
+            {
+                await db.SaveChangesAsync();
+                results.Add($"Fixed {mismatchTasks} tasks with mismatched safehouses");
+            }
+
+            // ── 8. Ensure every safehouse has unclaimed residents + every SW has claimed residents ──
             var allSwCodes = staffNames.Keys.ToList();
             var categories = new[] { "Abandoned", "Neglected", "Surrendered", "Foundling" };
             var riskLevels = new[] { "Low", "Medium", "High", "Critical" };
             var religions = new[] { "Catholic", "Protestant", "Iglesia ni Cristo", "Muslim", "None" };
             var referralSources = new[] { "DSWD", "PNP", "NGO Referral", "Court Order", "Community", "Self-Referral" };
-            var girlNames = new[] { "Maria", "Ana", "Rosa", "Elena", "Carmen", "Linda", "Grace", "Joy", "Faith", "Hope", "Liza", "Diana", "Sarah", "Ruth", "Esther", "Mercy", "Alma", "Nina", "Luz", "Paz", "Delia", "Nora", "Perla", "Jasmine", "Iris", "Daisy", "Ruby", "Pearl", "Crystal", "Jade", "Angel", "Sunshine", "Precious", "Princess", "Gem", "Star" };
             var maxId = await db.Residents.MaxAsync(r => r.ResidentId);
             var maxCode = maxId;
             var newResCount = 0;
