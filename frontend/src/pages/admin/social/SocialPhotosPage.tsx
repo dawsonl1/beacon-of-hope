@@ -187,7 +187,7 @@ export default function SocialPhotosPage() {
           {items.map(item => (
             <div key={item.mediaLibraryItemId} className={styles.photoCard}>
               <div className={styles.photoWrap}>
-                <img src={`${getApiUrl()}${item.thumbnailPath || item.filePath}`} alt={item.caption || 'Photo'} className={styles.photo} />
+                <img src={(item.thumbnailPath || item.filePath).startsWith('http') ? (item.thumbnailPath || item.filePath) : `${getApiUrl()}${item.thumbnailPath || item.filePath}`} alt={item.caption || 'Photo'} className={styles.photo} />
                 {item.usedCount > 0 && <span className={styles.usedBadge}>Used {item.usedCount}x</span>}
                 <button className={styles.deleteBtn} onClick={() => setDeleteTarget(item.mediaLibraryItemId)} title="Delete"><Trash2 size={14} /></button>
               </div>

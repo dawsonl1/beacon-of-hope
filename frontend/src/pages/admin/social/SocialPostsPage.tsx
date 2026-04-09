@@ -618,7 +618,7 @@ export default function SocialPostsPage() {
                     setShowPhotoPicker(false);
                   }}
                 >
-                  <img src={`${getApiUrl()}${photo.thumbnailPath}`} alt={photo.caption || 'Photo'} />
+                  <img src={photo.thumbnailPath.startsWith('http') ? photo.thumbnailPath : `${getApiUrl()}${photo.thumbnailPath}`} alt={photo.caption || 'Photo'} />
                   {photo.caption && <span className={styles.photoPickerCaption}>{photo.caption}</span>}
                 </button>
               ))}
