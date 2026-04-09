@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
-import { SUPPORTER_TYPES, SUPPORTER_STATUSES, ACQUISITION_CHANNELS } from '../../domain';
+import { SUPPORTER_TYPES, SUPPORTER_STATUSES, ACQUISITION_CHANNELS, REGIONS, COUNTRIES } from '../../domain';
+import { formatEnumLabel } from '../../constants';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Dropdown from '../../components/admin/Dropdown';
 import styles from './SupporterFormPage.module.css';
@@ -127,7 +128,7 @@ export default function SupporterFormPage() {
             <Dropdown
               value={form.supporterType}
               placeholder="Select type..."
-              options={SUPPORTER_TYPES.map(t => ({ value: t, label: t }))}
+              options={SUPPORTER_TYPES.map(t => ({ value: t, label: formatEnumLabel(t) }))}
               onChange={(v) => set('supporterType', v)}
             />
           </div>
@@ -174,12 +175,22 @@ export default function SupporterFormPage() {
 
           <div className={styles.field}>
             <label>Region</label>
-            <input value={form.region} onChange={e => set('region', e.target.value)} placeholder="Region" />
+            <Dropdown
+              value={form.region}
+              placeholder="Select region..."
+              options={REGIONS.map(r => ({ value: r, label: r }))}
+              onChange={(v) => set('region', v)}
+            />
           </div>
 
           <div className={styles.field}>
             <label>Country</label>
-            <input value={form.country} onChange={e => set('country', e.target.value)} placeholder="Country" />
+            <Dropdown
+              value={form.country}
+              placeholder="Select country..."
+              options={COUNTRIES.map(c => ({ value: c, label: c }))}
+              onChange={(v) => set('country', v)}
+            />
           </div>
 
           <div className={styles.field}>
@@ -187,7 +198,7 @@ export default function SupporterFormPage() {
             <Dropdown
               value={form.acquisitionChannel}
               placeholder="Select channel..."
-              options={CHANNELS.map(c => ({ value: c, label: c }))}
+              options={CHANNELS.map(c => ({ value: c, label: formatEnumLabel(c) }))}
               onChange={(v) => set('acquisitionChannel', v)}
             />
           </div>

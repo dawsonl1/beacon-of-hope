@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2, Trash2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { formatEnumLabel, APP_TODAY_STR } from '../../constants';
 import { DONATION_TYPES } from '../../domain';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Dropdown from '../../components/admin/Dropdown';
 import DatePicker from '../../components/admin/DatePicker';
+import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
 import styles from './DonationFormPage.module.css';
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'AUD', 'CAD'];
 
@@ -58,6 +59,8 @@ export default function DonationFormPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showDelete, setShowDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Load supporters list for dropdown
   useEffect(() => {
@@ -153,6 +156,19 @@ export default function DonationFormPage() {
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to save');
       setSaving(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (!id) return;
+    setDeleting(true);
+    try {
+      await apiFetch(`/api/admin/donations/${id}`, { method: 'DELETE' });
+      navigate('/admin/donors?tab=donations', { replace: true });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to delete donation.');
+      setDeleting(false);
+      setShowDelete(false);
     }
   }
 
@@ -348,6 +364,11 @@ export default function DonationFormPage() {
         {error && <p className={styles.errorMsg}>{error}</p>}
 
         <div className={styles.actions}>
+          {isEdit && (
+            <button type="button" className={styles.deleteBtn} onClick={() => setShowDelete(true)}>
+              <Trash2 size={14} /> Delete
+            </button>
+          )}
           <button type="button" className={styles.cancelBtn} onClick={() => navigate('/admin/donors?tab=donations')}>
             Cancel
           </button>
@@ -356,6 +377,16 @@ export default function DonationFormPage() {
           </button>
         </div>
       </form>
+
+      {showDelete && (
+        <DeleteConfirmDialog
+          title="Delete Donation"
+          message="Are you sure you want to delete this donation? This action cannot be undone."
+          onConfirm={handleDelete}
+          onCancel={() => setShowDelete(false)}
+          isDeleting={deleting}
+        />
+      )}
     </div>
   );
 }
