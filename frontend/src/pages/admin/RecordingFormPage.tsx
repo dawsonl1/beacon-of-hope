@@ -184,7 +184,7 @@ export default function RecordingFormPage() {
   const [emotionalStart, setEmotionalStart] = useState('');
   const [emotionalEnd, setEmotionalEnd] = useState('');
   const [narrative, setNarrative] = useState('');
-  const [interventions, setInterventions] = useState('');
+  const [interventions, setInterventions] = useState<string[]>([]);
   const [followUp, setFollowUp] = useState('');
   const [progressNoted, setProgressNoted] = useState(false);
   const [concernsFlagged, setConcernsFlagged] = useState(false);
@@ -456,7 +456,7 @@ export default function RecordingFormPage() {
     }
 
     if (data.narrative) setNarrative(data.narrative);
-    if (data.interventions) setInterventions(data.interventions);
+    if (data.interventions) setInterventions(data.interventions.split(', ').filter(Boolean));
     if (data.followUpActions) setFollowUp(data.followUpActions);
 
     if (data.progressNoted === true) setProgressNoted(true);
@@ -503,7 +503,7 @@ export default function RecordingFormPage() {
       setEmotionalStart(r.emotionalStateObserved ?? '');
       setEmotionalEnd(r.emotionalStateEnd ?? '');
       setNarrative(r.sessionNarrative ?? '');
-      setInterventions(r.interventionsApplied ?? '');
+      setInterventions(r.interventionsApplied ? r.interventionsApplied.split(', ').filter(Boolean) : []);
       setFollowUp(r.followUpActions ?? '');
       setProgressNoted(r.progressNoted ?? false);
       setConcernsFlagged(r.concernsFlagged ?? false);
@@ -557,7 +557,7 @@ export default function RecordingFormPage() {
           emotionalStateObserved: emotionalStart || null,
           emotionalStateEnd: emotionalEnd || null,
           sessionNarrative: narrative || null,
-          interventionsApplied: interventions || null,
+          interventionsApplied: interventions.length > 0 ? interventions.join(', ') : null,
           followUpActions: followUp || null,
           progressNoted: flags.progressNoted,
           concernsFlagged: flags.concernsFlagged,
@@ -789,9 +789,9 @@ export default function RecordingFormPage() {
         {/* ── Interventions & Follow-up ────────────── */}
         <div className={styles.formCard}>
           <h2 className={styles.sectionTitle}>Interventions & Follow-up</h2>
-          <div className={styles.field} style={{ maxWidth: '300px' }}>
+          <div className={styles.field} style={{ maxWidth: '400px' }}>
             <label>Interventions Applied</label>
-            <Dropdown value={interventions} placeholder="Select intervention..." options={INTERVENTION_OPTIONS.map(i => ({ value: i, label: i }))} onChange={v => setInterventions(v)} />
+            <MultiSelectDropdown values={interventions} placeholder="Select interventions..." options={INTERVENTION_OPTIONS.map(i => ({ value: i, label: i }))} onChange={v => setInterventions(v)} />
           </div>
           <div className={`${styles.field} ${styles.fieldFull}`} style={{ marginTop: '0.75rem' }}>
             <label>Follow-up Actions</label>
