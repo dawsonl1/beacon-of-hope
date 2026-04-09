@@ -112,11 +112,10 @@ const navGroups: NavGroup[] = [
   },
   {
     label: 'Admin',
-    adminOnly: true,
     items: [
       { to: '/admin/reports', icon: BarChart3, label: 'Reports' },
       { to: '/admin/donors', icon: HandHeart, label: 'Donors' },
-      { to: '/admin/users', icon: Shield, label: 'Users' },
+      { to: '/admin/users', icon: Shield, label: 'Users', adminOnly: true },
     ],
   },
 ];
