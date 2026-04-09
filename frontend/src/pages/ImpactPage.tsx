@@ -230,10 +230,11 @@ export default function ImpactPage() {
           {/* Story 1 */}
           <div className={styles.storyRow}>
             <div className={styles.storyImage}>
-              <div className={styles.storyPlaceholder} role="img" aria-label="A girl studying at a desk">
-                <GraduationCap size={48} strokeWidth={1.2} aria-hidden="true" />
-                <span>Photo coming soon</span>
-              </div>
+              <img
+                src="/images/girl-writing-notebook.png"
+                alt="A girl studying at a desk"
+                className={styles.storyImg}
+              />
             </div>
             <div className={styles.storyContent}>
               <span className={styles.storyTag}>Education</span>
@@ -256,10 +257,11 @@ export default function ImpactPage() {
           {/* Story 2 */}
           <div className={`${styles.storyRow} ${styles.storyRowReverse}`}>
             <div className={styles.storyImage}>
-              <div className={`${styles.storyPlaceholder} ${styles.storyPlaceholderWarm}`} role="img" aria-label="A family embracing">
-                <Heart size={48} strokeWidth={1.2} aria-hidden="true" />
-                <span>Photo coming soon</span>
-              </div>
+              <img
+                src="/images/survivor-child-holding-hands.png"
+                alt="A family embracing"
+                className={styles.storyImg}
+              />
             </div>
             <div className={styles.storyContent}>
               <span className={styles.storyTag}>Reintegration</span>
