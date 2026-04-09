@@ -3,6 +3,7 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Plus, Eye, AlertTriangle, Calendar, ClipboardList } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { formatDate } from '../../constants';
+import { useSafehouse } from '../../contexts/SafehouseContext';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Pagination from '../../components/admin/Pagination';
 import Dropdown from '../../components/admin/Dropdown';
@@ -81,6 +82,7 @@ export default function VisitationsPage() {
   useDocumentTitle('Visitations');
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { activeSafehouseId } = useSafehouse();
   const activeTab = searchParams.get('tab') === 'conferences' ? 'conferences' : 'visitations';
 
   // Visitations state
@@ -106,6 +108,7 @@ export default function VisitationsPage() {
     params.set('pageSize', String(pageSize));
     if (visitTypeFilter) params.set('visitType', visitTypeFilter);
     if (safetyOnly) params.set('safetyOnly', 'true');
+    if (activeSafehouseId) params.set('safehouseId', String(activeSafehouseId));
 
     apiFetch<VisitationListResponse>(`/api/admin/visitations?${params}`)
       .then((data) => {
@@ -114,7 +117,7 @@ export default function VisitationsPage() {
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [activeTab, page, visitTypeFilter, safetyOnly]);
+  }, [activeTab, page, visitTypeFilter, safetyOnly, activeSafehouseId]);
 
   // Fetch conferences
   useEffect(() => {

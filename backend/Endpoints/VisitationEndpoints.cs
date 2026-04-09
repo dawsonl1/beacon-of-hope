@@ -15,6 +15,7 @@ public static class VisitationEndpoints
             HttpContext httpContext,
             AppDbContext db,
             int? residentId,
+            int? safehouseId,
             string? visitType,
             bool? safetyOnly,
             int page = 1,
@@ -27,6 +28,9 @@ public static class VisitationEndpoints
 
             if (allowed != null)
                 query = query.Where(v => db.Residents.Any(r => r.ResidentId == v.ResidentId && r.SafehouseId.HasValue && allowed.Contains(r.SafehouseId.Value)));
+
+            if (safehouseId.HasValue)
+                query = query.Where(v => db.Residents.Any(r => r.ResidentId == v.ResidentId && r.SafehouseId == safehouseId.Value));
 
             if (residentId.HasValue)
                 query = query.Where(v => v.ResidentId == residentId.Value);
@@ -47,7 +51,7 @@ public static class VisitationEndpoints
                     v.ResidentId,
                     residentCode = db.Residents
                         .Where(r => r.ResidentId == v.ResidentId)
-                        .Select(r => r.InternalCode)
+                        .Select(r => r.FirstName != null && r.LastName != null ? r.FirstName + " " + r.LastName.Substring(0, 1) + "." : r.InternalCode)
                         .FirstOrDefault(),
                     v.VisitDate,
                     v.SocialWorker,
@@ -73,7 +77,7 @@ public static class VisitationEndpoints
                     v.ResidentId,
                     residentCode = db.Residents
                         .Where(r => r.ResidentId == v.ResidentId)
-                        .Select(r => r.InternalCode)
+                        .Select(r => r.FirstName != null && r.LastName != null ? r.FirstName + " " + r.LastName.Substring(0, 1) + "." : r.InternalCode)
                         .FirstOrDefault(),
                     v.VisitDate,
                     v.SocialWorker,
@@ -217,7 +221,7 @@ public static class VisitationEndpoints
                     p.ResidentId,
                     residentCode = db.Residents
                         .Where(r => r.ResidentId == p.ResidentId)
-                        .Select(r => r.InternalCode)
+                        .Select(r => r.FirstName != null && r.LastName != null ? r.FirstName + " " + r.LastName.Substring(0, 1) + "." : r.InternalCode)
                         .FirstOrDefault(),
                     p.PlanCategory,
                     p.PlanDescription,
@@ -236,7 +240,7 @@ public static class VisitationEndpoints
                     p.ResidentId,
                     residentCode = db.Residents
                         .Where(r => r.ResidentId == p.ResidentId)
-                        .Select(r => r.InternalCode)
+                        .Select(r => r.FirstName != null && r.LastName != null ? r.FirstName + " " + r.LastName.Substring(0, 1) + "." : r.InternalCode)
                         .FirstOrDefault(),
                     p.PlanCategory,
                     p.PlanDescription,

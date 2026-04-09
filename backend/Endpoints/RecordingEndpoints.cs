@@ -14,6 +14,7 @@ public static class RecordingEndpoints
         app.MapGet("/api/admin/recordings", async (
             AppDbContext db,
             int? residentId,
+            int? safehouseId,
             int page,
             int pageSize,
             string? sortBy) =>
@@ -22,6 +23,9 @@ public static class RecordingEndpoints
             if (pageSize < 1 || pageSize > 100) pageSize = 20;
 
             var query = db.ProcessRecordings.AsQueryable();
+
+            if (safehouseId.HasValue)
+                query = query.Where(r => db.Residents.Any(res => res.ResidentId == r.ResidentId && res.SafehouseId == safehouseId.Value));
 
             if (residentId.HasValue)
                 query = query.Where(r => r.ResidentId == residentId.Value);

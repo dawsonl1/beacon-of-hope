@@ -4,6 +4,7 @@ import { Plus, FileText, Shield, AlertTriangle, CheckCircle } from 'lucide-react
 import { apiFetch } from '../../api';
 import { ApiError } from '../../components/ApiError';
 import { formatDate } from '../../constants';
+import { useSafehouse } from '../../contexts/SafehouseContext';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Pagination from '../../components/admin/Pagination';
 import Dropdown from '../../components/admin/Dropdown';
@@ -61,6 +62,7 @@ export default function ProcessRecordingsPage() {
   useDocumentTitle('Process Recordings');
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { activeSafehouseId } = useSafehouse();
 
   const [recordings, setRecordings] = useState<RecordingRow[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -97,6 +99,7 @@ export default function ProcessRecordingsPage() {
       params.set('pageSize', String(PAGE_SIZE));
       params.set('sortBy', sortBy);
       if (residentFilter) params.set('residentId', residentFilter);
+      if (activeSafehouseId) params.set('safehouseId', String(activeSafehouseId));
 
       const data = await apiFetch<RecordingsResponse>(`/api/admin/recordings?${params}`);
       setRecordings(data.items);
@@ -106,7 +109,7 @@ export default function ProcessRecordingsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, residentFilter, sortBy]);
+  }, [page, residentFilter, sortBy, activeSafehouseId]);
 
   useEffect(() => {
     fetchRecordings();

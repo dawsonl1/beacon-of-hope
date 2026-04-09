@@ -41,11 +41,15 @@ public static class ReportEndpoints
             return data;
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
-        app.MapGet("/api/admin/reports/resident-outcomes", async (AppDbContext db) =>
+        app.MapGet("/api/admin/reports/resident-outcomes", async (AppDbContext db, int? safehouseId) =>
         {
-            var total = await db.Residents.CountAsync();
+            var residentsQuery = db.Residents.AsQueryable();
+            if (safehouseId.HasValue)
+                residentsQuery = residentsQuery.Where(r => r.SafehouseId == safehouseId.Value);
 
-            var byType = await db.Residents
+            var total = await residentsQuery.CountAsync();
+
+            var byType = await residentsQuery
                 .Where(r => r.ReintegrationStatus == "Completed" && r.ReintegrationType != null)
                 .GroupBy(r => r.ReintegrationType)
                 .Select(g => new
@@ -59,7 +63,7 @@ public static class ReportEndpoints
             var completedTotal = byType.Sum(b => b.count);
             var successRate = total > 0 ? Math.Round((double)completedTotal / total * 100, 1) : 0;
 
-            var avgLengthOfStay = await db.Residents
+            var avgLengthOfStay = await residentsQuery
                 .Where(r => r.ReintegrationStatus == "Completed"
                     && r.DateOfAdmission != null && r.DateClosed != null)
                 .Select(r => (double)(r.DateClosed!.Value.DayNumber - r.DateOfAdmission!.Value.DayNumber))

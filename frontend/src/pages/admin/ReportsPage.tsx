@@ -9,6 +9,7 @@ import {
 } from 'recharts';
 import { apiFetch } from '../../api';
 import { formatMonthLabel, formatEnumLabel } from '../../constants';
+import { useSafehouse } from '../../contexts/SafehouseContext';
 import { ChartTooltip } from '../../components/ChartTooltip';
 import KpiCard from '../../components/admin/KpiCard';
 import MlBadge from '../../components/admin/MlBadge';
@@ -215,6 +216,7 @@ function DonationsTab() {
 
 // ── Outcomes Tab ─────────────────────────────────────────
 function OutcomesTab() {
+  const { activeSafehouseId } = useSafehouse();
   const [outcomes, setOutcomes] = useState<OutcomeData | null>(null);
   const [edu, setEdu] = useState<EduRow[]>([]);
   const [health, setHealth] = useState<HealthRow[]>([]);
@@ -224,8 +226,11 @@ function OutcomesTab() {
     let cancelled = false;
     async function load() {
       try {
+        const outcomesUrl = activeSafehouseId
+          ? `/api/admin/reports/resident-outcomes?safehouseId=${activeSafehouseId}`
+          : '/api/admin/reports/resident-outcomes';
         const [o, e, h] = await Promise.all([
-          apiFetch<OutcomeData>('/api/admin/reports/resident-outcomes'),
+          apiFetch<OutcomeData>(outcomesUrl),
           apiFetch<EduRow[]>('/api/impact/education-trends'),
           apiFetch<HealthRow[]>('/api/impact/health-trends'),
         ]);
@@ -241,7 +246,7 @@ function OutcomesTab() {
     }
     load();
     return () => { cancelled = true; };
-  }, []);
+  }, [activeSafehouseId]);
 
   if (loading) return <Loading />;
 
