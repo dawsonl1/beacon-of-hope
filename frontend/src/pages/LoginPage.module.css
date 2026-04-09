@@ -216,6 +216,19 @@
   border-top: 1px solid rgba(15, 27, 45, 0.08);
 }
 
+.donateLink {
+  font-size: 0.85rem;
+  color: var(--color-sage);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.donateLink:hover {
+  color: var(--color-teal-dark, #0b7a6a);
+  text-decoration: underline;
+}
+
 .backLink {
   font-size: 0.85rem;
   color: var(--text-muted);
@@ -225,6 +238,7 @@
 
 .backLink:hover {
   color: var(--color-sage);
+  text-decoration: underline;
 }
 
 .switchText {
