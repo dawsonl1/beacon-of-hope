@@ -169,7 +169,7 @@ export default function DonorPortal() {
         <div className={styles.highlightCard}>
           <div className={styles.highlightIcon}><Users size={22} /></div>
           <div>
-            <span className={styles.highlightValue}>{donationCount > 0 ? Math.max(1, Math.floor(totalDonated / 1500)) : 0}</span>
+            <span className={styles.highlightValue}>{donationCount > 0 ? Math.max(1, Math.floor(totalDonated / 500)) : 0}</span>
             <span className={styles.highlightLabel}>Lives directly impacted</span>
           </div>
         </div>
