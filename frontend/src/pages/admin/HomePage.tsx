@@ -844,25 +844,24 @@ export default function HomePage() {
                         </p>
                       )}
                       <div className={styles.taskActions}>
-                        {TASK_TYPE_TO_EVENT_TYPE[task.taskType] ? (
+                        {TASK_TYPE_TO_EVENT_TYPE[task.taskType] && (
                           <button
                             className={styles.scheduleBtn}
                             onClick={e => { e.stopPropagation(); setScheduleTask(task); setScheduleForm({ eventDate: fmtDate(currentDate), startTime: '' }); }}
                           >
                             <Calendar size={12} /> Schedule
                           </button>
-                        ) : (
-                          <button
-                            className={styles.completeBtn}
-                            onClick={e => {
-                              e.stopPropagation();
-                              if (task.residentId) navigate(`/admin/caseload/${task.residentId}`);
-                              else handleTaskAction(task.staffTaskId, 'Completed');
-                            }}
-                          >
-                            <CheckCircle size={12} /> {task.residentId ? 'View' : 'Done'}
-                          </button>
                         )}
+                        <button
+                          className={styles.completeBtn}
+                          onClick={e => {
+                            e.stopPropagation();
+                            if (task.residentId) navigate(`/admin/caseload/${task.residentId}`);
+                            else handleTaskAction(task.staffTaskId, 'Completed');
+                          }}
+                        >
+                          <CheckCircle size={12} /> {task.residentId ? 'View' : 'Done'}
+                        </button>
                         <button className={styles.snoozeBtn} onClick={e => { e.stopPropagation(); handleTaskAction(task.staffTaskId, 'Snoozed', 30); }}>
                           <Clock size={12} />
                         </button>
