@@ -46,6 +46,7 @@ export default function IncidentsPage() {
   const [tab, setTab] = useState<Tab>('open');
   const [sortBy, setSortBy] = useState('severity');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+  const [resolvedFilter, setResolvedFilter] = useState('');
   const pageSize = 20;
 
   const fetchIncidents = useCallback(async () => {

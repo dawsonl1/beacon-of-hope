@@ -564,47 +564,209 @@ export default function ResidentDetailPage() {
 
             {/* ── Plan tab ─────────────────────── */}
             {activeTab === 'plan' && (
-              <>
-                <p className={styles.sectionLabel}>Reintegration</p>
-                <div className={styles.fieldGrid}>
-                  <InfoField label="Type" value={resident.reintegrationType} />
-                  <InfoField label="Status" value={resident.reintegrationStatus} />
-                </div>
-
-                <p className={styles.sectionLabel}>Social Worker</p>
-                <div className={styles.fieldGrid}>
-                  <InfoField label="Assigned SW" value={resident.assignedSocialWorker} />
-                  <InfoField label="Case Study Date" value={formatDate(resident.dateCaseStudyPrepared)} />
-                </div>
-                {resident.initialCaseAssessment && (
-                  <>
-                    <p className={styles.sectionLabel}>Initial Assessment</p>
-                    <p className={styles.notes}>{resident.initialCaseAssessment}</p>
-                  </>
-                )}
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
-                  <p className={styles.sectionLabel}>Case Conferences</p>
-                </div>
-                {conferences.length === 0 ? (
-                  <p className={styles.noData}>No conferences recorded.</p>
-                ) : (
-                  conferences.slice(0, 8).map((conf: any) => {
-                    const confColor = conf.status === 'Open' ? '#3498db' : conf.status === 'Achieved' ? '#27ae60' : '#95a5a6';
-                    return (
-                      <div key={conf.planId} className={`${styles.recordRow} ${styles.recordClickable}`} onClick={() => navigate('/admin/conferences')}>
-                        <span className={styles.recordDate}>{conf.caseConferenceDate || '-'}</span>
-                        <span>{conf.planCategory || '-'}</span>
-                        <span className={styles.statusBadge} style={{ background: `${confColor}18`, color: confColor, marginLeft: 'auto' }}>{conf.status || '-'}</span>
-                      </div>
-                    );
-                  })
-                )}
-              </>
+              <PlanTab
+                resident={resident}
+                conferences={conferences}
+                setConferences={setConferences}
+                navigate={navigate}
+                id={id!}
+              />
             )}
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+/* ── Plan Tab Component ────────────────────────── */
+
+const PLAN_CATEGORIES = ['Safety', 'Education', 'Physical Health', 'Psychosocial', 'Legal', 'Reintegration'];
+const PLAN_STATUSES = ['Open', 'In Progress', 'Achieved', 'On Hold', 'Closed'];
+const PLAN_STATUS_COLORS: Record<string, string> = {
+  Open: '#3498db', 'In Progress': '#f39c12', Achieved: '#27ae60', 'On Hold': '#95a5a6', Closed: '#95a5a6',
+};
+
+function PlanTab({ resident, conferences, setConferences, navigate, id }: {
+  resident: ResidentDetail;
+  conferences: any[];
+  setConferences: (c: any[]) => void;
+  navigate: (path: string) => void;
+  id: string;
+}) {
+  const [showForm, setShowForm] = useState(false);
+  const [editingPlan, setEditingPlan] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState('');
+
+  const [planCategory, setPlanCategory] = useState('');
+  const [planDescription, setPlanDescription] = useState('');
+  const [servicesProvided, setServicesProvided] = useState('');
+  const [targetValue, setTargetValue] = useState('');
+  const [targetDate, setTargetDate] = useState('');
+  const [status, setStatus] = useState('Open');
+
+  function resetForm() {
+    setPlanCategory('');
+    setPlanDescription('');
+    setServicesProvided('');
+    setTargetValue('');
+    setTargetDate('');
+    setStatus('Open');
+    setEditingPlan(null);
+    setFormError('');
+  }
+
+  function openCreate() {
+    resetForm();
+    setShowForm(true);
+  }
+
+  function openEdit(plan: any) {
+    setPlanCategory(plan.planCategory || '');
+    setPlanDescription(plan.planDescription || '');
+    setServicesProvided(plan.servicesProvided || '');
+    setTargetValue(plan.targetValue != null ? String(plan.targetValue) : '');
+    setTargetDate(plan.targetDate || '');
+    setStatus(plan.status || 'Open');
+    setEditingPlan(plan);
+    setShowForm(true);
+  }
+
+  async function handleSave(e: React.FormEvent) {
+    e.preventDefault();
+    if (!planCategory) { setFormError('Category is required.'); return; }
+    setSaving(true);
+    setFormError('');
+
+    const body = {
+      residentId: Number(id),
+      planCategory,
+      planDescription: planDescription || null,
+      servicesProvided: servicesProvided || null,
+      targetValue: targetValue ? Number(targetValue) : null,
+      targetDate: targetDate || null,
+      status,
+    };
+
+    try {
+      if (editingPlan) {
+        await apiFetch(`/api/admin/intervention-plans/${editingPlan.planId}`, {
+          method: 'PUT',
+          body: JSON.stringify(body),
+        });
+      } else {
+        await apiFetch('/api/admin/intervention-plans', {
+          method: 'POST',
+          body: JSON.stringify(body),
+        });
+      }
+      const updated = await apiFetch<any[]>(`/api/admin/intervention-plans?residentId=${id}`);
+      setConferences(updated);
+      setShowForm(false);
+      resetForm();
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : 'Failed to save');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <>
+      <p className={styles.sectionLabel}>Reintegration</p>
+      <div className={styles.fieldGrid}>
+        <InfoField label="Type" value={resident.reintegrationType} />
+        <InfoField label="Status" value={resident.reintegrationStatus} />
+      </div>
+
+      <p className={styles.sectionLabel}>Social Worker</p>
+      <div className={styles.fieldGrid}>
+        <InfoField label="Assigned SW" value={resident.assignedSocialWorker} />
+        <InfoField label="Case Study Date" value={formatDate(resident.dateCaseStudyPrepared)} />
+      </div>
+      {resident.initialCaseAssessment && (
+        <>
+          <p className={styles.sectionLabel}>Initial Assessment</p>
+          <p className={styles.notes}>{resident.initialCaseAssessment}</p>
+        </>
+      )}
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.75rem' }}>
+        <p className={styles.sectionLabel}>Intervention Plans</p>
+        <button className={styles.addBtn} onClick={openCreate}><Plus size={12} /> New Plan</button>
+      </div>
+
+      {showForm && (
+        <form onSubmit={handleSave} style={{ background: 'rgba(15,143,125,0.03)', border: '1px solid rgba(15,27,45,0.08)', borderRadius: '10px', padding: '0.75rem 1rem', marginBottom: '0.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Category *</label>
+              <select value={planCategory} onChange={e => setPlanCategory(e.target.value)} style={{ width: '100%', padding: '0.35rem', borderRadius: '6px', border: '1px solid rgba(15,27,45,0.12)', fontSize: '0.78rem' }}>
+                <option value="">Select...</option>
+                {PLAN_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Status</label>
+              <select value={status} onChange={e => setStatus(e.target.value)} style={{ width: '100%', padding: '0.35rem', borderRadius: '6px', border: '1px solid rgba(15,27,45,0.12)', fontSize: '0.78rem' }}>
+                {PLAN_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Target Value</label>
+              <input type="number" step="0.01" value={targetValue} onChange={e => setTargetValue(e.target.value)} placeholder="e.g. 80" style={{ width: '100%', padding: '0.35rem', borderRadius: '6px', border: '1px solid rgba(15,27,45,0.12)', fontSize: '0.78rem' }} />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Target Date</label>
+              <input type="date" value={targetDate} onChange={e => setTargetDate(e.target.value)} style={{ width: '100%', padding: '0.35rem', borderRadius: '6px', border: '1px solid rgba(15,27,45,0.12)', fontSize: '0.78rem' }} />
+            </div>
+          </div>
+          <div style={{ marginBottom: '0.5rem' }}>
+            <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Description</label>
+            <textarea value={planDescription} onChange={e => setPlanDescription(e.target.value)} rows={2} placeholder="What should be achieved..." style={{ width: '100%', padding: '0.35rem', borderRadius: '6px', border: '1px solid rgba(15,27,45,0.12)', fontSize: '0.78rem', resize: 'vertical' }} />
+          </div>
+          <div style={{ marginBottom: '0.5rem' }}>
+            <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, marginBottom: '0.2rem' }}>Services Provided</label>
+            <input type="text" value={servicesProvided} onChange={e => setServicesProvided(e.target.value)} placeholder="e.g. CBT, tutoring, medical checkup" style={{ width: '100%', padding: '0.35rem', borderRadius: '6px', border: '1px solid rgba(15,27,45,0.12)', fontSize: '0.78rem' }} />
+          </div>
+          {formError && <div style={{ color: '#c0392b', fontSize: '0.78rem', marginBottom: '0.3rem' }}>{formError}</div>}
+          <div style={{ display: 'flex', gap: '0.4rem' }}>
+            <button type="submit" disabled={saving} style={{ padding: '0.3rem 0.7rem', borderRadius: '6px', border: 'none', background: 'var(--color-sage)', color: '#fff', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}>
+              {saving ? 'Saving...' : editingPlan ? 'Update Plan' : 'Create Plan'}
+            </button>
+            <button type="button" onClick={() => { setShowForm(false); resetForm(); }} style={{ padding: '0.3rem 0.7rem', borderRadius: '6px', border: '1px solid rgba(15,27,45,0.12)', background: '#fff', color: 'var(--text-muted)', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
+
+      {conferences.length === 0 ? (
+        <p className={styles.noData}>No intervention plans yet.</p>
+      ) : (
+        conferences.map((plan: any) => {
+          const color = PLAN_STATUS_COLORS[plan.status || ''] || '#95a5a6';
+          return (
+            <div
+              key={plan.planId}
+              className={`${styles.recordRow} ${styles.recordClickable}`}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              onClick={() => openEdit(plan)}
+            >
+              <span className={styles.recordDate}>{plan.targetDate || plan.caseConferenceDate || '-'}</span>
+              <span style={{ fontWeight: 600, fontSize: '0.8rem' }}>{plan.planCategory || '-'}</span>
+              <span style={{ flex: 1, fontSize: '0.78rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {plan.planDescription ? (plan.planDescription.length > 50 ? plan.planDescription.slice(0, 50) + '...' : plan.planDescription) : ''}
+              </span>
+              {plan.targetValue != null && (
+                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Target: {plan.targetValue}</span>
+              )}
+              <span className={styles.statusBadge} style={{ background: `${color}18`, color, marginLeft: 'auto' }}>{plan.status || '-'}</span>
+            </div>
+          );
+        })
+      )}
+    </>
   );
 }

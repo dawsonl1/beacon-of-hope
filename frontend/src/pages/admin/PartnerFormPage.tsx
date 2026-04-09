@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
+import { formatEnumLabel } from '../../constants';
+import { REGIONS } from '../../domain';
 import Dropdown from '../../components/admin/Dropdown';
 import styles from './SupporterFormPage.module.css';
 
@@ -148,7 +150,7 @@ export default function PartnerFormPage() {
             <Dropdown
               value={form.roleType}
               placeholder="Select role..."
-              options={ROLE_TYPES.map(r => ({ value: r, label: r }))}
+              options={ROLE_TYPES.map(r => ({ value: r, label: formatEnumLabel(r) }))}
               onChange={(v) => set('roleType', v)}
             />
           </div>
@@ -165,7 +167,12 @@ export default function PartnerFormPage() {
 
           <div className={styles.field}>
             <label>Region</label>
-            <input value={form.region} onChange={e => set('region', e.target.value)} placeholder="Region" />
+            <Dropdown
+              value={form.region}
+              placeholder="Select region..."
+              options={REGIONS.map(r => ({ value: r, label: r }))}
+              onChange={(v) => set('region', v)}
+            />
           </div>
 
           <div className={`${styles.field} ${styles.fieldFull}`}>

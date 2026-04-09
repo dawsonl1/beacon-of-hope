@@ -199,6 +199,7 @@ app.MapAdminEndpoints();
 app.MapVisitationEndpoints();
 app.MapReportEndpoints();
 app.MapRecordingEndpoints();
+app.MapCaseConferenceEndpoints();
 app.MapSupporterEndpoints();
 app.MapDonationEndpoints();
 app.MapDonorPortalEndpoints();

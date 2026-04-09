@@ -447,6 +447,15 @@ public static class AdminEndpoints
             return new { caseStatuses, safehouses, categories, riskLevels, socialWorkers };
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
+        // List all safehouses (for dropdowns)
+        app.MapGet("/api/admin/safehouses", async (AppDbContext db) =>
+        {
+            return await db.Safehouses
+                .OrderBy(s => s.Name)
+                .Select(s => new { s.SafehouseId, s.Name })
+                .ToListAsync();
+        }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
+
         // Returns staff members assigned to a specific safehouse
         app.MapGet("/api/admin/safehouses/{safehouseId:int}/staff", async (int safehouseId, AppDbContext db, UserManager<ApplicationUser> userManager) =>
         {

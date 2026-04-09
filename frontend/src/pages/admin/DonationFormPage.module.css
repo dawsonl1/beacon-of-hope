@@ -176,6 +176,28 @@
   border-top: 1px solid rgba(15, 27, 45, 0.08);
 }
 
+.deleteBtn {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-rose, #dc2626);
+  background: transparent;
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  padding: 0.55rem 1.25rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+  margin-right: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.deleteBtn:hover {
+  background: rgba(220, 38, 38, 0.06);
+  border-color: rgba(220, 38, 38, 0.4);
+}
+
 .cancelBtn {
   font-size: 0.82rem;
   font-weight: 600;

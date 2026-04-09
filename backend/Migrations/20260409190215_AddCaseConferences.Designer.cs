@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using backend.Data;
@@ -11,9 +12,11 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260409190215_AddCaseConferences")]
+    partial class AddCaseConferences
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1007,113 +1010,6 @@ namespace backend.Migrations
                         .HasDatabaseName("idx_ml_history_entity_model");
 
                     b.ToTable("ml_prediction_history", (string)null);
-                });
-
-            modelBuilder.Entity("backend.Models.Newsletter", b =>
-                {
-                    b.Property<int>("NewsletterId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("newsletter_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("NewsletterId"));
-
-                    b.Property<DateTime?>("ApprovedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("approved_at");
-
-                    b.Property<string>("ApprovedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("approved_by");
-
-                    b.Property<DateTime>("GeneratedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("generated_at");
-
-                    b.Property<string>("HtmlContent")
-                        .HasColumnType("text")
-                        .HasColumnName("html_content");
-
-                    b.Property<int>("MonthYear")
-                        .HasColumnType("integer")
-                        .HasColumnName("month_year");
-
-                    b.Property<string>("PlainText")
-                        .HasColumnType("text")
-                        .HasColumnName("plain_text");
-
-                    b.Property<int>("RecipientCount")
-                        .HasColumnType("integer")
-                        .HasColumnName("recipient_count");
-
-                    b.Property<DateTime?>("SentAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("sent_at");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("status");
-
-                    b.Property<string>("Subject")
-                        .HasColumnType("text")
-                        .HasColumnName("subject");
-
-                    b.HasKey("NewsletterId")
-                        .HasName("newsletters_pkey");
-
-                    b.HasIndex("MonthYear")
-                        .IsUnique()
-                        .HasDatabaseName("newsletters_month_year_idx");
-
-                    b.HasIndex("Status")
-                        .HasDatabaseName("newsletters_status_idx");
-
-                    b.ToTable("newsletters", (string)null);
-                });
-
-            modelBuilder.Entity("backend.Models.NewsletterSubscriber", b =>
-                {
-                    b.Property<int>("NewsletterSubscriberId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("newsletter_subscriber_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("NewsletterSubscriberId"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("email");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_active");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.Property<DateTime>("SubscribedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("subscribed_at");
-
-                    b.Property<string>("UnsubscribeToken")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("unsubscribe_token");
-
-                    b.HasKey("NewsletterSubscriberId")
-                        .HasName("newsletter_subscribers_pkey");
-
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasDatabaseName("newsletter_subscribers_email_idx");
-
-                    b.HasIndex("IsActive")
-                        .HasDatabaseName("newsletter_subscribers_active_idx");
-
-                    b.ToTable("newsletter_subscribers", (string)null);
                 });
 
             modelBuilder.Entity("backend.Models.Partner", b =>
