@@ -441,9 +441,9 @@ export default function SocialPostsPage() {
         <div className={styles.calendarHeader}>
           <h2 className={styles.sectionTitle}>Schedule</h2>
           <div className={styles.monthNav}>
-            <button onClick={() => setMonthOffset(m => m - 1)} className={styles.weekBtn}><ChevronLeft size={16} /></button>
+            <button onClick={() => setMonthOffset(m => m - 1)} className={styles.weekBtn} title="Previous month"><ChevronLeft size={16} /></button>
             <span className={styles.monthLabel}>{monthLabel}</span>
-            <button onClick={() => setMonthOffset(m => m + 1)} className={styles.weekBtn}><ChevronRight size={16} /></button>
+            <button onClick={() => setMonthOffset(m => m + 1)} className={styles.weekBtn} title="Next month"><ChevronRight size={16} /></button>
             {monthOffset !== 0 && <button onClick={() => setMonthOffset(0)} className={styles.todayBtn}>Today</button>}
           </div>
         </div>
@@ -503,7 +503,7 @@ export default function SocialPostsPage() {
                   <span className={styles.platform}>{selectedPost.platform}</span>
                   <span className={styles.popoverStatus}>{selectedPost.status.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}</span>
                 </div>
-                <button className={styles.popoverClose} onClick={() => { setSelectedPost(null); setCalEditing(false); }}><X size={18} /></button>
+                <button className={styles.popoverClose} onClick={() => { setSelectedPost(null); setCalEditing(false); }} title="Close"><X size={18} /></button>
               </div>
               <div className={styles.popoverBody}>
                 {selectedPost.mediaPath && (
@@ -557,7 +557,7 @@ export default function SocialPostsPage() {
                     <input type="number" placeholder="Shares" min={0} value={engagement.shares || ''} onChange={e => setEngagement({ ...engagement, shares: +e.target.value })} />
                     <input type="number" placeholder="Comments" min={0} value={engagement.comments || ''} onChange={e => setEngagement({ ...engagement, comments: +e.target.value })} />
                     <input type="number" placeholder="$" min={0} step="0.01" value={engagement.donations || ''} onChange={e => setEngagement({ ...engagement, donations: +e.target.value })} />
-                    <button className={styles.btnApprove} onClick={() => handleLogEngagement(post.automatedPostId)}><Check size={14} /></button>
+                    <button className={styles.btnApprove} onClick={() => handleLogEngagement(post.automatedPostId)} title="Save engagement"><Check size={14} /></button>
                   </div>
                 ) : (
                   <button className={styles.btnLog} onClick={() => { setEngagementId(post.automatedPostId); setEngagement({ likes: 0, shares: 0, comments: 0, donations: 0 }); }}>
@@ -588,7 +588,7 @@ export default function SocialPostsPage() {
                 <h3>Choose a photo</h3>
                 <p>Select an image from your media library to use with this post.</p>
               </div>
-              <button onClick={() => setShowPhotoPicker(false)} className={styles.popoverClose}><X size={20} /></button>
+              <button onClick={() => setShowPhotoPicker(false)} className={styles.popoverClose} title="Close"><X size={20} /></button>
             </div>
             <div className={styles.photoPickerToolbar}>
               <button className={`${styles.photoPickerFilter} ${!pickerFilter ? styles.photoPickerFilterActive : ''}`} onClick={() => setPickerFilter('')}>All</button>

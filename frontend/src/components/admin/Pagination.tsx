@@ -40,6 +40,7 @@ export default function Pagination({ page, pageSize, totalCount, onPageChange }:
           disabled={page <= 1}
           onClick={() => onPageChange(page - 1)}
           aria-label="Previous page"
+          title="Previous page"
         >
           <ChevronLeft size={16} />
         </button>
@@ -61,6 +62,7 @@ export default function Pagination({ page, pageSize, totalCount, onPageChange }:
           disabled={page >= totalPages}
           onClick={() => onPageChange(page + 1)}
           aria-label="Next page"
+          title="Next page"
         >
           <ChevronRight size={16} />
         </button>

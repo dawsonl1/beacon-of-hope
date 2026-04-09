@@ -91,11 +91,11 @@ export default function DatePicker({ value, onChange, placeholder = 'Select date
       {open && (
         <div className={styles.dropdown}>
           <div className={styles.nav}>
-            <button type="button" className={styles.navBtn} onClick={() => shiftMonth(-1)}><ChevronLeft size={14} /></button>
+            <button type="button" className={styles.navBtn} onClick={() => shiftMonth(-1)} title="Previous month"><ChevronLeft size={14} /></button>
             <span className={styles.monthLabel}>
               {calMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
             </span>
-            <button type="button" className={styles.navBtn} onClick={() => shiftMonth(1)}><ChevronRight size={14} /></button>
+            <button type="button" className={styles.navBtn} onClick={() => shiftMonth(1)} title="Next month"><ChevronRight size={14} /></button>
           </div>
           <div className={styles.grid}>
             {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (

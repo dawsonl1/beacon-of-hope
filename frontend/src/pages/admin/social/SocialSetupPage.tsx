@@ -36,12 +36,12 @@ function TermsList({ value, onChange, placeholder, showNotes }: { value: string;
   return (
     <div className={styles.termsList}>
       {items.length > 0 && <div className={styles.chips}>{items.map(i => (
-        <span key={i.key} className={styles.chip}>{showNotes && i.note ? `${i.key} (${i.note})` : i.key}<button onClick={() => remove(i.key)}><X size={11} /></button></span>
+        <span key={i.key} className={styles.chip}>{showNotes && i.note ? `${i.key} (${i.note})` : i.key}<button onClick={() => remove(i.key)} title="Remove"><X size={11} /></button></span>
       ))}</div>}
       <div className={styles.termsAdd}>
         <input placeholder={placeholder} value={term} onChange={e => setTerm(e.target.value)} onKeyDown={e => e.key === 'Enter' && add()} />
         {showNotes && <input placeholder="Note (optional)" value={note} onChange={e => setNote(e.target.value)} onKeyDown={e => e.key === 'Enter' && add()} />}
-        <button onClick={add} className={styles.addChipBtn}><Plus size={14} /></button>
+        <button onClick={add} className={styles.addChipBtn} title="Add"><Plus size={14} /></button>
       </div>
     </div>
   );
@@ -174,15 +174,15 @@ export default function SocialSetupPage() {
                 <div key={`c${c.contentFactCandidateId}`} className={styles.itemRow + ' ' + styles.candidateRow}>
                   <div className={styles.itemContent}><p>{c.factText}</p><span className={styles.itemMeta}>{c.sourceName} · Pending review</span></div>
                   <div className={styles.itemActions}>
-                    <button onClick={() => approveCandidate(c.contentFactCandidateId)} className={styles.approveChip}><Check size={13} /></button>
-                    <button onClick={() => rejectCandidate(c.contentFactCandidateId)} className={styles.rejectChip}><X size={13} /></button>
+                    <button onClick={() => approveCandidate(c.contentFactCandidateId)} className={styles.approveChip} title="Approve"><Check size={13} /></button>
+                    <button onClick={() => rejectCandidate(c.contentFactCandidateId)} className={styles.rejectChip} title="Reject"><X size={13} /></button>
                   </div>
                 </div>
               ))}
               {facts.map(f => (
                 <div key={`f${f.contentFactId}`} className={styles.itemRow}>
                   <div className={styles.itemContent}><p>{f.factText}</p><span className={styles.itemMeta}>{f.sourceName}{f.usageCount > 0 ? ` · Used ${f.usageCount}x` : ''}</span></div>
-                  <button onClick={() => setDeleteFactId(f.contentFactId)} className={styles.deleteChip}><Trash2 size={13} /></button>
+                  <button onClick={() => setDeleteFactId(f.contentFactId)} className={styles.deleteChip} title="Delete"><Trash2 size={13} /></button>
                 </div>
               ))}
               {facts.length === 0 && candidates.length === 0 && <p className={styles.emptyHint}>No facts yet. Add some or click "Research" to find them.</p>}
@@ -206,7 +206,7 @@ export default function SocialSetupPage() {
               {points.map(p => (
                 <div key={p.contentTalkingPointId} className={styles.itemRow}>
                   <div className={styles.itemContent}><p>{p.text}</p><span className={styles.itemMeta}>{p.topic.replace('_', ' ')}{p.usageCount > 0 ? ` · Used ${p.usageCount}x` : ''}</span></div>
-                  <button onClick={() => deletePoint(p.contentTalkingPointId)} className={styles.deleteChip}><Trash2 size={13} /></button>
+                  <button onClick={() => deletePoint(p.contentTalkingPointId)} className={styles.deleteChip} title="Delete"><Trash2 size={13} /></button>
                 </div>
               ))}
               {points.length === 0 && <p className={styles.emptyHint}>No talking points yet.</p>}

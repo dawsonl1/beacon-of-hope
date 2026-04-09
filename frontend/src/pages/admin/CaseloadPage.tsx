@@ -188,6 +188,7 @@ export default function CaseloadPage() {
               className={styles.clearSearch}
               onClick={() => setSearchInput('')}
               aria-label="Clear search"
+              title="Clear search"
             >
               <X size={14} />
             </button>
@@ -224,19 +225,19 @@ export default function CaseloadPage() {
           {caseStatus && (
             <span className={styles.chip}>
               Status: {caseStatus}
-              <button onClick={() => clearFilter('caseStatus')} className={styles.chipClose}><X size={12} /></button>
+              <button onClick={() => clearFilter('caseStatus')} className={styles.chipClose} title="Remove status filter"><X size={12} /></button>
             </span>
           )}
           {caseCategory && (
             <span className={styles.chip}>
               Category: {caseCategory}
-              <button onClick={() => clearFilter('caseCategory')} className={styles.chipClose}><X size={12} /></button>
+              <button onClick={() => clearFilter('caseCategory')} className={styles.chipClose} title="Remove category filter"><X size={12} /></button>
             </span>
           )}
           {riskLevel && (
             <span className={styles.chip}>
               Risk: {riskLevel}
-              <button onClick={() => clearFilter('riskLevel')} className={styles.chipClose}><X size={12} /></button>
+              <button onClick={() => clearFilter('riskLevel')} className={styles.chipClose} title="Remove risk filter"><X size={12} /></button>
             </span>
           )}
           <button

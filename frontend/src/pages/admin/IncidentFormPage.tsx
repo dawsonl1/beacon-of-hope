@@ -202,7 +202,7 @@ export default function IncidentFormPage() {
             </div>
             <div className={styles.field}>
               <label className={styles.label}>Reported By</label>
-              <input className={styles.input} value={form.reportedBy} onChange={e => handleChange('reportedBy', e.target.value)} placeholder="Staff name" />
+              <input className={`${styles.input} ${!isEdit ? styles.readonlyInput : ''}`} value={form.reportedBy} onChange={e => isEdit ? handleChange('reportedBy', e.target.value) : undefined} readOnly={!isEdit} placeholder="Staff name" />
             </div>
           </div>
         </div>
@@ -273,7 +273,7 @@ export default function IncidentFormPage() {
             <div className={styles.toggleRow}>
               <button
                 type="button"
-                className={`${styles.toggle} ${form.followUpRequired ? styles.toggleDanger : ''}`}
+                className={`${styles.toggle} ${form.followUpRequired ? styles.toggleActive : ''}`}
                 onClick={() => handleChange('followUpRequired', !form.followUpRequired)}
               />
               <div>

@@ -19,7 +19,7 @@ export default function DeleteConfirmDialog({
   return (
     <div className={styles.overlay} onClick={onCancel}>
       <div className={styles.dialog} onClick={(e) => e.stopPropagation()}>
-        <button className={styles.closeBtn} onClick={onCancel} aria-label="Close">
+        <button className={styles.closeBtn} onClick={onCancel} aria-label="Close" title="Close">
           <X size={18} />
         </button>
         <div className={styles.iconWrap}>

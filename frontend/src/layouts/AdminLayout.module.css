@@ -8,39 +8,43 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(15, 27, 45, 0.08);
+  height: var(--header-height);
 }
 
 .headerInner {
-  max-width: 1280px;
+  max-width: var(--max-width);
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
-  height: 56px;
+  padding: 0 1.4rem;
+  height: 100%;
 }
 
 /* ── Logo ────────────────────────────────────────────────── */
 .logo {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
   text-decoration: none;
   flex-shrink: 0;
 }
 
 .logoIcon {
   color: var(--color-sage);
-  font-size: 1.2rem;
+  font-size: 1.4rem;
+  line-height: 1;
 }
 
 .logoText {
   font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 600;
   color: var(--text-strong);
-  font-size: 1.15rem;
+  letter-spacing: -0.02em;
 }
 
 /* ── Desktop Navigation (hover dropdowns) ────────────────── */
@@ -332,32 +336,31 @@
 }
 
 .logoutBtn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.42rem 0.85rem;
-  border-radius: 8px;
-  border: 1px solid rgba(15, 27, 45, 0.12);
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 0.82rem;
+  gap: 0.45rem;
+  font-size: 0.875rem;
   font-weight: 600;
+  color: var(--text-strong);
+  padding: 0.52rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 27, 45, 0.15);
+  background: transparent;
   font-family: var(--font-body);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform 0.25s, box-shadow 0.25s, background 0.25s;
 }
 
 .logoutBtn:hover {
-  color: var(--text-strong);
-  border-color: rgba(15, 27, 45, 0.2);
-  background: rgba(15, 27, 45, 0.03);
+  background: rgba(15, 27, 45, 0.05);
+  transform: translateY(-1px);
 }
 
 /* ── Content ─────────────────────────────────────────────── */
 .content {
-  max-width: 1280px;
+  max-width: var(--max-width);
   margin: 0 auto;
-  min-height: calc(100vh - 56px);
+  min-height: calc(100vh - var(--header-height));
   overflow-x: hidden;
 }
 
@@ -386,7 +389,7 @@
   .mobileNav {
     display: none;
     position: fixed;
-    top: 56px;
+    top: var(--header-height);
     left: 0;
     right: 0;
     bottom: 0;

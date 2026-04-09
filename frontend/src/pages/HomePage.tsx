@@ -114,7 +114,7 @@ export default function HomePage() {
             </a>
           </div>
         </div>
-        <a href="#impact" className={styles.scrollHint} aria-label="Scroll to learn more">
+        <a href="#impact" className={styles.scrollHint} aria-label="Scroll to learn more" title="Scroll to learn more">
           <ChevronDown size={20} />
         </a>
       </section>

@@ -140,6 +140,7 @@ export default function ChatWidget() {
           className={styles.fab}
           onClick={() => setOpen(true)}
           aria-label="Open chat"
+          title="Open chat"
         >
           <MessageCircle size={24} />
         </button>
@@ -153,7 +154,7 @@ export default function ChatWidget() {
               <span className={styles.headerDot} />
               <span className={styles.headerTitle}>Beacon of Hope</span>
             </div>
-            <button className={styles.closeBtn} onClick={() => setOpen(false)} aria-label="Close chat">
+            <button className={styles.closeBtn} onClick={() => setOpen(false)} aria-label="Close chat" title="Close chat">
               <X size={18} />
             </button>
           </div>

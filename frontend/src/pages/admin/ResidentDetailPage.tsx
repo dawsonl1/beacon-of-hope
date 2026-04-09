@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft, Edit, Trash2, Loader2, User, Shield, ClipboardList,
+  ArrowLeft, Edit, Trash2, Loader2, User, Users, Shield, ClipboardList,
   AlertTriangle, Activity, GraduationCap, Plus,
   Calendar, Heart, FileText, Mic, Eye,
 } from 'lucide-react';
@@ -176,9 +176,14 @@ export default function ResidentDetailPage() {
     apiFetch<{ items: any[] }>(`/api/admin/incidents?residentId=${id}`).then(d => setIncidents(d.items || [])).catch(() => {});
     apiFetch<any[]>(`/api/admin/intervention-plans?residentId=${id}`).then(setConferences).catch(() => {});
     apiFetch<any[]>(`/api/admin/recordings/emotional-trends?residentId=${id}`).then(setEmotionalTrends).catch(() => {});
-    apiFetch<{ items: any[] }>(`/api/admin/recordings?residentId=${id}`).then(d => setRecordings(Array.isArray(d) ? d : d.items || [])).catch(() => {});
+    apiFetch<{ items: any[] }>(`/api/admin/recordings?residentId=${id}&page=1&pageSize=100`).then(d => setRecordings(Array.isArray(d) ? d : d.items || [])).catch(() => {});
     apiFetch<{ items: any[] }>(`/api/admin/visitations?residentId=${id}`).then(d => setVisitations(Array.isArray(d) ? d : d.items || [])).catch(() => {});
   }, [id]);
+
+  const hasHighRisk = predictions.some(p =>
+    p.modelName.includes('incident-early-warning') &&
+    (p.scoreLabel === 'High' || p.scoreLabel === 'Critical')
+  );
 
   // Build unified timeline from all record types
   const timeline = useMemo<TimelineEntry[]>(() => {
@@ -385,6 +390,16 @@ export default function ResidentDetailPage() {
                       </div>
                     );
                   })}
+                </div>
+              )}
+              {hasHighRisk && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginTop: '0.75rem', padding: '0.65rem 1rem', background: 'rgba(211,84,0,0.06)', border: '1px solid rgba(211,84,0,0.2)', borderRadius: 'var(--radius-sm)', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                  <AlertTriangle size={15} style={{ color: '#d35400', flexShrink: 0 }} />
+                  <span>Elevated risk detected — consider scheduling a case conference.</span>
+                  <button onClick={() => navigate(`/admin/conferences?residentId=${resident.residentId}`)} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', marginLeft: 'auto', padding: '0.4rem 0.85rem', background: 'linear-gradient(120deg, var(--color-sage), #13a490)', color: '#fff', border: 'none', borderRadius: '999px', fontSize: '0.78rem', fontWeight: 600, fontFamily: 'var(--font-body)', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                    <Users size={14} />
+                    Schedule Case Conference
+                  </button>
                 </div>
               )}
             </div>

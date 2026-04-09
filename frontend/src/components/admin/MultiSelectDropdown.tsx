@@ -67,6 +67,7 @@ export default function MultiSelectDropdown({
                 role="button"
                 tabIndex={0}
                 className={styles.tagRemove}
+                title={`Remove ${opt.label}`}
                 onClick={(e) => remove(opt.value, e)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') remove(opt.value, e as unknown as React.MouseEvent);
