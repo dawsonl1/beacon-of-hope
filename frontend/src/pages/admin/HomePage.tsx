@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ChevronLeft, ChevronRight, Plus, Loader2,
@@ -124,6 +124,25 @@ function hourLabel(h: number): string {
   return `${h - 12} PM`;
 }
 
+function fmtWeekRange(d: Date): string {
+  const ws = getWeekStart(d);
+  const we = addDays(ws, 6);
+  const opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
+  const start = ws.toLocaleDateString('en-US', opts);
+  const endOpts: Intl.DateTimeFormatOptions = ws.getMonth() === we.getMonth()
+    ? { day: 'numeric' }
+    : { month: 'short', day: 'numeric' };
+  const end = we.toLocaleDateString('en-US', endOpts);
+  return `${start} – ${end}, ${we.getFullYear()}`;
+}
+
+function fmtDayHeader(d: Date): { name: string; date: number } {
+  return {
+    name: d.toLocaleDateString('en-US', { weekday: 'short' }),
+    date: d.getDate(),
+  };
+}
+
 function parseContext(json: string | null): Record<string, string> {
   if (!json) return {};
   try { return JSON.parse(json); } catch { return {}; }
@@ -137,7 +156,7 @@ export default function HomePage() {
   const { activeSafehouseId, safehouses } = useSafehouse();
 
   // Calendar state
-  const [view, setView] = useState<'day' | 'week'>('day');
+  const [view, setView] = useState<'day' | 'week'>('week');
   const [currentDate, setCurrentDate] = useState(new Date(APP_TODAY));
   const [events, setEvents] = useState<CalendarEventItem[]>([]);
   const [eventsLoading, setEventsLoading] = useState(true);
@@ -156,6 +175,7 @@ export default function HomePage() {
   // Drag-and-drop state
   const [dragTaskId, setDragTaskId] = useState<number | null>(null);
   const [dropHour, setDropHour] = useState<number | null>(null);
+  const [dropDate, setDropDate] = useState<string | null>(null);
 
   // Schedule modal state
   const [scheduleTask, setScheduleTask] = useState<StaffTaskItem | null>(null);
@@ -277,30 +297,35 @@ export default function HomePage() {
   function handleDragEnd() {
     setDragTaskId(null);
     setDropHour(null);
+    setDropDate(null);
     dragCounterRef.current = 0;
   }
 
-  function handleSlotDragEnter(hour: number) {
+  function handleSlotDragEnter(hour: number, date?: string) {
     dragCounterRef.current++;
     setDropHour(hour);
+    if (date) setDropDate(date);
   }
 
   function handleSlotDragLeave() {
     dragCounterRef.current--;
     if (dragCounterRef.current <= 0) {
       setDropHour(null);
+      setDropDate(null);
       dragCounterRef.current = 0;
     }
   }
 
-  function handleSlotDrop(hour: number) {
+  function handleSlotDrop(hour: number, date?: string) {
     if (!dragTaskId) return;
     const task = tasks.find(t => t.staffTaskId === dragTaskId);
     if (!task) return;
     const startTime = `${hour.toString().padStart(2, '0')}:00`;
-    scheduleTaskToCalendar(task, fmtDate(currentDate), startTime);
+    const targetDate = date || fmtDate(currentDate);
+    scheduleTaskToCalendar(task, targetDate, startTime);
     setDragTaskId(null);
     setDropHour(null);
+    setDropDate(null);
     dragCounterRef.current = 0;
   }
 
@@ -349,7 +374,7 @@ export default function HomePage() {
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <h1>Home</h1>
-          <p>{fmtDateDisplay(currentDate)}</p>
+          <p>{view === 'week' ? fmtWeekRange(currentDate) : fmtDateDisplay(currentDate)}</p>
         </div>
         <div className={styles.headerActions}>
           <div className={styles.dateControls}>
@@ -411,24 +436,64 @@ export default function HomePage() {
               </div>
             </>
           ) : (
-            <div className={styles.weekGrid}>
-              {DAY_NAMES.map((name, i) => {
-                const dayDate = addDays(getWeekStart(currentDate), i);
-                const dayStr = fmtDate(dayDate);
-                const isToday = dayStr === APP_TODAY_STR;
-                const dayEvents = events.filter(e => e.eventDate === dayStr);
-                return (
-                  <div key={name} className={isToday ? styles.weekDayToday : styles.weekDay}>
-                    <div className={isToday ? styles.weekDayHeaderToday : styles.weekDayHeader}>
-                      {name} {dayDate.getDate()}
-                    </div>
-                    <div className={styles.weekEventList}>
-                      {dayEvents.map(renderEventChip)}
-                    </div>
+            <>
+              {unscheduled.length > 0 && (
+                <div className={styles.unscheduledSection}>
+                  <div className={styles.sectionLabel}>Unscheduled</div>
+                  <div className={styles.unscheduledList}>
+                    {unscheduled.map(evt => (
+                      <div key={evt.calendarEventId} className={styles.unscheduledCard} onClick={() => setSelectedEvent(evt)}>
+                        {evt.title} {evt.residentCode && `(${evt.residentCode})`}
+                      </div>
+                    ))}
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              )}
+              <div className={styles.weekGrid}>
+                {/* Column headers */}
+                <div className={styles.weekCorner} />
+                {DAY_NAMES.map((_, i) => {
+                  const dayDate = addDays(getWeekStart(currentDate), i);
+                  const dayStr = fmtDate(dayDate);
+                  const isToday = dayStr === APP_TODAY_STR;
+                  const hdr = fmtDayHeader(dayDate);
+                  return (
+                    <div key={i} className={`${styles.weekColHeader} ${isToday ? styles.weekColHeaderToday : ''}`}>
+                      <span className={styles.weekColName}>{hdr.name}</span>
+                      <span className={`${styles.weekColDate} ${isToday ? styles.weekColDateToday : ''}`}>{hdr.date}</span>
+                    </div>
+                  );
+                })}
+                {/* Time rows */}
+                {HOURS.map(hour => {
+                  const hourStr = hour.toString().padStart(2, '0');
+                  return (
+                    <React.Fragment key={hour}>
+                      <div className={styles.weekTimeLabel}>{hourLabel(hour)}</div>
+                      {DAY_NAMES.map((_, i) => {
+                        const dayDate = addDays(getWeekStart(currentDate), i);
+                        const dayStr = fmtDate(dayDate);
+                        const isToday = dayStr === APP_TODAY_STR;
+                        const cellEvents = events.filter(e => e.eventDate === dayStr && e.startTime?.startsWith(hourStr));
+                        const isDropTarget = dragTaskId !== null && dropHour === hour && dropDate === dayStr;
+                        return (
+                          <div
+                            key={`${hour}-${i}`}
+                            className={`${styles.weekCell} ${isToday ? styles.weekCellToday : ''} ${isDropTarget ? styles.weekCellDropTarget : ''}`}
+                            onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }}
+                            onDragEnter={() => handleSlotDragEnter(hour, dayStr)}
+                            onDragLeave={handleSlotDragLeave}
+                            onDrop={e => { e.preventDefault(); handleSlotDrop(hour, dayStr); }}
+                          >
+                            {cellEvents.map(renderEventChip)}
+                          </div>
+                        );
+                      })}
+                    </React.Fragment>
+                  );
+                })}
+              </div>
+            </>
           )}
         </div>
 
