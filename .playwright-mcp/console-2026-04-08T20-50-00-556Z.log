@@ -1,0 +1,73 @@
+[     105ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[     122ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[     122ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[     625ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents/1 @ http://localhost:5173/src/api.ts:6
+[     626ms] [LOG] [API] Fetching: http://localhost:5001/api/ml/predictions/resident/1 @ http://localhost:5173/src/api.ts:6
+[     626ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/education-records?residentId=1 @ http://localhost:5173/src/api.ts:6
+[     627ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/health-records?residentId=1 @ http://localhost:5173/src/api.ts:6
+[     627ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/incidents?residentId=1 @ http://localhost:5173/src/api.ts:6
+[     628ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents/1 @ http://localhost:5173/src/api.ts:6
+[     628ms] [LOG] [API] Fetching: http://localhost:5001/api/ml/predictions/resident/1 @ http://localhost:5173/src/api.ts:6
+[     629ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/education-records?residentId=1 @ http://localhost:5173/src/api.ts:6
+[     629ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/health-records?residentId=1 @ http://localhost:5173/src/api.ts:6
+[     629ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/incidents?residentId=1 @ http://localhost:5173/src/api.ts:6
+[   22823ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:5173/@vite/client:968
+[   24023ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[   24037ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[   24038ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[   25111ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents/1 @ http://localhost:5173/src/api.ts:6
+[   25111ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/ml/predictions/resident/1 @ http://localhost:5173/src/api.ts:6
+[   25112ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/education-records?residentId=1 @ http://localhost:5173/src/api.ts:6
+[   25112ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/health-records?residentId=1 @ http://localhost:5173/src/api.ts:6
+[   25113ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/incidents?residentId=1 @ http://localhost:5173/src/api.ts:6
+[   25114ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents/1 @ http://localhost:5173/src/api.ts:6
+[   25114ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/ml/predictions/resident/1 @ http://localhost:5173/src/api.ts:6
+[   25115ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/education-records?residentId=1 @ http://localhost:5173/src/api.ts:6
+[   25115ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/health-records?residentId=1 @ http://localhost:5173/src/api.ts:6
+[   25115ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/incidents?residentId=1 @ http://localhost:5173/src/api.ts:6
+[   25258ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/ml/predictions/resident/1:0
+[   25259ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/ml/predictions/resident/1 @ http://localhost:5173/@vite/client:509
+[   25331ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/health-records?residentId=1:0
+[   25332ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/health-records?residentId=1 @ http://localhost:5173/@vite/client:509
+[   25350ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/education-records?residentId=1:0
+[   25350ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/education-records?residentId=1 @ http://localhost:5173/@vite/client:509
+[   25398ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/incidents?residentId=1:0
+[   25398ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/incidents?residentId=1 @ http://localhost:5173/@vite/client:509
+[   25465ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/education-records?residentId=1:0
+[   25466ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/education-records?residentId=1 @ http://localhost:5173/@vite/client:509
+[   25475ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/health-records?residentId=1:0
+[   25476ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/health-records?residentId=1 @ http://localhost:5173/@vite/client:509
+[   25599ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/incidents?residentId=1:0
+[   25599ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/incidents?residentId=1 @ http://localhost:5173/@vite/client:509
+[   25599ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/ml/predictions/resident/1:0
+[   25599ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/ml/predictions/resident/1 @ http://localhost:5173/@vite/client:509
+[  144672ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents/1 @ http://localhost:5173/src/api.ts:6
+[  144673ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/ml/predictions/resident/1 @ http://localhost:5173/src/api.ts:6
+[  144673ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/education-records?residentId=1 @ http://localhost:5173/src/api.ts:6
+[  144674ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/health-records?residentId=1 @ http://localhost:5173/src/api.ts:6
+[  144675ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/incidents?residentId=1 @ http://localhost:5173/src/api.ts:6
+[  145023ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/education-records?residentId=1:0
+[  145023ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/education-records?residentId=1 @ http://localhost:5173/@vite/client:509
+[  145137ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/health-records?residentId=1:0
+[  145138ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/health-records?residentId=1 @ http://localhost:5173/@vite/client:509
+[  145138ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/ml/predictions/resident/1:0
+[  145138ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/ml/predictions/resident/1 @ http://localhost:5173/@vite/client:509
+[  145211ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/incidents?residentId=1:0
+[  145211ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/incidents?residentId=1 @ http://localhost:5173/@vite/client:509
+[  187183ms] [ERROR] WebSocket connection to 'ws://localhost:5173/?token=fzaqArbvfAMo' failed:  @ http://localhost:5173/@vite/client:840
+[  187183ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:5173/@vite/client:968
+[  189494ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[  189510ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[  189510ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[  190332ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents/1 @ http://localhost:5173/src/api.ts:6
+[  190332ms] [LOG] [API] Fetching: http://localhost:5001/api/ml/predictions/resident/1 @ http://localhost:5173/src/api.ts:6
+[  190333ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/education-records?residentId=1 @ http://localhost:5173/src/api.ts:6
+[  190333ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/health-records?residentId=1 @ http://localhost:5173/src/api.ts:6
+[  190333ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/incidents?residentId=1 @ http://localhost:5173/src/api.ts:6
+[  190334ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recordings/emotional-trends?residentId=1 @ http://localhost:5173/src/api.ts:6
+[  190334ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents/1 @ http://localhost:5173/src/api.ts:6
+[  190334ms] [LOG] [API] Fetching: http://localhost:5001/api/ml/predictions/resident/1 @ http://localhost:5173/src/api.ts:6
+[  190335ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/education-records?residentId=1 @ http://localhost:5173/src/api.ts:6
+[  190335ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/health-records?residentId=1 @ http://localhost:5173/src/api.ts:6
+[  190335ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/incidents?residentId=1 @ http://localhost:5173/src/api.ts:6
+[  190335ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recordings/emotional-trends?residentId=1 @ http://localhost:5173/src/api.ts:6

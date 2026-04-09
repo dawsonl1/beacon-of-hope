@@ -1,0 +1,17 @@
+[      77ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[      98ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[      99ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[     809ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[     810ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[     810ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[     811ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[     811ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[     811ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6
+[     812ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[     813ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[     813ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[     813ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[     814ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[     814ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6
+[    8282ms] [LOG] [API] Fetching: http://localhost:5001/api/impact/summary @ http://localhost:5173/src/api.ts:6
+[    8282ms] [LOG] [API] Fetching: http://localhost:5001/api/impact/summary @ http://localhost:5173/src/api.ts:6

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, AlertTriangle, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { VISIT_TYPES, COOPERATION_LEVELS } from '../../domain';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './VisitationFormPage.module.css';
 
 interface ResidentOption {
@@ -44,6 +45,7 @@ const emptyForm: FormData = {
 };
 
 export default function VisitationFormPage() {
+  useDocumentTitle('Visitation Form');
   const { id } = useParams<{ id: string }>();
   const isEditing = Boolean(id);
   const navigate = useNavigate();
@@ -150,7 +152,7 @@ export default function VisitationFormPage() {
   }
 
   if (loading) {
-    return <div className={styles.page}><div className={styles.loading}>Loading...</div></div>;
+    return <div className={styles.page}><div className={styles.loading}><Loader2 size={24} style={{ animation: 'spin 1s linear infinite' }} /> Loading...</div></div>;
   }
 
   return (

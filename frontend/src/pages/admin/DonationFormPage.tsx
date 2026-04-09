@@ -4,6 +4,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { formatEnumLabel, APP_TODAY_STR } from '../../constants';
 import { DONATION_TYPES } from '../../domain';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './DonationFormPage.module.css';
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'AUD', 'CAD'];
 
@@ -41,6 +42,7 @@ const blank: FormData = {
 };
 
 export default function DonationFormPage() {
+  useDocumentTitle('Donation Form');
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -129,6 +131,7 @@ export default function DonationFormPage() {
         body.currencyCode = form.currencyCode || 'USD';
         body.amount = form.amount ? parseFloat(form.amount) : null;
       } else if (form.donationType === 'InKind') {
+        body.impactUnit = form.impactUnit || null;
         body.estimatedValue = form.estimatedValue ? parseFloat(form.estimatedValue) : null;
       } else if (form.donationType === 'Time') {
         body.impactUnit = form.impactUnit || null;
@@ -224,6 +227,14 @@ export default function DonationFormPage() {
             <div className={styles.typeSection}>
               <div className={styles.typeSectionTitle}>In-Kind Details</div>
               <div className={styles.typeSectionGrid}>
+                <div className={styles.field}>
+                  <label>Item Description</label>
+                  <input
+                    value={form.impactUnit}
+                    onChange={e => set('impactUnit', e.target.value)}
+                    placeholder="e.g., 20 bags of rice, school supplies, used laptop..."
+                  />
+                </div>
                 <div className={styles.field}>
                   <label>Estimated Value</label>
                   <input

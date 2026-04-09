@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, Users } from 'lucide-react';
+import { Loader2, Users, Plus, X } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { APP_TODAY } from '../../constants';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Pagination from '../../components/admin/Pagination';
 import styles from './IncidentsPage.module.css';
 
@@ -19,13 +20,29 @@ interface ConferenceItem {
   servicesProvided: string | null;
 }
 
+interface ResidentOption {
+  residentId: number;
+  internalCode: string;
+}
+
 export default function CaseConferencesPage() {
+  useDocumentTitle('Case Conferences');
   const navigate = useNavigate();
   const [plans, setPlans] = useState<ConferenceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const pageSize = 20;
+
+  // Form state
+  const [showForm, setShowForm] = useState(false);
+  const [residents, setResidents] = useState<ResidentOption[]>([]);
+  const [formResidentId, setFormResidentId] = useState('');
+  const [formCategory, setFormCategory] = useState('');
+  const [formDescription, setFormDescription] = useState('');
+  const [formDate, setFormDate] = useState('');
+  const [formSubmitting, setFormSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const fetchPlans = useCallback(async () => {
     setLoading(true);
@@ -40,6 +57,45 @@ export default function CaseConferencesPage() {
   }, []);
 
   useEffect(() => { fetchPlans(); }, [fetchPlans]);
+
+  useEffect(() => {
+    if (showForm && residents.length === 0) {
+      apiFetch<ResidentOption[]>('/api/admin/residents-list').then(setResidents).catch(() => {});
+    }
+  }, [showForm, residents.length]);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!formResidentId || !formDate) {
+      setFormError('Resident and conference date are required.');
+      return;
+    }
+    setFormSubmitting(true);
+    setFormError(null);
+    try {
+      await apiFetch('/api/admin/intervention-plans', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          residentId: Number(formResidentId),
+          planCategory: formCategory || null,
+          planDescription: formDescription || null,
+          caseConferenceDate: formDate,
+          status: 'Open',
+        }),
+      });
+      setShowForm(false);
+      setFormResidentId('');
+      setFormCategory('');
+      setFormDescription('');
+      setFormDate('');
+      fetchPlans();
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : 'Failed to schedule');
+    } finally {
+      setFormSubmitting(false);
+    }
+  }
 
   const upcoming = plans.filter(p => p.caseConferenceDate && new Date(p.caseConferenceDate) >= APP_TODAY);
   const allPast = plans.filter(p => !p.caseConferenceDate || new Date(p.caseConferenceDate) < APP_TODAY);
@@ -91,7 +147,47 @@ export default function CaseConferencesPage() {
           <h1 className={styles.title}>Case Conferences</h1>
           <p className={styles.subtitle}>Intervention plans and case conference scheduling</p>
         </div>
+        <button className={styles.addBtn} onClick={() => setShowForm(f => !f)}>
+          {showForm ? <><X size={16} /> Cancel</> : <><Plus size={16} /> Schedule Conference</>}
+        </button>
       </header>
+
+      {showForm && (
+        <form onSubmit={handleSubmit} style={{ background: '#fff', border: '1px solid rgba(15,27,45,0.08)', borderRadius: '12px', padding: '1.25rem', marginBottom: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div>
+            <label htmlFor="conf-resident" style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.3rem' }}>Resident</label>
+            <select id="conf-resident" value={formResidentId} onChange={e => setFormResidentId(e.target.value)} style={{ width: '100%', padding: '0.5rem', borderRadius: '8px', border: '1px solid #ccc' }}>
+              <option value="">Select resident...</option>
+              {residents.map(r => <option key={r.residentId} value={r.residentId}>{r.internalCode}</option>)}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="conf-category" style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.3rem' }}>Category</label>
+            <select id="conf-category" value={formCategory} onChange={e => setFormCategory(e.target.value)} style={{ width: '100%', padding: '0.5rem', borderRadius: '8px', border: '1px solid #ccc' }}>
+              <option value="">Select...</option>
+              <option value="Rehabilitation">Rehabilitation</option>
+              <option value="Education">Education</option>
+              <option value="Health">Health</option>
+              <option value="Reintegration">Reintegration</option>
+              <option value="Protection">Protection</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="conf-date" style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.3rem' }}>Conference Date</label>
+            <input id="conf-date" type="date" value={formDate} onChange={e => setFormDate(e.target.value)} style={{ width: '100%', padding: '0.5rem', borderRadius: '8px', border: '1px solid #ccc' }} />
+          </div>
+          <div style={{ gridColumn: '1 / -1' }}>
+            <label htmlFor="conf-desc" style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.3rem' }}>Description</label>
+            <textarea id="conf-desc" value={formDescription} onChange={e => setFormDescription(e.target.value)} rows={2} style={{ width: '100%', padding: '0.5rem', borderRadius: '8px', border: '1px solid #ccc', resize: 'vertical' }} />
+          </div>
+          {formError && <div style={{ gridColumn: '1 / -1', color: '#c0392b', fontSize: '0.85rem' }}>{formError}</div>}
+          <div style={{ gridColumn: '1 / -1' }}>
+            <button type="submit" disabled={formSubmitting} className={styles.addBtn}>
+              {formSubmitting ? 'Scheduling...' : 'Schedule Conference'}
+            </button>
+          </div>
+        </form>
+      )}
 
       {loading ? (
         <div className={styles.loading}><Loader2 size={24} className={styles.spinner} /> Loading...</div>

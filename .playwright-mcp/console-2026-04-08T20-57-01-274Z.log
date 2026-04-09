@@ -1,0 +1,25 @@
+[     151ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[     185ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[     186ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[     820ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/post-placement @ http://localhost:5173/src/api.ts:6
+[     821ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/post-placement/summary @ http://localhost:5173/src/api.ts:6
+[     821ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/post-placement @ http://localhost:5173/src/api.ts:6
+[     822ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/post-placement/summary @ http://localhost:5173/src/api.ts:6
+[   33205ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:5173/@vite/client:968
+[   34409ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[   34425ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[   34426ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[   35640ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/post-placement @ http://localhost:5173/src/api.ts:6
+[   35642ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/post-placement/summary @ http://localhost:5173/src/api.ts:6
+[   35644ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/post-placement @ http://localhost:5173/src/api.ts:6
+[   35645ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/post-placement/summary @ http://localhost:5173/src/api.ts:6
+[   36022ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/post-placement:0
+[   36023ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/post-placement @ http://localhost:5173/@vite/client:509
+[   36026ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/post-placement/summary:0
+[   36026ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/post-placement/summary @ http://localhost:5173/@vite/client:509
+[   36090ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/post-placement:0
+[   36090ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/post-placement @ http://localhost:5173/@vite/client:509
+[   36092ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/post-placement/summary:0
+[   36092ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/post-placement/summary @ http://localhost:5173/@vite/client:509
+[  567465ms] [ERROR] WebSocket connection to 'ws://localhost:5173/?token=rFAdCArPdaWg' failed:  @ http://localhost:5173/@vite/client:840
+[  567466ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:5173/@vite/client:968

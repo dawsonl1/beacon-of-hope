@@ -1,0 +1,104 @@
+- generic [ref=e253]:
+  - banner [ref=e254]:
+    - generic [ref=e255]:
+      - link "◆ Beacon of Hope" [ref=e256] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e257]: ◆
+        - generic [ref=e258]: Beacon of Hope
+      - navigation [ref=e259]:
+        - link "Dashboard" [ref=e260] [cursor=pointer]:
+          - /url: /admin
+          - img [ref=e261]
+          - generic [ref=e266]: Dashboard
+        - link "To-Do" [ref=e267] [cursor=pointer]:
+          - /url: /admin/tasks
+          - img [ref=e268]
+          - generic [ref=e271]: To-Do
+        - link "Calendar" [ref=e272] [cursor=pointer]:
+          - /url: /admin/calendar
+          - img [ref=e273]
+          - generic [ref=e275]: Calendar
+        - link "Queue" [ref=e276] [cursor=pointer]:
+          - /url: /admin/queue
+          - img [ref=e277]
+          - generic [ref=e280]: Queue
+        - link "Caseload" [ref=e281] [cursor=pointer]:
+          - /url: /admin/caseload
+          - img [ref=e282]
+          - generic [ref=e287]: Caseload
+        - link "Recordings" [ref=e288] [cursor=pointer]:
+          - /url: /admin/recordings
+          - img [ref=e289]
+          - generic [ref=e290]: Recordings
+        - link "Incidents" [ref=e291] [cursor=pointer]:
+          - /url: /admin/incidents
+          - img [ref=e292]
+          - generic [ref=e294]: Incidents
+        - link "Conferences" [ref=e295] [cursor=pointer]:
+          - /url: /admin/conferences
+          - img [ref=e296]
+          - generic [ref=e298]: Conferences
+        - link "Visitations" [ref=e299] [cursor=pointer]:
+          - /url: /admin/visitations
+          - img [ref=e300]
+          - generic [ref=e303]: Visitations
+        - link "Placed" [ref=e304] [cursor=pointer]:
+          - /url: /admin/post-placement
+          - img [ref=e305]
+          - generic [ref=e308]: Placed
+        - link "Donors" [ref=e309] [cursor=pointer]:
+          - /url: /admin/donors
+          - img [ref=e310]
+          - generic [ref=e315]: Donors
+        - link "Reports" [ref=e316] [cursor=pointer]:
+          - /url: /admin/reports
+          - img [ref=e317]
+          - generic [ref=e319]: Reports
+        - link "Users" [ref=e320] [cursor=pointer]:
+          - /url: /admin/users
+          - img [ref=e321]
+          - generic [ref=e323]: Users
+      - generic [ref=e324]:
+        - generic [ref=e325]: Staff
+        - button "Logout" [ref=e326] [cursor=pointer]:
+          - img [ref=e327]
+          - generic [ref=e330]: Logout
+  - main [ref=e331]:
+    - generic [ref=e332]:
+      - generic [ref=e334]:
+        - heading "To-Do List" [level=1] [ref=e335]
+        - paragraph [ref=e336]: Your pending tasks and action items
+      - generic [ref=e337]:
+        - generic [ref=e338]:
+          - img [ref=e340]
+          - generic [ref=e344]:
+            - paragraph [ref=e345]: Schedule doctor appointment for LS-0055
+            - link "LS-0055" [ref=e346] [cursor=pointer]:
+              - /url: "#"
+            - paragraph [ref=e347]: Monthly medical checkup scheduling
+            - paragraph [ref=e348]: "lastDoctorVisit: 2026-02-24"
+          - generic [ref=e349]:
+            - button "View" [ref=e350] [cursor=pointer]:
+              - img [ref=e351]
+              - text: View
+            - button "Snooze" [ref=e354] [cursor=pointer]:
+              - img [ref=e355]
+              - text: Snooze
+            - button [ref=e358] [cursor=pointer]:
+              - img [ref=e359]
+        - generic [ref=e362]:
+          - img [ref=e364]
+          - generic [ref=e367]:
+            - paragraph [ref=e368]: Update education records for LS-0055
+            - link "LS-0055" [ref=e369] [cursor=pointer]:
+              - /url: "#"
+            - paragraph [ref=e370]: Monthly education progress update
+          - generic [ref=e371]:
+            - button "View" [ref=e372] [cursor=pointer]:
+              - img [ref=e373]
+              - text: View
+            - button "Snooze" [ref=e376] [cursor=pointer]:
+              - img [ref=e377]
+              - text: Snooze
+            - button [ref=e380] [cursor=pointer]:
+              - img [ref=e381]

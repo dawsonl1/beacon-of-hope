@@ -1,0 +1,73 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e109]:
+      - banner [ref=e110]:
+        - generic [ref=e111]:
+          - link "◆ Beacon of Hope" [ref=e112] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e113]: ◆
+            - generic [ref=e114]: Beacon of Hope
+          - navigation [ref=e115]:
+            - link "Dashboard" [ref=e116] [cursor=pointer]:
+              - /url: /admin
+              - img [ref=e117]
+              - generic [ref=e122]: Dashboard
+            - link "To-Do" [active] [ref=e123] [cursor=pointer]:
+              - /url: /admin/tasks
+              - img [ref=e124]
+              - generic [ref=e127]: To-Do
+            - link "Calendar" [ref=e128] [cursor=pointer]:
+              - /url: /admin/calendar
+              - img [ref=e129]
+              - generic [ref=e131]: Calendar
+            - link "Caseload" [ref=e132] [cursor=pointer]:
+              - /url: /admin/caseload
+              - img [ref=e133]
+              - generic [ref=e138]: Caseload
+            - link "Recordings" [ref=e139] [cursor=pointer]:
+              - /url: /admin/recordings
+              - img [ref=e140]
+              - generic [ref=e141]: Recordings
+            - link "Incidents" [ref=e142] [cursor=pointer]:
+              - /url: /admin/incidents
+              - img [ref=e143]
+              - generic [ref=e145]: Incidents
+            - link "Visitations" [ref=e146] [cursor=pointer]:
+              - /url: /admin/visitations
+              - img [ref=e147]
+              - generic [ref=e150]: Visitations
+            - link "Donors" [ref=e151] [cursor=pointer]:
+              - /url: /admin/donors
+              - img [ref=e152]
+              - generic [ref=e157]: Donors
+            - link "Reports" [ref=e158] [cursor=pointer]:
+              - /url: /admin/reports
+              - img [ref=e159]
+              - generic [ref=e161]: Reports
+            - link "Users" [ref=e162] [cursor=pointer]:
+              - /url: /admin/users
+              - img [ref=e163]
+              - generic [ref=e165]: Users
+          - generic [ref=e166]:
+            - generic [ref=e167]: Admin
+            - button "Logout" [ref=e168] [cursor=pointer]:
+              - img [ref=e169]
+              - generic [ref=e172]: Logout
+      - main [ref=e173]:
+        - generic [ref=e497]:
+          - generic [ref=e499]:
+            - heading "To-Do List" [level=1] [ref=e500]
+            - paragraph [ref=e501]: Your pending tasks and action items
+          - generic [ref=e502]: "API error: 404 Not Found — https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/staff/tasks"
+    - dialog "Cookie consent" [ref=e101]:
+      - generic [ref=e102]:
+        - paragraph [ref=e103]:
+          - text: We use cookies to improve your experience and analyze site usage. See our
+          - link "Privacy Policy" [ref=e104] [cursor=pointer]:
+            - /url: /privacy-policy
+          - text: for details.
+        - generic [ref=e105]:
+          - button "Reject Non-Essential" [ref=e106] [cursor=pointer]
+          - button "Manage Preferences" [ref=e107] [cursor=pointer]
+          - button "Accept All" [ref=e108] [cursor=pointer]
+  - generic [ref=e496]: Website

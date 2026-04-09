@@ -1,0 +1,252 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e86]:
+    - banner [ref=e87]:
+      - generic [ref=e88]:
+        - link "◆ Beacon of Hope" [ref=e89] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e90]: ◆
+          - generic [ref=e91]: Beacon of Hope
+        - navigation [ref=e92]:
+          - generic [ref=e94]: Work
+          - generic [ref=e96]: Cases
+          - generic [ref=e98]: Records
+          - generic [ref=e100]: Admin
+        - generic [ref=e101]:
+          - generic [ref=e102]: Staff
+          - button "Logout" [ref=e103] [cursor=pointer]:
+            - img [ref=e104]
+            - generic [ref=e107]: Logout
+    - main [ref=e108]:
+      - generic [ref=e109]:
+        - generic [ref=e110]:
+          - generic [ref=e111]:
+            - generic [ref=e112]:
+              - heading "Dashboard" [level=1] [ref=e113]
+              - generic [ref=e114]: Admin
+            - paragraph [ref=e115]: Data as of February 16, 2026
+          - generic [ref=e116]:
+            - button "Add Resident" [ref=e117] [cursor=pointer]:
+              - img [ref=e118]
+              - generic [ref=e121]: Add Resident
+            - button "Log Donation" [ref=e122] [cursor=pointer]:
+              - img [ref=e123]
+              - generic [ref=e125]: Log Donation
+            - button "New Recording" [ref=e126] [cursor=pointer]:
+              - img [ref=e127]
+              - generic [ref=e130]: New Recording
+        - generic [ref=e131]:
+          - generic [ref=e132]:
+            - generic [ref=e133]: Active Residents
+            - generic [ref=e135]: "30"
+            - generic [ref=e136]: across all safehouses
+          - generic [ref=e137]:
+            - generic [ref=e138]: Open Incidents
+            - generic [ref=e140]: "29"
+            - generic [ref=e141]: 11 high severity
+          - generic [ref=e142]:
+            - generic [ref=e143]: Monthly Donations
+            - generic [ref=e144]:
+              - generic [ref=e145]: $3.7k
+              - generic [ref=e146]:
+                - img [ref=e147]
+                - text: +47.4%
+            - generic [ref=e150]: 10 donations this month
+          - generic [ref=e151]:
+            - generic [ref=e152]: Case Conferences
+            - generic [ref=e153]:
+              - generic [ref=e154]: "8"
+              - generic [ref=e155]:
+                - img [ref=e156]
+                - text: "Next: Feb 16"
+            - generic [ref=e158]: upcoming
+        - generic [ref=e159]:
+          - generic [ref=e160]:
+            - generic [ref=e161]:
+              - heading "Girls Impacted" [level=2] [ref=e162]
+              - generic [ref=e163]:
+                - generic [ref=e164]: Critical
+                - generic [ref=e166]: High
+                - generic [ref=e168]: Medium
+                - generic [ref=e170]: Low
+            - table [ref=e173]:
+              - rowgroup [ref=e174]:
+                - row "Resident Safehouse Category Last Session Risk" [ref=e175]:
+                  - columnheader "Resident" [ref=e176]
+                  - columnheader "Safehouse" [ref=e177]
+                  - columnheader "Category" [ref=e178]
+                  - columnheader "Last Session" [ref=e179]
+                  - columnheader "Risk" [ref=e180]
+              - rowgroup [ref=e181]:
+                - row "LS-0009 SW-16 SH07 Agat Surrendered Unknown Low" [ref=e182]:
+                  - cell "LS-0009 SW-16" [ref=e183]:
+                    - generic [ref=e184]: LS-0009
+                    - text: SW-16
+                  - cell "SH07 Agat" [ref=e185]
+                  - cell "Surrendered" [ref=e186]
+                  - cell "Unknown" [ref=e187]
+                  - cell "Low" [ref=e188]:
+                    - generic [ref=e189]: Low
+                - row "LS-0055 SW-01 SH02 Tamuning Abandoned Unknown Medium" [ref=e191]:
+                  - cell "LS-0055 SW-01" [ref=e192]:
+                    - generic [ref=e193]: LS-0055
+                    - text: SW-01
+                  - cell "SH02 Tamuning" [ref=e194]
+                  - cell "Abandoned" [ref=e195]
+                  - cell "Unknown" [ref=e196]
+                  - cell "Medium" [ref=e197]:
+                    - generic [ref=e198]: Medium
+                - row "LS-0020 SW-08 SH01 Dededo Neglected Unknown Medium" [ref=e200]:
+                  - cell "LS-0020 SW-08" [ref=e201]:
+                    - generic [ref=e202]: LS-0020
+                    - text: SW-08
+                  - cell "SH01 Dededo" [ref=e203]
+                  - cell "Neglected" [ref=e204]
+                  - cell "Unknown" [ref=e205]
+                  - cell "Medium" [ref=e206]:
+                    - generic [ref=e207]: Medium
+                - row "LS-0027 SW-16 SH02 Tamuning Neglected Unknown Low" [ref=e209]:
+                  - cell "LS-0027 SW-16" [ref=e210]:
+                    - generic [ref=e211]: LS-0027
+                    - text: SW-16
+                  - cell "SH02 Tamuning" [ref=e212]
+                  - cell "Neglected" [ref=e213]
+                  - cell "Unknown" [ref=e214]
+                  - cell "Low" [ref=e215]:
+                    - generic [ref=e216]: Low
+                - row "LS-0058 SW-17 SH08 Hagatna Abandoned Unknown Low" [ref=e218]:
+                  - cell "LS-0058 SW-17" [ref=e219]:
+                    - generic [ref=e220]: LS-0058
+                    - text: SW-17
+                  - cell "SH08 Hagatna" [ref=e221]
+                  - cell "Abandoned" [ref=e222]
+                  - cell "Unknown" [ref=e223]
+                  - cell "Low" [ref=e224]:
+                    - generic [ref=e225]: Low
+                - row "LS-0040 SW-08 SH01 Dededo Abandoned Unknown Low" [ref=e227]:
+                  - cell "LS-0040 SW-08" [ref=e228]:
+                    - generic [ref=e229]: LS-0040
+                    - text: SW-08
+                  - cell "SH01 Dededo" [ref=e230]
+                  - cell "Abandoned" [ref=e231]
+                  - cell "Unknown" [ref=e232]
+                  - cell "Low" [ref=e233]:
+                    - generic [ref=e234]: Low
+                - row "LS-0032 SW-07 SH06 Barrigada Foundling Unknown Medium" [ref=e236]:
+                  - cell "LS-0032 SW-07" [ref=e237]:
+                    - generic [ref=e238]: LS-0032
+                    - text: SW-07
+                  - cell "SH06 Barrigada" [ref=e239]
+                  - cell "Foundling" [ref=e240]
+                  - cell "Unknown" [ref=e241]
+                  - cell "Medium" [ref=e242]:
+                    - generic [ref=e243]: Medium
+                - row "LS-0014 SW-17 SH07 Agat Foundling Unknown Low" [ref=e245]:
+                  - cell "LS-0014 SW-17" [ref=e246]:
+                    - generic [ref=e247]: LS-0014
+                    - text: SW-17
+                  - cell "SH07 Agat" [ref=e248]
+                  - cell "Foundling" [ref=e249]
+                  - cell "Unknown" [ref=e250]
+                  - cell "Low" [ref=e251]:
+                    - generic [ref=e252]: Low
+            - button "View all 60 residents" [ref=e255] [cursor=pointer]
+          - generic [ref=e256]:
+            - generic [ref=e257]:
+              - generic [ref=e258]:
+                - heading "Recent Donations" [level=2] [ref=e259]
+                - button "View all" [ref=e260] [cursor=pointer]
+              - generic [ref=e261]:
+                - generic [ref=e262]:
+                  - generic [ref=e263]:
+                    - generic [ref=e264]: Tina Young
+                    - generic [ref=e265]: In-Kind
+                  - generic [ref=e266]:
+                    - generic [ref=e267]: $412.91 est.
+                    - generic [ref=e268]: Feb 13
+                - generic [ref=e269]:
+                  - generic [ref=e270]:
+                    - generic [ref=e271]: Jon Edwards
+                    - generic [ref=e272]: Skills
+                  - generic [ref=e273]:
+                    - generic [ref=e274]: $19.4 est.
+                    - generic [ref=e275]: Feb 10
+                - generic [ref=e276]:
+                  - generic [ref=e277]:
+                    - generic [ref=e278]: Nico Vasquez
+                    - generic [ref=e279]: In-Kind
+                  - generic [ref=e280]:
+                    - generic [ref=e281]: $642.58 est.
+                    - generic [ref=e282]: Feb 10
+                - generic [ref=e283]:
+                  - generic [ref=e284]:
+                    - generic [ref=e285]: Sophia Ibrahim
+                    - generic [ref=e286]: Monetary
+                  - generic [ref=e287]:
+                    - generic [ref=e288]: $707.04
+                    - generic [ref=e289]: Feb 2
+                - generic [ref=e290]:
+                  - generic [ref=e291]:
+                    - generic [ref=e292]: Mira Bello
+                    - generic [ref=e293]: Monetary
+                  - generic [ref=e294]:
+                    - generic [ref=e295]: $320.08
+                    - generic [ref=e296]: Feb 1
+            - generic [ref=e297]:
+              - generic [ref=e298]:
+                - heading "By Channel" [level=2] [ref=e299]
+                - generic [ref=e300]: Acquisition source
+              - application [ref=e303]:
+                - generic [ref=e327]:
+                  - generic [ref=e329]: Website
+                  - generic [ref=e331]: Word OfMouth
+                  - generic [ref=e333]: SocialMedia
+                  - generic [ref=e335]: Event
+                  - generic [ref=e337]: PartnerReferral
+                  - generic [ref=e339]: Church
+        - generic [ref=e340]:
+          - generic [ref=e341]:
+            - generic [ref=e342]:
+              - heading "Active Residents" [level=2] [ref=e343]
+              - generic [ref=e344]: +3 admitted this month
+            - application [ref=e347]:
+              - generic [ref=e357]:
+                - generic [ref=e358]:
+                  - generic [ref=e360]: Jan 23
+                  - generic [ref=e362]: May 23
+                  - generic [ref=e364]: Sep 23
+                  - generic [ref=e366]: Jan 24
+                  - generic [ref=e368]: May 24
+                  - generic [ref=e370]: Sep 24
+                  - generic [ref=e372]: Jan 25
+                  - generic [ref=e374]: May 25
+                  - generic [ref=e376]: Sep 25
+                  - generic [ref=e378]: Feb 26
+                - generic [ref=e379]:
+                  - generic [ref=e381]: "55"
+                  - generic [ref=e383]: "57"
+                  - generic [ref=e385]: "59"
+                  - generic [ref=e387]: "61"
+                  - generic [ref=e389]: "63"
+          - generic [ref=e390]:
+            - generic [ref=e391]:
+              - heading "Cases Flagged for Review" [level=2] [ref=e392]
+              - generic [ref=e393]: 7 currently flagged
+            - application [ref=e396]:
+              - generic [ref=e407]:
+                - generic [ref=e408]:
+                  - generic [ref=e410]: Jan 23
+                  - generic [ref=e412]: May 23
+                  - generic [ref=e414]: Sep 23
+                  - generic [ref=e416]: Jan 24
+                  - generic [ref=e418]: May 24
+                  - generic [ref=e420]: Sep 24
+                  - generic [ref=e422]: Jan 25
+                  - generic [ref=e424]: May 25
+                  - generic [ref=e426]: Sep 25
+                  - generic [ref=e428]: Feb 26
+                - generic [ref=e429]:
+                  - generic [ref=e431]: "0"
+                  - generic [ref=e433]: "3"
+                  - generic [ref=e435]: "6"
+                  - generic [ref=e437]: "9"
+  - generic [ref=e438]: "0"

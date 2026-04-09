@@ -1,0 +1,4 @@
+[     476ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[     476ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/donations-by-month @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[     476ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/allocations-by-program @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[     476ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0

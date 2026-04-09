@@ -1,0 +1,117 @@
+[      76ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[     107ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts:6
+[     108ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[     108ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts:6
+[     108ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[ 3095052ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:5173/@vite/client:968
+[ 3095538ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[ 3095594ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts:6
+[ 3095595ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[ 3095595ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts:6
+[ 3095596ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[ 3653166ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts:6
+[ 3653167ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[ 3653167ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts:6
+[ 3654604ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts:6
+[ 3654605ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[ 3654605ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts:6
+[ 3655442ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts?t=1775667602947:6
+[ 3655442ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts?t=1775667602947:6
+[ 3655443ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts?t=1775667602947:6
+[ 3657288ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts?t=1775667604777:6
+[ 3657288ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts?t=1775667604777:6
+[ 3657289ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts?t=1775667604777:6
+[ 3931429ms] Error: useAuth must be used within AuthProvider
+    at useAuth (http://localhost:5173/src/contexts/AuthContext.tsx?t=1775667878922:140:18)
+    at Header (http://localhost:5173/src/components/Header.tsx?t=1775667878922:155:44)
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:12867:12)
+    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:4212:19)
+    at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:5568:16)
+    at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:6139:20)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:850:66)
+    at performUnitOfWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8428:92)
+    at workLoopSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8324:37)
+    at renderRootSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8308:6)
+[ 3931427ms] [WARNING] %s
+
+%s
+ An error occurred in the <Header> component. Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries. @ http://localhost:5173/@vite/client:509
+[ 3942040ms] Error: useAuth must be used within AuthProvider
+    at useAuth (http://localhost:5173/src/contexts/AuthContext.tsx?t=1775667889539:142:18)
+    at Header (http://localhost:5173/src/components/Header.tsx?t=1775667889539:155:44)
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:12867:12)
+    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:4212:19)
+    at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:5568:16)
+    at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:6139:20)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:850:66)
+    at performUnitOfWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8428:92)
+    at workLoopSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8324:37)
+    at renderRootSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8308:6)
+[ 3942040ms] [WARNING] %s
+
+%s
+ An error occurred in the <Header> component. Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries. @ http://localhost:5173/@vite/client:509
+[ 3952555ms] Error: useAuth must be used within AuthProvider
+    at useAuth (http://localhost:5173/src/contexts/AuthContext.tsx?t=1775667900070:140:18)
+    at Header (http://localhost:5173/src/components/Header.tsx?t=1775667900070:155:44)
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:12867:12)
+    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:4212:19)
+    at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:5568:16)
+    at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:6139:20)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:850:66)
+    at performUnitOfWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8428:92)
+    at workLoopSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8324:37)
+    at renderRootSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8308:6)
+[ 3952555ms] [WARNING] %s
+
+%s
+ An error occurred in the <Header> component. Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries. @ http://localhost:5173/@vite/client:509
+[ 4143199ms] Error: useAuth must be used within AuthProvider
+    at useAuth (http://localhost:5173/src/contexts/AuthContext.tsx?t=1775667900070:140:18)
+    at Header (http://localhost:5173/src/components/Header.tsx?t=1775667900070:155:44)
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:12867:12)
+    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:4212:19)
+    at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:5568:16)
+    at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:6139:20)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:850:66)
+    at performUnitOfWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8428:92)
+    at workLoopSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8324:37)
+    at renderRootSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8308:6)
+[ 4143198ms] [WARNING] %s
+
+%s
+ An error occurred in the <Header> component. Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries. @ http://localhost:5173/@vite/client:509
+[ 4144874ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts?t=1775667900066:6
+[ 4144874ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts?t=1775667900066:6
+[ 4144875ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts?t=1775667900066:6
+[ 4144875ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts?t=1775667900066:6
+[ 4146502ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts?t=1775667900066:6
+[ 4146503ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts?t=1775667900066:6
+[ 4146503ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts?t=1775667900066:6
+[ 4148479ms] Error: useAuth must be used within AuthProvider
+    at useAuth (http://localhost:5173/src/contexts/AuthContext.tsx?t=1775668093985:142:18)
+    at Header (http://localhost:5173/src/components/Header.tsx?t=1775668093985:155:44)
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:12867:12)
+    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:4212:19)
+    at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:5568:16)
+    at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:6139:20)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:850:66)
+    at performUnitOfWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8428:92)
+    at workLoopSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8324:37)
+    at renderRootSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8308:6)
+[ 4148473ms] [WARNING] %s
+
+%s
+ An error occurred in the <Header> component. Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries. @ http://localhost:5173/@vite/client:509
+[ 4148509ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts?t=1775668095976:6
+[ 4148510ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts?t=1775668095976:6
+[ 4148510ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts?t=1775668095976:6
+[ 4148511ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts?t=1775668095976:6
+[ 4149445ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts?t=1775668096953:6
+[ 4149445ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts?t=1775668096953:6
+[ 4149446ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts?t=1775668096953:6

@@ -1,0 +1,287 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e4]:
+      - banner [ref=e5]:
+        - generic [ref=e6]:
+          - link "◆ Beacon of Hope" [ref=e7] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e8]: ◆
+            - generic [ref=e9]: Beacon of Hope
+          - navigation [ref=e10]:
+            - link "Dashboard" [ref=e11] [cursor=pointer]:
+              - /url: /admin
+              - img [ref=e12]
+              - generic [ref=e17]: Dashboard
+            - link "Caseload" [ref=e18] [cursor=pointer]:
+              - /url: /admin/caseload
+              - img [ref=e19]
+              - generic [ref=e24]: Caseload
+            - link "Recordings" [active] [ref=e25] [cursor=pointer]:
+              - /url: /admin/recordings
+              - img [ref=e26]
+              - generic [ref=e27]: Recordings
+            - link "Visitations" [ref=e28] [cursor=pointer]:
+              - /url: /admin/visitations
+              - img [ref=e29]
+              - generic [ref=e32]: Visitations
+            - link "Donors" [ref=e33] [cursor=pointer]:
+              - /url: /admin/donors
+              - img [ref=e34]
+              - generic [ref=e39]: Donors
+            - link "Reports" [ref=e40] [cursor=pointer]:
+              - /url: /admin/reports
+              - img [ref=e41]
+              - generic [ref=e43]: Reports
+            - link "Users" [ref=e44] [cursor=pointer]:
+              - /url: /admin/users
+              - img [ref=e45]
+              - generic [ref=e47]: Users
+          - generic [ref=e48]:
+            - generic [ref=e49]: Admin
+            - button "Logout" [ref=e50] [cursor=pointer]:
+              - img [ref=e51]
+              - generic [ref=e54]: Logout
+      - main [ref=e55]:
+        - generic [ref=e677]:
+          - generic [ref=e678]:
+            - generic [ref=e679]:
+              - heading "Process Recordings" [level=1] [ref=e680]
+              - paragraph [ref=e681]: Counseling session documentation
+            - button "New Recording" [ref=e682] [cursor=pointer]:
+              - img [ref=e683]
+              - text: New Recording
+          - generic [ref=e684]:
+            - img [ref=e685]
+            - generic [ref=e687]: These records contain confidential counseling notes about minors. Access is restricted to authorized staff. Do not share or reproduce outside this system.
+          - generic [ref=e688]:
+            - combobox [ref=e689] [cursor=pointer]:
+              - option "All Residents" [selected]
+            - combobox [ref=e690] [cursor=pointer]:
+              - option "Newest First" [selected]
+              - option "Oldest First"
+              - option "By Social Worker"
+            - generic [ref=e691]: 2819 recordings total
+          - generic [ref=e692]:
+            - table [ref=e694]:
+              - rowgroup [ref=e695]:
+                - row "Date Resident Social Worker Type Emotional State Summary Flags" [ref=e696]:
+                  - columnheader "Date" [ref=e697]
+                  - columnheader "Resident" [ref=e698]
+                  - columnheader "Social Worker" [ref=e699]
+                  - columnheader "Type" [ref=e700]
+                  - columnheader "Emotional State" [ref=e701]
+                  - columnheader "Summary" [ref=e702]
+                  - columnheader "Flags" [ref=e703]
+              - rowgroup [ref=e704]:
+                - 'row "Feb 1, 2027 LS-0027 SW-19 Individual Hopeful Session with resident. Type: Individual. Duration: 34 minutes. Progress" [ref=e705] [cursor=pointer]':
+                  - cell "Feb 1, 2027" [ref=e706]
+                  - cell "LS-0027" [ref=e707]
+                  - cell "SW-19" [ref=e708]
+                  - cell "Individual" [ref=e709]:
+                    - generic [ref=e710]: Individual
+                  - cell "Hopeful" [ref=e711]:
+                    - generic [ref=e712]: Hopeful
+                  - 'cell "Session with resident. Type: Individual. Duration: 34 minutes." [ref=e714]'
+                  - cell "Progress" [ref=e715]:
+                    - generic [ref=e717]:
+                      - img [ref=e718]
+                      - text: Progress
+                - 'row "Jan 24, 2027 LS-0027 SW-16 Individual Anxious Session with resident. Type: Individual. Duration: 54 minutes. Progress" [ref=e721] [cursor=pointer]':
+                  - cell "Jan 24, 2027" [ref=e722]
+                  - cell "LS-0027" [ref=e723]
+                  - cell "SW-16" [ref=e724]
+                  - cell "Individual" [ref=e725]:
+                    - generic [ref=e726]: Individual
+                  - cell "Anxious" [ref=e727]:
+                    - generic [ref=e728]: Anxious
+                  - 'cell "Session with resident. Type: Individual. Duration: 54 minutes." [ref=e730]'
+                  - cell "Progress" [ref=e731]:
+                    - generic [ref=e733]:
+                      - img [ref=e734]
+                      - text: Progress
+                - 'row "Jan 23, 2027 LS-0027 SW-16 Individual Angry Session with resident. Type: Individual. Duration: 90 minutes. Progress" [ref=e737] [cursor=pointer]':
+                  - cell "Jan 23, 2027" [ref=e738]
+                  - cell "LS-0027" [ref=e739]
+                  - cell "SW-16" [ref=e740]
+                  - cell "Individual" [ref=e741]:
+                    - generic [ref=e742]: Individual
+                  - cell "Angry" [ref=e743]:
+                    - generic [ref=e744]: Angry
+                  - 'cell "Session with resident. Type: Individual. Duration: 90 minutes." [ref=e746]'
+                  - cell "Progress" [ref=e747]:
+                    - generic [ref=e749]:
+                      - img [ref=e750]
+                      - text: Progress
+                - 'row "Jan 20, 2027 LS-0027 SW-04 Individual Sad Session with resident. Type: Individual. Duration: 79 minutes. Progress" [ref=e753] [cursor=pointer]':
+                  - cell "Jan 20, 2027" [ref=e754]
+                  - cell "LS-0027" [ref=e755]
+                  - cell "SW-04" [ref=e756]
+                  - cell "Individual" [ref=e757]:
+                    - generic [ref=e758]: Individual
+                  - cell "Sad" [ref=e759]:
+                    - generic [ref=e760]: Sad
+                  - 'cell "Session with resident. Type: Individual. Duration: 79 minutes." [ref=e762]'
+                  - cell "Progress" [ref=e763]:
+                    - generic [ref=e765]:
+                      - img [ref=e766]
+                      - text: Progress
+                - 'row "Jan 16, 2027 LS-0027 SW-20 Group Anxious Session with resident. Type: Group. Duration: 81 minutes. Progress" [ref=e769] [cursor=pointer]':
+                  - cell "Jan 16, 2027" [ref=e770]
+                  - cell "LS-0027" [ref=e771]
+                  - cell "SW-20" [ref=e772]
+                  - cell "Group" [ref=e773]:
+                    - generic [ref=e774]: Group
+                  - cell "Anxious" [ref=e775]:
+                    - generic [ref=e776]: Anxious
+                  - 'cell "Session with resident. Type: Group. Duration: 81 minutes." [ref=e778]'
+                  - cell "Progress" [ref=e779]:
+                    - generic [ref=e781]:
+                      - img [ref=e782]
+                      - text: Progress
+                - 'row "Jan 1, 2027 LS-0027 SW-14 Individual Hopeful Session with resident. Type: Individual. Duration: 69 minutes. Progress" [ref=e785] [cursor=pointer]':
+                  - cell "Jan 1, 2027" [ref=e786]
+                  - cell "LS-0027" [ref=e787]
+                  - cell "SW-14" [ref=e788]
+                  - cell "Individual" [ref=e789]:
+                    - generic [ref=e790]: Individual
+                  - cell "Hopeful" [ref=e791]:
+                    - generic [ref=e792]: Hopeful
+                  - 'cell "Session with resident. Type: Individual. Duration: 69 minutes." [ref=e794]'
+                  - cell "Progress" [ref=e795]:
+                    - generic [ref=e797]:
+                      - img [ref=e798]
+                      - text: Progress
+                - 'row "Dec 27, 2026 LS-0027 SW-06 Individual Sad Session with resident. Type: Individual. Duration: 62 minutes. Progress" [ref=e801] [cursor=pointer]':
+                  - cell "Dec 27, 2026" [ref=e802]
+                  - cell "LS-0027" [ref=e803]
+                  - cell "SW-06" [ref=e804]
+                  - cell "Individual" [ref=e805]:
+                    - generic [ref=e806]: Individual
+                  - cell "Sad" [ref=e807]:
+                    - generic [ref=e808]: Sad
+                  - 'cell "Session with resident. Type: Individual. Duration: 62 minutes." [ref=e810]'
+                  - cell "Progress" [ref=e811]:
+                    - generic [ref=e813]:
+                      - img [ref=e814]
+                      - text: Progress
+                - 'row "Dec 17, 2026 LS-0027 SW-16 Individual Withdrawn Session with resident. Type: Individual. Duration: 51 minutes. Progress" [ref=e817] [cursor=pointer]':
+                  - cell "Dec 17, 2026" [ref=e818]
+                  - cell "LS-0027" [ref=e819]
+                  - cell "SW-16" [ref=e820]
+                  - cell "Individual" [ref=e821]:
+                    - generic [ref=e822]: Individual
+                  - cell "Withdrawn" [ref=e823]:
+                    - generic [ref=e824]: Withdrawn
+                  - 'cell "Session with resident. Type: Individual. Duration: 51 minutes." [ref=e826]'
+                  - cell "Progress" [ref=e827]:
+                    - generic [ref=e829]:
+                      - img [ref=e830]
+                      - text: Progress
+                - 'row "Nov 28, 2026 LS-0027 SW-11 Group Happy Session with resident. Type: Group. Duration: 94 minutes. Concern Progress" [ref=e833] [cursor=pointer]':
+                  - cell "Nov 28, 2026" [ref=e834]
+                  - cell "LS-0027" [ref=e835]
+                  - cell "SW-11" [ref=e836]
+                  - cell "Group" [ref=e837]:
+                    - generic [ref=e838]: Group
+                  - cell "Happy" [ref=e839]:
+                    - generic [ref=e840]: Happy
+                  - 'cell "Session with resident. Type: Group. Duration: 94 minutes." [ref=e842]'
+                  - cell "Concern Progress" [ref=e843]:
+                    - generic [ref=e844]:
+                      - generic [ref=e845]:
+                        - img [ref=e846]
+                        - text: Concern
+                      - generic [ref=e848]:
+                        - img [ref=e849]
+                        - text: Progress
+                - 'row "Nov 27, 2026 LS-0027 SW-09 Individual Anxious Session with resident. Type: Individual. Duration: 54 minutes. Progress" [ref=e852] [cursor=pointer]':
+                  - cell "Nov 27, 2026" [ref=e853]
+                  - cell "LS-0027" [ref=e854]
+                  - cell "SW-09" [ref=e855]
+                  - cell "Individual" [ref=e856]:
+                    - generic [ref=e857]: Individual
+                  - cell "Anxious" [ref=e858]:
+                    - generic [ref=e859]: Anxious
+                  - 'cell "Session with resident. Type: Individual. Duration: 54 minutes." [ref=e861]'
+                  - cell "Progress" [ref=e862]:
+                    - generic [ref=e864]:
+                      - img [ref=e865]
+                      - text: Progress
+                - 'row "Nov 5, 2026 LS-0027 SW-10 Group Sad Session with resident. Type: Group. Duration: 47 minutes." [ref=e868] [cursor=pointer]':
+                  - cell "Nov 5, 2026" [ref=e869]
+                  - cell "LS-0027" [ref=e870]
+                  - cell "SW-10" [ref=e871]
+                  - cell "Group" [ref=e872]:
+                    - generic [ref=e873]: Group
+                  - cell "Sad" [ref=e874]:
+                    - generic [ref=e875]: Sad
+                  - 'cell "Session with resident. Type: Group. Duration: 47 minutes." [ref=e877]'
+                  - cell [ref=e878]
+                - 'row "Nov 2, 2026 LS-0027 SW-12 Group Happy Session with resident. Type: Group. Duration: 106 minutes. Progress" [ref=e879] [cursor=pointer]':
+                  - cell "Nov 2, 2026" [ref=e880]
+                  - cell "LS-0027" [ref=e881]
+                  - cell "SW-12" [ref=e882]
+                  - cell "Group" [ref=e883]:
+                    - generic [ref=e884]: Group
+                  - cell "Happy" [ref=e885]:
+                    - generic [ref=e886]: Happy
+                  - 'cell "Session with resident. Type: Group. Duration: 106 minutes." [ref=e888]'
+                  - cell "Progress" [ref=e889]:
+                    - generic [ref=e891]:
+                      - img [ref=e892]
+                      - text: Progress
+                - 'row "Oct 25, 2026 LS-0027 SW-19 Individual Sad Session with resident. Type: Individual. Duration: 53 minutes. Progress" [ref=e895] [cursor=pointer]':
+                  - cell "Oct 25, 2026" [ref=e896]
+                  - cell "LS-0027" [ref=e897]
+                  - cell "SW-19" [ref=e898]
+                  - cell "Individual" [ref=e899]:
+                    - generic [ref=e900]: Individual
+                  - cell "Sad" [ref=e901]:
+                    - generic [ref=e902]: Sad
+                  - 'cell "Session with resident. Type: Individual. Duration: 53 minutes." [ref=e904]'
+                  - cell "Progress" [ref=e905]:
+                    - generic [ref=e907]:
+                      - img [ref=e908]
+                      - text: Progress
+                - 'row "Oct 17, 2026 LS-0027 SW-01 Individual Withdrawn Session with resident. Type: Individual. Duration: 37 minutes. Progress" [ref=e911] [cursor=pointer]':
+                  - cell "Oct 17, 2026" [ref=e912]
+                  - cell "LS-0027" [ref=e913]
+                  - cell "SW-01" [ref=e914]
+                  - cell "Individual" [ref=e915]:
+                    - generic [ref=e916]: Individual
+                  - cell "Withdrawn" [ref=e917]:
+                    - generic [ref=e918]: Withdrawn
+                  - 'cell "Session with resident. Type: Individual. Duration: 37 minutes." [ref=e920]'
+                  - cell "Progress" [ref=e921]:
+                    - generic [ref=e923]:
+                      - img [ref=e924]
+                      - text: Progress
+                - 'row "Sep 27, 2026 LS-0027 SW-09 Group Angry Session with resident. Type: Group. Duration: 55 minutes. Concern" [ref=e927] [cursor=pointer]':
+                  - cell "Sep 27, 2026" [ref=e928]
+                  - cell "LS-0027" [ref=e929]
+                  - cell "SW-09" [ref=e930]
+                  - cell "Group" [ref=e931]:
+                    - generic [ref=e932]: Group
+                  - cell "Angry" [ref=e933]:
+                    - generic [ref=e934]: Angry
+                  - 'cell "Session with resident. Type: Group. Duration: 55 minutes." [ref=e936]'
+                  - cell "Concern" [ref=e937]:
+                    - generic [ref=e939]:
+                      - img [ref=e940]
+                      - text: Concern
+            - generic [ref=e942]:
+              - button "Previous" [disabled] [ref=e943]
+              - generic [ref=e944]: Page 1 of 188
+              - button "Next" [ref=e945] [cursor=pointer]
+    - dialog "Cookie consent" [ref=e390]:
+      - generic [ref=e391]:
+        - paragraph [ref=e392]:
+          - text: We use cookies to improve your experience and analyze site usage. See our
+          - link "Privacy Policy" [ref=e393] [cursor=pointer]:
+            - /url: /privacy-policy
+          - text: for details.
+        - generic [ref=e394]:
+          - button "Reject Non-Essential" [ref=e395] [cursor=pointer]
+          - button "Manage Preferences" [ref=e396] [cursor=pointer]
+          - button "Accept All" [ref=e397] [cursor=pointer]
+  - generic [ref=e398]: Website

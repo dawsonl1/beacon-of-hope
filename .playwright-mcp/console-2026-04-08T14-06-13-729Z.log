@@ -1,0 +1,31 @@
+[     198ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=1bdc8b75:14336
+[     259ms] [LOG] [API] Fetching: http://localhost:5001/api/impact/summary @ http://localhost:5173/src/api.ts?t=1775657011161:6
+[     260ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts?t=1775657011161:6
+[     261ms] [LOG] [API] Fetching: http://localhost:5001/api/impact/summary @ http://localhost:5173/src/api.ts?t=1775657011161:6
+[     261ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts?t=1775657011161:6
+[     267ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5001/api/impact/summary:0
+[     267ms] [ERROR] Failed to fetch impact summary TypeError: Failed to fetch
+    at apiFetch (http://localhost:5173/src/api.ts?t=1775657011161:8:20)
+    at http://localhost:5173/src/pages/HomePage.tsx?t=1775657011161:65:3
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=1bdc8b75:12903:13)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=1bdc8b75:850:66)
+    at commitHookEffectListMount (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=1bdc8b75:6616:153)
+    at commitHookPassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=1bdc8b75:6651:55)
+    at commitPassiveMountOnFiber (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=1bdc8b75:7617:22)
+    at recursivelyTraversePassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=1bdc8b75:7605:5)
+    at commitPassiveMountOnFiber (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=1bdc8b75:7616:6)
+    at recursivelyTraversePassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=1bdc8b75:7605:5) @ http://localhost:5173/@vite/client:509
+[     267ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5001/api/auth/me:0
+[     267ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5001/api/impact/summary:0
+[     267ms] [ERROR] Failed to fetch impact summary TypeError: Failed to fetch
+    at apiFetch (http://localhost:5173/src/api.ts?t=1775657011161:8:20)
+    at http://localhost:5173/src/pages/HomePage.tsx?t=1775657011161:65:3
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=1bdc8b75:12903:13)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=1bdc8b75:850:66)
+    at commitHookEffectListMount (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=1bdc8b75:6616:153)
+    at commitHookPassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=1bdc8b75:6651:55)
+    at reconnectPassiveEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=1bdc8b75:7700:6)
+    at recursivelyTraverseReconnectPassiveEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=1bdc8b75:7687:5)
+    at reconnectPassiveEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=1bdc8b75:7699:6)
+    at recursivelyTraverseReconnectPassiveEffects (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=1bdc8b75:7687:5) @ http://localhost:5173/@vite/client:509
+[     268ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5001/api/auth/me:0

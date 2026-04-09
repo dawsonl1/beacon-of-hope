@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Loader2, Plus } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { APP_TODAY, APP_TODAY_STR } from '../../constants';
 import { useSafehouse } from '../../contexts/SafehouseContext';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './CalendarPage.module.css';
 
 interface CalendarEventItem {
@@ -69,6 +70,7 @@ function addDays(d: Date, n: number): Date {
 const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export default function CalendarPage() {
+  useDocumentTitle('Calendar');
   const navigate = useNavigate();
   const { activeSafehouseId, safehouses } = useSafehouse();
   const [view, setView] = useState<'day' | 'week'>('day');

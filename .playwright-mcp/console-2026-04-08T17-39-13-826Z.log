@@ -1,0 +1,11 @@
+[     176ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[     782ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/metrics @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[     782ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[     783ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/recent-donations @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[     783ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/active-residents-trend @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[     783ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/flagged-cases-trend @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[     784ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/donations-by-channel @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[  173916ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents/filter-options @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[  173916ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents?page=1&pageSize=20 @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[  185794ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents?page=1&pageSize=500&sortBy=code_asc @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[  185794ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/recordings?page=1&pageSize=15&sortBy=date_desc @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0

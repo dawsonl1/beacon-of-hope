@@ -1,0 +1,30 @@
+[     139ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[     198ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts?t=1775671510080:6
+[     199ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts?t=1775671510080:6
+[    7338ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/metrics @ http://localhost:5173/src/api.ts?t=1775671510080:6
+[    7339ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents @ http://localhost:5173/src/api.ts?t=1775671510080:6
+[    7339ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/recent-donations @ http://localhost:5173/src/api.ts?t=1775671510080:6
+[    7340ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts?t=1775671510080:6
+[    7340ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts?t=1775671510080:6
+[    7340ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts?t=1775671510080:6
+[    7341ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/metrics @ http://localhost:5173/src/api.ts?t=1775671510080:6
+[    7342ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents @ http://localhost:5173/src/api.ts?t=1775671510080:6
+[    7342ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/recent-donations @ http://localhost:5173/src/api.ts?t=1775671510080:6
+[    7342ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts?t=1775671510080:6
+[    7342ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts?t=1775671510080:6
+[    7343ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts?t=1775671510080:6
+[   28584ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/staff/tasks @ http://localhost:5173/src/api.ts?t=1775671510080:6
+[   28584ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/staff/tasks @ http://localhost:5173/src/api.ts?t=1775671510080:6
+[   28765ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/staff/tasks:0
+[   28765ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/staff/tasks @ http://localhost:5173/@vite/client:509
+[   28834ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/staff/tasks:0
+[   28835ms] [ERROR] [API] 404 Not Found from https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/staff/tasks @ http://localhost:5173/@vite/client:509
+[   61222ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:5173/@vite/client:968
+[   62451ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[   62482ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[   62482ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[   65826ms] [ERROR] WebSocket connection to 'ws://localhost:5173/?token=KmQicUJqUgb5' failed:  @ http://localhost:5173/@vite/client:840
+[   65827ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:5173/@vite/client:968
+[   68130ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[   68154ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[   68155ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6

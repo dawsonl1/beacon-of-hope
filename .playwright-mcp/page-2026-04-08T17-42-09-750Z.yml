@@ -1,0 +1,354 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e4]:
+      - banner [ref=e5]:
+        - generic [ref=e6]:
+          - link "◆ Beacon of Hope" [ref=e7] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e8]: ◆
+            - generic [ref=e9]: Beacon of Hope
+          - navigation [ref=e10]:
+            - link "Dashboard" [ref=e11] [cursor=pointer]:
+              - /url: /admin
+              - img [ref=e12]
+              - generic [ref=e17]: Dashboard
+            - link "Caseload" [active] [ref=e18] [cursor=pointer]:
+              - /url: /admin/caseload
+              - img [ref=e19]
+              - generic [ref=e24]: Caseload
+            - link "Recordings" [ref=e25] [cursor=pointer]:
+              - /url: /admin/recordings
+              - img [ref=e26]
+              - generic [ref=e27]: Recordings
+            - link "Visitations" [ref=e28] [cursor=pointer]:
+              - /url: /admin/visitations
+              - img [ref=e29]
+              - generic [ref=e32]: Visitations
+            - link "Donors" [ref=e33] [cursor=pointer]:
+              - /url: /admin/donors
+              - img [ref=e34]
+              - generic [ref=e39]: Donors
+            - link "Reports" [ref=e40] [cursor=pointer]:
+              - /url: /admin/reports
+              - img [ref=e41]
+              - generic [ref=e43]: Reports
+            - link "Users" [ref=e44] [cursor=pointer]:
+              - /url: /admin/users
+              - img [ref=e45]
+              - generic [ref=e47]: Users
+          - generic [ref=e48]:
+            - generic [ref=e49]: Admin
+            - button "Logout" [ref=e50] [cursor=pointer]:
+              - img [ref=e51]
+              - generic [ref=e54]: Logout
+      - main [ref=e55]:
+        - generic [ref=e399]:
+          - generic [ref=e400]:
+            - generic [ref=e401]:
+              - heading "Caseload Inventory" [level=1] [ref=e402]
+              - paragraph [ref=e403]: 60 residents
+            - button "Add Resident" [ref=e404] [cursor=pointer]:
+              - img [ref=e405]
+              - text: Add Resident
+          - generic [ref=e406]:
+            - generic [ref=e407]:
+              - img [ref=e408]
+              - textbox "Search by code, case no, or social worker..." [ref=e411]
+            - generic [ref=e412]:
+              - combobox [ref=e413] [cursor=pointer]:
+                - option "All Statuses" [selected]
+                - option "Active"
+                - option "Closed"
+                - option "Transferred"
+              - combobox [ref=e414] [cursor=pointer]:
+                - option "All Safehouses" [selected]
+                - option "SH01 Dededo"
+                - option "SH02 Tamuning"
+                - option "SH03 Inarajan"
+                - option "SH04 Mangilao"
+                - option "SH05 Yigo"
+                - option "SH06 Barrigada"
+                - option "SH07 Agat"
+                - option "SH08 Hagatna"
+                - option "SH09 Santa Rita"
+              - combobox [ref=e415] [cursor=pointer]:
+                - option "All Categories" [selected]
+                - option "Abandoned"
+                - option "Foundling"
+                - option "Neglected"
+                - option "Surrendered"
+              - combobox [ref=e416] [cursor=pointer]:
+                - option "All Risk Levels" [selected]
+                - option "Critical"
+                - option "High"
+                - option "Low"
+                - option "Medium"
+          - generic [ref=e417]:
+            - table [ref=e419]:
+              - rowgroup [ref=e420]:
+                - row "Code Case No. Safehouse Status Category Risk Admitted Social Worker" [ref=e421]:
+                  - columnheader "Code" [ref=e422] [cursor=pointer]:
+                    - text: Code
+                    - img [ref=e423]
+                  - columnheader "Case No." [ref=e425] [cursor=pointer]:
+                    - text: Case No.
+                    - img [ref=e426]
+                  - columnheader "Safehouse" [ref=e428]
+                  - columnheader "Status" [ref=e429] [cursor=pointer]:
+                    - text: Status
+                    - img [ref=e430]
+                  - columnheader "Category" [ref=e432] [cursor=pointer]:
+                    - text: Category
+                    - img [ref=e433]
+                  - columnheader "Risk" [ref=e435] [cursor=pointer]:
+                    - text: Risk
+                    - img [ref=e436]
+                  - columnheader "Admitted" [ref=e438] [cursor=pointer]:
+                    - text: Admitted
+                    - img [ref=e439]
+                  - columnheader "Social Worker" [ref=e441] [cursor=pointer]:
+                    - text: Social Worker
+                    - img [ref=e442]
+              - rowgroup [ref=e444]:
+                - row "LS-0009 C3706 SH07 Agat Active Surrendered Low 2025-04-06 SW-16" [ref=e445] [cursor=pointer]:
+                  - cell "LS-0009" [ref=e446]
+                  - cell "C3706" [ref=e447]
+                  - cell "SH07 Agat" [ref=e448]
+                  - cell "Active" [ref=e449]:
+                    - generic [ref=e450]: Active
+                  - cell "Surrendered" [ref=e451]
+                  - cell "Low" [ref=e452]:
+                    - generic [ref=e453]: Low
+                  - cell "2025-04-06" [ref=e454]
+                  - cell "SW-16" [ref=e455]
+                - row "LS-0055 C2908 SH02 Tamuning Active Abandoned Medium 2025-04-01 SW-01" [ref=e456] [cursor=pointer]:
+                  - cell "LS-0055" [ref=e457]
+                  - cell "C2908" [ref=e458]
+                  - cell "SH02 Tamuning" [ref=e459]
+                  - cell "Active" [ref=e460]:
+                    - generic [ref=e461]: Active
+                  - cell "Abandoned" [ref=e462]
+                  - cell "Medium" [ref=e463]:
+                    - generic [ref=e464]: Medium
+                  - cell "2025-04-01" [ref=e465]
+                  - cell "SW-01" [ref=e466]
+                - row "LS-0020 C2853 SH01 Dededo Closed Neglected Medium 2025-03-23 SW-08" [ref=e467] [cursor=pointer]:
+                  - cell "LS-0020" [ref=e468]
+                  - cell "C2853" [ref=e469]
+                  - cell "SH01 Dededo" [ref=e470]
+                  - cell "Closed" [ref=e471]:
+                    - generic [ref=e472]: Closed
+                  - cell "Neglected" [ref=e473]
+                  - cell "Medium" [ref=e474]:
+                    - generic [ref=e475]: Medium
+                  - cell "2025-03-23" [ref=e476]
+                  - cell "SW-08" [ref=e477]
+                - row "LS-0027 C6505 SH02 Tamuning Transferred Neglected Low 2025-03-17 SW-16" [ref=e478] [cursor=pointer]:
+                  - cell "LS-0027" [ref=e479]
+                  - cell "C6505" [ref=e480]
+                  - cell "SH02 Tamuning" [ref=e481]
+                  - cell "Transferred" [ref=e482]:
+                    - generic [ref=e483]: Transferred
+                  - cell "Neglected" [ref=e484]
+                  - cell "Low" [ref=e485]:
+                    - generic [ref=e486]: Low
+                  - cell "2025-03-17" [ref=e487]
+                  - cell "SW-16" [ref=e488]
+                - row "LS-0058 C5053 SH08 Hagatna Closed Abandoned Low 2025-03-14 SW-17" [ref=e489] [cursor=pointer]:
+                  - cell "LS-0058" [ref=e490]
+                  - cell "C5053" [ref=e491]
+                  - cell "SH08 Hagatna" [ref=e492]
+                  - cell "Closed" [ref=e493]:
+                    - generic [ref=e494]: Closed
+                  - cell "Abandoned" [ref=e495]
+                  - cell "Low" [ref=e496]:
+                    - generic [ref=e497]: Low
+                  - cell "2025-03-14" [ref=e498]
+                  - cell "SW-17" [ref=e499]
+                - row "LS-0040 C7587 SH01 Dededo Active Abandoned Low 2025-03-01 SW-08" [ref=e500] [cursor=pointer]:
+                  - cell "LS-0040" [ref=e501]
+                  - cell "C7587" [ref=e502]
+                  - cell "SH01 Dededo" [ref=e503]
+                  - cell "Active" [ref=e504]:
+                    - generic [ref=e505]: Active
+                  - cell "Abandoned" [ref=e506]
+                  - cell "Low" [ref=e507]:
+                    - generic [ref=e508]: Low
+                  - cell "2025-03-01" [ref=e509]
+                  - cell "SW-08" [ref=e510]
+                - row "LS-0032 C3013 SH06 Barrigada Active Foundling Medium 2025-02-11 SW-07" [ref=e511] [cursor=pointer]:
+                  - cell "LS-0032" [ref=e512]
+                  - cell "C3013" [ref=e513]
+                  - cell "SH06 Barrigada" [ref=e514]
+                  - cell "Active" [ref=e515]:
+                    - generic [ref=e516]: Active
+                  - cell "Foundling" [ref=e517]
+                  - cell "Medium" [ref=e518]:
+                    - generic [ref=e519]: Medium
+                  - cell "2025-02-11" [ref=e520]
+                  - cell "SW-07" [ref=e521]
+                - row "LS-0014 C8844 SH07 Agat Active Foundling Low 2025-01-26 SW-17" [ref=e522] [cursor=pointer]:
+                  - cell "LS-0014" [ref=e523]
+                  - cell "C8844" [ref=e524]
+                  - cell "SH07 Agat" [ref=e525]
+                  - cell "Active" [ref=e526]:
+                    - generic [ref=e527]: Active
+                  - cell "Foundling" [ref=e528]
+                  - cell "Low" [ref=e529]:
+                    - generic [ref=e530]: Low
+                  - cell "2025-01-26" [ref=e531]
+                  - cell "SW-17" [ref=e532]
+                - row "LS-0017 C3951 SH01 Dededo Active Surrendered Medium 2025-01-20 SW-02" [ref=e533] [cursor=pointer]:
+                  - cell "LS-0017" [ref=e534]
+                  - cell "C3951" [ref=e535]
+                  - cell "SH01 Dededo" [ref=e536]
+                  - cell "Active" [ref=e537]:
+                    - generic [ref=e538]: Active
+                  - cell "Surrendered" [ref=e539]
+                  - cell "Medium" [ref=e540]:
+                    - generic [ref=e541]: Medium
+                  - cell "2025-01-20" [ref=e542]
+                  - cell "SW-02" [ref=e543]
+                - row "LS-0033 C9903 SH07 Agat Transferred Foundling Low 2024-12-21 SW-16" [ref=e544] [cursor=pointer]:
+                  - cell "LS-0033" [ref=e545]
+                  - cell "C9903" [ref=e546]
+                  - cell "SH07 Agat" [ref=e547]
+                  - cell "Transferred" [ref=e548]:
+                    - generic [ref=e549]: Transferred
+                  - cell "Foundling" [ref=e550]
+                  - cell "Low" [ref=e551]:
+                    - generic [ref=e552]: Low
+                  - cell "2024-12-21" [ref=e553]
+                  - cell "SW-16" [ref=e554]
+                - row "LS-0042 C8805 SH06 Barrigada Active Abandoned Low 2024-12-11 SW-19" [ref=e555] [cursor=pointer]:
+                  - cell "LS-0042" [ref=e556]
+                  - cell "C8805" [ref=e557]
+                  - cell "SH06 Barrigada" [ref=e558]
+                  - cell "Active" [ref=e559]:
+                    - generic [ref=e560]: Active
+                  - cell "Abandoned" [ref=e561]
+                  - cell "Low" [ref=e562]:
+                    - generic [ref=e563]: Low
+                  - cell "2024-12-11" [ref=e564]
+                  - cell "SW-19" [ref=e565]
+                - row "LS-0024 C5428 SH04 Mangilao Active Foundling Low 2024-11-20 SW-02" [ref=e566] [cursor=pointer]:
+                  - cell "LS-0024" [ref=e567]
+                  - cell "C5428" [ref=e568]
+                  - cell "SH04 Mangilao" [ref=e569]
+                  - cell "Active" [ref=e570]:
+                    - generic [ref=e571]: Active
+                  - cell "Foundling" [ref=e572]
+                  - cell "Low" [ref=e573]:
+                    - generic [ref=e574]: Low
+                  - cell "2024-11-20" [ref=e575]
+                  - cell "SW-02" [ref=e576]
+                - row "LS-0015 C0855 SH08 Hagatna Transferred Surrendered Low 2024-10-18 SW-16" [ref=e577] [cursor=pointer]:
+                  - cell "LS-0015" [ref=e578]
+                  - cell "C0855" [ref=e579]
+                  - cell "SH08 Hagatna" [ref=e580]
+                  - cell "Transferred" [ref=e581]:
+                    - generic [ref=e582]: Transferred
+                  - cell "Surrendered" [ref=e583]
+                  - cell "Low" [ref=e584]:
+                    - generic [ref=e585]: Low
+                  - cell "2024-10-18" [ref=e586]
+                  - cell "SW-16" [ref=e587]
+                - row "LS-0056 C3620 SH01 Dededo Closed Surrendered Low 2024-10-16 SW-19" [ref=e588] [cursor=pointer]:
+                  - cell "LS-0056" [ref=e589]
+                  - cell "C3620" [ref=e590]
+                  - cell "SH01 Dededo" [ref=e591]
+                  - cell "Closed" [ref=e592]:
+                    - generic [ref=e593]: Closed
+                  - cell "Surrendered" [ref=e594]
+                  - cell "Low" [ref=e595]:
+                    - generic [ref=e596]: Low
+                  - cell "2024-10-16" [ref=e597]
+                  - cell "SW-19" [ref=e598]
+                - row "LS-0039 C2281 SH08 Hagatna Closed Surrendered Low 2024-10-10 SW-17" [ref=e599] [cursor=pointer]:
+                  - cell "LS-0039" [ref=e600]
+                  - cell "C2281" [ref=e601]
+                  - cell "SH08 Hagatna" [ref=e602]
+                  - cell "Closed" [ref=e603]:
+                    - generic [ref=e604]: Closed
+                  - cell "Surrendered" [ref=e605]
+                  - cell "Low" [ref=e606]:
+                    - generic [ref=e607]: Low
+                  - cell "2024-10-10" [ref=e608]
+                  - cell "SW-17" [ref=e609]
+                - row "LS-0004 C3116 SH02 Tamuning Active Neglected Low 2024-09-27 SW-15" [ref=e610] [cursor=pointer]:
+                  - cell "LS-0004" [ref=e611]
+                  - cell "C3116" [ref=e612]
+                  - cell "SH02 Tamuning" [ref=e613]
+                  - cell "Active" [ref=e614]:
+                    - generic [ref=e615]: Active
+                  - cell "Neglected" [ref=e616]
+                  - cell "Low" [ref=e617]:
+                    - generic [ref=e618]: Low
+                  - cell "2024-09-27" [ref=e619]
+                  - cell "SW-15" [ref=e620]
+                - row "LS-0048 C6402 SH05 Yigo Active Surrendered Medium 2024-08-23 SW-09" [ref=e621] [cursor=pointer]:
+                  - cell "LS-0048" [ref=e622]
+                  - cell "C6402" [ref=e623]
+                  - cell "SH05 Yigo" [ref=e624]
+                  - cell "Active" [ref=e625]:
+                    - generic [ref=e626]: Active
+                  - cell "Surrendered" [ref=e627]
+                  - cell "Medium" [ref=e628]:
+                    - generic [ref=e629]: Medium
+                  - cell "2024-08-23" [ref=e630]
+                  - cell "SW-09" [ref=e631]
+                - row "LS-0035 C7521 SH03 Inarajan Transferred Surrendered Medium 2024-08-01 SW-19" [ref=e632] [cursor=pointer]:
+                  - cell "LS-0035" [ref=e633]
+                  - cell "C7521" [ref=e634]
+                  - cell "SH03 Inarajan" [ref=e635]
+                  - cell "Transferred" [ref=e636]:
+                    - generic [ref=e637]: Transferred
+                  - cell "Surrendered" [ref=e638]
+                  - cell "Medium" [ref=e639]:
+                    - generic [ref=e640]: Medium
+                  - cell "2024-08-01" [ref=e641]
+                  - cell "SW-19" [ref=e642]
+                - row "LS-0043 C7232 SH02 Tamuning Closed Neglected Low 2024-07-13 SW-05" [ref=e643] [cursor=pointer]:
+                  - cell "LS-0043" [ref=e644]
+                  - cell "C7232" [ref=e645]
+                  - cell "SH02 Tamuning" [ref=e646]
+                  - cell "Closed" [ref=e647]:
+                    - generic [ref=e648]: Closed
+                  - cell "Neglected" [ref=e649]
+                  - cell "Low" [ref=e650]:
+                    - generic [ref=e651]: Low
+                  - cell "2024-07-13" [ref=e652]
+                  - cell "SW-05" [ref=e653]
+                - row "LS-0007 C6898 SH06 Barrigada Active Foundling Low 2024-06-22 SW-04" [ref=e654] [cursor=pointer]:
+                  - cell "LS-0007" [ref=e655]
+                  - cell "C6898" [ref=e656]
+                  - cell "SH06 Barrigada" [ref=e657]
+                  - cell "Active" [ref=e658]:
+                    - generic [ref=e659]: Active
+                  - cell "Foundling" [ref=e660]
+                  - cell "Low" [ref=e661]:
+                    - generic [ref=e662]: Low
+                  - cell "2024-06-22" [ref=e663]
+                  - cell "SW-04" [ref=e664]
+            - generic [ref=e665]:
+              - generic [ref=e666]: Showing 1–20 of 60
+              - generic [ref=e667]:
+                - button "Previous page" [disabled] [ref=e668]:
+                  - img [ref=e669]
+                - button "1" [ref=e671] [cursor=pointer]
+                - button "2" [ref=e672] [cursor=pointer]
+                - button "3" [ref=e673] [cursor=pointer]
+                - button "Next page" [ref=e674] [cursor=pointer]:
+                  - img [ref=e675]
+    - dialog "Cookie consent" [ref=e390]:
+      - generic [ref=e391]:
+        - paragraph [ref=e392]:
+          - text: We use cookies to improve your experience and analyze site usage. See our
+          - link "Privacy Policy" [ref=e393] [cursor=pointer]:
+            - /url: /privacy-policy
+          - text: for details.
+        - generic [ref=e394]:
+          - button "Reject Non-Essential" [ref=e395] [cursor=pointer]
+          - button "Manage Preferences" [ref=e396] [cursor=pointer]
+          - button "Accept All" [ref=e397] [cursor=pointer]
+  - generic [ref=e398]: Website

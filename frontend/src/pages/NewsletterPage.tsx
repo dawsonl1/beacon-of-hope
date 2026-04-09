@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Mail, CheckCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import styles from './NewsletterPage.module.css';
 
 export default function NewsletterPage() {
+  useDocumentTitle('Newsletter');
   const { isAuthenticated, user } = useAuth();
   const [email, setEmail] = useState(user?.email ?? '');
   const [submitted, setSubmitted] = useState(false);

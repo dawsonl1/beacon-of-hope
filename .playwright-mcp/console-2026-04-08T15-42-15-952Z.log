@@ -1,0 +1,21 @@
+[     412ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[     492ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts:6
+[     493ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/donations-by-month @ http://localhost:5173/src/api.ts:6
+[     493ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/allocations-by-program @ http://localhost:5173/src/api.ts:6
+[     493ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[     494ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts:6
+[     494ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/donations-by-month @ http://localhost:5173/src/api.ts:6
+[     494ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/allocations-by-program @ http://localhost:5173/src/api.ts:6
+[     495ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[   69356ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts:6
+[   69356ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/donations-by-month @ http://localhost:5173/src/api.ts:6
+[   69357ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/allocations-by-program @ http://localhost:5173/src/api.ts:6
+[   82994ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[   83030ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts:6
+[   83030ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/donations-by-month @ http://localhost:5173/src/api.ts:6
+[   83031ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/allocations-by-program @ http://localhost:5173/src/api.ts:6
+[   83031ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[   83032ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/summary @ http://localhost:5173/src/api.ts:6
+[   83032ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/donations-by-month @ http://localhost:5173/src/api.ts:6
+[   83032ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/impact/allocations-by-program @ http://localhost:5173/src/api.ts:6
+[   83032ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6

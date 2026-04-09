@@ -5,6 +5,7 @@ import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import { formatDate } from '../../constants';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './VisitationDetailPage.module.css';
 
 interface VisitationDetail {
@@ -36,6 +37,7 @@ function getVisitTypeClass(type: string | null): string {
 }
 
 export default function VisitationDetailPage() {
+  useDocumentTitle('Visitation Detail');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();

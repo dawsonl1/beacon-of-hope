@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useSafehouse } from '../../contexts/SafehouseContext';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Pagination from '../../components/admin/Pagination';
 import styles from './IncidentsPage.module.css';
 
@@ -30,6 +31,7 @@ const SEVERITY_STYLES: Record<string, string> = {
 };
 
 export default function IncidentsPage() {
+  useDocumentTitle('Incidents');
   const navigate = useNavigate();
   const { activeSafehouseId } = useSafehouse();
   const [incidents, setIncidents] = useState<IncidentRow[]>([]);

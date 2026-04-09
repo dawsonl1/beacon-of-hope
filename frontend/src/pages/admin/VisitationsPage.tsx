@@ -3,6 +3,8 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Plus, Eye, AlertTriangle, Calendar, ClipboardList } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { formatDate } from '../../constants';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import { Pagination } from '../../components/admin/Pagination';
 import styles from './VisitationsPage.module.css';
 
 /* ── Types ──────────────────────────────────────────── */
@@ -75,6 +77,7 @@ function getCoopClass(level: string | null): string {
 /* ── Component ──────────────────────────────────────── */
 
 export default function VisitationsPage() {
+  useDocumentTitle('Visitations');
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') === 'conferences' ? 'conferences' : 'visitations';
 
@@ -269,27 +272,7 @@ export default function VisitationsPage() {
               </div>
 
               {totalPages > 1 && (
-                <div className={styles.pagination}>
-                  <span className={styles.pageInfo}>
-                    Showing {(page - 1) * pageSize + 1}--{Math.min(page * pageSize, totalCount)} of {totalCount}
-                  </span>
-                  <div className={styles.pageButtons}>
-                    <button
-                      className={styles.pageBtn}
-                      disabled={page <= 1}
-                      onClick={() => setPage(page - 1)}
-                    >
-                      Previous
-                    </button>
-                    <button
-                      className={styles.pageBtn}
-                      disabled={page >= totalPages}
-                      onClick={() => setPage(page + 1)}
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
+                <Pagination page={page} pageSize={pageSize} totalCount={totalCount} onPageChange={setPage} />
               )}
             </div>
           )}

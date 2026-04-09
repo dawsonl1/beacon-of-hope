@@ -1,0 +1,44 @@
+[      78ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[      91ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[      92ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[     767ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents/filter-options @ http://localhost:5173/src/api.ts:6
+[     768ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents?page=1&pageSize=20 @ http://localhost:5173/src/api.ts:6
+[     769ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents/filter-options @ http://localhost:5173/src/api.ts:6
+[     769ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents?page=1&pageSize=20 @ http://localhost:5173/src/api.ts:6
+[   14239ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:5173/@vite/client:968
+[   15462ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[   15476ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[   15476ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[   22729ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents/filter-options @ http://localhost:5173/src/api.ts:6
+[   22729ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents?page=1&pageSize=20 @ http://localhost:5173/src/api.ts:6
+[   22731ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents/filter-options @ http://localhost:5173/src/api.ts:6
+[   22732ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents?page=1&pageSize=20 @ http://localhost:5173/src/api.ts:6
+[  264193ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[  264193ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[  265344ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents/filter-options @ http://localhost:5173/src/api.ts:6
+[  265345ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents?page=1&pageSize=20 @ http://localhost:5173/src/api.ts:6
+[  265347ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents/filter-options @ http://localhost:5173/src/api.ts:6
+[  265348ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents?page=1&pageSize=20 @ http://localhost:5173/src/api.ts:6
+[  276056ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[  276056ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ http://localhost:5173/src/api.ts:6
+[  276585ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents/filter-options @ http://localhost:5173/src/api.ts:6
+[  276586ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents?page=1&pageSize=20 @ http://localhost:5173/src/api.ts:6
+[  276588ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents/filter-options @ http://localhost:5173/src/api.ts:6
+[  276589ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents?page=1&pageSize=20 @ http://localhost:5173/src/api.ts:6
+[  287033ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents/filter-options @ http://localhost:5173/src/api.ts:6
+[  287033ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents?page=1&pageSize=20 @ http://localhost:5173/src/api.ts:6
+[  287034ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents/filter-options @ http://localhost:5173/src/api.ts:6
+[  287034ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents?page=1&pageSize=20 @ http://localhost:5173/src/api.ts:6
+[  306954ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents/filter-options @ http://localhost:5173/src/api.ts:6
+[  306955ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents?page=1&pageSize=20 @ http://localhost:5173/src/api.ts:6
+[  306956ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents/filter-options @ http://localhost:5173/src/api.ts:6
+[  306956ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents?page=1&pageSize=20 @ http://localhost:5173/src/api.ts:6
+[  388380ms] [ERROR] WebSocket connection to 'ws://localhost:5173/?token=r2vOs-XHepEL' failed:  @ http://localhost:5173/@vite/client:840
+[  388381ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:5173/@vite/client:968
+[  395715ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[  395730ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[  395731ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[  396403ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents/filter-options @ http://localhost:5173/src/api.ts:6
+[  396404ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents?page=1&pageSize=20 @ http://localhost:5173/src/api.ts:6
+[  396404ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents/filter-options @ http://localhost:5173/src/api.ts:6
+[  396404ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents?page=1&pageSize=20 @ http://localhost:5173/src/api.ts:6

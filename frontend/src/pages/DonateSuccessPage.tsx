@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Heart, CheckCircle } from 'lucide-react';
 import { apiFetch } from '../api';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import styles from './DonateSuccessPage.module.css';
 
 interface DonationResult {
@@ -12,6 +13,7 @@ interface DonationResult {
 }
 
 export default function DonateSuccessPage() {
+  useDocumentTitle('Donation Successful');
   const [params] = useSearchParams();
   const sessionId = params.get('session_id');
   const [result, setResult] = useState<DonationResult | null>(null);

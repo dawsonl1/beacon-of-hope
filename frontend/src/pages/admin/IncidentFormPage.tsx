@@ -5,6 +5,7 @@ import { apiFetch } from '../../api';
 import { APP_TODAY_STR } from '../../constants';
 import { INCIDENT_TYPES, SEVERITY_LEVELS } from '../../domain';
 import { useSafehouse } from '../../contexts/SafehouseContext';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './VisitationFormPage.module.css';
 
 interface ResidentOption {
@@ -41,6 +42,7 @@ const emptyForm: FormData = {
 };
 
 export default function IncidentFormPage() {
+  useDocumentTitle('Incident Form');
   const { id } = useParams();
   const navigate = useNavigate();
   const isEdit = !!id;

@@ -35,5 +35,9 @@ public partial class ProcessRecording
 
     public string? NotesRestricted { get; set; }
 
+    public bool? NeedsCaseConference { get; set; }
+
+    public bool? ReadyForReintegration { get; set; }
+
     public virtual Resident Resident { get; set; } = null!;
 }

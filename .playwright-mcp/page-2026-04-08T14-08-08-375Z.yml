@@ -1,0 +1,161 @@
+- generic [ref=e2]:
+  - banner [ref=e19]:
+    - generic [ref=e20]:
+      - link "◆ Beacon of Hope" [ref=e21] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e22]: ◆
+        - generic [ref=e23]: Beacon of Hope
+      - navigation [ref=e24]:
+        - link "Home" [ref=e25] [cursor=pointer]:
+          - /url: /
+        - link "Our Mission" [ref=e26] [cursor=pointer]:
+          - /url: /#mission
+        - link "Impact" [ref=e27] [cursor=pointer]:
+          - /url: /impact
+        - link "Get Involved" [ref=e28] [cursor=pointer]:
+          - /url: /#involved
+      - generic [ref=e29]:
+        - link "Become a Donor" [ref=e30] [cursor=pointer]:
+          - /url: /signup
+          - img [ref=e31]
+          - generic [ref=e34]: Become a Donor
+        - link "Login" [ref=e35] [cursor=pointer]:
+          - /url: /login
+          - img [ref=e36]
+          - generic [ref=e39]: Login
+  - main [ref=e40]:
+    - generic [ref=e41]:
+      - generic [ref=e42]:
+        - paragraph [ref=e43]: Beacon of Hope Foundation
+        - heading "Restoring hope, one life at a time" [level=1] [ref=e44]:
+          - text: Restoring hope,
+          - emphasis [ref=e45]: one life at a time
+        - paragraph [ref=e46]: We operate safe homes in Guam for girls who are survivors of sexual abuse and trafficking — providing shelter, healing, education, and a path to a new life.
+        - generic [ref=e47]:
+          - link "Donate Now" [ref=e48] [cursor=pointer]:
+            - /url: /donate
+            - img [ref=e49]
+            - text: Donate Now
+          - link "See Our Impact" [ref=e51] [cursor=pointer]:
+            - /url: "#impact"
+            - text: See Our Impact
+            - img [ref=e52]
+      - link "Scroll to learn more" [ref=e54] [cursor=pointer]:
+        - /url: "#impact"
+        - img [ref=e55]
+    - generic [ref=e58]:
+      - generic [ref=e59]: Our Impact
+      - alert [ref=e61]:
+        - img [ref=e62]
+        - generic [ref=e64]:
+          - paragraph [ref=e65]: Unable to reach the server. Please try again later.
+          - paragraph [ref=e66]: "API target: http://localhost:5001"
+    - generic [ref=e68]:
+      - heading "Our Mission" [level=2] [ref=e69]
+      - paragraph [ref=e70]: Beacon of Hope contracts with in-country individuals and organizations across Guam to provide safehouses and comprehensive rehabilitation services. Every girl who enters our care receives a personalized path toward healing and independence.
+      - generic [ref=e71]:
+        - generic [ref=e72]:
+          - img [ref=e74]
+          - generic [ref=e76]: "01"
+          - heading "Rescue & Referral" [level=3] [ref=e77]
+          - paragraph [ref=e78]: Girls are referred through government agencies, NGOs, and court orders into our care.
+        - generic [ref=e79]:
+          - img [ref=e81]
+          - generic [ref=e84]: "02"
+          - heading "Safe Housing" [level=3] [ref=e85]
+          - paragraph [ref=e86]: Placed in one of our safehouses across Guam with around-the-clock care.
+        - generic [ref=e87]:
+          - img [ref=e89]
+          - generic [ref=e92]: "03"
+          - heading "Rehabilitation" [level=3] [ref=e93]
+          - paragraph [ref=e94]: Counseling, education, health services, and personalized intervention plans for every resident.
+        - generic [ref=e95]:
+          - img [ref=e97]
+          - generic [ref=e102]: "04"
+          - heading "Reintegration" [level=3] [ref=e103]
+          - paragraph [ref=e104]: Prepared for family reunification, foster care, or independent living when they are ready.
+    - generic [ref=e106]:
+      - blockquote [ref=e107]:
+        - paragraph [ref=e108]:
+          - text: “I never thought I could have a future.
+          - text: Beacon of Hope gave me one.”
+      - generic [ref=e111]:
+        - paragraph [ref=e112]: A Beacon of Hope graduate
+        - paragraph [ref=e113]: Successfully reintegrated after 2 years in our program
+    - generic [ref=e115]:
+      - heading "Get Involved" [level=2] [ref=e116]
+      - paragraph [ref=e117]: Every act of generosity — no matter the form — helps a girl heal, learn, and build a future she deserves.
+      - generic [ref=e118]:
+        - link "Donate Your financial support funds shelter, education, counseling, and care." [ref=e119] [cursor=pointer]:
+          - /url: /donate
+          - img [ref=e120]
+          - heading "Donate" [level=3] [ref=e122]
+          - paragraph [ref=e123]: Your financial support funds shelter, education, counseling, and care.
+        - link "Volunteer Give your time and skills to help our team on the ground." [ref=e124] [cursor=pointer]:
+          - /url: /signup
+          - img [ref=e125]
+          - heading "Volunteer" [level=3] [ref=e130]
+          - paragraph [ref=e131]: Give your time and skills to help our team on the ground.
+        - link "Partner Bring your church, company, or community alongside our mission." [ref=e132] [cursor=pointer]:
+          - /url: /signup
+          - img [ref=e133]
+          - heading "Partner" [level=3] [ref=e138]
+          - paragraph [ref=e139]: Bring your church, company, or community alongside our mission.
+        - link "Advocate Amplify our voice on social media and raise awareness." [ref=e140] [cursor=pointer]:
+          - /url: /newsletter
+          - img [ref=e141]
+          - heading "Advocate" [level=3] [ref=e144]
+          - paragraph [ref=e145]: Amplify our voice on social media and raise awareness.
+    - generic [ref=e147]:
+      - heading "Your donation changes a life" [level=2] [ref=e148]
+      - generic [ref=e149]:
+        - generic [ref=e150]:
+          - generic [ref=e151]: $500
+          - generic [ref=e152]: One week of education supplies
+        - generic [ref=e153]:
+          - generic [ref=e154]: $2,000
+          - generic [ref=e155]: One month of counseling sessions
+        - generic [ref=e156]:
+          - generic [ref=e157]: $8,000
+          - generic [ref=e158]: Full month of care for one girl
+      - link "Give Today" [ref=e159] [cursor=pointer]:
+        - /url: /donate
+        - img [ref=e160]
+        - text: Give Today
+  - contentinfo [ref=e162]:
+    - generic [ref=e163]:
+      - generic [ref=e164]:
+        - generic [ref=e165]:
+          - text: ◆Beacon of Hope
+          - paragraph [ref=e166]: Restoring hope and rebuilding lives for survivors of abuse and trafficking in Guam.
+        - generic [ref=e167]:
+          - generic [ref=e168]:
+            - heading "Organization" [level=4] [ref=e169]
+            - link "Our Mission" [ref=e170] [cursor=pointer]:
+              - /url: /#mission
+            - link "Our Impact" [ref=e171] [cursor=pointer]:
+              - /url: /#impact
+            - link "Get Involved" [ref=e172] [cursor=pointer]:
+              - /url: /#involved
+          - generic [ref=e173]:
+            - heading "Legal" [level=4] [ref=e174]
+            - link "Privacy Policy" [ref=e175] [cursor=pointer]:
+              - /url: /privacy-policy
+            - button "Cookie Settings" [ref=e176] [cursor=pointer]
+          - generic [ref=e177]:
+            - heading "Connect" [level=4] [ref=e178]
+            - link "Instagram" [ref=e179] [cursor=pointer]:
+              - /url: https://instagram.com
+            - link "Facebook" [ref=e180] [cursor=pointer]:
+              - /url: https://facebook.com
+            - link "LinkedIn" [ref=e181] [cursor=pointer]:
+              - /url: https://linkedin.com
+            - link "Monthly Newsletter" [ref=e182] [cursor=pointer]:
+              - /url: /newsletter
+            - paragraph [ref=e183]: "*Data as of February 15, 2026"
+      - generic [ref=e185]:
+        - paragraph [ref=e186]: © 2026 Beacon of Hope. All rights reserved.
+        - paragraph [ref=e187]:
+          - text: Made with
+          - img [ref=e188]
+          - text: for those who need it most

@@ -291,3 +291,24 @@
     min-width: 700px;
   }
 }
+
+.kpi {
+  background: #fff;
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  text-align: center;
+}
+.kpiLabel {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.kpiValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-strong);
+}

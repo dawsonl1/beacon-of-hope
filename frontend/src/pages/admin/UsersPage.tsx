@@ -3,6 +3,7 @@ import { UserPlus, Trash2, Loader2, Shield, User } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './UsersPage.module.css';
 
 interface SafehouseRef {
@@ -21,6 +22,7 @@ interface AppUser {
 }
 
 export default function UsersPage() {
+  useDocumentTitle('User Management');
   const { user: currentUser } = useAuth();
   const isAdmin = currentUser?.roles?.includes('Admin') ?? false;
 

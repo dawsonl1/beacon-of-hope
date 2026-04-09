@@ -15,6 +15,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import { useReveal } from '../hooks/useReveal';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import styles from './HomePage.module.css';
 
 /* ── Animated counter ──────────────────────────────────────── */
@@ -58,6 +59,7 @@ function Counter({ end, suffix = '', prefix = '' }: { end: number; suffix?: stri
 
 /* ── Home Page ─────────────────────────────────────────────── */
 export default function HomePage() {
+  useDocumentTitle('Home');
   const impactRef = useReveal();
   const missionRef = useReveal();
   const storyRef = useReveal();

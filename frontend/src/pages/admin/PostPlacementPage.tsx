@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useSafehouse } from '../../contexts/SafehouseContext';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Pagination from '../../components/admin/Pagination';
 import styles from './IncidentsPage.module.css';
 
@@ -36,6 +37,7 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 export default function PostPlacementPage() {
+  useDocumentTitle('Post-Placement');
   const navigate = useNavigate();
   const { activeSafehouseId } = useSafehouse();
   const [residents, setResidents] = useState<PostPlacementResident[]>([]);

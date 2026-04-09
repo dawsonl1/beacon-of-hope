@@ -3,9 +3,11 @@ import type { FormEvent } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import styles from './LoginPage.module.css';
 
 export default function LoginPage() {
+  useDocumentTitle('Login');
   const { login, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();

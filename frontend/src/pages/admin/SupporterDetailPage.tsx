@@ -5,6 +5,7 @@ import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import { formatDate, formatAmount, formatEnumLabel } from '../../constants';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './SupporterDetailPage.module.css';
 
 interface SupporterDetail {
@@ -45,6 +46,7 @@ interface DetailResponse {
 }
 
 export default function SupporterDetailPage() {
+  useDocumentTitle('Supporter Detail');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();

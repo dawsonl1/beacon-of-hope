@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Loader2, CheckCircle, Clock, X, Stethoscope, GraduationCap, Heart, AlertTriangle, Home, ClipboardList } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useSafehouse } from '../../contexts/SafehouseContext';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './StaffTasksPage.module.css';
 
 interface StaffTaskItem {
@@ -34,6 +35,7 @@ const TASK_ICON_MAP: Record<string, { icon: typeof Stethoscope; className: strin
 };
 
 export default function StaffTasksPage() {
+  useDocumentTitle('Tasks');
   const navigate = useNavigate();
   const { activeSafehouseId } = useSafehouse();
   const [tasks, setTasks] = useState<StaffTaskItem[]>([]);

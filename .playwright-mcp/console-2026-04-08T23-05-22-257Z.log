@@ -1,0 +1,7 @@
+[     147ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[     167ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[     167ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[     703ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents?page=1&pageSize=500&sortBy=code_asc @ http://localhost:5173/src/api.ts:6
+[     704ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recordings?page=1&pageSize=15&sortBy=date_desc @ http://localhost:5173/src/api.ts:6
+[     705ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents?page=1&pageSize=500&sortBy=code_asc @ http://localhost:5173/src/api.ts:6
+[     705ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recordings?page=1&pageSize=15&sortBy=date_desc @ http://localhost:5173/src/api.ts:6

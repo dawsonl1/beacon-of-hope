@@ -5,6 +5,7 @@ import { Heart, GraduationCap, Home, Stethoscope, ShieldCheck, Users } from 'luc
 import { apiFetch } from '../api';
 import type { ImpactSummary } from '../types';
 import { ApiError } from '../components/ApiError';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import styles from './ImpactPage.module.css';
 
 /* ── Animated counter ──────────────────────────────────────── */
@@ -81,6 +82,7 @@ const IMPACT_CARDS = [
 /* ── Impact Page ───────────────────────────────────────── */
 
 export default function ImpactPage() {
+  useDocumentTitle('Our Impact');
   const heroRef = useReveal();
   const impactRef = useReveal();
   const storiesRef = useReveal();

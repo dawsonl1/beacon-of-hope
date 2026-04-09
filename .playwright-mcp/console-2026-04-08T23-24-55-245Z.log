@@ -1,0 +1,7 @@
+[      73ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[      92ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[      92ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[     860ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/post-placement @ http://localhost:5173/src/api.ts:6
+[     861ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/post-placement/summary @ http://localhost:5173/src/api.ts:6
+[     863ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/post-placement @ http://localhost:5173/src/api.ts:6
+[     863ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/post-placement/summary @ http://localhost:5173/src/api.ts:6

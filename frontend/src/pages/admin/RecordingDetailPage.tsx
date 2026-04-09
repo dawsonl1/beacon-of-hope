@@ -13,6 +13,7 @@ import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import { ApiError } from '../../components/ApiError';
 import { formatDate } from '../../constants';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './RecordingDetailPage.module.css';
 
 interface Recording {
@@ -56,6 +57,7 @@ function getEmotionalStyle(state: string | null) {
 }
 
 export default function RecordingDetailPage() {
+  useDocumentTitle('Recording Detail');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();

@@ -1,4 +1,5 @@
 import { useCookieConsent } from '../contexts/CookieConsentContext';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import styles from './PrivacyPolicyPage.module.css';
 
 const sections = [
@@ -17,6 +18,7 @@ const sections = [
 ];
 
 export default function PrivacyPolicyPage() {
+  useDocumentTitle('Privacy Policy');
   const { openPreferencesModal } = useCookieConsent();
 
   return (

@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { formatDate, formatAmount, formatEnumLabel } from '../../constants';
 import Pagination from '../../components/admin/Pagination';
 import { SUPPORTER_TYPES, SUPPORTER_STATUSES, DONATION_TYPES } from '../../domain';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './DonorsPage.module.css';
 
 /* ── Types ──────────────────────────────────────────────── */
@@ -80,6 +81,7 @@ const STATUSES = SUPPORTER_STATUSES;
 /* ── Component ──────────────────────────────────────────── */
 
 export default function DonorsPage() {
+  useDocumentTitle('Donors & Contributions');
   const { user } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();

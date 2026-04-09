@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { APP_TODAY_STR } from '../../constants';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './ResidentFormPage.module.css';
 
 interface SafehouseOption {
@@ -147,6 +148,7 @@ function toPayload(form: FormData) {
 }
 
 export default function ResidentFormPage() {
+  useDocumentTitle('Resident Form');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const isEdit = !!id;

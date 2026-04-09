@@ -226,7 +226,95 @@ namespace backend.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
+                    b.HasIndex("SupporterId");
+
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("backend.Models.CalendarEvent", b =>
+                {
+                    b.Property<int>("CalendarEventId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("calendar_event_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CalendarEventId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<TimeOnly?>("EndTime")
+                        .HasColumnType("time without time zone")
+                        .HasColumnName("end_time");
+
+                    b.Property<DateOnly>("EventDate")
+                        .HasColumnType("date")
+                        .HasColumnName("event_date");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("event_type");
+
+                    b.Property<string>("RecurrenceRule")
+                        .HasColumnType("text")
+                        .HasColumnName("recurrence_rule");
+
+                    b.Property<int?>("ResidentId")
+                        .HasColumnType("integer")
+                        .HasColumnName("resident_id");
+
+                    b.Property<int>("SafehouseId")
+                        .HasColumnType("integer")
+                        .HasColumnName("safehouse_id");
+
+                    b.Property<int?>("SourceTaskId")
+                        .HasColumnType("integer")
+                        .HasColumnName("source_task_id");
+
+                    b.Property<string>("StaffUserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("staff_user_id");
+
+                    b.Property<TimeOnly?>("StartTime")
+                        .HasColumnType("time without time zone")
+                        .HasColumnName("start_time");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.HasKey("CalendarEventId")
+                        .HasName("calendar_events_pkey");
+
+                    b.HasIndex("ResidentId");
+
+                    b.HasIndex("SafehouseId")
+                        .HasDatabaseName("calendar_events_safehouse_id_idx");
+
+                    b.HasIndex("SourceTaskId");
+
+                    b.HasIndex("StaffUserId")
+                        .HasDatabaseName("calendar_events_staff_user_id_idx");
+
+                    b.HasIndex("StaffUserId", "EventDate")
+                        .HasDatabaseName("calendar_events_user_date_idx");
+
+                    b.ToTable("calendar_events", (string)null);
                 });
 
             modelBuilder.Entity("backend.Models.Donation", b =>
@@ -239,7 +327,7 @@ namespace backend.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DonationId"));
 
                     b.Property<decimal?>("Amount")
-                        .HasColumnType("numeric")
+                        .HasColumnType("numeric(12,2)")
                         .HasColumnName("amount");
 
                     b.Property<string>("CampaignName")
@@ -263,7 +351,7 @@ namespace backend.Migrations
                         .HasColumnName("donation_type");
 
                     b.Property<decimal?>("EstimatedValue")
-                        .HasColumnType("numeric")
+                        .HasColumnType("numeric(12,2)")
                         .HasColumnName("estimated_value");
 
                     b.Property<string>("ImpactUnit")
@@ -320,7 +408,7 @@ namespace backend.Migrations
                         .HasColumnName("allocation_notes");
 
                     b.Property<decimal?>("AmountAllocated")
-                        .HasColumnType("numeric")
+                        .HasColumnType("numeric(12,2)")
                         .HasColumnName("amount_allocated");
 
                     b.Property<int>("DonationId")
@@ -550,7 +638,7 @@ namespace backend.Migrations
                         .HasColumnName("donation_id");
 
                     b.Property<decimal?>("EstimatedUnitValue")
-                        .HasColumnType("numeric")
+                        .HasColumnType("numeric(12,2)")
                         .HasColumnName("estimated_unit_value");
 
                     b.Property<string>("IntendedUse")
@@ -968,6 +1056,9 @@ namespace backend.Migrations
                         .HasColumnType("text")
                         .HasColumnName("interventions_applied");
 
+                    b.Property<bool?>("NeedsCaseConference")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("NotesRestricted")
                         .HasColumnType("text")
                         .HasColumnName("notes_restricted");
@@ -975,6 +1066,9 @@ namespace backend.Migrations
                     b.Property<bool?>("ProgressNoted")
                         .HasColumnType("boolean")
                         .HasColumnName("progress_noted");
+
+                    b.Property<bool?>("ReadyForReintegration")
+                        .HasColumnType("boolean");
 
                     b.Property<bool?>("ReferralMade")
                         .HasColumnType("boolean")
@@ -1394,7 +1488,7 @@ namespace backend.Migrations
                         .HasColumnName("avg_view_duration_seconds");
 
                     b.Property<decimal?>("BoostBudgetPhp")
-                        .HasColumnType("numeric")
+                        .HasColumnType("numeric(12,2)")
                         .HasColumnName("boost_budget_php");
 
                     b.Property<string>("CallToActionType")
@@ -1442,7 +1536,7 @@ namespace backend.Migrations
                         .HasColumnName("engagement_rate");
 
                     b.Property<decimal?>("EstimatedDonationValuePhp")
-                        .HasColumnType("numeric")
+                        .HasColumnType("numeric(12,2)")
                         .HasColumnName("estimated_donation_value_php");
 
                     b.Property<bool?>("FeaturesResidentStory")
@@ -1550,6 +1644,94 @@ namespace backend.Migrations
                     b.ToTable("social_media_posts", (string)null);
                 });
 
+            modelBuilder.Entity("backend.Models.StaffTask", b =>
+                {
+                    b.Property<int>("StaffTaskId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("staff_task_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("StaffTaskId"));
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("completed_at");
+
+                    b.Property<string>("ContextJson")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("context_json");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<DateTime?>("DueTriggerDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("due_trigger_date");
+
+                    b.Property<int?>("ResidentId")
+                        .HasColumnType("integer")
+                        .HasColumnName("resident_id");
+
+                    b.Property<int>("SafehouseId")
+                        .HasColumnType("integer")
+                        .HasColumnName("safehouse_id");
+
+                    b.Property<DateTime?>("SnoozeUntil")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("snooze_until");
+
+                    b.Property<int?>("SourceEntityId")
+                        .HasColumnType("integer")
+                        .HasColumnName("source_entity_id");
+
+                    b.Property<string>("SourceEntityType")
+                        .HasColumnType("text")
+                        .HasColumnName("source_entity_type");
+
+                    b.Property<string>("StaffUserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("staff_user_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<string>("TaskType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("task_type");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.HasKey("StaffTaskId")
+                        .HasName("staff_tasks_pkey");
+
+                    b.HasIndex("ResidentId");
+
+                    b.HasIndex("SafehouseId")
+                        .HasDatabaseName("staff_tasks_safehouse_id_idx");
+
+                    b.HasIndex("StaffUserId")
+                        .HasDatabaseName("staff_tasks_staff_user_id_idx");
+
+                    b.HasIndex("StaffUserId", "Status")
+                        .HasDatabaseName("staff_tasks_user_status_idx");
+
+                    b.ToTable("staff_tasks", (string)null);
+                });
+
             modelBuilder.Entity("backend.Models.Supporter", b =>
                 {
                     b.Property<int>("SupporterId")
@@ -1621,6 +1803,36 @@ namespace backend.Migrations
                     b.ToTable("supporters", (string)null);
                 });
 
+            modelBuilder.Entity("backend.Models.UserSafehouse", b =>
+                {
+                    b.Property<int>("UserSafehouseId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("user_safehouse_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserSafehouseId"));
+
+                    b.Property<int>("SafehouseId")
+                        .HasColumnType("integer")
+                        .HasColumnName("safehouse_id");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("UserSafehouseId")
+                        .HasName("user_safehouses_pkey");
+
+                    b.HasIndex("SafehouseId");
+
+                    b.HasIndex("UserId", "SafehouseId")
+                        .IsUnique()
+                        .HasDatabaseName("user_safehouses_user_safehouse_idx");
+
+                    b.ToTable("user_safehouses", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1672,6 +1884,53 @@ namespace backend.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("backend.Models.ApplicationUser", b =>
+                {
+                    b.HasOne("backend.Models.Supporter", "Supporter")
+                        .WithMany()
+                        .HasForeignKey("SupporterId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Supporter");
+                });
+
+            modelBuilder.Entity("backend.Models.CalendarEvent", b =>
+                {
+                    b.HasOne("backend.Models.Resident", "Resident")
+                        .WithMany("CalendarEvents")
+                        .HasForeignKey("ResidentId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("calendar_events_resident_id_fkey");
+
+                    b.HasOne("backend.Models.Safehouse", "Safehouse")
+                        .WithMany("CalendarEvents")
+                        .HasForeignKey("SafehouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("calendar_events_safehouse_id_fkey");
+
+                    b.HasOne("backend.Models.StaffTask", "SourceTask")
+                        .WithMany()
+                        .HasForeignKey("SourceTaskId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("calendar_events_source_task_id_fkey");
+
+                    b.HasOne("backend.Models.ApplicationUser", "StaffUser")
+                        .WithMany("CalendarEvents")
+                        .HasForeignKey("StaffUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("calendar_events_staff_user_id_fkey");
+
+                    b.Navigation("Resident");
+
+                    b.Navigation("Safehouse");
+
+                    b.Navigation("SourceTask");
+
+                    b.Navigation("StaffUser");
+                });
+
             modelBuilder.Entity("backend.Models.Donation", b =>
                 {
                     b.HasOne("backend.Models.SocialMediaPost", "ReferralPost")
@@ -1696,7 +1955,7 @@ namespace backend.Migrations
                     b.HasOne("backend.Models.Donation", "Donation")
                         .WithMany("DonationAllocations")
                         .HasForeignKey("DonationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("donation_allocations_donation_id_fkey");
 
@@ -1716,7 +1975,7 @@ namespace backend.Migrations
                     b.HasOne("backend.Models.Resident", "Resident")
                         .WithMany("EducationRecords")
                         .HasForeignKey("ResidentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("education_records_resident_id_fkey");
 
@@ -1728,7 +1987,7 @@ namespace backend.Migrations
                     b.HasOne("backend.Models.Resident", "Resident")
                         .WithMany("HealthWellbeingRecords")
                         .HasForeignKey("ResidentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("health_wellbeing_records_resident_id_fkey");
 
@@ -1740,7 +1999,7 @@ namespace backend.Migrations
                     b.HasOne("backend.Models.Resident", "Resident")
                         .WithMany("HomeVisitations")
                         .HasForeignKey("ResidentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("home_visitations_resident_id_fkey");
 
@@ -1752,7 +2011,7 @@ namespace backend.Migrations
                     b.HasOne("backend.Models.Donation", "Donation")
                         .WithMany("InKindDonationItems")
                         .HasForeignKey("DonationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("in_kind_donation_items_donation_id_fkey");
 
@@ -1783,7 +2042,7 @@ namespace backend.Migrations
                     b.HasOne("backend.Models.Resident", "Resident")
                         .WithMany("InterventionPlans")
                         .HasForeignKey("ResidentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("intervention_plans_resident_id_fkey");
 
@@ -1815,7 +2074,7 @@ namespace backend.Migrations
                     b.HasOne("backend.Models.Resident", "Resident")
                         .WithMany("ProcessRecordings")
                         .HasForeignKey("ResidentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("process_recordings_resident_id_fkey");
 
@@ -1845,6 +2104,65 @@ namespace backend.Migrations
                     b.Navigation("Safehouse");
                 });
 
+            modelBuilder.Entity("backend.Models.StaffTask", b =>
+                {
+                    b.HasOne("backend.Models.Resident", "Resident")
+                        .WithMany("StaffTasks")
+                        .HasForeignKey("ResidentId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("staff_tasks_resident_id_fkey");
+
+                    b.HasOne("backend.Models.Safehouse", "Safehouse")
+                        .WithMany("StaffTasks")
+                        .HasForeignKey("SafehouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("staff_tasks_safehouse_id_fkey");
+
+                    b.HasOne("backend.Models.ApplicationUser", "StaffUser")
+                        .WithMany("StaffTasks")
+                        .HasForeignKey("StaffUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("staff_tasks_staff_user_id_fkey");
+
+                    b.Navigation("Resident");
+
+                    b.Navigation("Safehouse");
+
+                    b.Navigation("StaffUser");
+                });
+
+            modelBuilder.Entity("backend.Models.UserSafehouse", b =>
+                {
+                    b.HasOne("backend.Models.Safehouse", "Safehouse")
+                        .WithMany("UserSafehouses")
+                        .HasForeignKey("SafehouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("user_safehouses_safehouse_id_fkey");
+
+                    b.HasOne("backend.Models.ApplicationUser", "User")
+                        .WithMany("UserSafehouses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("user_safehouses_user_id_fkey");
+
+                    b.Navigation("Safehouse");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("backend.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("CalendarEvents");
+
+                    b.Navigation("StaffTasks");
+
+                    b.Navigation("UserSafehouses");
+                });
+
             modelBuilder.Entity("backend.Models.Donation", b =>
                 {
                     b.Navigation("DonationAllocations");
@@ -1859,6 +2177,8 @@ namespace backend.Migrations
 
             modelBuilder.Entity("backend.Models.Resident", b =>
                 {
+                    b.Navigation("CalendarEvents");
+
                     b.Navigation("EducationRecords");
 
                     b.Navigation("HealthWellbeingRecords");
@@ -1870,10 +2190,14 @@ namespace backend.Migrations
                     b.Navigation("InterventionPlans");
 
                     b.Navigation("ProcessRecordings");
+
+                    b.Navigation("StaffTasks");
                 });
 
             modelBuilder.Entity("backend.Models.Safehouse", b =>
                 {
+                    b.Navigation("CalendarEvents");
+
                     b.Navigation("DonationAllocations");
 
                     b.Navigation("IncidentReports");
@@ -1883,6 +2207,10 @@ namespace backend.Migrations
                     b.Navigation("Residents");
 
                     b.Navigation("SafehouseMonthlyMetrics");
+
+                    b.Navigation("StaffTasks");
+
+                    b.Navigation("UserSafehouses");
                 });
 
             modelBuilder.Entity("backend.Models.SocialMediaPost", b =>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Loader2, UserCheck } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useSafehouse } from '../../contexts/SafehouseContext';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './IncidentsPage.module.css';
 
 interface UnclaimedResident {
@@ -21,6 +22,7 @@ const RISK_COLORS: Record<string, string> = {
 };
 
 export default function CaseQueuePage() {
+  useDocumentTitle('Case Queue');
   const navigate = useNavigate();
   const { activeSafehouseId } = useSafehouse();
   const [residents, setResidents] = useState<UnclaimedResident[]>([]);

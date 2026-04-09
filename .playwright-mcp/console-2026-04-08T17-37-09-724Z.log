@@ -1,0 +1,8 @@
+[     552ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/me @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[   28035ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/auth/login @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[   33450ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/metrics @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[   33451ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/residents @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[   33451ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/recent-donations @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[   33451ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/active-residents-trend @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[   33452ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/flagged-cases-trend @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0
+[   33452ms] [LOG] [API] Fetching: https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/admin/donations-by-channel @ https://intex2-1.vercel.app/assets/jsx-runtime-CyFIHBwK.js:0

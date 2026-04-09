@@ -4,6 +4,7 @@ import { Search, Plus, ChevronUp, ChevronDown, X, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import Pagination from '../../components/admin/Pagination';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './CaseloadPage.module.css';
 
 interface ResidentRow {
@@ -57,6 +58,7 @@ function statusClass(status: string | null): string {
 }
 
 export default function CaseloadPage() {
+  useDocumentTitle('Caseload');
   const { user } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();

@@ -27,7 +27,7 @@ interface OutcomeData {
   avgLengthOfStayDays: number;
   byType: { type: string; count: number }[];
 }
-interface EduRow { year: number; month: number; avgProgress: number }
+interface EduRow { year: number; month: number; avgProgress: number; avgAttendance: number }
 interface HealthRow { year: number; month: number; avgHealth: number; avgNutrition: number; avgSleep: number; avgEnergy: number }
 interface SafehouseRow {
   safehouseId: number; safehouseCode: string; name: string; city: string;
@@ -243,7 +243,7 @@ function OutcomesTab() {
   if (loading) return <Loading />;
 
   const donutData = outcomes?.byType.map(d => ({ name: d.type, value: d.count })) ?? [];
-  const eduData = edu.map(d => ({ month: formatMonthLabel(d.year, d.month), avgProgress: d.avgProgress }));
+  const eduData = edu.map(d => ({ month: formatMonthLabel(d.year, d.month), avgProgress: d.avgProgress, avgAttendance: d.avgAttendance }));
   const healthData = health.map(d => ({
     month: formatMonthLabel(d.year, d.month),
     health: d.avgHealth,
@@ -252,8 +252,35 @@ function OutcomesTab() {
     energy: d.avgEnergy,
   }));
 
+  const latestEdu = edu.length > 0 ? edu[edu.length - 1] : null;
+  const latestHealth = health.length > 0 ? health[health.length - 1] : null;
+
   return (
     <>
+      {/* KPI Summary Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div className={styles.kpi}>
+          <div className={styles.kpiLabel}>Success Rate</div>
+          <div className={styles.kpiValue}>{outcomes?.successRate ?? 0}%</div>
+        </div>
+        <div className={styles.kpi}>
+          <div className={styles.kpiLabel}>Avg Education Progress</div>
+          <div className={styles.kpiValue}>{latestEdu?.avgProgress ?? '-'}%</div>
+        </div>
+        <div className={styles.kpi}>
+          <div className={styles.kpiLabel}>Avg Attendance</div>
+          <div className={styles.kpiValue}>{latestEdu?.avgAttendance ?? '-'}%</div>
+        </div>
+        <div className={styles.kpi}>
+          <div className={styles.kpiLabel}>Avg Health Score</div>
+          <div className={styles.kpiValue}>{latestHealth?.avgHealth ?? '-'}<span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>/100</span></div>
+        </div>
+        <div className={styles.kpi}>
+          <div className={styles.kpiLabel}>Avg Length of Stay</div>
+          <div className={styles.kpiValue}>{outcomes?.avgLengthOfStayDays ?? '-'} <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>days</span></div>
+        </div>
+      </div>
+
       <div className={styles.chartsRow}>
         {/* Reintegration donut */}
         <div className={styles.chartCard}>
@@ -292,6 +319,7 @@ function OutcomesTab() {
               <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} stroke="#B0A99F" tickFormatter={v => `${v}%`} />
               <Tooltip content={<ChartTooltip />} />
               <Line type="monotone" dataKey="avgProgress" stroke="#7A9E7E" strokeWidth={2.5} dot={{ r: 3, fill: '#7A9E7E' }} name="Avg Progress %" />
+              <Line type="monotone" dataKey="avgAttendance" stroke="#4A6FA5" strokeWidth={2} dot={{ r: 2, fill: '#4A6FA5' }} name="Avg Attendance %" strokeDasharray="5 5" />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -331,16 +359,22 @@ function OutcomesTab() {
 }
 
 // ── Safehouses Tab ───────────────────────────────────────
+interface TrendRow { safehouseCode: string; year: number; month: number; incidents: number }
+
 function SafehousesTab() {
   const [data, setData] = useState<SafehouseRow[]>([]);
+  const [trends, setTrends] = useState<TrendRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
       try {
-        const d = await apiFetch<SafehouseRow[]>('/api/admin/reports/safehouse-comparison');
-        if (!cancelled) setData(d);
+        const [d, t] = await Promise.all([
+          apiFetch<SafehouseRow[]>('/api/admin/reports/safehouse-comparison'),
+          apiFetch<TrendRow[]>('/api/admin/reports/safehouse-trends'),
+        ]);
+        if (!cancelled) { setData(d); setTrends(t); }
       } catch (e) {
         console.error('Failed to load safehouse comparison', e);
       } finally {
@@ -431,6 +465,36 @@ function SafehousesTab() {
           </ResponsiveContainer>
         </div>
       </div>
+
+      {/* Incident Trends by Safehouse */}
+      {trends.length > 0 && (() => {
+        const codes = [...new Set(trends.map(t => t.safehouseCode))];
+        const months = [...new Set(trends.map(t => `${t.year}-${String(t.month).padStart(2, '0')}`))].sort();
+        const chartData = months.map(m => {
+          const row: Record<string, string | number> = { month: m };
+          codes.forEach(code => {
+            const match = trends.find(t => t.safehouseCode === code && `${t.year}-${String(t.month).padStart(2, '0')}` === m);
+            row[code] = match?.incidents ?? 0;
+          });
+          return row;
+        });
+        return (
+          <div className={styles.chartCard}>
+            <h3 className={styles.chartTitle}>Incident Trends by Safehouse</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(15,27,45,0.06)" />
+                <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+                <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
+                <Tooltip />
+                {codes.map((code, i) => (
+                  <Line key={code} type="monotone" dataKey={code} stroke={COLORS[i % COLORS.length]} strokeWidth={2} dot={{ r: 2 }} name={code} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        );
+      })()}
     </>
   );
 }

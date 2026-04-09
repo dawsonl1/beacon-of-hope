@@ -4,6 +4,8 @@ import { Plus, FileText, Shield, AlertTriangle, CheckCircle } from 'lucide-react
 import { apiFetch } from '../../api';
 import { ApiError } from '../../components/ApiError';
 import { formatDate } from '../../constants';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import { Pagination } from '../../components/admin/Pagination';
 import styles from './ProcessRecordingsPage.module.css';
 
 interface RecordingRow {
@@ -55,6 +57,7 @@ function getEmotionalColor(state: string | null): string {
 const PAGE_SIZE = 15;
 
 export default function ProcessRecordingsPage() {
+  useDocumentTitle('Process Recordings');
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -265,25 +268,7 @@ export default function ProcessRecordingsPage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className={styles.pagination}>
-                <button
-                  className={styles.pageBtn}
-                  disabled={page <= 1}
-                  onClick={() => setPage(page - 1)}
-                >
-                  Previous
-                </button>
-                <span className={styles.pageInfo}>
-                  Page {page} of {totalPages}
-                </span>
-                <button
-                  className={styles.pageBtn}
-                  disabled={page >= totalPages}
-                  onClick={() => setPage(page + 1)}
-                >
-                  Next
-                </button>
-              </div>
+              <Pagination page={page} pageSize={PAGE_SIZE} totalCount={totalCount} onPageChange={setPage} />
             )}
           </>
         )}

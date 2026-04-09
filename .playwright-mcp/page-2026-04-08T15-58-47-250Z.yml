@@ -1,0 +1,350 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "◆ Beacon of Hope" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: ◆
+        - generic [ref=e7]: Beacon of Hope
+      - navigation [ref=e8]:
+        - link "Home" [ref=e9] [cursor=pointer]:
+          - /url: /
+        - link "Our Mission" [ref=e10] [cursor=pointer]:
+          - /url: /#mission
+        - link "Impact" [ref=e11] [cursor=pointer]:
+          - /url: /impact
+        - link "Get Involved" [ref=e12] [cursor=pointer]:
+          - /url: /#involved
+      - generic [ref=e13]:
+        - link [ref=e14] [cursor=pointer]:
+          - /url: /donate
+          - img [ref=e15]
+        - link [ref=e18] [cursor=pointer]:
+          - /url: /login
+          - img [ref=e19]
+        - button "Open menu" [ref=e22] [cursor=pointer]:
+          - img [ref=e23]
+  - generic [ref=e25]:
+    - banner [ref=e26]:
+      - heading "Privacy Policy" [level=1] [ref=e27]
+      - paragraph [ref=e28]: "Last updated: April 6, 2026"
+      - button "Print this page" [ref=e29] [cursor=pointer]
+    - navigation "Table of contents" [ref=e30]:
+      - heading "Contents" [level=2] [ref=e31]
+      - list [ref=e32]:
+        - listitem [ref=e33]:
+          - link "1. Data We Collect" [ref=e34] [cursor=pointer]:
+            - /url: "#data-we-collect"
+        - listitem [ref=e35]:
+          - link "2. How We Use Your Data" [ref=e36] [cursor=pointer]:
+            - /url: "#how-we-use-data"
+        - listitem [ref=e37]:
+          - link "3. Protection of Minors' Data" [ref=e38] [cursor=pointer]:
+            - /url: "#protection-of-minors"
+        - listitem [ref=e39]:
+          - link "4. Data Sharing & Third Parties" [ref=e40] [cursor=pointer]:
+            - /url: "#data-sharing"
+        - listitem [ref=e41]:
+          - link "5. International Data Transfers" [ref=e42] [cursor=pointer]:
+            - /url: "#international-transfers"
+        - listitem [ref=e43]:
+          - link "6. Data Retention" [ref=e44] [cursor=pointer]:
+            - /url: "#data-retention"
+        - listitem [ref=e45]:
+          - link "7. Your Rights" [ref=e46] [cursor=pointer]:
+            - /url: "#your-rights"
+        - listitem [ref=e47]:
+          - link "8. Cookies & Tracking" [ref=e48] [cursor=pointer]:
+            - /url: "#cookies"
+        - listitem [ref=e49]:
+          - link "9. Data Security" [ref=e50] [cursor=pointer]:
+            - /url: "#data-security"
+        - listitem [ref=e51]:
+          - link "10. Data Breach Notification" [ref=e52] [cursor=pointer]:
+            - /url: "#breach-notification"
+        - listitem [ref=e53]:
+          - link "11. Contact Information" [ref=e54] [cursor=pointer]:
+            - /url: "#contact"
+        - listitem [ref=e55]:
+          - link "12. Changes to This Policy" [ref=e56] [cursor=pointer]:
+            - /url: "#changes"
+    - generic [ref=e57]:
+      - generic [ref=e58]:
+        - heading "1. Data We Collect" [level=2] [ref=e59]
+        - heading "Visitor Data" [level=3] [ref=e60]
+        - paragraph [ref=e61]: When you visit our website, we may collect information about pages visited, session duration, browser type, device information, and IP address. This data is collected through cookies and similar technologies, subject to your consent preferences.
+        - heading "Donor Data" [level=3] [ref=e62]
+        - paragraph [ref=e63]:
+          - text: When you make a donation, we collect your name, email address, donation amount, and payment method type. We do
+          - strong [ref=e64]: not
+          - text: store credit card numbers or full payment details -- these are processed directly by our payment processor.
+        - heading "Staff / Employee Data" [level=3] [ref=e65]
+        - paragraph [ref=e66]: For staff and authorized users, we collect names, email addresses, roles, and login credentials (passwords are stored using industry-standard one-way hashing and are never stored in plain text).
+        - heading "Resident Data" [level=3] [ref=e67]
+        - paragraph [ref=e68]:
+          - text: Case records, personal histories, counseling notes, and related information about residents in our care are classified as
+          - strong [ref=e69]: highly sensitive personal information
+          - text: . Collection and processing of this data is governed by strict legal mandates and internal policies described in Section 3 below.
+      - generic [ref=e70]:
+        - heading "2. How We Use Your Data" [level=2] [ref=e71]
+        - paragraph [ref=e72]: "We process personal data only with a lawful basis, as follows:"
+        - list [ref=e73]:
+          - listitem [ref=e74]:
+            - strong [ref=e75]: "Donor data:"
+            - text: Contract performance (processing your donation) and consent (communications and newsletters).
+          - listitem [ref=e76]:
+            - strong [ref=e77]: "Staff data:"
+            - text: Contract performance (employment relationship) and legal obligation (federal and Guam reporting requirements).
+          - listitem [ref=e78]:
+            - strong [ref=e79]: "Resident data:"
+            - text: Legal obligation (child welfare regulations under Guam and federal law) and legitimate interest (child welfare and protection).
+          - listitem [ref=e80]:
+            - strong [ref=e81]: "Visitor data:"
+            - text: Consent (analytics cookies) and legitimate interest (essential site functionality and security).
+      - generic [ref=e82]:
+        - heading "3. Protection of Minors' Data" [level=2] [ref=e83]
+        - paragraph [ref=e84]: Beacon of Hope is dedicated to the protection of children and their personal information. This section describes the special safeguards we apply to data related to the minors in our care.
+        - list [ref=e85]:
+          - listitem [ref=e86]:
+            - text: Resident data -- including names, case histories, counseling notes, and health records -- is classified as
+            - strong [ref=e87]: highly sensitive personal information
+            - text: under GDPR Article 9 and applicable U.S. federal and Guam territorial privacy laws.
+          - listitem [ref=e88]: Access is restricted to authorized staff members who have a direct case relationship with the resident.
+          - listitem [ref=e89]:
+            - text: Resident data is
+            - strong [ref=e90]: never
+            - text: shared with third parties except as required by law (e.g., mandatory reporting obligations under Guam and federal child welfare statutes).
+          - listitem [ref=e91]:
+            - text: Resident data is
+            - strong [ref=e92]: never
+            - text: used in marketing materials, public reports, or impact dashboards in any identifiable form. All public-facing statistics are aggregated and anonymized.
+          - listitem [ref=e93]:
+            - text: "Legal basis for processing without parental consent: regulatory mandate for accredited child welfare organizations acting"
+            - emphasis [ref=e94]: in loco parentis
+            - text: under applicable law.
+          - listitem [ref=e95]: Data is anonymized or securely deleted when a resident turns 18 or exits the program, subject to applicable retention requirements.
+          - listitem [ref=e96]:
+            - text: If you believe that a minor's data has been inadvertently disclosed, please contact us immediately at
+            - link "privacy@beaconofhope.org" [ref=e97] [cursor=pointer]:
+              - /url: mailto:privacy@beaconofhope.org
+            - text: . We commit to investigating and remediating within 48 hours.
+      - generic [ref=e98]:
+        - heading "4. Data Sharing & Third Parties" [level=2] [ref=e99]
+        - paragraph [ref=e100]: "We work with the following service providers to operate our platform:"
+        - table [ref=e102]:
+          - rowgroup [ref=e103]:
+            - row "Service Purpose Data Shared Privacy Policy" [ref=e104]:
+              - columnheader "Service" [ref=e105]
+              - columnheader "Purpose" [ref=e106]
+              - columnheader "Data Shared" [ref=e107]
+              - columnheader "Privacy Policy" [ref=e108]
+          - rowgroup [ref=e109]:
+            - row "Microsoft Azure Backend hosting & database All stored application data, server-side logs Link" [ref=e110]:
+              - cell "Microsoft Azure" [ref=e111]
+              - cell "Backend hosting & database" [ref=e112]
+              - cell "All stored application data, server-side logs" [ref=e113]
+              - cell "Link" [ref=e114]:
+                - link "Link" [ref=e115] [cursor=pointer]:
+                  - /url: https://privacy.microsoft.com/en-us/privacystatement
+            - row "Vercel Frontend hosting Static assets, access logs Link" [ref=e116]:
+              - cell "Vercel" [ref=e117]
+              - cell "Frontend hosting" [ref=e118]
+              - cell "Static assets, access logs" [ref=e119]
+              - cell "Link" [ref=e120]:
+                - link "Link" [ref=e121] [cursor=pointer]:
+                  - /url: https://vercel.com/legal/privacy-policy
+            - row "Stripe Payment processing Donor email, donation amount, payment details Link" [ref=e122]:
+              - cell "Stripe" [ref=e123]
+              - cell "Payment processing" [ref=e124]
+              - cell "Donor email, donation amount, payment details" [ref=e125]
+              - cell "Link" [ref=e126]:
+                - link "Link" [ref=e127] [cursor=pointer]:
+                  - /url: https://stripe.com/privacy
+        - paragraph [ref=e128]:
+          - strong [ref=e129]: Your data is never sold.
+          - text: Resident data is never shared with any third party except as required by law. Data Processing Agreements (DPAs) are in place with all processors; copies are available on request at
+          - link "privacy@beaconofhope.org" [ref=e130] [cursor=pointer]:
+            - /url: mailto:privacy@beaconofhope.org
+          - text: .
+      - generic [ref=e131]:
+        - heading "5. International Data Transfers" [level=2] [ref=e132]
+        - list [ref=e133]:
+          - listitem [ref=e134]: "Primary data storage: Microsoft Azure (PostgreSQL)."
+          - listitem [ref=e135]: Backend hosted on Microsoft Azure (West US 2 region).
+          - listitem [ref=e136]: Frontend hosted on Vercel (global CDN).
+          - listitem [ref=e137]: "Legal mechanism for cross-border transfers: Standard Contractual Clauses (SCCs) where applicable."
+          - listitem [ref=e138]: Beacon of Hope honors the more protective standard -- either GDPR or applicable U.S. privacy law -- for all users regardless of location.
+      - generic [ref=e139]:
+        - heading "6. Data Retention" [level=2] [ref=e140]
+        - table [ref=e142]:
+          - rowgroup [ref=e143]:
+            - row "Data Type Retention Period" [ref=e144]:
+              - columnheader "Data Type" [ref=e145]
+              - columnheader "Retention Period" [ref=e146]
+          - rowgroup [ref=e147]:
+            - row "Donor financial records 7 years (tax compliance)" [ref=e148]:
+              - cell "Donor financial records" [ref=e149]
+              - cell "7 years (tax compliance)" [ref=e150]
+            - row "Resident case records Duration of stay + 5 years (child welfare compliance)" [ref=e151]:
+              - cell "Resident case records" [ref=e152]
+              - cell "Duration of stay + 5 years (child welfare compliance)" [ref=e153]
+            - row "Staff account data Duration of employment + 1 year" [ref=e154]:
+              - cell "Staff account data" [ref=e155]
+              - cell "Duration of employment + 1 year" [ref=e156]
+            - row "Website usage data 2 years" [ref=e157]:
+              - cell "Website usage data" [ref=e158]
+              - cell "2 years" [ref=e159]
+            - row "Cookie consent records 3 years" [ref=e160]:
+              - cell "Cookie consent records" [ref=e161]
+              - cell "3 years" [ref=e162]
+        - paragraph [ref=e163]: After the applicable retention period, data is either anonymized or securely deleted. Legal holds may extend retention when required by law.
+      - generic [ref=e164]:
+        - heading "7. Your Rights" [level=2] [ref=e165]
+        - heading "GDPR Rights (EU Data Subjects)" [level=3] [ref=e166]
+        - paragraph [ref=e167]: "Under the General Data Protection Regulation, you have the right to:"
+        - list [ref=e168]:
+          - listitem [ref=e169]:
+            - strong [ref=e170]: Access
+            - text: "-- request a copy of the personal data we hold about you."
+          - listitem [ref=e171]:
+            - strong [ref=e172]: Rectification
+            - text: "-- request correction of inaccurate data."
+          - listitem [ref=e173]:
+            - strong [ref=e174]: Erasure
+            - text: "-- request deletion of your data (\"right to be forgotten\")."
+          - listitem [ref=e175]:
+            - strong [ref=e176]: Restriction
+            - text: "-- request that we limit processing of your data."
+          - listitem [ref=e177]:
+            - strong [ref=e178]: Data Portability
+            - text: "-- receive your data in a structured, machine-readable format."
+          - listitem [ref=e179]:
+            - strong [ref=e180]: Object
+            - text: "-- object to processing based on legitimate interest."
+        - heading "U.S. Privacy Rights" [level=3] [ref=e181]
+        - paragraph [ref=e182]: "Under applicable U.S. federal and territorial law, you have the right to:"
+        - list [ref=e183]:
+          - listitem [ref=e184]:
+            - strong [ref=e185]: Be informed
+            - text: "-- know how your data is being collected and processed."
+          - listitem [ref=e186]:
+            - strong [ref=e187]: Access
+            - text: "-- obtain a copy of your personal data."
+          - listitem [ref=e188]:
+            - strong [ref=e189]: Correction
+            - text: "-- have inaccurate data corrected."
+          - listitem [ref=e190]:
+            - strong [ref=e191]: Deletion
+            - text: "-- request deletion of your data, subject to legal retention requirements."
+          - listitem [ref=e192]:
+            - strong [ref=e193]: Opt-out
+            - text: "-- opt out of the sale or sharing of your personal data (we do not sell your data)."
+        - paragraph [ref=e194]:
+          - text: To exercise any of these rights, email
+          - link "privacy@beaconofhope.org" [ref=e195] [cursor=pointer]:
+            - /url: mailto:privacy@beaconofhope.org
+          - text: . We will respond within 30 days.
+        - paragraph [ref=e196]:
+          - strong [ref=e197]: "Note on erasure:"
+          - text: We will delete your personal information upon request but retain anonymized financial records as required for tax compliance.
+      - generic [ref=e198]:
+        - heading "8. Cookies & Tracking" [level=2] [ref=e199]
+        - paragraph [ref=e200]: "We use the following categories of cookies:"
+        - table [ref=e202]:
+          - rowgroup [ref=e203]:
+            - row "Category Cookies Purpose Duration" [ref=e204]:
+              - columnheader "Category" [ref=e205]
+              - columnheader "Cookies" [ref=e206]
+              - columnheader "Purpose" [ref=e207]
+              - columnheader "Duration" [ref=e208]
+          - rowgroup [ref=e209]:
+            - row "Necessary boh_cookie_consent, BeaconAuth Consent record, authentication 365 days / Session" [ref=e210]:
+              - cell "Necessary" [ref=e211]
+              - cell "boh_cookie_consent, BeaconAuth" [ref=e212]
+              - cell "Consent record, authentication" [ref=e213]
+              - cell "365 days / Session" [ref=e214]
+            - row "Analytics _ga, _gid (if enabled) Anonymized usage statistics 2 years / 24 hours" [ref=e215]:
+              - cell "Analytics" [ref=e216]
+              - cell "_ga, _gid (if enabled)" [ref=e217]
+              - cell "Anonymized usage statistics" [ref=e218]
+              - cell "2 years / 24 hours" [ref=e219]
+            - row "Functional boh_theme UI preferences (theme, display) 365 days" [ref=e220]:
+              - cell "Functional" [ref=e221]
+              - cell "boh_theme" [ref=e222]
+              - cell "UI preferences (theme, display)" [ref=e223]
+              - cell "365 days" [ref=e224]
+        - paragraph [ref=e225]: Non-essential cookies are blocked until you provide consent. You can manage your preferences at any time by clicking the button below or the "Cookie Settings" link in our footer.
+        - button "Manage Cookie Preferences" [ref=e226] [cursor=pointer]
+      - generic [ref=e227]:
+        - heading "9. Data Security" [level=2] [ref=e228]
+        - paragraph [ref=e229]: "We implement appropriate technical and organizational measures to protect your personal data, including:"
+        - list [ref=e230]:
+          - listitem [ref=e231]: Encryption of data in transit using TLS (Transport Layer Security).
+          - listitem [ref=e232]: Role-based access controls limiting data access to authorized personnel.
+          - listitem [ref=e233]: Regular security reviews and access audits.
+          - listitem [ref=e234]: Secure password storage using industry-standard hashing algorithms.
+          - listitem [ref=e235]: Content Security Policy (CSP) headers to protect against cross-site scripting.
+      - generic [ref=e236]:
+        - heading "10. Data Breach Notification" [level=2] [ref=e237]
+        - paragraph [ref=e238]: "In the event of a personal data breach, Beacon of Hope commits to:"
+        - list [ref=e239]:
+          - listitem [ref=e240]: Notifying the relevant supervisory authority within 72 hours of discovery, as required by GDPR and applicable U.S. law.
+          - listitem [ref=e241]: Promptly notifying affected data subjects when the breach is likely to result in a risk to their rights and freedoms.
+          - listitem [ref=e242]: "Following a structured response process: detect, contain, assess, notify, and remediate."
+      - generic [ref=e243]:
+        - heading "11. Contact Information" [level=2] [ref=e244]
+        - list [ref=e245]:
+          - listitem [ref=e246]:
+            - strong [ref=e247]: "Data Protection Officer:"
+            - link "dpo@beaconofhope.org" [ref=e248] [cursor=pointer]:
+              - /url: mailto:dpo@beaconofhope.org
+          - listitem [ref=e249]:
+            - strong [ref=e250]: "General Privacy Inquiries:"
+            - link "privacy@beaconofhope.org" [ref=e251] [cursor=pointer]:
+              - /url: mailto:privacy@beaconofhope.org
+          - listitem [ref=e252]:
+            - strong [ref=e253]: "Federal Trade Commission (FTC):"
+            - link "www.ftc.gov" [ref=e254] [cursor=pointer]:
+              - /url: https://www.ftc.gov/
+      - generic [ref=e255]:
+        - heading "12. Changes to This Policy" [level=2] [ref=e256]
+        - paragraph [ref=e257]: The "Last updated" date at the top of this policy reflects the current version. Material changes will be announced via a banner on our website. If we make significant changes to how we handle your data, we will re-request your cookie consent.
+        - paragraph [ref=e258]:
+          - strong [ref=e259]: Version 1.0
+          - text: "-- Initial privacy policy (April 2026)."
+  - contentinfo [ref=e260]:
+    - generic [ref=e261]:
+      - generic [ref=e262]:
+        - generic [ref=e263]:
+          - text: ◆Beacon of Hope
+          - paragraph [ref=e264]: Restoring hope and rebuilding lives for survivors of abuse and trafficking in Guam.
+        - generic [ref=e265]:
+          - generic [ref=e266]:
+            - heading "Organization" [level=4] [ref=e267]
+            - link "Our Mission" [ref=e268] [cursor=pointer]:
+              - /url: /#mission
+            - link "Our Impact" [ref=e269] [cursor=pointer]:
+              - /url: /#impact
+            - link "Get Involved" [ref=e270] [cursor=pointer]:
+              - /url: /#involved
+          - generic [ref=e271]:
+            - heading "Legal" [level=4] [ref=e272]
+            - link "Privacy Policy" [ref=e273] [cursor=pointer]:
+              - /url: /privacy-policy
+            - button "Cookie Settings" [ref=e274] [cursor=pointer]
+          - generic [ref=e275]:
+            - heading "Connect" [level=4] [ref=e276]
+            - link "Instagram" [ref=e277] [cursor=pointer]:
+              - /url: https://instagram.com
+            - link "Facebook" [ref=e278] [cursor=pointer]:
+              - /url: https://facebook.com
+            - link "LinkedIn" [ref=e279] [cursor=pointer]:
+              - /url: https://linkedin.com
+            - link "Monthly Newsletter" [ref=e280] [cursor=pointer]:
+              - /url: /newsletter
+            - paragraph [ref=e281]: "*Data as of February 15, 2026"
+      - generic [ref=e283]:
+        - paragraph [ref=e284]: © 2026 Beacon of Hope. All rights reserved.
+        - paragraph [ref=e285]:
+          - text: Made with
+          - img [ref=e286]
+          - text: for those who need it most

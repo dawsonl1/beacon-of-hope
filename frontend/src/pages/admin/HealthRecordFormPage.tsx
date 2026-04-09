@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { APP_TODAY_STR } from '../../constants';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './VisitationFormPage.module.css';
 
 interface FormData {
@@ -31,6 +32,7 @@ const emptyForm: FormData = {
 };
 
 export default function HealthRecordFormPage() {
+  useDocumentTitle('Health Record');
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const residentId = params.get('residentId');

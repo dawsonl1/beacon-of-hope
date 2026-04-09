@@ -1,0 +1,71 @@
+- generic [ref=e86]:
+  - banner [ref=e87]:
+    - generic [ref=e88]:
+      - link "◆ Beacon of Hope" [ref=e89] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e90]: ◆
+        - generic [ref=e91]: Beacon of Hope
+      - navigation [ref=e92]:
+        - link "Dashboard" [ref=e93] [cursor=pointer]:
+          - /url: /admin
+          - img [ref=e94]
+          - generic [ref=e99]: Dashboard
+        - link "To-Do" [ref=e100] [cursor=pointer]:
+          - /url: /admin/tasks
+          - img [ref=e101]
+          - generic [ref=e104]: To-Do
+        - link "Calendar" [ref=e105] [cursor=pointer]:
+          - /url: /admin/calendar
+          - img [ref=e106]
+          - generic [ref=e108]: Calendar
+        - link "Queue" [ref=e109] [cursor=pointer]:
+          - /url: /admin/queue
+          - img [ref=e110]
+          - generic [ref=e113]: Queue
+        - link "Caseload" [ref=e114] [cursor=pointer]:
+          - /url: /admin/caseload
+          - img [ref=e115]
+          - generic [ref=e120]: Caseload
+        - link "Recordings" [ref=e121] [cursor=pointer]:
+          - /url: /admin/recordings
+          - img [ref=e122]
+          - generic [ref=e123]: Recordings
+        - link "Incidents" [ref=e124] [cursor=pointer]:
+          - /url: /admin/incidents
+          - img [ref=e125]
+          - generic [ref=e127]: Incidents
+        - link "Conferences" [ref=e128] [cursor=pointer]:
+          - /url: /admin/conferences
+          - img [ref=e129]
+          - generic [ref=e131]: Conferences
+        - link "Visitations" [ref=e132] [cursor=pointer]:
+          - /url: /admin/visitations
+          - img [ref=e133]
+          - generic [ref=e136]: Visitations
+        - link "Placed" [ref=e137] [cursor=pointer]:
+          - /url: /admin/post-placement
+          - img [ref=e138]
+          - generic [ref=e141]: Placed
+        - link "Donors" [ref=e142] [cursor=pointer]:
+          - /url: /admin/donors
+          - img [ref=e143]
+          - generic [ref=e148]: Donors
+        - link "Reports" [ref=e149] [cursor=pointer]:
+          - /url: /admin/reports
+          - img [ref=e150]
+          - generic [ref=e152]: Reports
+        - link "Users" [ref=e153] [cursor=pointer]:
+          - /url: /admin/users
+          - img [ref=e154]
+          - generic [ref=e156]: Users
+      - generic [ref=e157]:
+        - generic [ref=e158]: Admin
+        - button "Logout" [ref=e159] [cursor=pointer]:
+          - img [ref=e160]
+          - generic [ref=e163]: Logout
+  - main [ref=e164]:
+    - generic [ref=e165]:
+      - generic [ref=e167]:
+        - heading "To-Do List" [level=1] [ref=e168]
+        - paragraph [ref=e169]: Your pending tasks and action items
+      - generic [ref=e170]: No pending tasks. You're all caught up!

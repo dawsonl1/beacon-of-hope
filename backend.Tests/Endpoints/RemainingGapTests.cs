@@ -246,17 +246,23 @@ public class RemainingGapTests : IClassFixture<TestWebApplicationFactory>
     public async Task Incident_Resolve_SetsResolutionDate()
     {
         var client = await AuthHelper.GetAdminClientAsync(_factory);
+        var resResp = await client.PostAsJsonAsync("/api/admin/residents", new
+        {
+            internalCode = $"INC-{Guid.NewGuid():N}"[..10],
+            caseStatus = "Active"
+        });
+        var residentId = (await resResp.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("residentId").GetInt32();
 
         var createResp = await client.PostAsJsonAsync("/api/admin/incidents", new
         {
-            incidentDate = "2026-04-05", incidentType = "Behavioral",
+            residentId, incidentDate = "2026-04-05", incidentType = "Behavioral",
             severity = "Medium", description = "Will resolve", resolved = false
         });
         var id = (await createResp.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("incidentId").GetInt32();
 
         await client.PutAsJsonAsync($"/api/admin/incidents/{id}", new
         {
-            incidentDate = "2026-04-05", incidentType = "Behavioral",
+            residentId, incidentDate = "2026-04-05", incidentType = "Behavioral",
             severity = "Medium", description = "Will resolve",
             resolved = true, resolutionDate = "2026-04-08"
         });

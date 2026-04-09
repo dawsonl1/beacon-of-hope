@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './VisitationDetailPage.module.css';
 
 interface IncidentDetail {
@@ -30,6 +31,7 @@ const SEVERITY_COLORS: Record<string, string> = {
 };
 
 export default function IncidentDetailPage() {
+  useDocumentTitle('Incident Detail');
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -58,7 +60,7 @@ export default function IncidentDetailPage() {
     }
   }
 
-  if (loading) return <div className={styles.page}><p>Loading...</p></div>;
+  if (loading) return <div className={styles.page}><div className={styles.loading}><Loader2 size={24} style={{ animation: 'spin 1s linear infinite' }} /> Loading...</div></div>;
   if (error) return <div className={styles.page}><p style={{ color: '#c0392b' }}>{error}</p></div>;
   if (!incident) return <div className={styles.page}><p>Incident not found.</p></div>;
 

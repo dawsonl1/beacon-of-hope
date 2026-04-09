@@ -1,0 +1,15 @@
+[      83ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[     107ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[     108ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[     734ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[     734ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[     735ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[     735ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[     736ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[     736ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6
+[     737ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[     737ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[     737ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[     738ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[     738ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[     738ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6

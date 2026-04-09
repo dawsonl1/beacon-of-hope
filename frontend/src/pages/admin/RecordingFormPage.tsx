@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Shield, Mic, Square, Sparkles } from 'lucide-react';
+import { ArrowLeft, Shield, Mic, Square, Sparkles, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { APP_TODAY, APP_TODAY_STR } from '../../constants';
 import { useAuth } from '../../contexts/AuthContext';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './RecordingFormPage.module.css';
 
 interface ResidentOption {
@@ -119,6 +120,7 @@ function blobToBase64(blob: Blob): Promise<string> {
 }
 
 export default function RecordingFormPage() {
+  useDocumentTitle('Recording Form');
   const { id } = useParams<{ id: string }>();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
@@ -431,6 +433,8 @@ export default function RecordingFormPage() {
       setProgressNoted(r.progressNoted ?? false);
       setConcernsFlagged(r.concernsFlagged ?? false);
       setReferralMade(r.referralMade ?? false);
+      setNeedsCaseConference(r.needsCaseConference ?? false);
+      setReadyForReintegration(r.readyForReintegration ?? false);
       setNotesRestricted(r.notesRestricted ?? '');
     } catch {
       setErrorMsg('Failed to load recording.');
@@ -477,6 +481,8 @@ export default function RecordingFormPage() {
         concernsFlagged,
         referralMade,
         notesRestricted: notesRestricted || null,
+        needsCaseConference,
+        readyForReintegration,
       };
 
       if (isEdit) {
@@ -503,7 +509,7 @@ export default function RecordingFormPage() {
   if (loading) {
     return (
       <div className={styles.page}>
-        <div className={styles.loading}>Loading...</div>
+        <div className={styles.loading}><Loader2 size={24} style={{ animation: 'spin 1s linear infinite' }} /> Loading...</div>
       </div>
     );
   }

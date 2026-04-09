@@ -1,0 +1,207 @@
+[     113ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:14336
+[     143ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[     143ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[     721ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[     721ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[     722ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[     722ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[     723ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[     723ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6
+[     725ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[     725ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[     726ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[     726ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[     726ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[     727ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6
+[  165306ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[  165306ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[  165307ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[  165307ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[  165308ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[  165308ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6
+[  165309ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[  165310ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[  165310ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[  165310ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[  165311ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[  165311ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6
+[  177415ms] [ERROR] %o
+
+%s
+
+%s
+ ReferenceError: navItems is not defined
+    at AdminLayoutInner (http://localhost:5173/src/layouts/AdminLayout.tsx?t=1775690187668:188:17)
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:12867:12)
+    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:4212:19)
+    at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:5568:16)
+    at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:6139:20)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:850:66)
+    at performUnitOfWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8428:92)
+    at workLoopSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8324:37)
+    at renderRootSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8308:6)
+    at performWorkOnRoot (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:7993:27) The above error occurred in the <AdminLayoutInner> component. React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary. @ http://localhost:5173/@vite/client:509
+[  177417ms] [ERROR] React error boundary caught: ReferenceError: navItems is not defined
+    at AdminLayoutInner (http://localhost:5173/src/layouts/AdminLayout.tsx?t=1775690187668:188:17)
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:12867:12)
+    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:4212:19)
+    at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:5568:16)
+    at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:6139:20)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:850:66)
+    at performUnitOfWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8428:92)
+    at workLoopSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8324:37)
+    at renderRootSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8308:6)
+    at performWorkOnRoot (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:7993:27) {componentStack: 
+    at AdminLayoutInner (http://localhost:5173/sr…sx?t=1775689901167:15:3)
+    at App (<anonymous>)} @ http://localhost:5173/@vite/client:509
+[  185549ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[  185835ms] [ERROR] %o
+
+%s
+
+%s
+ ReferenceError: navItems is not defined
+    at AdminLayoutInner (http://localhost:5173/src/layouts/AdminLayout.tsx?t=1775690195808:191:17)
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:12867:12)
+    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:4212:19)
+    at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:5568:16)
+    at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:6139:20)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:850:66)
+    at performUnitOfWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8428:92)
+    at workLoopSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8324:37)
+    at renderRootSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8308:6)
+    at performWorkOnRoot (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:7993:27) The above error occurred in the <AdminLayoutInner> component. React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary. @ http://localhost:5173/@vite/client:509
+[  185836ms] [ERROR] React error boundary caught: ReferenceError: navItems is not defined
+    at AdminLayoutInner (http://localhost:5173/src/layouts/AdminLayout.tsx?t=1775690195808:191:17)
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:12867:12)
+    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:4212:19)
+    at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:5568:16)
+    at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:6139:20)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:850:66)
+    at performUnitOfWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8428:92)
+    at workLoopSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8324:37)
+    at renderRootSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8308:6)
+    at performWorkOnRoot (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:7993:27) {componentStack: 
+    at AdminLayoutInner (http://localhost:5173/sr…sx?t=1775689901167:15:3)
+    at App (<anonymous>)} @ http://localhost:5173/@vite/client:509
+[  198893ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[  199186ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[  199187ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[  199187ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[  199188ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[  199188ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[  199189ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6
+[  199189ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[  199190ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[  199190ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[  199190ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[  199190ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[  199191ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6
+[  215318ms] [ERROR] %o
+
+%s
+
+%s
+ ReferenceError: moreNav is not defined
+    at AdminLayoutInner (http://localhost:5173/src/layouts/AdminLayout.tsx?t=1775690225575:168:23)
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:12867:12)
+    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:4212:19)
+    at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:5568:16)
+    at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:6139:20)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:850:66)
+    at performUnitOfWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8428:92)
+    at workLoopSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8324:37)
+    at renderRootSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8308:6)
+    at performWorkOnRoot (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:7993:27) The above error occurred in the <AdminLayoutInner> component. React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary. @ http://localhost:5173/@vite/client:509
+[  215319ms] [ERROR] React error boundary caught: ReferenceError: moreNav is not defined
+    at AdminLayoutInner (http://localhost:5173/src/layouts/AdminLayout.tsx?t=1775690225575:168:23)
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:12867:12)
+    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:4212:19)
+    at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:5568:16)
+    at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:6139:20)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:850:66)
+    at performUnitOfWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8428:92)
+    at workLoopSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8324:37)
+    at renderRootSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8308:6)
+    at performWorkOnRoot (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:7993:27) {componentStack: 
+    at AdminLayoutInner (http://localhost:5173/sr…sx?t=1775689901167:15:3)
+    at App (<anonymous>)} @ http://localhost:5173/@vite/client:509
+[  240574ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[  240960ms] [ERROR] %o
+
+%s
+
+%s
+ ReferenceError: primaryNav is not defined
+    at AdminLayoutInner (http://localhost:5173/src/layouts/AdminLayout.tsx?t=1775690250830:203:18)
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:12867:12)
+    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:4212:19)
+    at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:5568:16)
+    at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:6139:20)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:850:66)
+    at performUnitOfWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8428:92)
+    at workLoopSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8324:37)
+    at renderRootSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8308:6)
+    at performWorkOnRoot (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:7993:27) The above error occurred in the <AdminLayoutInner> component. React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary. @ http://localhost:5173/@vite/client:509
+[  240960ms] [ERROR] React error boundary caught: ReferenceError: primaryNav is not defined
+    at AdminLayoutInner (http://localhost:5173/src/layouts/AdminLayout.tsx?t=1775690250830:203:18)
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:12867:12)
+    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:4212:19)
+    at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:5568:16)
+    at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:6139:20)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:850:66)
+    at performUnitOfWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8428:92)
+    at workLoopSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8324:37)
+    at renderRootSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:8308:6)
+    at performWorkOnRoot (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=c7a74274:7993:27) {componentStack: 
+    at AdminLayoutInner (http://localhost:5173/sr…sx?t=1775689901167:15:3)
+    at App (<anonymous>)} @ http://localhost:5173/@vite/client:509
+[  258378ms] [LOG] [API] Fetching: http://localhost:5001/api/auth/me @ http://localhost:5173/src/api.ts:6
+[  258674ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[  258675ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[  258675ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[  258676ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[  258676ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[  258677ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6
+[  258677ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[  258678ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[  258678ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[  258678ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[  258679ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[  258679ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6
+[  297850ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[  297851ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[  297852ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[  297853ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[  297853ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[  297854ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6
+[  297855ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[  297855ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[  297855ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[  297856ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[  297856ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[  297856ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6
+[  308844ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[  308844ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[  308844ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[  308845ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[  308845ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[  308846ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6
+[  308846ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[  308846ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[  308847ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[  308847ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[  308847ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[  308847ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6
+[  342831ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[  342831ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[  342832ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[  342834ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[  342835ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[  342835ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6
+[  342836ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/metrics @ http://localhost:5173/src/api.ts:6
+[  342836ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/residents @ http://localhost:5173/src/api.ts:6
+[  342837ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/recent-donations @ http://localhost:5173/src/api.ts:6
+[  342837ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/active-residents-trend @ http://localhost:5173/src/api.ts:6
+[  342837ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/flagged-cases-trend @ http://localhost:5173/src/api.ts:6
+[  342838ms] [LOG] [API] Fetching: http://localhost:5001/api/admin/donations-by-channel @ http://localhost:5173/src/api.ts:6

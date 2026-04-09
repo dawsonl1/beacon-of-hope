@@ -327,4 +327,55 @@ export const newFeatureHandlers = [
   ),
 ];
 
-export const handlers = [...authHandlers, ...publicHandlers, ...adminHandlers, ...newFeatureHandlers];
+// ── Deepened report endpoints ────────────
+export const deepReportHandlers = [
+  http.get(`${API}/api/impact/education-summary`, () =>
+    HttpResponse.json({
+      enrollmentBreakdown: [{ status: 'Enrolled', count: 30 }, { status: 'Not Enrolled', count: 5 }],
+      completionBreakdown: [{ status: 'Completed', count: 20 }, { status: 'In Progress', count: 15 }],
+    }),
+  ),
+  http.get(`${API}/api/admin/reports/safehouse-trends`, () =>
+    HttpResponse.json([
+      { safehouseCode: 'SH-001', year: 2025, month: 10, incidents: 3 },
+      { safehouseCode: 'SH-001', year: 2025, month: 11, incidents: 2 },
+      { safehouseCode: 'SH-002', year: 2025, month: 10, incidents: 1 },
+      { safehouseCode: 'SH-002', year: 2025, month: 11, incidents: 4 },
+    ]),
+  ),
+];
+
+// ── AAR Report ──────────────────────────
+export const aarHandlers = [
+  http.get(`${API}/api/admin/reports/aar-summary`, () =>
+    HttpResponse.json({
+      categories: [
+        { category: 'Caring', serviceCount: 150, beneficiaryCount: 45, services: [{ service: 'Health & Wellbeing Records', count: 100, beneficiaries: 40 }, { service: 'Intervention Plans', count: 50, beneficiaries: 30 }] },
+        { category: 'Healing', serviceCount: 200, beneficiaryCount: 52, services: [{ service: 'Counseling Sessions', count: 200, beneficiaries: 52 }] },
+        { category: 'Teaching', serviceCount: 180, beneficiaryCount: 48, services: [{ service: 'Education Records', count: 180, beneficiaries: 48 }] },
+      ],
+      totalBeneficiaries: 62,
+    }),
+  ),
+];
+
+// ── Intervention plans / conferences ─────
+export const conferenceHandlers = [
+  http.get(`${API}/api/admin/intervention-plans`, () =>
+    HttpResponse.json([
+      { planId: 1, residentId: 1, residentCode: 'R-001', planCategory: 'Rehabilitation', planDescription: 'Quarterly review', status: 'Open', caseConferenceDate: '2026-05-01', targetDate: null, targetValue: null, servicesProvided: null },
+      { planId: 2, residentId: 2, residentCode: 'R-002', planCategory: 'Education', planDescription: 'School enrollment', status: 'Achieved', caseConferenceDate: '2026-01-15', targetDate: null, targetValue: null, servicesProvided: null },
+    ]),
+  ),
+  http.post(`${API}/api/admin/intervention-plans`, () =>
+    HttpResponse.json({ planId: 99 }),
+  ),
+  http.get(`${API}/api/admin/residents-list`, () =>
+    HttpResponse.json([
+      { residentId: 1, internalCode: 'R-001', caseStatus: 'Active' },
+      { residentId: 2, internalCode: 'R-002', caseStatus: 'Active' },
+    ]),
+  ),
+];
+
+export const handlers = [...authHandlers, ...publicHandlers, ...adminHandlers, ...newFeatureHandlers, ...conferenceHandlers, ...deepReportHandlers, ...aarHandlers];

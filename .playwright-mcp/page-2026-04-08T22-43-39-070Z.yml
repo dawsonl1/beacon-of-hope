@@ -1,0 +1,100 @@
+- generic [ref=e4]:
+  - banner [ref=e5]:
+    - generic [ref=e6]:
+      - link "◆ Beacon of Hope" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e8]: ◆
+        - generic [ref=e9]: Beacon of Hope
+      - navigation [ref=e10]:
+        - link "Dashboard" [ref=e11] [cursor=pointer]:
+          - /url: /admin
+          - img [ref=e12]
+          - generic [ref=e17]: Dashboard
+        - link "To-Do" [ref=e18] [cursor=pointer]:
+          - /url: /admin/tasks
+          - img [ref=e19]
+          - generic [ref=e22]: To-Do
+        - link "Calendar" [ref=e23] [cursor=pointer]:
+          - /url: /admin/calendar
+          - img [ref=e24]
+          - generic [ref=e26]: Calendar
+        - link "Queue" [ref=e27] [cursor=pointer]:
+          - /url: /admin/queue
+          - img [ref=e28]
+          - generic [ref=e31]: Queue
+        - link "Caseload" [ref=e32] [cursor=pointer]:
+          - /url: /admin/caseload
+          - img [ref=e33]
+          - generic [ref=e38]: Caseload
+        - link "Recordings" [ref=e39] [cursor=pointer]:
+          - /url: /admin/recordings
+          - img [ref=e40]
+          - generic [ref=e41]: Recordings
+        - link "Incidents" [ref=e42] [cursor=pointer]:
+          - /url: /admin/incidents
+          - img [ref=e43]
+          - generic [ref=e45]: Incidents
+        - link "Conferences" [ref=e46] [cursor=pointer]:
+          - /url: /admin/conferences
+          - img [ref=e47]
+          - generic [ref=e49]: Conferences
+        - link "Visitations" [ref=e50] [cursor=pointer]:
+          - /url: /admin/visitations
+          - img [ref=e51]
+          - generic [ref=e54]: Visitations
+        - link "Placed" [ref=e55] [cursor=pointer]:
+          - /url: /admin/post-placement
+          - img [ref=e56]
+          - generic [ref=e59]: Placed
+        - link "Donors" [ref=e60] [cursor=pointer]:
+          - /url: /admin/donors
+          - img [ref=e61]
+          - generic [ref=e66]: Donors
+        - link "Reports" [ref=e67] [cursor=pointer]:
+          - /url: /admin/reports
+          - img [ref=e68]
+          - generic [ref=e70]: Reports
+        - link "Users" [ref=e71] [cursor=pointer]:
+          - /url: /admin/users
+          - img [ref=e72]
+          - generic [ref=e74]: Users
+      - generic [ref=e75]:
+        - combobox [ref=e76] [cursor=pointer]:
+          - option "SH01 - Lighthouse Safehouse 1" [selected]
+          - option "SH02 - Lighthouse Safehouse 2"
+        - generic [ref=e77]: Staff
+        - button "Logout" [ref=e78] [cursor=pointer]:
+          - img [ref=e79]
+          - generic [ref=e82]: Logout
+  - main [ref=e83]:
+    - generic [ref=e84]:
+      - generic [ref=e85]:
+        - generic [ref=e86]:
+          - heading "Calendar" [level=1] [ref=e87]
+          - paragraph [ref=e88]: Your daily schedule and events
+        - generic [ref=e89]:
+          - generic [ref=e90]:
+            - button "Day" [ref=e91] [cursor=pointer]
+            - button "Week" [ref=e92] [cursor=pointer]
+          - button "New Event" [ref=e93] [cursor=pointer]:
+            - img [ref=e94]
+            - text: New Event
+      - generic [ref=e95]:
+        - button [ref=e96] [cursor=pointer]:
+          - img [ref=e97]
+        - button "Today" [ref=e99] [cursor=pointer]
+        - generic [ref=e100]: 2026-04-13 - 2026-04-19
+        - button [active] [ref=e101] [cursor=pointer]:
+          - img [ref=e102]
+      - generic [ref=e147]:
+        - generic [ref=e183]:
+          - generic [ref=e184]: Mon 13
+          - generic [ref=e186] [cursor=pointer]:
+            - generic [ref=e187]: 09:00
+            - generic [ref=e188]: Monday Case Conference — SH01
+        - generic [ref=e190]: Tue 14
+        - generic [ref=e192]: Wed 15
+        - generic [ref=e194]: Thu 16
+        - generic [ref=e196]: Fri 17
+        - generic [ref=e198]: Sat 18
+        - generic [ref=e200]: Sun 19

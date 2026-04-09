@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { SUPPORTER_TYPES, SUPPORTER_STATUSES, ACQUISITION_CHANNELS } from '../../domain';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './SupporterFormPage.module.css';
 
 const STATUSES = SUPPORTER_STATUSES;
@@ -37,6 +38,7 @@ const blank: FormData = {
 };
 
 export default function SupporterFormPage() {
+  useDocumentTitle('Supporter Form');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const isEdit = !!id;

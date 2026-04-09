@@ -3,12 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Edit, Trash2, ChevronDown, ChevronRight,
   Loader2, User, Briefcase, Heart, Home, Shield, ClipboardList, RefreshCw,
-  AlertTriangle, Activity, GraduationCap, Stethoscope, Plus,
+  AlertTriangle, Activity, GraduationCap, Stethoscope, Plus, Users,
 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { formatDate } from '../../constants';
 import { useAuth } from '../../contexts/AuthContext';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './ResidentDetailPage.module.css';
 
 interface MlPrediction {
@@ -138,6 +139,7 @@ function Section({
 }
 
 export default function ResidentDetailPage() {
+  useDocumentTitle('Resident Detail');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -152,6 +154,7 @@ export default function ResidentDetailPage() {
   const [educationRecords, setEducationRecords] = useState<any[]>([]);
   const [healthRecords, setHealthRecords] = useState<any[]>([]);
   const [incidents, setIncidents] = useState<any[]>([]);
+  const [conferences, setConferences] = useState<any[]>([]);
   const [emotionalTrends, setEmotionalTrends] = useState<{ sessionDate: string; emotionalStateObserved: string; emotionalStateEnd: string }[]>([]);
 
   useEffect(() => {
@@ -168,6 +171,7 @@ export default function ResidentDetailPage() {
       apiFetch<any[]>(`/api/admin/education-records?residentId=${id}`).then(setEducationRecords).catch(() => {});
       apiFetch<any[]>(`/api/admin/health-records?residentId=${id}`).then(setHealthRecords).catch(() => {});
       apiFetch<{ items: any[] }>(`/api/admin/incidents?residentId=${id}`).then(d => setIncidents(d.items || [])).catch(() => {});
+      apiFetch<any[]>(`/api/admin/intervention-plans?residentId=${id}`).then(setConferences).catch(() => {});
       apiFetch<any[]>(`/api/admin/recordings/emotional-trends?residentId=${id}`).then(setEmotionalTrends).catch(() => {});
     }
   }, [id]);
@@ -521,6 +525,33 @@ export default function ResidentDetailPage() {
                 <span style={{ color: inc.resolved ? '#27ae60' : '#e74c3c' }}>{inc.resolved ? 'Resolved' : 'Open'}</span>
               </div>
             ))}
+          </div>
+        )}
+      </Section>
+
+      <Section title="Case Conferences" icon={Users}>
+        {conferences.length === 0 ? (
+          <p className={styles.noData}>No case conferences recorded.</p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {conferences.slice(0, 5).map((conf: any) => (
+              <div
+                key={conf.planId}
+                style={{ display: 'flex', gap: '1rem', fontSize: '0.82rem', padding: '0.5rem 0', borderBottom: '1px solid rgba(15,27,45,0.04)', cursor: 'pointer' }}
+                onClick={() => navigate('/admin/conferences')}
+              >
+                <span style={{ fontWeight: 600, minWidth: '90px' }}>{conf.caseConferenceDate || '-'}</span>
+                <span>{conf.planCategory || '-'}</span>
+                <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '0.15rem 0.45rem', borderRadius: '4px', background: conf.status === 'Open' ? '#3498db18' : conf.status === 'Achieved' ? '#27ae6018' : '#95a5a618', color: conf.status === 'Open' ? '#3498db' : conf.status === 'Achieved' ? '#27ae60' : '#95a5a6', textTransform: 'uppercase' as const }}>
+                  {conf.status || '-'}
+                </span>
+              </div>
+            ))}
+            {conferences.length > 5 && (
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => navigate('/admin/conferences')}>
+                View all {conferences.length} conferences...
+              </p>
+            )}
           </div>
         )}
       </Section>

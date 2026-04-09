@@ -1,3 +1,5 @@
+using backend.DTOs;
+using backend.Mapping;
 using backend.Models;
 using FluentAssertions;
 

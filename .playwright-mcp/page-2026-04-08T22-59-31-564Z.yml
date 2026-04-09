@@ -1,0 +1,63 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "◆ Beacon of Hope" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: ◆
+        - generic [ref=e7]: Beacon of Hope
+      - navigation [ref=e8]:
+        - link "Home" [ref=e9] [cursor=pointer]:
+          - /url: /
+        - link "Our Mission" [ref=e10] [cursor=pointer]:
+          - /url: /#mission
+        - link "Impact" [ref=e11] [cursor=pointer]:
+          - /url: /impact
+        - link "Get Involved" [ref=e12] [cursor=pointer]:
+          - /url: /#involved
+      - generic [ref=e13]:
+        - link "Donate" [ref=e14] [cursor=pointer]:
+          - /url: /donate
+          - img [ref=e15]
+          - generic [ref=e18]: Donate
+        - link "Login" [ref=e19] [cursor=pointer]:
+          - /url: /login
+          - img [ref=e20]
+          - generic [ref=e23]: Login
+  - generic [ref=e24]: Loading...
+  - contentinfo [ref=e25]:
+    - generic [ref=e26]:
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - text: ◆Beacon of Hope
+          - paragraph [ref=e29]: Restoring hope and rebuilding lives for survivors of abuse and trafficking in Guam.
+        - generic [ref=e30]:
+          - generic [ref=e31]:
+            - heading "Organization" [level=4] [ref=e32]
+            - link "Our Mission" [ref=e33] [cursor=pointer]:
+              - /url: /#mission
+            - link "Our Impact" [ref=e34] [cursor=pointer]:
+              - /url: /#impact
+            - link "Get Involved" [ref=e35] [cursor=pointer]:
+              - /url: /#involved
+          - generic [ref=e36]:
+            - heading "Legal" [level=4] [ref=e37]
+            - link "Privacy Policy" [ref=e38] [cursor=pointer]:
+              - /url: /privacy-policy
+            - button "Cookie Settings" [ref=e39] [cursor=pointer]
+          - generic [ref=e40]:
+            - heading "Connect" [level=4] [ref=e41]
+            - link "Instagram" [ref=e42] [cursor=pointer]:
+              - /url: https://instagram.com
+            - link "Facebook" [ref=e43] [cursor=pointer]:
+              - /url: https://facebook.com
+            - link "LinkedIn" [ref=e44] [cursor=pointer]:
+              - /url: https://linkedin.com
+            - link "Monthly Newsletter" [ref=e45] [cursor=pointer]:
+              - /url: /newsletter
+            - paragraph [ref=e46]: "*Data as of February 16, 2026"
+      - generic [ref=e48]:
+        - paragraph [ref=e49]: © 2026 Beacon of Hope. All rights reserved.
+        - paragraph [ref=e50]:
+          - text: Made with
+          - img [ref=e51]
+          - text: for those who need it most
