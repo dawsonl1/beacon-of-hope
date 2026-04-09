@@ -452,7 +452,7 @@ export default function HomePage() {
   function getQuarterFromEvent(e: React.DragEvent): number {
     const rect = e.currentTarget.getBoundingClientRect();
     const y = e.clientY - dragOffsetY.current - rect.top;
-    const quarter = Math.floor((y / rect.height) * 4);
+    const quarter = Math.round((y / rect.height) * 4);
     return [0, 15, 30, 45][Math.min(Math.max(quarter, 0), 3)];
   }
 
