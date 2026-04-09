@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { APP_TODAY, APP_TODAY_STR } from '../../constants';
 import styles from './DatePicker.module.css';
 
 interface DatePickerProps {
@@ -30,7 +31,7 @@ export default function DatePicker({ value, onChange, placeholder = 'Select date
   const ref = useRef<HTMLDivElement>(null);
 
   // Calendar state — month being viewed
-  const viewDate = value ? parseDate(value) : new Date();
+  const viewDate = value ? parseDate(value) : APP_TODAY;
   const [viewMonth, setViewMonth] = useState(viewDate.getMonth());
   const [viewYear, setViewYear] = useState(viewDate.getFullYear());
 
@@ -58,7 +59,7 @@ export default function DatePicker({ value, onChange, placeholder = 'Select date
   const calDays: (number | null)[] = Array(startDay).fill(null);
   for (let d = 1; d <= daysInMonth; d++) calDays.push(d);
 
-  const today = fmtDate(new Date());
+  const today = APP_TODAY_STR;
 
   function shiftMonth(delta: number) {
     const d = new Date(viewYear, viewMonth + delta, 1);

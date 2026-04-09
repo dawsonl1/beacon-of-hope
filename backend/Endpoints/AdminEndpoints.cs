@@ -220,7 +220,7 @@ public static class AdminEndpoints
                 Phone = body.Phone?.Trim(),
                 Region = body.Region?.Trim(),
                 Status = body.Status?.Trim() ?? "Prospective",
-                StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                StartDate = AppConstants.DataCutoff,
                 Notes = body.Notes?.Trim(),
             };
             db.Partners.Add(partner);
@@ -520,7 +520,7 @@ public static class AdminEndpoints
             var (valid, err) = DtoValidator.Validate(body);
             if (!valid) return Results.BadRequest(new { error = err });
 
-            var resident = new Resident { CreatedAt = DateTime.UtcNow };
+            var resident = new Resident { CreatedAt = AppConstants.DataCutoffUtc };
             EntityMapper.MapResident(resident, body);
 
             db.Residents.Add(resident);

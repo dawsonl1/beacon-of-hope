@@ -132,7 +132,7 @@ public static class SupporterEndpoints
             var (valid, err) = DtoValidator.Validate(body);
             if (!valid) return Results.BadRequest(new { error = err });
 
-            var supporter = new backend.Models.Supporter { CreatedAt = DateTime.UtcNow };
+            var supporter = new backend.Models.Supporter { CreatedAt = AppConstants.DataCutoffUtc };
             EntityMapper.MapSupporter(supporter, body);
             supporter.Status ??= "Active";
 

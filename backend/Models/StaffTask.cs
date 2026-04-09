@@ -13,7 +13,7 @@ public class StaffTask
     public string Status { get; set; } = "Pending"; // Pending, Snoozed, Completed, Dismissed
     public DateTime? SnoozeUntil { get; set; }
     public DateTime? DueTriggerDate { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = AppConstants.DataCutoffUtc; // Frozen date — do not replace with DateTime.UtcNow
     public DateTime? CompletedAt { get; set; }
     public string? SourceEntityType { get; set; }
     public int? SourceEntityId { get; set; }

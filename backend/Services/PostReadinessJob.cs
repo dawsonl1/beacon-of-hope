@@ -22,7 +22,7 @@ public class PostReadinessJob : BackgroundService
             {
                 using var scope = _services.CreateScope();
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                var now = DateTime.UtcNow;
+                var now = AppConstants.DataCutoffUtc;
 
                 // Move scheduled posts to ready_to_publish when their time arrives
                 var readyPosts = await db.AutomatedPosts

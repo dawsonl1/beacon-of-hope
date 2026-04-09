@@ -107,8 +107,8 @@ public static class DonorPortalEndpoints
                     DisplayName = email,
                     SupporterType = "Individual",
                     Status = "Active",
-                    FirstDonationDate = DateOnly.FromDateTime(DateTime.UtcNow),
-                    CreatedAt = DateTime.UtcNow
+                    FirstDonationDate = AppConstants.DataCutoff,
+                    CreatedAt = AppConstants.DataCutoffUtc
                 };
                 db.Supporters.Add(supporter);
                 await db.SaveChangesAsync();
@@ -141,7 +141,7 @@ public static class DonorPortalEndpoints
             {
                 SupporterId = supporterId,
                 DonationType = "Monetary",
-                DonationDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                DonationDate = AppConstants.DataCutoff,
                 ChannelSource = "Online",
                 CurrencyCode = "USD",
                 Amount = (body.AmountCents ?? 0) / 100m,
@@ -165,7 +165,7 @@ public static class DonorPortalEndpoints
                     db.NewsletterSubscribers.Add(new backend.Models.NewsletterSubscriber
                     {
                         Email = email,
-                        SubscribedAt = DateTime.UtcNow,
+                        SubscribedAt = AppConstants.DataCutoffUtc,
                         IsActive = true
                     });
                 }

@@ -54,7 +54,7 @@ public class MilestoneEvaluationJob : BackgroundService
         {
             // Check cooldown
             if (rule.LastTriggeredAt != null &&
-                (DateTime.UtcNow - rule.LastTriggeredAt.Value).TotalDays < rule.CooldownDays)
+                (AppConstants.DataCutoffUtc - rule.LastTriggeredAt.Value).TotalDays < rule.CooldownDays)
                 continue;
 
             var currentValue = await GetMetricValue(db, rule.MetricName, ct);
@@ -103,11 +103,11 @@ public class MilestoneEvaluationJob : BackgroundService
                             Status = "draft",
                             Platform = "instagram",
                             MilestoneRuleId = rule.MilestoneRuleId,
-                            CreatedAt = DateTime.UtcNow
+                            CreatedAt = AppConstants.DataCutoffUtc
                         };
                         db.AutomatedPosts.Add(post);
-                        rule.LastTriggeredAt = DateTime.UtcNow;
-                        rule.UpdatedAt = DateTime.UtcNow;
+                        rule.LastTriggeredAt = AppConstants.DataCutoffUtc;
+                        rule.UpdatedAt = AppConstants.DataCutoffUtc;
                         await db.SaveChangesAsync(ct);
                         _logger.LogInformation("Milestone post created: {Id}", post.AutomatedPostId);
                     }
@@ -125,15 +125,15 @@ public class MilestoneEvaluationJob : BackgroundService
         return metricName switch
         {
             "monthly_donation_total" => await db.Donations
-                .Where(d => d.DonationDate != null && d.DonationDate.Value.Month == DateTime.UtcNow.Month && d.DonationDate.Value.Year == DateTime.UtcNow.Year)
+                .Where(d => d.DonationDate != null && d.DonationDate.Value.Month == AppConstants.DataCutoffUtc.Month && d.DonationDate.Value.Year == AppConstants.DataCutoffUtc.Year)
                 .SumAsync(d => d.Amount ?? 0, ct),
 
             "yearly_donation_total" => await db.Donations
-                .Where(d => d.DonationDate != null && d.DonationDate.Value.Year == DateTime.UtcNow.Year)
+                .Where(d => d.DonationDate != null && d.DonationDate.Value.Year == AppConstants.DataCutoffUtc.Year)
                 .SumAsync(d => d.Amount ?? 0, ct),
 
             "new_donor_count_monthly" => await db.Supporters
-                .Where(s => s.CreatedAt != null && s.CreatedAt.Value.Month == DateTime.UtcNow.Month && s.CreatedAt.Value.Year == DateTime.UtcNow.Year)
+                .Where(s => s.CreatedAt != null && s.CreatedAt.Value.Month == AppConstants.DataCutoffUtc.Month && s.CreatedAt.Value.Year == AppConstants.DataCutoffUtc.Year)
                 .CountAsync(ct),
 
             "active_resident_count" => await db.Residents

@@ -31,7 +31,7 @@ public static class StaffEndpoints
         {
             var user = await userManager.GetUserAsync(httpContext.User);
             if (user == null) return Results.Unauthorized();
-            var now = DateTime.UtcNow;
+            var now = AppConstants.DataCutoffUtc;
             var query = db.StaffTasks
                 .Where(t => t.StaffUserId == user.Id)
                 .Where(t => t.Status == "Pending" || t.Status == "Snoozed")
@@ -65,7 +65,7 @@ public static class StaffEndpoints
             if (task == null) return Results.NotFound();
             var body = await httpContext.Request.ReadFromJsonAsync<UpdateStaffTaskRequest>();
             if (body == null) return Results.BadRequest(new { error = "Request body is required." });
-            if (!string.IsNullOrEmpty(body.Status)) { task.Status = body.Status; if (body.Status == "Completed" || body.Status == "Dismissed") task.CompletedAt = DateTime.UtcNow; }
+            if (!string.IsNullOrEmpty(body.Status)) { task.Status = body.Status; if (body.Status == "Completed" || body.Status == "Dismissed") task.CompletedAt = AppConstants.DataCutoffUtc; }
             if (body.SnoozeUntil.HasValue) { task.SnoozeUntil = body.SnoozeUntil.Value; task.Status = "Snoozed"; }
             await db.SaveChangesAsync();
             return Results.Ok(new { updated = true });
@@ -102,7 +102,7 @@ public static class StaffEndpoints
             }
             var evt = new CalendarEvent { StaffUserId = user.Id, SafehouseId = body.SafehouseId, ResidentId = body.ResidentId, EventType = body.EventType ?? "Other", Title = body.Title ?? "", Description = body.Description, EventDate = DateOnly.Parse(body.EventDate), StartTime = !string.IsNullOrEmpty(body.StartTime) ? TimeOnly.Parse(body.StartTime) : null, EndTime = !string.IsNullOrEmpty(body.EndTime) ? TimeOnly.Parse(body.EndTime) : null, RecurrenceRule = body.RecurrenceRule, SourceTaskId = body.SourceTaskId, Status = "Scheduled" };
             db.CalendarEvents.Add(evt);
-            if (body.SourceTaskId.HasValue) { var task = await db.StaffTasks.FirstOrDefaultAsync(t => t.StaffTaskId == body.SourceTaskId.Value); if (task != null) { task.Status = "Completed"; task.CompletedAt = DateTime.UtcNow; } }
+            if (body.SourceTaskId.HasValue) { var task = await db.StaffTasks.FirstOrDefaultAsync(t => t.StaffTaskId == body.SourceTaskId.Value); if (task != null) { task.Status = "Completed"; task.CompletedAt = AppConstants.DataCutoffUtc; } }
             await db.SaveChangesAsync();
             return Results.Ok(new { evt.CalendarEventId });
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));

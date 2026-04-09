@@ -7,7 +7,7 @@ public class Newsletter
     public string? HtmlContent { get; set; }
     public string? PlainText { get; set; }
     public string Status { get; set; } = "draft";
-    public DateTime GeneratedAt { get; set; } = DateTime.UtcNow;
+    public DateTime GeneratedAt { get; set; } = AppConstants.DataCutoffUtc; // Frozen date — do not replace with DateTime.UtcNow
     public string? ApprovedBy { get; set; }
     public DateTime? ApprovedAt { get; set; }
     public DateTime? SentAt { get; set; }

@@ -1,3 +1,4 @@
+using backend;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Text.Json;
@@ -230,7 +231,7 @@ app.MapPut("/api/admin/social/settings", async (HttpContext ctx, AppDbContext db
     if (body.TryGetProperty("dailyGenerationTime", out var dgt)) settings.DailyGenerationTime = dgt.GetString();
     if (body.TryGetProperty("notificationMethod", out var nm)) settings.NotificationMethod = nm.GetString();
     if (body.TryGetProperty("notificationEmail", out var ne)) settings.NotificationEmail = ne.GetString();
-    settings.UpdatedAt = DateTime.UtcNow;
+    settings.UpdatedAt = AppConstants.DataCutoffUtc;
     await db.SaveChangesAsync();
     return Results.Ok(settings);
 }).RequireAuthorization(p => p.RequireRole("Admin"));
@@ -255,7 +256,7 @@ app.MapPut("/api/admin/social/voice-guide", async (HttpContext ctx, AppDbContext
     if (body.TryGetProperty("avoidedTerms", out var at2)) guide.AvoidedTerms = at2.GetString();
     if (body.TryGetProperty("structuralRules", out var sr)) guide.StructuralRules = sr.GetString();
     if (body.TryGetProperty("visualRules", out var vr)) guide.VisualRules = vr.GetString();
-    guide.UpdatedAt = DateTime.UtcNow;
+    guide.UpdatedAt = AppConstants.DataCutoffUtc;
     await db.SaveChangesAsync();
     return Results.Ok(guide);
 }).RequireAuthorization(p => p.RequireRole("Admin"));
@@ -286,7 +287,7 @@ app.MapPost("/api/admin/social/facts", async (HttpContext ctx, AppDbContext db, 
         Category = body.TryGetProperty("category", out var c) ? c.GetString() : null,
         Pillar = body.TryGetProperty("pillar", out var p) ? p.GetString() : null,
         AddedBy = user?.Email,
-        AddedAt = DateTime.UtcNow
+        AddedAt = AppConstants.DataCutoffUtc
     };
     db.ContentFacts.Add(fact);
     await db.SaveChangesAsync();
@@ -332,7 +333,7 @@ app.MapPost("/api/admin/social/talking-points", async (HttpContext ctx, AppDbCon
     {
         Text = body.TryGetProperty("text", out var t) ? t.GetString() : null,
         Topic = body.TryGetProperty("topic", out var tp) ? tp.GetString() : null,
-        CreatedAt = DateTime.UtcNow
+        CreatedAt = AppConstants.DataCutoffUtc
     };
     db.ContentTalkingPoints.Add(point);
     await db.SaveChangesAsync();
@@ -347,7 +348,7 @@ app.MapPut("/api/admin/social/talking-points/{id}", async (int id, HttpContext c
     if (body.ValueKind == JsonValueKind.Undefined) return Results.BadRequest();
     if (body.TryGetProperty("text", out var t)) point.Text = t.GetString();
     if (body.TryGetProperty("topic", out var tp)) point.Topic = tp.GetString();
-    point.UpdatedAt = DateTime.UtcNow;
+    point.UpdatedAt = AppConstants.DataCutoffUtc;
     await db.SaveChangesAsync();
     return Results.Ok(point);
 }).RequireAuthorization(p => p.RequireRole("Admin"));
@@ -382,7 +383,7 @@ app.MapPost("/api/admin/social/hashtag-sets", async (HttpContext ctx, AppDbConte
         Pillar = body.TryGetProperty("pillar", out var p) ? p.GetString() : null,
         Platform = body.TryGetProperty("platform", out var pl) ? pl.GetString() : null,
         Hashtags = body.TryGetProperty("hashtags", out var h) ? h.GetString() : null,
-        CreatedAt = DateTime.UtcNow
+        CreatedAt = AppConstants.DataCutoffUtc
     };
     db.HashtagSets.Add(set);
     await db.SaveChangesAsync();
@@ -400,7 +401,7 @@ app.MapPut("/api/admin/social/hashtag-sets/{id}", async (int id, HttpContext ctx
     if (body.TryGetProperty("pillar", out var p)) set.Pillar = p.GetString();
     if (body.TryGetProperty("platform", out var pl)) set.Platform = pl.GetString();
     if (body.TryGetProperty("hashtags", out var h)) set.Hashtags = h.GetString();
-    set.UpdatedAt = DateTime.UtcNow;
+    set.UpdatedAt = AppConstants.DataCutoffUtc;
     await db.SaveChangesAsync();
     return Results.Ok(set);
 }).RequireAuthorization(p => p.RequireRole("Admin"));
@@ -459,7 +460,7 @@ app.MapPost("/api/admin/social/posts", async (HttpContext ctx, AppDbContext db) 
         Source = body.TryGetProperty("source", out var s) ? s.GetString() : null,
         Status = body.TryGetProperty("status", out var st) ? st.GetString() : "draft",
         Platform = body.TryGetProperty("platform", out var pl) ? pl.GetString() : null,
-        CreatedAt = DateTime.UtcNow
+        CreatedAt = AppConstants.DataCutoffUtc
     };
     db.AutomatedPosts.Add(post);
     await db.SaveChangesAsync();
@@ -474,7 +475,7 @@ app.MapPut("/api/admin/social/posts/{id}", async (int id, HttpContext ctx, AppDb
     if (body.ValueKind == JsonValueKind.Undefined) return Results.BadRequest();
     if (body.TryGetProperty("content", out var c)) post.Content = c.GetString();
     if (body.TryGetProperty("mediaId", out var mid) && mid.ValueKind == JsonValueKind.Number) post.MediaId = mid.GetInt32();
-    post.UpdatedAt = DateTime.UtcNow;
+    post.UpdatedAt = AppConstants.DataCutoffUtc;
     await db.SaveChangesAsync();
     return Results.Ok(post);
 }).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
@@ -499,8 +500,8 @@ app.MapPatch("/api/admin/social/posts/{id}/approve", async (int id, HttpContext 
     }
     post.Status = "scheduled";
     post.ApprovedBy = user?.Email;
-    post.ApprovedAt = DateTime.UtcNow;
-    post.UpdatedAt = DateTime.UtcNow;
+    post.ApprovedAt = AppConstants.DataCutoffUtc;
+    post.UpdatedAt = AppConstants.DataCutoffUtc;
     await db.SaveChangesAsync();
     return Results.Ok(post);
 }).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
@@ -519,7 +520,7 @@ app.MapPatch("/api/admin/social/posts/{id}/reject", async (int id, HttpContext c
     post.Status = "rejected";
     if (body.ValueKind != JsonValueKind.Undefined && body.TryGetProperty("rejectionReason", out var reason))
         post.RejectionReason = reason.GetString();
-    post.UpdatedAt = DateTime.UtcNow;
+    post.UpdatedAt = AppConstants.DataCutoffUtc;
     await db.SaveChangesAsync();
     return Results.Ok(post);
 }).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
@@ -538,7 +539,7 @@ app.MapPatch("/api/admin/social/posts/{id}/snooze", async (int id, HttpContext c
     }
     post.Status = "snoozed";
     if (body.TryGetProperty("snoozedUntil", out var su)) post.SnoozedUntil = DateTime.Parse(su.GetString()!, null, System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal);
-    post.UpdatedAt = DateTime.UtcNow;
+    post.UpdatedAt = AppConstants.DataCutoffUtc;
     await db.SaveChangesAsync();
     return Results.Ok(post);
 }).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
@@ -548,7 +549,7 @@ app.MapPatch("/api/admin/social/posts/{id}/publish", async (int id, AppDbContext
     var post = await db.AutomatedPosts.FindAsync(id);
     if (post == null) return Results.NotFound();
     post.Status = "published";
-    post.UpdatedAt = DateTime.UtcNow;
+    post.UpdatedAt = AppConstants.DataCutoffUtc;
     await db.SaveChangesAsync();
     return Results.Ok(post);
 }).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
@@ -563,7 +564,7 @@ app.MapPatch("/api/admin/social/posts/{id}/engagement", async (int id, HttpConte
     if (body.TryGetProperty("engagementShares", out var es)) post.EngagementShares = es.GetInt32();
     if (body.TryGetProperty("engagementComments", out var ec)) post.EngagementComments = ec.GetInt32();
     if (body.TryGetProperty("engagementDonations", out var ed)) post.EngagementDonations = ed.GetDecimal();
-    post.UpdatedAt = DateTime.UtcNow;
+    post.UpdatedAt = AppConstants.DataCutoffUtc;
     await db.SaveChangesAsync();
     return Results.Ok(post);
 }).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
@@ -587,7 +588,7 @@ app.MapPost("/api/admin/social/awareness-dates", async (HttpContext ctx, AppDbCo
         Recurrence = body.TryGetProperty("recurrence", out var r) ? r.GetString() : null,
         PillarEmphasis = body.TryGetProperty("pillarEmphasis", out var pe) ? pe.GetString() : null,
         Description = body.TryGetProperty("description", out var d) ? d.GetString() : null,
-        CreatedAt = DateTime.UtcNow
+        CreatedAt = AppConstants.DataCutoffUtc
     };
     db.AwarenessDates.Add(date);
     await db.SaveChangesAsync();
@@ -638,7 +639,7 @@ app.MapPost("/api/admin/social/cta", async (HttpContext ctx, AppDbContext db) =>
         CurrentAmount = body.TryGetProperty("currentAmount", out var ca) ? ca.GetDecimal() : null,
         Url = body.TryGetProperty("url", out var u) ? u.GetString() : null,
         Priority = body.TryGetProperty("priority", out var p) ? p.GetInt32() : 0,
-        CreatedAt = DateTime.UtcNow
+        CreatedAt = AppConstants.DataCutoffUtc
     };
     db.CtaConfigs.Add(cta);
     await db.SaveChangesAsync();
@@ -658,7 +659,7 @@ app.MapPut("/api/admin/social/cta/{id}", async (int id, HttpContext ctx, AppDbCo
     if (body.TryGetProperty("url", out var u)) cta.Url = u.GetString();
     if (body.TryGetProperty("priority", out var p)) cta.Priority = p.GetInt32();
     if (body.TryGetProperty("isActive", out var ia)) cta.IsActive = ia.GetBoolean();
-    cta.UpdatedAt = DateTime.UtcNow;
+    cta.UpdatedAt = AppConstants.DataCutoffUtc;
     await db.SaveChangesAsync();
     return Results.Ok(cta);
 }).RequireAuthorization(p => p.RequireRole("Admin"));
@@ -690,7 +691,7 @@ app.MapPost("/api/admin/social/graphic-templates", async (HttpContext ctx, AppDb
         TextColor = body.TryGetProperty("textColor", out var tc) ? tc.GetString() : null,
         TextPosition = body.TryGetProperty("textPosition", out var tp) ? tp.GetString() : null,
         SuitableFor = body.TryGetProperty("suitableFor", out var sf) ? sf.GetString() : null,
-        CreatedAt = DateTime.UtcNow
+        CreatedAt = AppConstants.DataCutoffUtc
     };
     db.GraphicTemplates.Add(template);
     await db.SaveChangesAsync();
@@ -740,7 +741,7 @@ app.MapPost("/api/admin/social/milestone-rules", async (HttpContext ctx, AppDbCo
         ThresholdValue = body.TryGetProperty("thresholdValue", out var tv) ? tv.GetDecimal() : null,
         CooldownDays = body.TryGetProperty("cooldownDays", out var cd) ? cd.GetInt32() : 7,
         PostTemplate = body.TryGetProperty("postTemplate", out var pt) ? pt.GetString() : null,
-        CreatedAt = DateTime.UtcNow
+        CreatedAt = AppConstants.DataCutoffUtc
     };
     db.MilestoneRules.Add(rule);
     await db.SaveChangesAsync();
@@ -760,7 +761,7 @@ app.MapPut("/api/admin/social/milestone-rules/{id}", async (int id, HttpContext 
     if (body.TryGetProperty("cooldownDays", out var cd)) rule.CooldownDays = cd.GetInt32();
     if (body.TryGetProperty("postTemplate", out var pt)) rule.PostTemplate = pt.GetString();
     if (body.TryGetProperty("isActive", out var ia)) rule.IsActive = ia.GetBoolean();
-    rule.UpdatedAt = DateTime.UtcNow;
+    rule.UpdatedAt = AppConstants.DataCutoffUtc;
     await db.SaveChangesAsync();
     return Results.Ok(rule);
 }).RequireAuthorization(p => p.RequireRole("Admin"));
@@ -798,7 +799,7 @@ app.MapPost("/api/admin/social/media", async (HttpContext ctx, AppDbContext db, 
         ActivityType = body.TryGetProperty("activityType", out var at2) ? at2.GetString() : null,
         ConsentConfirmed = true,
         UploadedBy = user?.Email,
-        UploadedAt = DateTime.UtcNow
+        UploadedAt = AppConstants.DataCutoffUtc
     };
     db.MediaLibraryItems.Add(item);
     await db.SaveChangesAsync();
@@ -928,7 +929,7 @@ app.MapPost("/api/social/media/upload", async (HttpContext ctx, AppDbContext db,
         ActivityType = activityType,
         ConsentConfirmed = true,
         UploadedBy = user?.Email,
-        UploadedAt = DateTime.UtcNow
+        UploadedAt = AppConstants.DataCutoffUtc
     };
     db.MediaLibraryItems.Add(item);
     await db.SaveChangesAsync();
@@ -979,7 +980,7 @@ app.MapPost("/api/admin/social/fact-candidates", async (HttpContext ctx, AppDbCo
         Category = body.TryGetProperty("category", out var c) ? c.GetString() : null,
         SearchQuery = body.TryGetProperty("searchQuery", out var sq) ? sq.GetString() : null,
         Status = "pending",
-        CreatedAt = DateTime.UtcNow
+        CreatedAt = AppConstants.DataCutoffUtc
     };
     db.ContentFactCandidates.Add(candidate);
     await db.SaveChangesAsync();
@@ -995,7 +996,7 @@ app.MapPatch("/api/admin/social/fact-candidates/{id}/approve", async (int id, Ht
     string? pillar = body.ValueKind != JsonValueKind.Undefined && body.TryGetProperty("pillar", out var p) ? p.GetString() : "the_problem";
     candidate.Status = "approved";
     candidate.ReviewedBy = user?.Email;
-    candidate.ReviewedAt = DateTime.UtcNow;
+    candidate.ReviewedAt = AppConstants.DataCutoffUtc;
     // Create a new content fact from the approved candidate
     var fact = new backend.Models.SocialMedia.ContentFact
     {
@@ -1005,7 +1006,7 @@ app.MapPatch("/api/admin/social/fact-candidates/{id}/approve", async (int id, Ht
         Category = candidate.Category,
         Pillar = pillar,
         AddedBy = user?.Email,
-        AddedAt = DateTime.UtcNow
+        AddedAt = AppConstants.DataCutoffUtc
     };
     db.ContentFacts.Add(fact);
     await db.SaveChangesAsync();
@@ -1019,7 +1020,7 @@ app.MapPatch("/api/admin/social/fact-candidates/{id}/reject", async (int id, Htt
     var user = await userManager.GetUserAsync(ctx.User);
     candidate.Status = "rejected";
     candidate.ReviewedBy = user?.Email;
-    candidate.ReviewedAt = DateTime.UtcNow;
+    candidate.ReviewedAt = AppConstants.DataCutoffUtc;
     await db.SaveChangesAsync();
     return Results.Ok(candidate);
 }).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
@@ -1063,7 +1064,7 @@ app.MapPost("/api/admin/social/research-refresh", async (HttpContext ctx, AppDbC
                 Category = c.TryGetProperty("category", out var cat) ? cat.GetString() : null,
                 SearchQuery = "research_refresh",
                 Status = "pending",
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = AppConstants.DataCutoffUtc
             };
             db.ContentFactCandidates.Add(candidate);
             saved++;
@@ -1199,7 +1200,7 @@ app.MapPost("/api/admin/social/generate", async (HttpContext ctx, AppDbContext d
                 FactId = factId,
                 TalkingPointId = tpId,
                 ScheduledAt = scheduledAt,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = AppConstants.DataCutoffUtc
             };
             db.AutomatedPosts.Add(post);
             await db.SaveChangesAsync();
