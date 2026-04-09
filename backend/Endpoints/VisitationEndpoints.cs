@@ -51,7 +51,7 @@ public static class VisitationEndpoints
                     v.ResidentId,
                     residentCode = db.Residents
                         .Where(r => r.ResidentId == v.ResidentId)
-                        .Select(r => r.FirstName != null && r.LastName != null ? r.FirstName + " " + r.LastName.Substring(0, 1) + "." : r.InternalCode)
+                        .Select(r => r.InternalCode)
                         .FirstOrDefault(),
                     v.VisitDate,
                     v.SocialWorker,
@@ -77,7 +77,7 @@ public static class VisitationEndpoints
                     v.ResidentId,
                     residentCode = db.Residents
                         .Where(r => r.ResidentId == v.ResidentId)
-                        .Select(r => r.FirstName != null && r.LastName != null ? r.FirstName + " " + r.LastName.Substring(0, 1) + "." : r.InternalCode)
+                        .Select(r => r.InternalCode)
                         .FirstOrDefault(),
                     v.VisitDate,
                     v.SocialWorker,
@@ -221,7 +221,7 @@ public static class VisitationEndpoints
                     p.ResidentId,
                     residentCode = db.Residents
                         .Where(r => r.ResidentId == p.ResidentId)
-                        .Select(r => r.FirstName != null && r.LastName != null ? r.FirstName + " " + r.LastName.Substring(0, 1) + "." : r.InternalCode)
+                        .Select(r => r.InternalCode)
                         .FirstOrDefault(),
                     p.PlanCategory,
                     p.PlanDescription,
@@ -240,7 +240,7 @@ public static class VisitationEndpoints
                     p.ResidentId,
                     residentCode = db.Residents
                         .Where(r => r.ResidentId == p.ResidentId)
-                        .Select(r => r.FirstName != null && r.LastName != null ? r.FirstName + " " + r.LastName.Substring(0, 1) + "." : r.InternalCode)
+                        .Select(r => r.InternalCode)
                         .FirstOrDefault(),
                     p.PlanCategory,
                     p.PlanDescription,
