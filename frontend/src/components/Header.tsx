@@ -121,7 +121,7 @@ export default function Header() {
         <div className={styles.actions}>
           {isAuthenticated && user ? (
             <>
-              <Link to={user.roles?.includes('Admin') || user.roles?.includes('Staff') ? '/admin' : '/donor'} className={styles.loginBtn} aria-label={user.roles?.includes('Admin') || user.roles?.includes('Staff') ? 'Dashboard' : user.firstName}>
+              <Link to={user.roles?.includes('Admin') || user.roles?.includes('Staff') ? '/admin/dashboard' : '/donor'} className={styles.loginBtn} aria-label={user.roles?.includes('Admin') || user.roles?.includes('Staff') ? 'Dashboard' : user.firstName}>
                 <User size={16} aria-hidden="true" />
                 <span>{user.roles?.includes('Admin') || user.roles?.includes('Staff') ? 'Dashboard' : user.firstName}</span>
               </Link>
