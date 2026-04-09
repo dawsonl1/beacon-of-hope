@@ -6,6 +6,11 @@ import { APP_TODAY_STR } from '../../constants';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './VisitationFormPage.module.css';
 
+interface ResidentOption {
+  residentId: number;
+  internalCode: string | null;
+}
+
 interface FormData {
   residentId: number | '';
   recordDate: string;
@@ -38,18 +43,18 @@ export default function HealthRecordFormPage() {
   const residentId = params.get('residentId');
 
   const [form, setForm] = useState<FormData>({ ...emptyForm, residentId: residentId ? Number(residentId) : '' });
-  const [residents, setResidents] = useState<{ residentId: number; internalCode: string }[]>([]);
+  const [residents, setResidents] = useState<ResidentOption[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    apiFetch<any>('/api/admin/residents-list')
+    apiFetch<ResidentOption[] | { items: ResidentOption[] }>('/api/admin/residents-list')
       .then(data => setResidents(Array.isArray(data) ? data : data.items || []))
       .catch(() => {});
   }, []);
 
-  function handleChange(field: keyof FormData, value: any) {
-    setForm(prev => ({ ...prev, [field]: value }));
+  function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
+    setForm(prev => ({ ...prev, [key]: value }));
   }
 
   // Auto-calculate BMI
@@ -64,7 +69,7 @@ export default function HealthRecordFormPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.residentId) { setError('Resident is required.'); return; }
+    if (!form.residentId) { setError('Please select a resident.'); return; }
     setError('');
     setSaving(true);
     try {
@@ -97,78 +102,203 @@ export default function HealthRecordFormPage() {
   return (
     <div className={styles.page}>
       <Link to={residentId ? `/admin/caseload/${residentId}` : '/admin/caseload'} className={styles.backLink}>
-        <ArrowLeft size={16} /> Back
+        <ArrowLeft size={15} />
+        Back
       </Link>
+
       <h1 className={styles.title}>Input Health Record</h1>
 
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.grid}>
-          <label className={styles.label}>
-            Resident *
-            <select className={styles.select} value={form.residentId} onChange={e => handleChange('residentId', e.target.value ? Number(e.target.value) : '')} required>
-              <option value="">Select resident</option>
-              {residents.map(r => <option key={r.residentId} value={r.residentId}>{r.internalCode}</option>)}
-            </select>
-          </label>
-          <label className={styles.label}>
-            Record Date
-            <input type="date" className={styles.input} value={form.recordDate} onChange={e => handleChange('recordDate', e.target.value)} />
-          </label>
-          <label className={styles.label}>
-            Weight (kg)
-            <input type="number" step="0.1" className={styles.input} value={form.weightKg} onChange={e => handleChange('weightKg', e.target.value)} placeholder="kg" />
-          </label>
-          <label className={styles.label}>
-            Height (cm)
-            <input type="number" step="0.1" className={styles.input} value={form.heightCm} onChange={e => handleChange('heightCm', e.target.value)} placeholder="cm" />
-          </label>
-          <label className={styles.label}>
-            BMI (auto-calculated)
-            <input type="number" step="0.1" className={styles.input} value={form.bmi} readOnly style={{ background: '#f5f5f5' }} />
-          </label>
-          <label className={styles.label}>
-            Nutrition Score (1-10)
-            <input type="number" min="1" max="10" step="0.1" className={styles.input} value={form.nutritionScore} onChange={e => handleChange('nutritionScore', e.target.value)} />
-          </label>
-          <label className={styles.label}>
-            Sleep Quality (1-10)
-            <input type="number" min="1" max="10" step="0.1" className={styles.input} value={form.sleepQualityScore} onChange={e => handleChange('sleepQualityScore', e.target.value)} />
-          </label>
-          <label className={styles.label}>
-            Energy Level (1-10)
-            <input type="number" min="1" max="10" step="0.1" className={styles.input} value={form.energyLevelScore} onChange={e => handleChange('energyLevelScore', e.target.value)} />
-          </label>
-          <label className={styles.label}>
-            General Health (1-10)
-            <input type="number" min="1" max="10" step="0.1" className={styles.input} value={form.generalHealthScore} onChange={e => handleChange('generalHealthScore', e.target.value)} />
-          </label>
+      {error && <div className={styles.error}>{error}</div>}
+
+      <form onSubmit={handleSubmit}>
+        {/* ── Record Details ──────────────────────────── */}
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Record Details</h2>
+          <div className={styles.fieldGrid}>
+            <div className={styles.field}>
+              <label className={styles.label}>
+                Resident <span className={styles.required}>*</span>
+              </label>
+              <select
+                className={styles.select}
+                value={form.residentId}
+                onChange={e => updateField('residentId', e.target.value ? Number(e.target.value) : '')}
+                required
+              >
+                <option value="">Select resident...</option>
+                {residents.map(r => (
+                  <option key={r.residentId} value={r.residentId}>
+                    {r.internalCode ?? `#${r.residentId}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Record Date</label>
+              <input
+                type="date"
+                className={styles.input}
+                value={form.recordDate}
+                onChange={e => updateField('recordDate', e.target.value)}
+              />
+            </div>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '2rem', marginTop: '0.75rem' }}>
-          <label className={styles.checkLabel}>
-            <input type="checkbox" checked={form.medicalCheckupDone} onChange={e => handleChange('medicalCheckupDone', e.target.checked)} />
-            Medical Checkup Done
-          </label>
-          <label className={styles.checkLabel}>
-            <input type="checkbox" checked={form.dentalCheckupDone} onChange={e => handleChange('dentalCheckupDone', e.target.checked)} />
-            Dental Checkup Done
-          </label>
-          <label className={styles.checkLabel}>
-            <input type="checkbox" checked={form.psychologicalCheckupDone} onChange={e => handleChange('psychologicalCheckupDone', e.target.checked)} />
-            Psychological Checkup Done
-          </label>
+        {/* ── Physical Measurements ──────────────────── */}
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Physical Measurements</h2>
+          <div className={styles.fieldGrid}>
+            <div className={styles.field}>
+              <label className={styles.label}>Weight (kg)</label>
+              <input
+                type="number"
+                step="0.1"
+                className={styles.input}
+                value={form.weightKg}
+                onChange={e => updateField('weightKg', e.target.value)}
+                placeholder="kg"
+              />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Height (cm)</label>
+              <input
+                type="number"
+                step="0.1"
+                className={styles.input}
+                value={form.heightCm}
+                onChange={e => updateField('heightCm', e.target.value)}
+                placeholder="cm"
+              />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>BMI (auto-calculated)</label>
+              <input
+                type="number"
+                step="0.1"
+                className={styles.input}
+                value={form.bmi}
+                readOnly
+                style={{ background: '#f5f5f5' }}
+              />
+            </div>
+          </div>
         </div>
 
-        <label className={styles.label} style={{ marginTop: '0.75rem' }}>
-          Notes
-          <textarea className={styles.textarea} rows={3} value={form.notes} onChange={e => handleChange('notes', e.target.value)} placeholder="Additional notes..." />
-        </label>
+        {/* ── Wellness Scores ────────────────────────── */}
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Wellness Scores</h2>
+          <div className={styles.fieldGrid}>
+            <div className={styles.field}>
+              <label className={styles.label}>Nutrition (1–10)</label>
+              <input
+                type="number"
+                min="1" max="10" step="0.1"
+                className={styles.input}
+                value={form.nutritionScore}
+                onChange={e => updateField('nutritionScore', e.target.value)}
+                placeholder="1 – 10"
+              />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Sleep Quality (1–10)</label>
+              <input
+                type="number"
+                min="1" max="10" step="0.1"
+                className={styles.input}
+                value={form.sleepQualityScore}
+                onChange={e => updateField('sleepQualityScore', e.target.value)}
+                placeholder="1 – 10"
+              />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Energy Level (1–10)</label>
+              <input
+                type="number"
+                min="1" max="10" step="0.1"
+                className={styles.input}
+                value={form.energyLevelScore}
+                onChange={e => updateField('energyLevelScore', e.target.value)}
+                placeholder="1 – 10"
+              />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>General Health (1–10)</label>
+              <input
+                type="number"
+                min="1" max="10" step="0.1"
+                className={styles.input}
+                value={form.generalHealthScore}
+                onChange={e => updateField('generalHealthScore', e.target.value)}
+                placeholder="1 – 10"
+              />
+            </div>
+          </div>
+        </div>
 
-        {error && <p className={styles.error} role="alert">{error}</p>}
+        {/* ── Checkups ───────────────────────────────── */}
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Checkups Completed</h2>
 
+          <div className={styles.toggleRow}>
+            <button
+              type="button"
+              className={`${styles.toggle} ${form.medicalCheckupDone ? styles.toggleActive : ''}`}
+              onClick={() => updateField('medicalCheckupDone', !form.medicalCheckupDone)}
+            />
+            <div>
+              <div className={styles.toggleLabel}>Medical Checkup</div>
+              <div className={styles.toggleSub}>General medical examination completed</div>
+            </div>
+          </div>
+
+          <div className={styles.toggleRow}>
+            <button
+              type="button"
+              className={`${styles.toggle} ${form.dentalCheckupDone ? styles.toggleActive : ''}`}
+              onClick={() => updateField('dentalCheckupDone', !form.dentalCheckupDone)}
+            />
+            <div>
+              <div className={styles.toggleLabel}>Dental Checkup</div>
+              <div className={styles.toggleSub}>Dental examination completed</div>
+            </div>
+          </div>
+
+          <div className={styles.toggleRow}>
+            <button
+              type="button"
+              className={`${styles.toggle} ${form.psychologicalCheckupDone ? styles.toggleActive : ''}`}
+              onClick={() => updateField('psychologicalCheckupDone', !form.psychologicalCheckupDone)}
+            />
+            <div>
+              <div className={styles.toggleLabel}>Psychological Checkup</div>
+              <div className={styles.toggleSub}>Psychological assessment completed</div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Notes ───────────────────────────────────── */}
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Notes</h2>
+          <div className={styles.fieldGrid}>
+            <div className={`${styles.field} ${styles.fieldFull}`}>
+              <label className={styles.label}>Additional Notes</label>
+              <textarea
+                className={styles.textarea}
+                value={form.notes}
+                onChange={e => updateField('notes', e.target.value)}
+                placeholder="Any additional notes about the health record..."
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* ── Actions ────────────────────────────────── */}
         <div className={styles.actions}>
-          <button type="button" className={styles.cancelBtn} onClick={() => navigate(-1)}>Cancel</button>
-          <button type="submit" className={styles.saveBtn} disabled={saving}>
+          <button type="button" className={styles.cancelBtn} onClick={() => navigate(-1)}>
+            Cancel
+          </button>
+          <button type="submit" className={styles.submitBtn} disabled={saving}>
             {saving ? 'Saving...' : 'Save Health Record'}
           </button>
         </div>
