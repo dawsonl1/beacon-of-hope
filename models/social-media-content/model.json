@@ -1,0 +1,675 @@
+{
+  "model_name": "social-media-content",
+  "runs": [
+    {
+      "model_name": "social-media-content",
+      "model_version": "20260408",
+      "trained_at_utc": "2026-04-08T22:45:07.111046+00:00",
+      "features": [
+        "features_resident_story",
+        "boost_budget_php",
+        "caption_length",
+        "post_hour",
+        "platform_Twitter",
+        "platform_WhatsApp",
+        "post_type_FundraisingAppeal",
+        "sentiment_tone_Celebratory",
+        "sentiment_tone_Emotional",
+        "sentiment_tone_Urgent"
+      ],
+      "num_training_rows": 649,
+      "num_test_rows": 163,
+      "training_date": "20260408",
+      "model_type": "OLS Multiple Linear Regression (explanatory)",
+      "feature_list": [
+        "features_resident_story",
+        "boost_budget_php",
+        "caption_length",
+        "post_hour",
+        "platform_Twitter",
+        "platform_WhatsApp",
+        "post_type_FundraisingAppeal",
+        "sentiment_tone_Celebratory",
+        "sentiment_tone_Emotional",
+        "sentiment_tone_Urgent"
+      ],
+      "train_rows": 649,
+      "test_rows": 163,
+      "total_rows": 812,
+      "adjusted_r2_train": 0.2902846696929222,
+      "r2_test": 0.2531265542183586,
+      "adjusted_r2_test": 0.20399014331167165,
+      "mae_test": 15.768322310289742,
+      "rmse_test": 28.930926661016244,
+      "n_observations": 812,
+      "ols_coefficients": [
+        {
+          "feature": "features_resident_story",
+          "coefficient": 36.16475594054643,
+          "std_error": 2.6182721658354744,
+          "t_stat": 13.812450979100745,
+          "p_value": 3.724819960768299e-38,
+          "ci_lower": 31.023283108253025,
+          "ci_upper": 41.30622877283983
+        },
+        {
+          "feature": "sentiment_tone_Urgent",
+          "coefficient": 9.708518931262605,
+          "std_error": 2.9941965208672214,
+          "t_stat": 3.2424454652865227,
+          "p_value": 0.001246841968252782,
+          "ci_lower": 3.828847494708975,
+          "ci_upper": 15.588190367816235
+        },
+        {
+          "feature": "platform_WhatsApp",
+          "coefficient": 7.593141340613645,
+          "std_error": 3.180638046582189,
+          "t_stat": 2.387301299112922,
+          "p_value": 0.01726275765162887,
+          "ci_lower": 1.3473566894817441,
+          "ci_upper": 13.838925991745546
+        },
+        {
+          "feature": "post_type_FundraisingAppeal",
+          "coefficient": 7.570318338680794,
+          "std_error": 3.4514880460164847,
+          "t_stat": 2.1933491403564425,
+          "p_value": 0.028642362408876396,
+          "ci_lower": 0.792668462883162,
+          "ci_upper": 14.347968214478426
+        },
+        {
+          "feature": "sentiment_tone_Emotional",
+          "coefficient": 6.873032176425079,
+          "std_error": 2.859645472085003,
+          "t_stat": 2.4034560380010555,
+          "p_value": 0.016525259030589868,
+          "ci_lower": 1.2575771841728436,
+          "ci_upper": 12.488487168677315
+        },
+        {
+          "feature": "sentiment_tone_Celebratory",
+          "coefficient": 6.004852758582418,
+          "std_error": 3.013445081882217,
+          "t_stat": 1.9926869730215055,
+          "p_value": 0.0467213194040802,
+          "ci_lower": 0.08738313022478117,
+          "ci_upper": 11.922322386940055
+        },
+        {
+          "feature": "post_hour",
+          "coefficient": 0.5619963067277702,
+          "std_error": 0.16041004373742113,
+          "t_stat": 3.5034982450831746,
+          "p_value": 0.000491297611928718,
+          "ci_lower": 0.24700083274129236,
+          "ci_upper": 0.8769917807142481
+        },
+        {
+          "feature": "caption_length",
+          "coefficient": 0.13504338347306943,
+          "std_error": 0.03733189576992502,
+          "t_stat": 3.617372777030569,
+          "p_value": 0.0003211419294138701,
+          "ci_lower": 0.061735142113129915,
+          "ci_upper": 0.20835162483300895
+        },
+        {
+          "feature": "boost_budget_php",
+          "coefficient": 0.004890800882492204,
+          "std_error": 0.0009878992152864356,
+          "t_stat": 4.950708338273298,
+          "p_value": 9.476407143012119e-07,
+          "ci_lower": 0.0029508738410196377,
+          "ci_upper": 0.006830727923964771
+        },
+        {
+          "feature": "platform_Twitter",
+          "coefficient": -8.079814452593316,
+          "std_error": 3.018937065207895,
+          "t_stat": -2.6763772407547393,
+          "p_value": 0.0076334730223490185,
+          "ci_lower": -14.008068629414947,
+          "ci_upper": -2.1515602757716854
+        }
+      ]
+    },
+    {
+      "model_name": "social-media-content",
+      "model_version": "20260408",
+      "trained_at_utc": "2026-04-08T23:29:13.845043+00:00",
+      "features": [
+        "features_resident_story",
+        "boost_budget_php",
+        "caption_length",
+        "post_hour",
+        "platform_Twitter",
+        "platform_WhatsApp",
+        "post_type_FundraisingAppeal",
+        "sentiment_tone_Celebratory",
+        "sentiment_tone_Emotional",
+        "sentiment_tone_Urgent"
+      ],
+      "num_training_rows": 649,
+      "num_test_rows": 163,
+      "training_date": "20260408",
+      "model_type": "OLS Multiple Linear Regression (explanatory)",
+      "feature_list": [
+        "features_resident_story",
+        "boost_budget_php",
+        "caption_length",
+        "post_hour",
+        "platform_Twitter",
+        "platform_WhatsApp",
+        "post_type_FundraisingAppeal",
+        "sentiment_tone_Celebratory",
+        "sentiment_tone_Emotional",
+        "sentiment_tone_Urgent"
+      ],
+      "train_rows": 649,
+      "test_rows": 163,
+      "total_rows": 812,
+      "adjusted_r2_train": 0.2902846696929222,
+      "r2_test": 0.2531265542183586,
+      "adjusted_r2_test": 0.20399014331167165,
+      "mae_test": 15.768322310289742,
+      "rmse_test": 28.930926661016244,
+      "n_observations": 812,
+      "ols_coefficients": [
+        {
+          "feature": "features_resident_story",
+          "coefficient": 36.16475594054643,
+          "std_error": 2.6182721658354744,
+          "t_stat": 13.812450979100745,
+          "p_value": 3.724819960768299e-38,
+          "ci_lower": 31.023283108253025,
+          "ci_upper": 41.30622877283983
+        },
+        {
+          "feature": "sentiment_tone_Urgent",
+          "coefficient": 9.708518931262605,
+          "std_error": 2.9941965208672214,
+          "t_stat": 3.2424454652865227,
+          "p_value": 0.001246841968252782,
+          "ci_lower": 3.828847494708975,
+          "ci_upper": 15.588190367816235
+        },
+        {
+          "feature": "platform_WhatsApp",
+          "coefficient": 7.593141340613645,
+          "std_error": 3.180638046582189,
+          "t_stat": 2.387301299112922,
+          "p_value": 0.01726275765162887,
+          "ci_lower": 1.3473566894817441,
+          "ci_upper": 13.838925991745546
+        },
+        {
+          "feature": "post_type_FundraisingAppeal",
+          "coefficient": 7.570318338680794,
+          "std_error": 3.4514880460164847,
+          "t_stat": 2.1933491403564425,
+          "p_value": 0.028642362408876396,
+          "ci_lower": 0.792668462883162,
+          "ci_upper": 14.347968214478426
+        },
+        {
+          "feature": "sentiment_tone_Emotional",
+          "coefficient": 6.873032176425079,
+          "std_error": 2.859645472085003,
+          "t_stat": 2.4034560380010555,
+          "p_value": 0.016525259030589868,
+          "ci_lower": 1.2575771841728436,
+          "ci_upper": 12.488487168677315
+        },
+        {
+          "feature": "sentiment_tone_Celebratory",
+          "coefficient": 6.004852758582418,
+          "std_error": 3.013445081882217,
+          "t_stat": 1.9926869730215055,
+          "p_value": 0.0467213194040802,
+          "ci_lower": 0.08738313022478117,
+          "ci_upper": 11.922322386940055
+        },
+        {
+          "feature": "post_hour",
+          "coefficient": 0.5619963067277702,
+          "std_error": 0.16041004373742113,
+          "t_stat": 3.5034982450831746,
+          "p_value": 0.000491297611928718,
+          "ci_lower": 0.24700083274129236,
+          "ci_upper": 0.8769917807142481
+        },
+        {
+          "feature": "caption_length",
+          "coefficient": 0.13504338347306943,
+          "std_error": 0.03733189576992502,
+          "t_stat": 3.617372777030569,
+          "p_value": 0.0003211419294138701,
+          "ci_lower": 0.061735142113129915,
+          "ci_upper": 0.20835162483300895
+        },
+        {
+          "feature": "boost_budget_php",
+          "coefficient": 0.004890800882492204,
+          "std_error": 0.0009878992152864356,
+          "t_stat": 4.950708338273298,
+          "p_value": 9.476407143012119e-07,
+          "ci_lower": 0.0029508738410196377,
+          "ci_upper": 0.006830727923964771
+        },
+        {
+          "feature": "platform_Twitter",
+          "coefficient": -8.079814452593316,
+          "std_error": 3.018937065207895,
+          "t_stat": -2.6763772407547393,
+          "p_value": 0.0076334730223490185,
+          "ci_lower": -14.008068629414947,
+          "ci_upper": -2.1515602757716854
+        }
+      ]
+    },
+    {
+      "model_name": "social-media-content",
+      "model_version": "20260408",
+      "trained_at_utc": "2026-04-08T23:29:47.854642+00:00",
+      "features": [
+        "features_resident_story",
+        "boost_budget_php",
+        "caption_length",
+        "post_hour",
+        "platform_Twitter",
+        "platform_WhatsApp",
+        "post_type_FundraisingAppeal",
+        "sentiment_tone_Celebratory",
+        "sentiment_tone_Emotional",
+        "sentiment_tone_Urgent"
+      ],
+      "num_training_rows": 649,
+      "num_test_rows": 163,
+      "training_date": "20260408",
+      "model_type": "OLS Multiple Linear Regression (explanatory)",
+      "feature_list": [
+        "features_resident_story",
+        "boost_budget_php",
+        "caption_length",
+        "post_hour",
+        "platform_Twitter",
+        "platform_WhatsApp",
+        "post_type_FundraisingAppeal",
+        "sentiment_tone_Celebratory",
+        "sentiment_tone_Emotional",
+        "sentiment_tone_Urgent"
+      ],
+      "train_rows": 649,
+      "test_rows": 163,
+      "total_rows": 812,
+      "adjusted_r2_train": 0.2902846696929222,
+      "r2_test": 0.2531265542183586,
+      "adjusted_r2_test": 0.20399014331167165,
+      "mae_test": 15.768322310289742,
+      "rmse_test": 28.930926661016244,
+      "n_observations": 812,
+      "ols_coefficients": [
+        {
+          "feature": "features_resident_story",
+          "coefficient": 36.16475594054643,
+          "std_error": 2.6182721658354744,
+          "t_stat": 13.812450979100745,
+          "p_value": 3.724819960768299e-38,
+          "ci_lower": 31.023283108253025,
+          "ci_upper": 41.30622877283983
+        },
+        {
+          "feature": "sentiment_tone_Urgent",
+          "coefficient": 9.708518931262605,
+          "std_error": 2.9941965208672214,
+          "t_stat": 3.2424454652865227,
+          "p_value": 0.001246841968252782,
+          "ci_lower": 3.828847494708975,
+          "ci_upper": 15.588190367816235
+        },
+        {
+          "feature": "platform_WhatsApp",
+          "coefficient": 7.593141340613645,
+          "std_error": 3.180638046582189,
+          "t_stat": 2.387301299112922,
+          "p_value": 0.01726275765162887,
+          "ci_lower": 1.3473566894817441,
+          "ci_upper": 13.838925991745546
+        },
+        {
+          "feature": "post_type_FundraisingAppeal",
+          "coefficient": 7.570318338680794,
+          "std_error": 3.4514880460164847,
+          "t_stat": 2.1933491403564425,
+          "p_value": 0.028642362408876396,
+          "ci_lower": 0.792668462883162,
+          "ci_upper": 14.347968214478426
+        },
+        {
+          "feature": "sentiment_tone_Emotional",
+          "coefficient": 6.873032176425079,
+          "std_error": 2.859645472085003,
+          "t_stat": 2.4034560380010555,
+          "p_value": 0.016525259030589868,
+          "ci_lower": 1.2575771841728436,
+          "ci_upper": 12.488487168677315
+        },
+        {
+          "feature": "sentiment_tone_Celebratory",
+          "coefficient": 6.004852758582418,
+          "std_error": 3.013445081882217,
+          "t_stat": 1.9926869730215055,
+          "p_value": 0.0467213194040802,
+          "ci_lower": 0.08738313022478117,
+          "ci_upper": 11.922322386940055
+        },
+        {
+          "feature": "post_hour",
+          "coefficient": 0.5619963067277702,
+          "std_error": 0.16041004373742113,
+          "t_stat": 3.5034982450831746,
+          "p_value": 0.000491297611928718,
+          "ci_lower": 0.24700083274129236,
+          "ci_upper": 0.8769917807142481
+        },
+        {
+          "feature": "caption_length",
+          "coefficient": 0.13504338347306943,
+          "std_error": 0.03733189576992502,
+          "t_stat": 3.617372777030569,
+          "p_value": 0.0003211419294138701,
+          "ci_lower": 0.061735142113129915,
+          "ci_upper": 0.20835162483300895
+        },
+        {
+          "feature": "boost_budget_php",
+          "coefficient": 0.004890800882492204,
+          "std_error": 0.0009878992152864356,
+          "t_stat": 4.950708338273298,
+          "p_value": 9.476407143012119e-07,
+          "ci_lower": 0.0029508738410196377,
+          "ci_upper": 0.006830727923964771
+        },
+        {
+          "feature": "platform_Twitter",
+          "coefficient": -8.079814452593316,
+          "std_error": 3.018937065207895,
+          "t_stat": -2.6763772407547393,
+          "p_value": 0.0076334730223490185,
+          "ci_lower": -14.008068629414947,
+          "ci_upper": -2.1515602757716854
+        }
+      ]
+    },
+    {
+      "model_name": "social-media-content",
+      "model_version": "20260408",
+      "trained_at_utc": "2026-04-08T23:45:49.048905+00:00",
+      "features": [
+        "features_resident_story",
+        "boost_budget_php",
+        "caption_length",
+        "post_hour",
+        "platform_Twitter",
+        "platform_WhatsApp",
+        "post_type_FundraisingAppeal",
+        "sentiment_tone_Celebratory",
+        "sentiment_tone_Emotional",
+        "sentiment_tone_Urgent"
+      ],
+      "num_training_rows": 649,
+      "num_test_rows": 163,
+      "training_date": "20260408",
+      "model_type": "OLS Multiple Linear Regression (explanatory)",
+      "feature_list": [
+        "features_resident_story",
+        "boost_budget_php",
+        "caption_length",
+        "post_hour",
+        "platform_Twitter",
+        "platform_WhatsApp",
+        "post_type_FundraisingAppeal",
+        "sentiment_tone_Celebratory",
+        "sentiment_tone_Emotional",
+        "sentiment_tone_Urgent"
+      ],
+      "train_rows": 649,
+      "test_rows": 163,
+      "total_rows": 812,
+      "adjusted_r2_train": 0.2902846696929222,
+      "r2_test": 0.2531265542183586,
+      "adjusted_r2_test": 0.20399014331167165,
+      "mae_test": 15.768322310289742,
+      "rmse_test": 28.930926661016244,
+      "n_observations": 812,
+      "ols_coefficients": [
+        {
+          "feature": "features_resident_story",
+          "coefficient": 36.16475594054643,
+          "std_error": 2.6182721658354744,
+          "t_stat": 13.812450979100745,
+          "p_value": 3.724819960768299e-38,
+          "ci_lower": 31.023283108253025,
+          "ci_upper": 41.30622877283983
+        },
+        {
+          "feature": "sentiment_tone_Urgent",
+          "coefficient": 9.708518931262605,
+          "std_error": 2.9941965208672214,
+          "t_stat": 3.2424454652865227,
+          "p_value": 0.001246841968252782,
+          "ci_lower": 3.828847494708975,
+          "ci_upper": 15.588190367816235
+        },
+        {
+          "feature": "platform_WhatsApp",
+          "coefficient": 7.593141340613645,
+          "std_error": 3.180638046582189,
+          "t_stat": 2.387301299112922,
+          "p_value": 0.01726275765162887,
+          "ci_lower": 1.3473566894817441,
+          "ci_upper": 13.838925991745546
+        },
+        {
+          "feature": "post_type_FundraisingAppeal",
+          "coefficient": 7.570318338680794,
+          "std_error": 3.4514880460164847,
+          "t_stat": 2.1933491403564425,
+          "p_value": 0.028642362408876396,
+          "ci_lower": 0.792668462883162,
+          "ci_upper": 14.347968214478426
+        },
+        {
+          "feature": "sentiment_tone_Emotional",
+          "coefficient": 6.873032176425079,
+          "std_error": 2.859645472085003,
+          "t_stat": 2.4034560380010555,
+          "p_value": 0.016525259030589868,
+          "ci_lower": 1.2575771841728436,
+          "ci_upper": 12.488487168677315
+        },
+        {
+          "feature": "sentiment_tone_Celebratory",
+          "coefficient": 6.004852758582418,
+          "std_error": 3.013445081882217,
+          "t_stat": 1.9926869730215055,
+          "p_value": 0.0467213194040802,
+          "ci_lower": 0.08738313022478117,
+          "ci_upper": 11.922322386940055
+        },
+        {
+          "feature": "post_hour",
+          "coefficient": 0.5619963067277702,
+          "std_error": 0.16041004373742113,
+          "t_stat": 3.5034982450831746,
+          "p_value": 0.000491297611928718,
+          "ci_lower": 0.24700083274129236,
+          "ci_upper": 0.8769917807142481
+        },
+        {
+          "feature": "caption_length",
+          "coefficient": 0.13504338347306943,
+          "std_error": 0.03733189576992502,
+          "t_stat": 3.617372777030569,
+          "p_value": 0.0003211419294138701,
+          "ci_lower": 0.061735142113129915,
+          "ci_upper": 0.20835162483300895
+        },
+        {
+          "feature": "boost_budget_php",
+          "coefficient": 0.004890800882492204,
+          "std_error": 0.0009878992152864356,
+          "t_stat": 4.950708338273298,
+          "p_value": 9.476407143012119e-07,
+          "ci_lower": 0.0029508738410196377,
+          "ci_upper": 0.006830727923964771
+        },
+        {
+          "feature": "platform_Twitter",
+          "coefficient": -8.079814452593316,
+          "std_error": 3.018937065207895,
+          "t_stat": -2.6763772407547393,
+          "p_value": 0.0076334730223490185,
+          "ci_lower": -14.008068629414947,
+          "ci_upper": -2.1515602757716854
+        }
+      ]
+    },
+    {
+      "model_name": "social-media-content",
+      "model_version": "20260409",
+      "trained_at_utc": "2026-04-09T00:11:07.752319+00:00",
+      "features": [
+        "features_resident_story",
+        "boost_budget_php",
+        "caption_length",
+        "post_hour",
+        "platform_Twitter",
+        "platform_WhatsApp",
+        "post_type_FundraisingAppeal",
+        "sentiment_tone_Celebratory",
+        "sentiment_tone_Emotional",
+        "sentiment_tone_Urgent"
+      ],
+      "num_training_rows": 649,
+      "num_test_rows": 163,
+      "training_date": "20260409",
+      "model_type": "OLS Multiple Linear Regression (explanatory)",
+      "feature_list": [
+        "features_resident_story",
+        "boost_budget_php",
+        "caption_length",
+        "post_hour",
+        "platform_Twitter",
+        "platform_WhatsApp",
+        "post_type_FundraisingAppeal",
+        "sentiment_tone_Celebratory",
+        "sentiment_tone_Emotional",
+        "sentiment_tone_Urgent"
+      ],
+      "train_rows": 649,
+      "test_rows": 163,
+      "total_rows": 812,
+      "adjusted_r2_train": 0.2902846696929222,
+      "r2_test": 0.2531265542183586,
+      "adjusted_r2_test": 0.20399014331167165,
+      "mae_test": 15.768322310289742,
+      "rmse_test": 28.930926661016244,
+      "n_observations": 812,
+      "ols_coefficients": [
+        {
+          "feature": "features_resident_story",
+          "coefficient": 36.16475594054643,
+          "std_error": 2.6182721658354744,
+          "t_stat": 13.812450979100745,
+          "p_value": 3.724819960768299e-38,
+          "ci_lower": 31.023283108253025,
+          "ci_upper": 41.30622877283983
+        },
+        {
+          "feature": "sentiment_tone_Urgent",
+          "coefficient": 9.708518931262605,
+          "std_error": 2.9941965208672214,
+          "t_stat": 3.2424454652865227,
+          "p_value": 0.001246841968252782,
+          "ci_lower": 3.828847494708975,
+          "ci_upper": 15.588190367816235
+        },
+        {
+          "feature": "platform_WhatsApp",
+          "coefficient": 7.593141340613645,
+          "std_error": 3.180638046582189,
+          "t_stat": 2.387301299112922,
+          "p_value": 0.01726275765162887,
+          "ci_lower": 1.3473566894817441,
+          "ci_upper": 13.838925991745546
+        },
+        {
+          "feature": "post_type_FundraisingAppeal",
+          "coefficient": 7.570318338680794,
+          "std_error": 3.4514880460164847,
+          "t_stat": 2.1933491403564425,
+          "p_value": 0.028642362408876396,
+          "ci_lower": 0.792668462883162,
+          "ci_upper": 14.347968214478426
+        },
+        {
+          "feature": "sentiment_tone_Emotional",
+          "coefficient": 6.873032176425079,
+          "std_error": 2.859645472085003,
+          "t_stat": 2.4034560380010555,
+          "p_value": 0.016525259030589868,
+          "ci_lower": 1.2575771841728436,
+          "ci_upper": 12.488487168677315
+        },
+        {
+          "feature": "sentiment_tone_Celebratory",
+          "coefficient": 6.004852758582418,
+          "std_error": 3.013445081882217,
+          "t_stat": 1.9926869730215055,
+          "p_value": 0.0467213194040802,
+          "ci_lower": 0.08738313022478117,
+          "ci_upper": 11.922322386940055
+        },
+        {
+          "feature": "post_hour",
+          "coefficient": 0.5619963067277702,
+          "std_error": 0.16041004373742113,
+          "t_stat": 3.5034982450831746,
+          "p_value": 0.000491297611928718,
+          "ci_lower": 0.24700083274129236,
+          "ci_upper": 0.8769917807142481
+        },
+        {
+          "feature": "caption_length",
+          "coefficient": 0.13504338347306943,
+          "std_error": 0.03733189576992502,
+          "t_stat": 3.617372777030569,
+          "p_value": 0.0003211419294138701,
+          "ci_lower": 0.061735142113129915,
+          "ci_upper": 0.20835162483300895
+        },
+        {
+          "feature": "boost_budget_php",
+          "coefficient": 0.004890800882492204,
+          "std_error": 0.0009878992152864356,
+          "t_stat": 4.950708338273298,
+          "p_value": 9.476407143012119e-07,
+          "ci_lower": 0.0029508738410196377,
+          "ci_upper": 0.006830727923964771
+        },
+        {
+          "feature": "platform_Twitter",
+          "coefficient": -8.079814452593316,
+          "std_error": 3.018937065207895,
+          "t_stat": -2.6763772407547393,
+          "p_value": 0.0076334730223490185,
+          "ci_lower": -14.008068629414947,
+          "ci_upper": -2.1515602757716854
+        }
+      ]
+    }
+  ]
+}

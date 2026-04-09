@@ -97,5 +97,6 @@ def build_features(raw: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series, pd.DataF
     num_cols = [c for c in _NUMERIC if c in df.columns]
 
     X = pd.concat([df[bool_cols + num_cols], dummies], axis=1)
+    X.columns = pd.Index([str(c) for c in X.columns])
 
     return X, y, eda_engagement

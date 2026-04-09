@@ -111,16 +111,30 @@ def run_inference() -> list[dict]:
         raise ValueError("Incident warning model bundle is missing selfharm_model or runaway_model.")
 
     features = build_feature_frame(active)
-    X = features.drop(columns=["resident_id"], errors="ignore")
+    X_all = features.drop(columns=["resident_id"], errors="ignore")
 
+    # Ensure all union features exist (fill missing with 0)
     if feature_list:
         for col in feature_list:
-            if col not in X.columns:
-                X[col] = 0
-        X = X[feature_list]
+            if col not in X_all.columns:
+                X_all[col] = 0
 
-    selfharm_scores = selfharm_model.predict_proba(X)[:, 1]
-    runaway_scores = runaway_model.predict_proba(X)[:, 1]
+    # Each model was trained on its own PFI-selected feature subset.
+    # Use each model's feature_names_in_ to select the right columns.
+    def _align(model, X):
+        if hasattr(model, "feature_names_in_"):
+            cols = list(model.feature_names_in_)
+        elif feature_list:
+            cols = feature_list
+        else:
+            return X
+        for c in cols:
+            if c not in X.columns:
+                X[c] = 0
+        return X[cols]
+
+    selfharm_scores = selfharm_model.predict_proba(_align(selfharm_model, X_all.copy()))[:, 1]
+    runaway_scores = runaway_model.predict_proba(_align(runaway_model, X_all.copy()))[:, 1]
 
     records = _build_records(features, selfharm_scores, runaway_scores, _load_model_version())
     write_predictions(client, records)

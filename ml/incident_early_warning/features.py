@@ -103,6 +103,7 @@ def build_feature_frame(
         *bool_features,
     ]
     out = pd.concat([df[keep_cols], case_dummies], axis=1)
+    out.columns = pd.Index([str(c) for c in out.columns])
     return out.fillna(0)
 
 

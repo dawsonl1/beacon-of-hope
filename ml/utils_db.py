@@ -58,6 +58,9 @@ def fetch_table(client: Engine, table: str) -> pd.DataFrame:
     """
     logger.info(f"Fetching table: {table}")
     df = pd.read_sql_table(table, client)
+    # SQLAlchemy returns quoted_name objects (a str subclass) for column names,
+    # which causes sklearn to reject the DataFrame.  Force plain str here.
+    df.columns = pd.Index([str(c) for c in df.columns])
     logger.info(f"  → {len(df)} rows")
     return df
 

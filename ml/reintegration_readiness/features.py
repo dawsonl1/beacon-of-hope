@@ -260,6 +260,7 @@ def build_reintegration_feature_frame(
                 case_dummies[col] = 0.0
         case_dummies = case_dummies[expected_cols]
     feature_df = pd.concat([feature_df.drop(columns=["case_category"]), case_dummies], axis=1)
+    feature_df.columns = pd.Index([str(c) for c in feature_df.columns])
 
     feature_df = feature_df.fillna(0)
     return feature_df

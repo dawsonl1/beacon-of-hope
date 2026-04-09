@@ -118,6 +118,7 @@ def build_features(raw: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
             df[col] = "None"
 
     X = df[FEATURE_COLUMNS].copy()
+    X.columns = pd.Index([str(c) for c in X.columns])
 
     return X, y
 

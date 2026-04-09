@@ -157,8 +157,7 @@ def main() -> None:
         write_predictions(client, [record])
         rows = _rows_with_run_id(client, TABLE_PREDICTIONS)
         match = [r for r in rows if r["entity_type"] == "resident" and r["entity_id"] == 1
-                 and r["model_name"] == MODEL_NAME
-                 and json.loads(r["metadata"]) if isinstance(r["metadata"], str) else r["metadata"]]
+                 and r["model_name"] == MODEL_NAME]
         _assert(len(match) >= 1, "expected at least one matching ml_predictions row")
 
     def test_2_upsert_overwrites_no_duplicate() -> None:

@@ -1,0 +1,557 @@
+{
+  "model_name": "incident-risk-drivers",
+  "runs": [
+    {
+      "model_name": "incident-risk-drivers",
+      "model_version": "20260408",
+      "trained_at_utc": "2026-04-08T22:44:51.540324+00:00",
+      "features": [
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "has_special_needs",
+        "initial_risk_num",
+        "is_pwd",
+        "sub_cat_osaec",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked"
+      ],
+      "num_training_rows": 60,
+      "num_test_rows": 0,
+      "training_date": "20260408",
+      "model_type": "Logistic Regression (statsmodels) - dual target",
+      "feature_list": [
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "has_special_needs",
+        "initial_risk_num",
+        "is_pwd",
+        "sub_cat_osaec",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked"
+      ],
+      "train_rows": 60,
+      "test_rows": 0,
+      "total_rows": 60,
+      "selfharm_pseudo_r2": 0.47658679273067284,
+      "runaway_pseudo_r2": 0.34659935818140475,
+      "n_observations": 60,
+      "selfharm_coefficients": [
+        {
+          "feature": "sub_cat_sexual_abuse",
+          "coefficient": 3.8405435279516893,
+          "odds_ratio": 46.55076920919722,
+          "std_err": 1.0471792971770733,
+          "p_value": 0.00024492124623834346,
+          "ci_lower": 1.7881098201286596,
+          "ci_upper": 5.892977235774719
+        },
+        {
+          "feature": "initial_risk_num",
+          "coefficient": 0.9356959129554221,
+          "odds_ratio": 2.5489867135287474,
+          "std_err": 0.6271536234051275,
+          "p_value": 0.13570637413253153,
+          "ci_lower": -0.29350260169242404,
+          "ci_upper": 2.1648944276032682
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -0.21715501258990674,
+          "odds_ratio": 0.8048052046960583,
+          "std_err": 1.1467013784741438,
+          "p_value": 0.8497999838691415,
+          "ci_lower": -2.4646484154216624,
+          "ci_upper": 2.0303383902418486
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -1.7893846680086374,
+          "odds_ratio": 0.1670629372155577,
+          "std_err": 1.2951674372031554,
+          "p_value": 0.1670989810018748,
+          "ci_lower": -4.3278661988758635,
+          "ci_upper": 0.7490968628585892
+        }
+      ],
+      "runaway_coefficients": [
+        {
+          "feature": "initial_risk_num",
+          "coefficient": 1.6283454568643465,
+          "odds_ratio": 5.095437119766335,
+          "std_err": 0.518451254786636,
+          "p_value": 0.0016849397673196463,
+          "ci_lower": 0.6121996697429406,
+          "ci_upper": 2.6444912439857524
+        },
+        {
+          "feature": "sub_cat_trafficked",
+          "coefficient": 1.2005304388190703,
+          "odds_ratio": 3.3218785088017313,
+          "std_err": 0.8871509359947217,
+          "p_value": 0.17597814012575963,
+          "ci_lower": -0.538253444581583,
+          "ci_upper": 2.9393143222197233
+        },
+        {
+          "feature": "has_special_needs",
+          "coefficient": 1.0856905065107596,
+          "odds_ratio": 2.9614840368942814,
+          "std_err": 1.1035672612838519,
+          "p_value": 0.32521339818535877,
+          "ci_lower": -1.0772615801230936,
+          "ci_upper": 3.248642593144613
+        },
+        {
+          "feature": "sub_cat_osaec",
+          "coefficient": -0.7848809300424618,
+          "odds_ratio": 0.45617401517264533,
+          "std_err": 1.2437368550785326,
+          "p_value": 0.5279969042587176,
+          "ci_lower": -3.2225603722414986,
+          "ci_upper": 1.6527985121565747
+        },
+        {
+          "feature": "is_pwd",
+          "coefficient": -30.849320072495924,
+          "odds_ratio": 4.002308138885368e-14,
+          "std_err": 10798116.177233526,
+          "p_value": 0.9999977205101526,
+          "ci_lower": -21163949.657577112,
+          "ci_upper": 21163887.958936967
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -1.4372158346250934,
+          "odds_ratio": 0.2375883238788713,
+          "std_err": 1.1387409217672124,
+          "p_value": 0.2069093559619799,
+          "ci_lower": -3.669107029010773,
+          "ci_upper": 0.7946753597605862
+        },
+        {
+          "feature": "sub_cat_sexual_abuse",
+          "coefficient": -0.1523104529092734,
+          "odds_ratio": 0.8587216467211308,
+          "std_err": 0.8555812979251952,
+          "p_value": 0.8587073879824082,
+          "ci_lower": -1.82921898268869,
+          "ci_upper": 1.5245980768701433
+        }
+      ]
+    },
+    {
+      "model_name": "incident-risk-drivers",
+      "model_version": "20260408",
+      "trained_at_utc": "2026-04-08T23:31:05.206831+00:00",
+      "features": [
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "has_special_needs",
+        "initial_risk_num",
+        "is_pwd",
+        "sub_cat_osaec",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked"
+      ],
+      "num_training_rows": 60,
+      "num_test_rows": 0,
+      "training_date": "20260408",
+      "model_type": "Logistic Regression (statsmodels) - dual target",
+      "feature_list": [
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "has_special_needs",
+        "initial_risk_num",
+        "is_pwd",
+        "sub_cat_osaec",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked"
+      ],
+      "train_rows": 60,
+      "test_rows": 0,
+      "total_rows": 60,
+      "selfharm_pseudo_r2": 0.47658679273067284,
+      "runaway_pseudo_r2": 0.34659935818140475,
+      "n_observations": 60,
+      "selfharm_coefficients": [
+        {
+          "feature": "sub_cat_sexual_abuse",
+          "coefficient": 3.8405435279516893,
+          "odds_ratio": 46.55076920919722,
+          "std_err": 1.0471792971770733,
+          "p_value": 0.00024492124623834346,
+          "ci_lower": 1.7881098201286596,
+          "ci_upper": 5.892977235774719
+        },
+        {
+          "feature": "initial_risk_num",
+          "coefficient": 0.9356959129554221,
+          "odds_ratio": 2.5489867135287474,
+          "std_err": 0.6271536234051275,
+          "p_value": 0.13570637413253153,
+          "ci_lower": -0.29350260169242404,
+          "ci_upper": 2.1648944276032682
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -0.21715501258990674,
+          "odds_ratio": 0.8048052046960583,
+          "std_err": 1.1467013784741438,
+          "p_value": 0.8497999838691415,
+          "ci_lower": -2.4646484154216624,
+          "ci_upper": 2.0303383902418486
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -1.7893846680086374,
+          "odds_ratio": 0.1670629372155577,
+          "std_err": 1.2951674372031554,
+          "p_value": 0.1670989810018748,
+          "ci_lower": -4.3278661988758635,
+          "ci_upper": 0.7490968628585892
+        }
+      ],
+      "runaway_coefficients": [
+        {
+          "feature": "initial_risk_num",
+          "coefficient": 1.6283454568643465,
+          "odds_ratio": 5.095437119766335,
+          "std_err": 0.518451254786636,
+          "p_value": 0.0016849397673196463,
+          "ci_lower": 0.6121996697429406,
+          "ci_upper": 2.6444912439857524
+        },
+        {
+          "feature": "sub_cat_trafficked",
+          "coefficient": 1.2005304388190703,
+          "odds_ratio": 3.3218785088017313,
+          "std_err": 0.8871509359947217,
+          "p_value": 0.17597814012575963,
+          "ci_lower": -0.538253444581583,
+          "ci_upper": 2.9393143222197233
+        },
+        {
+          "feature": "has_special_needs",
+          "coefficient": 1.0856905065107596,
+          "odds_ratio": 2.9614840368942814,
+          "std_err": 1.1035672612838519,
+          "p_value": 0.32521339818535877,
+          "ci_lower": -1.0772615801230936,
+          "ci_upper": 3.248642593144613
+        },
+        {
+          "feature": "sub_cat_osaec",
+          "coefficient": -0.7848809300424618,
+          "odds_ratio": 0.45617401517264533,
+          "std_err": 1.2437368550785326,
+          "p_value": 0.5279969042587176,
+          "ci_lower": -3.2225603722414986,
+          "ci_upper": 1.6527985121565747
+        },
+        {
+          "feature": "is_pwd",
+          "coefficient": -30.849320072495924,
+          "odds_ratio": 4.002308138885368e-14,
+          "std_err": 10798116.177233526,
+          "p_value": 0.9999977205101526,
+          "ci_lower": -21163949.657577112,
+          "ci_upper": 21163887.958936967
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -1.4372158346250934,
+          "odds_ratio": 0.2375883238788713,
+          "std_err": 1.1387409217672124,
+          "p_value": 0.2069093559619799,
+          "ci_lower": -3.669107029010773,
+          "ci_upper": 0.7946753597605862
+        },
+        {
+          "feature": "sub_cat_sexual_abuse",
+          "coefficient": -0.1523104529092734,
+          "odds_ratio": 0.8587216467211308,
+          "std_err": 0.8555812979251952,
+          "p_value": 0.8587073879824082,
+          "ci_lower": -1.82921898268869,
+          "ci_upper": 1.5245980768701433
+        }
+      ]
+    },
+    {
+      "model_name": "incident-risk-drivers",
+      "model_version": "20260408",
+      "trained_at_utc": "2026-04-08T23:45:35.266986+00:00",
+      "features": [
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "has_special_needs",
+        "initial_risk_num",
+        "is_pwd",
+        "sub_cat_osaec",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked"
+      ],
+      "num_training_rows": 60,
+      "num_test_rows": 0,
+      "training_date": "20260408",
+      "model_type": "Logistic Regression (statsmodels) - dual target",
+      "feature_list": [
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "has_special_needs",
+        "initial_risk_num",
+        "is_pwd",
+        "sub_cat_osaec",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked"
+      ],
+      "train_rows": 60,
+      "test_rows": 0,
+      "total_rows": 60,
+      "selfharm_pseudo_r2": 0.47658679273067284,
+      "runaway_pseudo_r2": 0.34659935818140475,
+      "n_observations": 60,
+      "selfharm_coefficients": [
+        {
+          "feature": "sub_cat_sexual_abuse",
+          "coefficient": 3.8405435279516893,
+          "odds_ratio": 46.55076920919722,
+          "std_err": 1.0471792971770733,
+          "p_value": 0.00024492124623834346,
+          "ci_lower": 1.7881098201286596,
+          "ci_upper": 5.892977235774719
+        },
+        {
+          "feature": "initial_risk_num",
+          "coefficient": 0.9356959129554221,
+          "odds_ratio": 2.5489867135287474,
+          "std_err": 0.6271536234051275,
+          "p_value": 0.13570637413253153,
+          "ci_lower": -0.29350260169242404,
+          "ci_upper": 2.1648944276032682
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -0.21715501258990674,
+          "odds_ratio": 0.8048052046960583,
+          "std_err": 1.1467013784741438,
+          "p_value": 0.8497999838691415,
+          "ci_lower": -2.4646484154216624,
+          "ci_upper": 2.0303383902418486
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -1.7893846680086374,
+          "odds_ratio": 0.1670629372155577,
+          "std_err": 1.2951674372031554,
+          "p_value": 0.1670989810018748,
+          "ci_lower": -4.3278661988758635,
+          "ci_upper": 0.7490968628585892
+        }
+      ],
+      "runaway_coefficients": [
+        {
+          "feature": "initial_risk_num",
+          "coefficient": 1.6283454568643465,
+          "odds_ratio": 5.095437119766335,
+          "std_err": 0.518451254786636,
+          "p_value": 0.0016849397673196463,
+          "ci_lower": 0.6121996697429406,
+          "ci_upper": 2.6444912439857524
+        },
+        {
+          "feature": "sub_cat_trafficked",
+          "coefficient": 1.2005304388190703,
+          "odds_ratio": 3.3218785088017313,
+          "std_err": 0.8871509359947217,
+          "p_value": 0.17597814012575963,
+          "ci_lower": -0.538253444581583,
+          "ci_upper": 2.9393143222197233
+        },
+        {
+          "feature": "has_special_needs",
+          "coefficient": 1.0856905065107596,
+          "odds_ratio": 2.9614840368942814,
+          "std_err": 1.1035672612838519,
+          "p_value": 0.32521339818535877,
+          "ci_lower": -1.0772615801230936,
+          "ci_upper": 3.248642593144613
+        },
+        {
+          "feature": "sub_cat_osaec",
+          "coefficient": -0.7848809300424618,
+          "odds_ratio": 0.45617401517264533,
+          "std_err": 1.2437368550785326,
+          "p_value": 0.5279969042587176,
+          "ci_lower": -3.2225603722414986,
+          "ci_upper": 1.6527985121565747
+        },
+        {
+          "feature": "is_pwd",
+          "coefficient": -30.849320072495924,
+          "odds_ratio": 4.002308138885368e-14,
+          "std_err": 10798116.177233526,
+          "p_value": 0.9999977205101526,
+          "ci_lower": -21163949.657577112,
+          "ci_upper": 21163887.958936967
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -1.4372158346250934,
+          "odds_ratio": 0.2375883238788713,
+          "std_err": 1.1387409217672124,
+          "p_value": 0.2069093559619799,
+          "ci_lower": -3.669107029010773,
+          "ci_upper": 0.7946753597605862
+        },
+        {
+          "feature": "sub_cat_sexual_abuse",
+          "coefficient": -0.1523104529092734,
+          "odds_ratio": 0.8587216467211308,
+          "std_err": 0.8555812979251952,
+          "p_value": 0.8587073879824082,
+          "ci_lower": -1.82921898268869,
+          "ci_upper": 1.5245980768701433
+        }
+      ]
+    },
+    {
+      "model_name": "incident-risk-drivers",
+      "model_version": "20260409",
+      "trained_at_utc": "2026-04-09T00:03:16.469499+00:00",
+      "features": [
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "has_special_needs",
+        "initial_risk_num",
+        "is_pwd",
+        "sub_cat_osaec",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked"
+      ],
+      "num_training_rows": 60,
+      "num_test_rows": 0,
+      "training_date": "20260409",
+      "model_type": "Logistic Regression (statsmodels) - dual target",
+      "feature_list": [
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "has_special_needs",
+        "initial_risk_num",
+        "is_pwd",
+        "sub_cat_osaec",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked"
+      ],
+      "train_rows": 60,
+      "test_rows": 0,
+      "total_rows": 60,
+      "selfharm_pseudo_r2": 0.47658679273067284,
+      "runaway_pseudo_r2": 0.34659935818140475,
+      "n_observations": 60,
+      "selfharm_coefficients": [
+        {
+          "feature": "sub_cat_sexual_abuse",
+          "coefficient": 3.8405435279516893,
+          "odds_ratio": 46.55076920919722,
+          "std_err": 1.0471792971770733,
+          "p_value": 0.00024492124623834346,
+          "ci_lower": 1.7881098201286596,
+          "ci_upper": 5.892977235774719
+        },
+        {
+          "feature": "initial_risk_num",
+          "coefficient": 0.9356959129554221,
+          "odds_ratio": 2.5489867135287474,
+          "std_err": 0.6271536234051275,
+          "p_value": 0.13570637413253153,
+          "ci_lower": -0.29350260169242404,
+          "ci_upper": 2.1648944276032682
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -0.21715501258990674,
+          "odds_ratio": 0.8048052046960583,
+          "std_err": 1.1467013784741438,
+          "p_value": 0.8497999838691415,
+          "ci_lower": -2.4646484154216624,
+          "ci_upper": 2.0303383902418486
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -1.7893846680086374,
+          "odds_ratio": 0.1670629372155577,
+          "std_err": 1.2951674372031554,
+          "p_value": 0.1670989810018748,
+          "ci_lower": -4.3278661988758635,
+          "ci_upper": 0.7490968628585892
+        }
+      ],
+      "runaway_coefficients": [
+        {
+          "feature": "initial_risk_num",
+          "coefficient": 1.6283454568643465,
+          "odds_ratio": 5.095437119766335,
+          "std_err": 0.518451254786636,
+          "p_value": 0.0016849397673196463,
+          "ci_lower": 0.6121996697429406,
+          "ci_upper": 2.6444912439857524
+        },
+        {
+          "feature": "sub_cat_trafficked",
+          "coefficient": 1.2005304388190703,
+          "odds_ratio": 3.3218785088017313,
+          "std_err": 0.8871509359947217,
+          "p_value": 0.17597814012575963,
+          "ci_lower": -0.538253444581583,
+          "ci_upper": 2.9393143222197233
+        },
+        {
+          "feature": "has_special_needs",
+          "coefficient": 1.0856905065107596,
+          "odds_ratio": 2.9614840368942814,
+          "std_err": 1.1035672612838519,
+          "p_value": 0.32521339818535877,
+          "ci_lower": -1.0772615801230936,
+          "ci_upper": 3.248642593144613
+        },
+        {
+          "feature": "sub_cat_osaec",
+          "coefficient": -0.7848809300424618,
+          "odds_ratio": 0.45617401517264533,
+          "std_err": 1.2437368550785326,
+          "p_value": 0.5279969042587176,
+          "ci_lower": -3.2225603722414986,
+          "ci_upper": 1.6527985121565747
+        },
+        {
+          "feature": "is_pwd",
+          "coefficient": -30.849320072495924,
+          "odds_ratio": 4.002308138885368e-14,
+          "std_err": 10798116.177233526,
+          "p_value": 0.9999977205101526,
+          "ci_lower": -21163949.657577112,
+          "ci_upper": 21163887.958936967
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -1.4372158346250934,
+          "odds_ratio": 0.2375883238788713,
+          "std_err": 1.1387409217672124,
+          "p_value": 0.2069093559619799,
+          "ci_lower": -3.669107029010773,
+          "ci_upper": 0.7946753597605862
+        },
+        {
+          "feature": "sub_cat_sexual_abuse",
+          "coefficient": -0.1523104529092734,
+          "odds_ratio": 0.8587216467211308,
+          "std_err": 0.8555812979251952,
+          "p_value": 0.8587073879824082,
+          "ci_lower": -1.82921898268869,
+          "ci_upper": 1.5245980768701433
+        }
+      ]
+    }
+  ]
+}

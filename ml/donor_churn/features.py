@@ -175,5 +175,6 @@ def build_donor_feature_frame(
         drop_first=False,
     )
     final = pd.concat([merged.drop(columns=["acquisition_channel", "relationship_type"]), dummies], axis=1)
+    final.columns = pd.Index([str(c) for c in final.columns])
     return final.fillna(0)
 
