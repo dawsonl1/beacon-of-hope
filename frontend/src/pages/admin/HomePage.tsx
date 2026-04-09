@@ -177,6 +177,9 @@ export default function HomePage() {
   const [dropHour, setDropHour] = useState<number | null>(null);
   const [dropDate, setDropDate] = useState<string | null>(null);
 
+  // All-day expand state (tracks which days are expanded)
+  const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set());
+
   // Schedule modal state
   const [scheduleTask, setScheduleTask] = useState<StaffTaskItem | null>(null);
   const [scheduleForm, setScheduleForm] = useState<ScheduleForm>({ eventDate: APP_TODAY_STR, startTime: '' });
@@ -449,6 +452,11 @@ export default function HomePage() {
                 const dayStr = fmtDate(dayDate);
                 const isToday = dayStr === APP_TODAY_STR;
                 const dayUnscheduled = unscheduled.filter(e => e.eventDate === dayStr);
+                const isExpanded = expandedDays.has(dayStr);
+                const MAX_VISIBLE = 4;
+                const showCollapsed = !isExpanded && dayUnscheduled.length > MAX_VISIBLE;
+                const visibleEvents = showCollapsed ? dayUnscheduled.slice(0, MAX_VISIBLE - 1) : dayUnscheduled;
+                const hiddenCount = dayUnscheduled.length - visibleEvents.length;
                 return (
                   <div
                     key={`allday-${i}`}
@@ -458,7 +466,7 @@ export default function HomePage() {
                     onDragLeave={handleSlotDragLeave}
                     onDrop={e => { e.preventDefault(); handleSlotDrop(-1, dayStr); }}
                   >
-                    {dayUnscheduled.map(evt => (
+                    {visibleEvents.map(evt => (
                       <div
                         key={evt.calendarEventId}
                         className={styles.allDayChip}
@@ -470,6 +478,22 @@ export default function HomePage() {
                         {evt.title} {evt.residentCode && `(${evt.residentCode})`}
                       </div>
                     ))}
+                    {showCollapsed && (
+                      <button
+                        className={styles.allDayMore}
+                        onClick={() => setExpandedDays(prev => { const next = new Set(prev); next.add(dayStr); return next; })}
+                      >
+                        +{hiddenCount} more
+                      </button>
+                    )}
+                    {isExpanded && dayUnscheduled.length > MAX_VISIBLE && (
+                      <button
+                        className={styles.allDayMore}
+                        onClick={() => setExpandedDays(prev => { const next = new Set(prev); next.delete(dayStr); return next; })}
+                      >
+                        show less
+                      </button>
+                    )}
                   </div>
                 );
               })}

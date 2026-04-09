@@ -177,6 +177,23 @@
   filter: brightness(0.92);
 }
 
+.allDayMore {
+  font-size: 0.6rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  padding: 0.1rem 0.25rem;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.15s;
+}
+
+.allDayMore:hover {
+  color: var(--color-sage);
+}
+
 /* ── Event chips ─────────────────────────────────── */
 .eventChip {
   display: inline-flex;
