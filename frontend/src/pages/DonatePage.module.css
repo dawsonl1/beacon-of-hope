@@ -102,22 +102,25 @@
 
 .amountGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 1fr;
   gap: 0.6rem;
   margin-bottom: 1.5rem;
 }
 
 .amountBtn {
-  padding: 0.8rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 0.85rem 1rem;
   border: 1.5px solid #dde1e6;
   border-radius: 10px;
-  font-size: 1.05rem;
-  font-weight: 600;
   font-family: var(--font-body);
   cursor: pointer;
   background: #fff;
   color: var(--color-slate-dark);
   transition: all 0.2s;
+  text-align: left;
 }
 
 .amountBtn:hover {
@@ -127,7 +130,23 @@
 .amountBtnActive {
   border-color: var(--color-teal);
   background: rgba(15, 143, 125, 0.06);
+}
+
+.amountBtnActive .amountValue {
   color: var(--color-teal);
+}
+
+.amountValue {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-slate-dark);
+}
+
+.amountImpact {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--color-slate);
+  line-height: 1.35;
 }
 
 .customAmountWrap {
@@ -304,7 +323,7 @@
   }
 
   .amountGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
 
   .summaryAmount {

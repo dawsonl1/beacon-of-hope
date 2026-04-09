@@ -3,7 +3,13 @@ import { Heart } from 'lucide-react';
 import { apiFetch } from '../api';
 import styles from './DonatePage.module.css';
 
-const PRESET_AMOUNTS = [250, 500, 750, 1000, 1500];
+const PRESET_AMOUNTS: { amount: number; impact: string }[] = [
+  { amount: 250, impact: 'Provides school supplies and tutoring for a child' },
+  { amount: 500, impact: 'Covers counseling and therapy for a survivor' },
+  { amount: 750, impact: 'Funds medical care and wellness support' },
+  { amount: 1000, impact: "Supports a child's full monthly care" },
+  { amount: 1500, impact: 'Shelters and rehabilitates a child for a month' },
+];
 
 type Mode = 'one-time' | 'recurring';
 type Cadence = 'monthly' | 'quarterly' | 'yearly';
@@ -59,10 +65,11 @@ export default function DonatePage() {
     <main className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroInner}>
-          <h1 className={styles.title}>Make a Difference Today</h1>
+          <h1 className={styles.title}>Your Donation Will Change a Child's Life</h1>
           <p className={styles.subtitle}>
-            Your donation helps provide safe shelter, education, counseling, and a path to
-            reintegration for survivors of abuse and trafficking in Guam.
+            The holistic healing provided to children-survivors of abuse and trafficking
+            is only possible with your financial help. Every dollar goes directly toward
+            refuge, rehabilitation, and reintegration services.
           </p>
         </div>
       </section>
@@ -102,13 +109,14 @@ export default function DonatePage() {
 
           {/* Amount presets */}
           <div className={styles.amountGrid}>
-            {PRESET_AMOUNTS.map(amt => (
+            {PRESET_AMOUNTS.map(({ amount: amt, impact }) => (
               <button
                 key={amt}
                 className={`${styles.amountBtn} ${selectedAmount === amt && !customAmount ? styles.amountBtnActive : ''}`}
                 onClick={() => { setSelectedAmount(amt); setCustomAmount(''); }}
               >
-                ${amt.toLocaleString()}
+                <span className={styles.amountValue}>${amt.toLocaleString()}</span>
+                <span className={styles.amountImpact}>{impact}</span>
               </button>
             ))}
             <div className={styles.customAmountWrap}>
@@ -116,7 +124,7 @@ export default function DonatePage() {
               <input
                 type="number"
                 className={styles.customInput}
-                placeholder="Other"
+                placeholder="Other amount"
                 value={customAmount}
                 min="1"
                 onChange={e => {
