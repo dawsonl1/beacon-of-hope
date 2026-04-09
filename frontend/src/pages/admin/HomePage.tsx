@@ -101,9 +101,7 @@ const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 function fmtDate(d: Date): string { return d.toISOString().split('T')[0]; }
 
-function fmtDateDisplay(d: Date): string {
-  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-}
+
 
 function getWeekStart(d: Date): Date {
   const day = d.getDay();
@@ -399,7 +397,6 @@ export default function HomePage() {
   }
 
   const unscheduled = events.filter(e => !e.startTime && e.status !== 'Completed');
-  const scheduled = events.filter(e => e.startTime);
 
   /* ── Render ────────────────────────────────────── */
 
