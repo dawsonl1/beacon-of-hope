@@ -97,6 +97,8 @@ public static class VisitationEndpoints
             if (body == null) return Results.BadRequest(new { error = "Request body is required." });
             var (valid, err) = DtoValidator.Validate(body);
             if (!valid) return Results.BadRequest(new { error = err });
+            var denied = await SafehouseAuth.ValidateResidentAccess(httpContext, db, body.ResidentId);
+            if (denied != null) return denied;
             var visitation = new HomeVisitation { ResidentId = body.ResidentId, VisitDate = body.VisitDate, SocialWorker = body.SocialWorker, VisitType = body.VisitType, LocationVisited = body.LocationVisited, FamilyMembersPresent = body.FamilyMembersPresent, Purpose = body.Purpose, Observations = body.Observations, FamilyCooperationLevel = body.FamilyCooperationLevel, SafetyConcernsNoted = body.SafetyConcernsNoted, FollowUpNeeded = body.FollowUpNeeded, FollowUpNotes = body.FollowUpNotes, VisitOutcome = body.VisitOutcome };
             db.HomeVisitations.Add(visitation);
             await db.SaveChangesAsync();

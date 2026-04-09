@@ -41,6 +41,11 @@ public static class IncidentEndpoints
             if (body == null) return Results.BadRequest(new { error = "Request body is required." });
             var (valid, err) = DtoValidator.Validate(body);
             if (!valid) return Results.BadRequest(new { error = err });
+            if (body.ResidentId.HasValue)
+            {
+                var denied = await SafehouseAuth.ValidateResidentAccess(httpContext, db, body.ResidentId.Value);
+                if (denied != null) return denied;
+            }
             var incident = new IncidentReport { ResidentId = body.ResidentId, SafehouseId = body.SafehouseId, IncidentDate = body.IncidentDate, IncidentType = body.IncidentType, Severity = body.Severity, Description = body.Description, ResponseTaken = body.ResponseTaken, ReportedBy = body.ReportedBy, Resolved = body.Resolved ?? false, ResolutionDate = body.ResolutionDate, FollowUpRequired = body.FollowUpRequired ?? false };
             db.IncidentReports.Add(incident);
             await db.SaveChangesAsync();

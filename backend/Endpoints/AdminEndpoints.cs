@@ -641,9 +641,14 @@ public static class AdminEndpoints
 
         // ── Safehouses & Residents list ──────────────────────────
 
-        app.MapGet("/api/admin/residents-list", async (AppDbContext db) =>
+        app.MapGet("/api/admin/residents-list", async (HttpContext httpContext, AppDbContext db) =>
         {
-            var data = await db.Residents
+            var allowed = await SafehouseAuth.GetAllowedSafehouseIds(httpContext, db);
+            var query = db.Residents.AsQueryable();
+            if (allowed != null)
+                query = query.Where(r => r.SafehouseId.HasValue && allowed.Contains(r.SafehouseId.Value));
+
+            var data = await query
                 .OrderBy(r => r.InternalCode)
                 .Select(r => new
                 {
