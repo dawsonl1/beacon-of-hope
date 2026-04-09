@@ -27,6 +27,8 @@ interface RecordingData {
   progressNoted: boolean | null;
   concernsFlagged: boolean | null;
   referralMade: boolean | null;
+  needsCaseConference: boolean | null;
+  readyForReintegration: boolean | null;
   notesRestricted: string | null;
 }
 
