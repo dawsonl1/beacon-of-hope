@@ -136,18 +136,19 @@
 .spinner { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── Unscheduled parking lot ─────────────────────────────── */
+/* ── Unscheduled / To Do queue ─────────────────────────── */
 .unscheduledSection {
   margin-bottom: 1rem;
   padding: 0.75rem;
-  border: 2px dashed transparent;
+  border: 2px dashed rgba(15, 143, 125, 0.2);
   border-radius: 10px;
   transition: border-color 0.2s, background 0.2s;
+  min-height: 52px;
 }
 
 .unscheduledSection.dropTargetActive {
   border-color: var(--color-sage);
-  background: rgba(15, 143, 125, 0.04);
+  background: rgba(15, 143, 125, 0.06);
 }
 
 .sectionLabel {
@@ -184,10 +185,21 @@
   background: rgba(15, 143, 125, 0.03);
 }
 
+.unscheduledCard:active {
+  cursor: grabbing;
+}
+
 .unscheduledEmpty {
   font-size: 0.78rem;
   color: var(--text-muted);
-  padding: 0.5rem 0;
+  padding: 0.25rem 0;
+}
+
+.dropHint {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-sage);
+  margin-bottom: 0.4rem;
 }
 
 /* ── Day view grid ───────────────────────────────────────── */
@@ -200,35 +212,27 @@
 
 .timeSlot {
   display: flex;
-  border-bottom: 1px solid rgba(15, 27, 45, 0.04);
+  border-bottom: 1px solid rgba(15, 27, 45, 0.06);
   min-height: 42px;
-  transition: background 0.2s;
+  transition: background 0.15s;
 }
 
 .halfHourSlot {
   border-bottom: 1px dashed rgba(15, 27, 45, 0.03);
-  min-height: 42px;
 }
 
 .timeSlot:hover {
   background: rgba(15, 143, 125, 0.02);
 }
 
-.dropTargetActive {
-  background: rgba(15, 143, 125, 0.08) !important;
-}
-
-.draggable {
-  cursor: grab;
-  user-select: none;
-}
-
-.dragging {
-  opacity: 0.4;
+/* Drop target highlight — clear green tint */
+.slotHighlight {
+  background: rgba(15, 143, 125, 0.1) !important;
+  border-bottom-color: rgba(15, 143, 125, 0.3);
 }
 
 .timeLabel {
-  width: 60px;
+  width: 64px;
   padding: 0.4rem 0.5rem;
   font-size: 0.72rem;
   color: var(--text-muted);
@@ -244,9 +248,21 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.3rem;
-  align-items: flex-start;
+  align-items: center;
 }
 
+/* Floating time label shown when hovering as a drop target */
+.dropTimeLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-sage);
+  background: rgba(15, 143, 125, 0.12);
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+/* ── Event chips ─────────────────────────────────────────── */
 .eventChip {
   display: inline-flex;
   align-items: center;
@@ -261,6 +277,15 @@
 }
 
 .eventChip:hover { filter: brightness(0.95); }
+
+.draggable {
+  cursor: grab;
+  user-select: none;
+}
+
+.draggable:active {
+  cursor: grabbing;
+}
 
 .eventCounseling { background: rgba(52, 152, 219, 0.12); color: #2980b9; }
 .eventDoctorApt { background: rgba(46, 204, 113, 0.12); color: #27ae60; }

@@ -46,10 +46,13 @@ const EVENT_TYPE_STYLES: Record<string, string> = {
 };
 
 const HOURS = Array.from({ length: 14 }, (_, i) => i + 6); // 6am to 7pm
-const HALF_HOURS: { hour: number; minute: 0 | 30 }[] = HOURS.flatMap(h => [
-  { hour: h, minute: 0 as const },
-  { hour: h, minute: 30 as const },
-]);
+
+function formatTime12(hour: number, minute: number): string {
+  const h = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+  const suffix = hour < 12 ? 'AM' : 'PM';
+  if (minute === 0) return `${h} ${suffix}`;
+  return `${h}:${minute.toString().padStart(2, '0')} ${suffix}`;
+}
 
 function formatDate(d: Date): string {
   return d.toISOString().split('T')[0];
@@ -61,7 +64,7 @@ function formatDateDisplay(d: Date): string {
 
 function getWeekStart(d: Date): Date {
   const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Monday
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
   return new Date(d.getFullYear(), d.getMonth(), diff);
 }
 
@@ -69,6 +72,12 @@ function addDays(d: Date, n: number): Date {
   const result = new Date(d);
   result.setDate(result.getDate() + n);
   return result;
+}
+
+/** Snap a "HH:mm" time string to the nearest :00 or :30 slot */
+function snapToSlot(time: string): string {
+  const [h, m] = time.split(':').map(Number);
+  return `${h.toString().padStart(2, '0')}:${m < 30 ? '00' : '30'}`;
 }
 
 const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -94,9 +103,9 @@ export default function CalendarPage() {
     residentId: '',
   });
   const [residents, setResidents] = useState<{ residentId: number; internalCode: string }[]>([]);
-  const [dragId, setDragId] = useState<number | null>(null);
   const [dropTarget, setDropTarget] = useState<string | null>(null); // "HH:MM" or "unscheduled"
-  const dragRef = useRef<number | null>(null);
+  const dragIdRef = useRef<number | null>(null);
+  const dragCounterRef = useRef<Record<string, number>>({});
 
   const fetchEvents = useCallback(async () => {
     setLoading(true);
@@ -171,50 +180,81 @@ export default function CalendarPage() {
     return classes.join(' ');
   }
 
-  function handleDragStart(evt: CalendarEventItem) {
-    setDragId(evt.calendarEventId);
-    dragRef.current = evt.calendarEventId;
+  // ── Drag handlers ──────────────────────────────────────
+
+  function handleDragStart(e: React.DragEvent, evt: CalendarEventItem) {
+    dragIdRef.current = evt.calendarEventId;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', String(evt.calendarEventId));
+    // Slight delay so the drag ghost renders before we apply visual changes
+    requestAnimationFrame(() => {
+      const el = e.target as HTMLElement;
+      el.style.opacity = '0.4';
+    });
   }
 
-  function handleDragEnd() {
-    setDragId(null);
+  function handleDragEnd(e: React.DragEvent) {
+    dragIdRef.current = null;
     setDropTarget(null);
-    dragRef.current = null;
+    dragCounterRef.current = {};
+    (e.target as HTMLElement).style.opacity = '';
   }
 
-  function handleDragOver(e: React.DragEvent, slotKey: string) {
+  // Use a counter per slot to handle child element enter/leave properly
+  function handleDragEnter(e: React.DragEvent, slotKey: string) {
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
+    const counters = dragCounterRef.current;
+    counters[slotKey] = (counters[slotKey] || 0) + 1;
     setDropTarget(slotKey);
   }
 
-  function handleDragLeave() {
-    setDropTarget(null);
+  function handleDragOver(e: React.DragEvent) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
   }
 
-  async function handleDropOnSlot(timeStr: string) {
-    const id = dragRef.current;
+  function handleDragLeave(slotKey: string) {
+    const counters = dragCounterRef.current;
+    counters[slotKey] = (counters[slotKey] || 0) - 1;
+    if (counters[slotKey] <= 0) {
+      counters[slotKey] = 0;
+      if (dropTarget === slotKey) setDropTarget(null);
+    }
+  }
+
+  async function handleDropOnSlot(e: React.DragEvent, timeStr: string) {
+    e.preventDefault();
+    const id = dragIdRef.current;
     if (!id) return;
-    handleDragEnd();
+    dragIdRef.current = null;
+    setDropTarget(null);
+    dragCounterRef.current = {};
     await handleUpdateEvent(id, { startTime: timeStr });
   }
 
-  async function handleDropOnUnscheduled() {
-    const id = dragRef.current;
+  async function handleDropOnQueue(e: React.DragEvent) {
+    e.preventDefault();
+    const id = dragIdRef.current;
     if (!id) return;
-    handleDragEnd();
-    await handleUpdateEvent(id, { startTime: null });
+    dragIdRef.current = null;
+    setDropTarget(null);
+    dragCounterRef.current = {};
+    // Send empty string so backend clears the StartTime (null is ignored)
+    await handleUpdateEvent(id, { startTime: '' });
   }
 
+  // ── Rendering helpers ──────────────────────────────────
+
   function renderEventChip(evt: CalendarEventItem, draggable = true) {
+    const canDrag = draggable && evt.status !== 'Completed';
     return (
       <div
         key={evt.calendarEventId}
-        className={`${getEventStyle(evt.eventType, evt.status)} ${draggable ? styles.draggable : ''} ${dragId === evt.calendarEventId ? styles.dragging : ''}`}
-        onClick={() => { if (!dragId) setSelectedEvent(evt); }}
-        draggable={draggable && evt.status !== 'Completed'}
-        onDragStart={(e) => { e.dataTransfer.effectAllowed = 'move'; handleDragStart(evt); }}
-        onDragEnd={handleDragEnd}
+        className={`${getEventStyle(evt.eventType, evt.status)} ${canDrag ? styles.draggable : ''}`}
+        onClick={() => setSelectedEvent(evt)}
+        draggable={canDrag}
+        onDragStart={canDrag ? (e) => handleDragStart(e, evt) : undefined}
+        onDragEnd={canDrag ? handleDragEnd : undefined}
       >
         {evt.startTime && <span>{evt.startTime}</span>}
         <span>{evt.title}</span>
@@ -261,58 +301,77 @@ export default function CalendarPage() {
         <div className={styles.error}>{error}</div>
       ) : view === 'day' ? (
         <>
+          {/* ── To Do queue (always visible as drop target) ──── */}
           <div
             className={`${styles.unscheduledSection} ${dropTarget === 'unscheduled' ? styles.dropTargetActive : ''}`}
-            onDragOver={(e) => handleDragOver(e, 'unscheduled')}
-            onDragLeave={handleDragLeave}
-            onDrop={(e) => { e.preventDefault(); handleDropOnUnscheduled(); }}
+            onDragEnter={(e) => handleDragEnter(e, 'unscheduled')}
+            onDragOver={handleDragOver}
+            onDragLeave={() => handleDragLeave('unscheduled')}
+            onDrop={handleDropOnQueue}
           >
-            <div className={styles.sectionLabel}>To Do {unscheduled.length > 0 && `(${unscheduled.length})`}</div>
+            <div className={styles.sectionLabel}>
+              To Do {unscheduled.length > 0 && `(${unscheduled.length})`}
+            </div>
+            {dropTarget === 'unscheduled' && (
+              <div className={styles.dropHint}>Drop here to unschedule</div>
+            )}
             {unscheduled.length > 0 ? (
               <div className={styles.unscheduledList}>
                 {unscheduled.map(evt => (
                   <div
                     key={evt.calendarEventId}
-                    className={`${styles.unscheduledCard} ${dragId === evt.calendarEventId ? styles.dragging : ''}`}
-                    onClick={() => { if (!dragId) setSelectedEvent(evt); }}
+                    className={styles.unscheduledCard}
                     draggable
-                    onDragStart={(e) => { e.dataTransfer.effectAllowed = 'move'; handleDragStart(evt); }}
+                    onDragStart={(e) => handleDragStart(e, evt)}
                     onDragEnd={handleDragEnd}
+                    onClick={() => setSelectedEvent(evt)}
                   >
                     {evt.title} {evt.residentCode && `(${evt.residentCode})`}
                   </div>
                 ))}
               </div>
-            ) : (
-              <div className={styles.unscheduledEmpty}>
-                {dragId ? 'Drop here to unschedule' : 'No unscheduled events'}
-              </div>
-            )}
+            ) : dropTarget !== 'unscheduled' ? (
+              <div className={styles.unscheduledEmpty}>No unscheduled events</div>
+            ) : null}
           </div>
+
+          {/* ── Day grid with half-hour slots ──────────────── */}
           <div className={styles.dayGrid}>
-            {HALF_HOURS.map(({ hour, minute }) => {
-              const timeStr = `${hour.toString().padStart(2, '0')}:${minute === 0 ? '00' : '30'}`;
-              const slotEvents = scheduled.filter(e => e.startTime === timeStr);
-              const isHalfHour = minute === 30;
-              const isTarget = dropTarget === timeStr;
-              const label = minute === 0
-                ? (hour === 0 ? '12 AM' : hour < 12 ? `${hour} AM` : hour === 12 ? '12 PM' : `${hour - 12} PM`)
-                : '';
-              return (
-                <div
-                  key={timeStr}
-                  className={`${styles.timeSlot} ${isHalfHour ? styles.halfHourSlot : ''} ${isTarget ? styles.dropTargetActive : ''}`}
-                  onDragOver={(e) => handleDragOver(e, timeStr)}
-                  onDragLeave={handleDragLeave}
-                  onDrop={(e) => { e.preventDefault(); handleDropOnSlot(timeStr); }}
-                >
-                  <div className={styles.timeLabel}>{label}</div>
-                  <div className={styles.slotContent}>
-                    {slotEvents.map(evt => renderEventChip(evt))}
+            {HOURS.map(hour => (
+              [0, 30].map(minute => {
+                const timeStr = `${hour.toString().padStart(2, '0')}:${minute === 0 ? '00' : '30'}`;
+                const slotEvents = scheduled.filter(e => e.startTime && snapToSlot(e.startTime) === timeStr);
+                const isHalf = minute === 30;
+                const isTarget = dropTarget === timeStr;
+
+                return (
+                  <div
+                    key={timeStr}
+                    className={`${styles.timeSlot} ${isHalf ? styles.halfHourSlot : ''} ${isTarget ? styles.slotHighlight : ''}`}
+                    onDragEnter={(e) => handleDragEnter(e, timeStr)}
+                    onDragOver={handleDragOver}
+                    onDragLeave={() => handleDragLeave(timeStr)}
+                    onDrop={(e) => handleDropOnSlot(e, timeStr)}
+                  >
+                    <div className={styles.timeLabel}>
+                      {minute === 0 ? formatTime12(hour, 0) : ''}
+                    </div>
+                    <div className={styles.slotContent}>
+                      {isTarget && (
+                        <span className={styles.dropTimeLabel}>
+                          {(() => {
+                            const h = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+                            const sfx = hour < 12 ? 'AM' : 'PM';
+                            return `${h}:${minute.toString().padStart(2, '0')} ${sfx}`;
+                          })()}
+                        </span>
+                      )}
+                      {slotEvents.map(evt => renderEventChip(evt))}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            ))}
           </div>
         </>
       ) : (
@@ -328,7 +387,7 @@ export default function CalendarPage() {
                   {name} {dayDate.getDate()}
                 </div>
                 <div className={styles.weekEventList}>
-                  {dayEvents.map(renderEventChip)}
+                  {dayEvents.map(evt => renderEventChip(evt, false))}
                 </div>
               </div>
             );

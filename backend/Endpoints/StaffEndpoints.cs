@@ -111,8 +111,8 @@ public static class StaffEndpoints
             var body = await httpContext.Request.ReadFromJsonAsync<UpdateCalendarEventRequest>();
             if (body == null) return Results.BadRequest(new { error = "Request body is required." });
             if (!string.IsNullOrEmpty(body.Status)) evt.Status = body.Status;
-            if (!string.IsNullOrEmpty(body.StartTime)) evt.StartTime = TimeOnly.Parse(body.StartTime);
-            if (!string.IsNullOrEmpty(body.EndTime)) evt.EndTime = TimeOnly.Parse(body.EndTime);
+            if (body.StartTime != null) evt.StartTime = body.StartTime == "" ? null : TimeOnly.Parse(body.StartTime);
+            if (body.EndTime != null) evt.EndTime = body.EndTime == "" ? null : TimeOnly.Parse(body.EndTime);
             if (!string.IsNullOrEmpty(body.EventDate)) evt.EventDate = DateOnly.Parse(body.EventDate);
             if (body.Title != null) evt.Title = body.Title;
             if (body.Description != null) evt.Description = body.Description;
