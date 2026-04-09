@@ -188,10 +188,12 @@ def fetch_monthly_resident_metrics(year: int, month: int) -> dict | None:
     with get_engine().connect() as conn:
         row = conn.execute(
             text("""
-                SELECT active_residents, avg_education_progress, avg_health_score
+                SELECT SUM(active_residents) as active_residents,
+                       AVG(avg_education_progress) as avg_education_progress,
+                       AVG(avg_health_score) as avg_health_score
                 FROM safehouse_monthly_metrics
-                WHERE year = :year AND month = :month
-                LIMIT 1
+                WHERE EXTRACT(YEAR FROM month_start) = :year
+                  AND EXTRACT(MONTH FROM month_start) = :month
             """),
             {"year": year, "month": month},
         ).mappings().first()
