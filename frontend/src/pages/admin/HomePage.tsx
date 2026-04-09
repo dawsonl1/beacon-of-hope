@@ -175,16 +175,37 @@ function eventEnd(evt: CalendarEventItem): number {
 
 function computeOverlapLayout(dayEvents: CalendarEventItem[], draggedId: number | null): Map<number, EventLayout> {
   const layout = new Map<number, EventLayout>();
-  // Only scheduled events (with startTime), exclude dragged event
   const sorted = dayEvents
     .filter(e => e.startTime && e.calendarEventId !== draggedId)
     .sort((a, b) => toMinutes(a.startTime) - toMinutes(b.startTime) || eventEnd(b) - eventEnd(a));
 
-  // Group into overlap clusters
+  // Greedy column packing: assign each event to the leftmost column
+  // where it doesn't overlap with any event already in that column.
+  // columns[i] = end time of the last event placed in column i
+  const columns: number[] = [];
+  const evtColumns = new Map<number, number>();
+
+  for (const evt of sorted) {
+    const start = toMinutes(evt.startTime);
+    let placed = false;
+    for (let col = 0; col < columns.length; col++) {
+      if (start >= columns[col]) {
+        columns[col] = eventEnd(evt);
+        evtColumns.set(evt.calendarEventId, col);
+        placed = true;
+        break;
+      }
+    }
+    if (!placed) {
+      evtColumns.set(evt.calendarEventId, columns.length);
+      columns.push(eventEnd(evt));
+    }
+  }
+
+  // Now group into overlap clusters and find max columns per cluster
   const clusters: CalendarEventItem[][] = [];
   for (const evt of sorted) {
     const start = toMinutes(evt.startTime);
-    // Find if this event overlaps with any existing cluster
     let placed = false;
     for (const cluster of clusters) {
       const clusterEnd = Math.max(...cluster.map(e => eventEnd(e)));
@@ -197,12 +218,16 @@ function computeOverlapLayout(dayEvents: CalendarEventItem[], draggedId: number 
     if (!placed) clusters.push([evt]);
   }
 
-  // Assign columns within each cluster
+  // For each cluster, find the max column used to determine totalCols
   for (const cluster of clusters) {
-    const cols = cluster.length;
-    cluster.forEach((evt, idx) => {
-      layout.set(evt.calendarEventId, { column: idx, totalCols: cols });
-    });
+    const maxCol = Math.max(...cluster.map(e => evtColumns.get(e.calendarEventId) ?? 0));
+    const totalCols = maxCol + 1;
+    for (const evt of cluster) {
+      layout.set(evt.calendarEventId, {
+        column: evtColumns.get(evt.calendarEventId) ?? 0,
+        totalCols,
+      });
+    }
   }
 
   return layout;
