@@ -261,9 +261,10 @@ export default function HomePage() {
   const [dragTaskId, setDragTaskId] = useState<number | null>(null);
   const [dragEventId, setDragEventId] = useState<number | null>(null);
   const [dropHour, setDropHour] = useState<number | null>(null);
-  const [dropMinute, setDropMinute] = useState<number>(0);
   const [dropDate, setDropDate] = useState<string | null>(null);
   const dragOffsetY = useRef<number>(0);
+  const dropMinuteRef = useRef<number>(0);
+  const dropIndicatorRef = useRef<HTMLDivElement | null>(null);
 
   // All-day expand state (tracks which days are expanded)
   const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set());
@@ -402,8 +403,9 @@ export default function HomePage() {
     setDragTaskId(null);
     setDragEventId(null);
     setDropHour(null);
-    setDropMinute(0);
     setDropDate(null);
+    dropMinuteRef.current = 0;
+    dropIndicatorRef.current = null;
     dragCounterRef.current = 0;
   }
 
@@ -438,25 +440,25 @@ export default function HomePage() {
     if (!dragTaskId) return;
     const task = tasks.find(t => t.staffTaskId === dragTaskId);
     if (!task) return;
-    const minute = e ? getQuarterFromEvent(e) : 0;
+    const minute = e ? getQuarterFromEvent(e) : dropMinuteRef.current;
     const startTime = formatDropTime(hour, minute);
     const targetDate = date || fmtDate(currentDate);
     scheduleTaskToCalendar(task, targetDate, startTime);
     setDragTaskId(null);
     setDropHour(null);
-    setDropMinute(0);
+    dropMinuteRef.current = 0;
     setDropDate(null);
     dragCounterRef.current = 0;
   }
 
   function handleEventDrop(hour: number, date: string, e?: React.DragEvent) {
     if (!dragEventId) return;
-    const minute = e ? getQuarterFromEvent(e) : 0;
+    const minute = e ? getQuarterFromEvent(e) : dropMinuteRef.current;
     const startTime = formatDropTime(hour, minute);
     handleUpdateEvent(dragEventId, { startTime, eventDate: date });
     setDragEventId(null);
     setDropHour(null);
-    setDropMinute(0);
+    dropMinuteRef.current = 0;
     setDropDate(null);
     dragCounterRef.current = 0;
   }
@@ -706,7 +708,12 @@ export default function HomePage() {
                           onDragOver={e => {
                             e.preventDefault();
                             e.dataTransfer.dropEffect = 'move';
-                            setDropMinute(getQuarterFromEvent(e));
+                            const minute = getQuarterFromEvent(e);
+                            dropMinuteRef.current = minute;
+                            if (dropIndicatorRef.current) {
+                              dropIndicatorRef.current.style.top = `${(minute / 60) * 100}%`;
+                              dropIndicatorRef.current.textContent = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                            }
                           }}
                           onDragEnter={() => handleSlotDragEnter(hour, dayStr)}
                           onDragLeave={handleSlotDragLeave}
@@ -717,8 +724,8 @@ export default function HomePage() {
                             return renderEventChip(evt, layout);
                           })}
                           {(isDropTarget || isEventDropTarget) && (
-                            <div className={styles.dropTimeIndicator} style={{ top: `${(dropMinute / 60) * 100}%` }}>
-                              {hour.toString().padStart(2, '0')}:{dropMinute.toString().padStart(2, '0')}
+                            <div ref={dropIndicatorRef} className={styles.dropTimeIndicator} style={{ top: '0%' }}>
+                              {hour.toString().padStart(2, '0')}:00
                             </div>
                           )}
                         </div>
