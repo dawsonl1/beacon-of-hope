@@ -35,8 +35,7 @@ describe('DonatePage', () => {
   it('shows donation-related content', () => {
     renderWithProviders(<DonatePage />);
     // Look for any text related to donating
-    const donateText = screen.queryByText(/donate/i) || screen.queryByText(/give/i) || screen.queryByText(/support/i);
-    expect(donateText).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /donation/i })).toBeTruthy();
   });
 });
 
