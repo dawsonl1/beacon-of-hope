@@ -1,6 +1,7 @@
 """
 app.py — FastAPI application for the AI harness.
 All AI/LLM logic lives here. The .NET backend calls these endpoints.
+Includes: content planning, post generation, photo selection, newsletter generation.
 """
 
 import logging
