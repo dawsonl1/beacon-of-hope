@@ -501,6 +501,11 @@ public static class AdminEndpoints
             if (resident == null)
                 return Results.NotFound(new { error = "Resident not found." });
 
+            // Staff can only edit residents in their assigned safehouses
+            var allowed = await SafehouseAuth.GetAllowedSafehouseIds(httpContext, db);
+            if (allowed != null && (!resident.SafehouseId.HasValue || !allowed.Contains(resident.SafehouseId.Value)))
+                return Results.Forbid();
+
             var body = await httpContext.Request.ReadFromJsonAsync<ResidentRequest>();
             if (body == null)
                 return Results.BadRequest(new { error = "Request body is required." });
@@ -511,7 +516,7 @@ public static class AdminEndpoints
 
             await db.SaveChangesAsync();
             return Results.Ok(new { resident.ResidentId });
-        }).RequireAuthorization("AdminOnly");
+        }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
         app.MapDelete("/api/admin/residents/{id:int}", async (int id, AppDbContext db) =>
         {

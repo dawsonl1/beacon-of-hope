@@ -146,6 +146,7 @@ export default function ResidentDetailPage() {
   const { user } = useAuth();
   const backTo = `/admin/caseload${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
   const isAdmin = user?.roles?.includes('Admin') ?? false;
+  const isStaff = user?.roles?.includes('Staff') ?? false;
 
   const [resident, setResident] = useState<ResidentDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -234,14 +235,16 @@ export default function ResidentDetailPage() {
         <button className={styles.backLink} onClick={() => navigate(backTo)}>
           <ArrowLeft size={16} /> Back to Caseload
         </button>
-        {isAdmin && (
+        {(isAdmin || isStaff) && (
           <div className={styles.actions}>
             <button className={styles.editBtn} onClick={() => navigate(`/admin/caseload/${id}/edit`)}>
               <Edit size={15} /> Edit
             </button>
-            <button className={styles.deleteBtn} onClick={() => setShowDelete(true)}>
-              <Trash2 size={15} /> Delete
-            </button>
+            {isAdmin && (
+              <button className={styles.deleteBtn} onClick={() => setShowDelete(true)}>
+                <Trash2 size={15} /> Delete
+              </button>
+            )}
           </div>
         )}
       </div>
