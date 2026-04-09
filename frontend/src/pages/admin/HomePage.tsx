@@ -750,6 +750,11 @@ export default function HomePage() {
               </div>
               {selectedEvent.status === 'Scheduled' && (
                 <div className={styles.popoverActions}>
+                  {selectedEvent.residentId && (
+                    <button className={styles.modalBtn} onClick={() => { navigate(`/admin/caseload/${selectedEvent.residentId}`); closePopover(); }}>
+                      <User size={12} /> View Patient
+                    </button>
+                  )}
                   <button className={styles.modalBtnPrimary} onClick={() => handleUpdateEvent(selectedEvent.calendarEventId, { status: 'Completed' })}>
                     Complete
                   </button>
