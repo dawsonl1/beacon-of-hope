@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ArrowLeft,
   Edit3,
@@ -60,6 +60,10 @@ export default function RecordingDetailPage() {
   useDocumentTitle('Recording Detail');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const fromResident = searchParams.get('fromResident');
+  const backPath = fromResident ? `/admin/caseload/${fromResident}` : '/admin/recordings';
+  const backLabel = fromResident ? 'Back to resident' : 'Back to recordings';
   const { user } = useAuth();
 
   const [recording, setRecording] = useState<Recording | null>(null);
@@ -107,8 +111,8 @@ export default function RecordingDetailPage() {
     return (
       <div className={styles.page}>
         <ApiError message="Unable to load this recording." />
-        <button className={styles.backLink} onClick={() => navigate('/admin/recordings')}>
-          <ArrowLeft size={14} /> Back to recordings
+        <button className={styles.backLink} onClick={() => navigate(backPath)}>
+          <ArrowLeft size={14} /> {backLabel}
         </button>
       </div>
     );

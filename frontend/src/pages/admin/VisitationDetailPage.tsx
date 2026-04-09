@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Pencil, Trash2, AlertTriangle, Clock, CheckCircle, ClipboardList, Plus, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
@@ -58,6 +58,10 @@ export default function VisitationDetailPage() {
   useDocumentTitle('Visitation Detail');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const fromResident = searchParams.get('fromResident');
+  const backPath = fromResident ? `/admin/caseload/${fromResident}` : '/admin/visitations';
+  const backLabel = fromResident ? 'Back to resident' : 'Back to Visitations';
   const { user } = useAuth();
   const [visitation, setVisitation] = useState<VisitationDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -138,9 +142,9 @@ export default function VisitationDetailPage() {
 
   return (
     <div className={styles.page}>
-      <Link to="/admin/visitations" className={styles.backLink}>
+      <Link to={backPath} className={styles.backLink}>
         <ArrowLeft size={15} />
-        Back to Visitations
+        {backLabel}
       </Link>
 
       {/* ── Header ───────────────────────────────────── */}

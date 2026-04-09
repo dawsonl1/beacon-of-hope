@@ -346,15 +346,16 @@
   padding: 0.55rem 0;
   border-bottom: 1px solid rgba(15, 27, 45, 0.04);
   font-size: 0.8rem;
-  cursor: pointer;
   transition: background 0.1s;
   margin: 0 -1rem;
   padding-left: 1rem;
   padding-right: 1rem;
 }
 
-.timelineItem:hover { background: rgba(15, 27, 45, 0.015); }
 .timelineItem:last-child { border-bottom: none; }
+
+.timelineClickable { cursor: pointer; }
+.timelineClickable:hover { background: rgba(15, 27, 45, 0.025); }
 
 .timelineIcon {
   width: 28px;

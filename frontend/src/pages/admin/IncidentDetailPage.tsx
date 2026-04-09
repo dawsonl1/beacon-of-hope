@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Edit, Trash2, Loader2, AlertTriangle, CheckCircle, ClipboardList, Calendar, Plus } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { formatDate } from '../../constants';
@@ -62,6 +62,10 @@ export default function IncidentDetailPage() {
   useDocumentTitle('Incident Detail');
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const fromResident = searchParams.get('fromResident');
+  const backPath = fromResident ? `/admin/caseload/${fromResident}` : '/admin/incidents';
+  const backLabel = fromResident ? 'Back to resident' : 'Back to Incidents';
   const { user } = useAuth();
   const isAdmin = user?.roles?.includes('Admin') ?? false;
 
@@ -153,8 +157,8 @@ export default function IncidentDetailPage() {
 
   return (
     <div className={styles.page}>
-      <Link to="/admin/incidents" className={styles.backLink}>
-        <ArrowLeft size={15} /> Back to Incidents
+      <Link to={backPath} className={styles.backLink}>
+        <ArrowLeft size={15} /> {backLabel}
       </Link>
 
       <div className={styles.header}>

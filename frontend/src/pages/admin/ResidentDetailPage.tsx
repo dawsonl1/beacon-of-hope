@@ -213,19 +213,19 @@ export default function ResidentDetailPage() {
   const timeline = useMemo<TimelineEntry[]>(() => {
     const items: TimelineEntry[] = [];
     for (const r of recordings.slice(0, 20)) {
-      items.push({ type: 'recording', date: r.sessionDate || r.createdAt, title: `Counseling — ${r.sessionType || 'Session'}`, detail: r.socialWorker ? `by ${r.socialWorker}` : undefined, id: r.recordingId, route: `/admin/recordings/${r.recordingId}` });
+      items.push({ type: 'recording', date: r.sessionDate || r.createdAt, title: `Counseling — ${r.sessionType || 'Session'}`, detail: r.socialWorker ? `by ${r.socialWorker}` : undefined, id: r.recordingId, route: `/admin/recordings/${r.recordingId}?fromResident=${id}` });
     }
     for (const v of visitations.slice(0, 20)) {
-      items.push({ type: 'visit', date: v.visitDate || v.createdAt, title: `${v.visitType || 'Home'} Visit`, detail: v.socialWorker ? `by ${v.socialWorker}` : undefined, id: v.visitationId, route: `/admin/visitations/${v.visitationId}` });
+      items.push({ type: 'visit', date: v.visitDate || v.createdAt, title: `${v.visitType || 'Home'} Visit`, detail: v.socialWorker ? `by ${v.socialWorker}` : undefined, id: v.visitationId, route: `/admin/visitations/${v.visitationId}?fromResident=${id}` });
     }
     for (const i of incidents.slice(0, 20)) {
-      items.push({ type: 'incident', date: i.incidentDate, title: `${i.incidentType || 'Incident'} — ${i.severity}`, detail: i.resolved ? 'Resolved' : 'Open', id: i.incidentId, route: `/admin/incidents/${i.incidentId}` });
+      items.push({ type: 'incident', date: i.incidentDate, title: `${i.incidentType || 'Incident'} — ${i.severity}`, detail: i.resolved ? 'Resolved' : 'Open', id: i.incidentId, route: `/admin/incidents/${i.incidentId}?fromResident=${id}` });
     }
     for (const e of educationRecords.slice(0, 10)) {
-      items.push({ type: 'education', date: e.recordDate, title: `Education — ${e.educationLevel || 'Update'}`, detail: e.attendanceRate != null ? `${Math.round(e.attendanceRate * 100)}% attendance` : undefined });
+      items.push({ type: 'education', date: e.recordDate, title: `Education — ${e.educationLevel || 'Update'}`, detail: e.attendanceRate != null ? `${Math.round(e.attendanceRate * 100)}% attendance` : undefined, id: e.educationRecordId });
     }
     for (const h of healthRecords.slice(0, 10)) {
-      items.push({ type: 'health', date: h.recordDate, title: 'Health Check', detail: h.generalHealthScore != null ? `Health: ${h.generalHealthScore}/5` : undefined });
+      items.push({ type: 'health', date: h.recordDate, title: 'Health Check', detail: h.generalHealthScore != null ? `Health: ${h.generalHealthScore}/5` : undefined, id: h.healthRecordId });
     }
     items.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
     return items.slice(0, 15);
@@ -297,12 +297,10 @@ export default function ResidentDetailPage() {
       {/* Top bar */}
       <div className={styles.topBar}>
         <button className={styles.backLink} onClick={() => navigate('/admin/caseload')}><ArrowLeft size={16} /> Back to Caseload</button>
-        {isAdmin && (
-          <div className={styles.actions}>
-            <button className={styles.editBtn} onClick={() => navigate(`/admin/caseload/${id}/edit`)}><Edit size={14} /> Edit</button>
-            <button className={styles.deleteBtn} onClick={() => setShowDelete(true)}><Trash2 size={14} /> Delete</button>
-          </div>
-        )}
+        <div className={styles.actions}>
+          <button className={styles.editBtn} onClick={() => navigate(`/admin/caseload/${id}/edit`)}><Edit size={14} /> Edit</button>
+          {isAdmin && <button className={styles.deleteBtn} onClick={() => setShowDelete(true)}><Trash2 size={14} /> Delete</button>}
+        </div>
       </div>
 
       {/* ── Profile header card ────────────────────── */}
@@ -344,7 +342,8 @@ export default function ResidentDetailPage() {
       <div className={styles.body}>
         {/* ── Left column: active case data ─────── */}
         <div>
-          {/* Risk & Predictions */}
+          {/* Risk & Predictions — hidden when case is closed */}
+          {resident.caseStatus !== 'Closed' ? (
           <div className={styles.card}>
             <div className={styles.cardHeader}><Shield size={15} className={styles.cardIcon} /> Risk & Predictions</div>
             <div className={styles.cardBody}>
@@ -434,6 +433,58 @@ export default function ResidentDetailPage() {
               )}
             </div>
           </div>
+          ) : (
+          <div className={styles.card}>
+            <div className={styles.cardHeader}><Activity size={15} className={styles.cardIcon} /> Journey Summary</div>
+            <div className={styles.cardBody}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.65rem 1rem', background: 'rgba(39,174,96,0.06)', border: '1px solid rgba(39,174,96,0.2)', borderRadius: 'var(--radius-sm)', fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
+                <Activity size={15} style={{ color: '#27ae60', flexShrink: 0 }} />
+                <span>Case closed{resident.dateClosed ? ` on ${formatDate(resident.dateClosed)}` : ''}. This resident has been successfully reintegrated.</span>
+              </div>
+              <div className={styles.riskPair}>
+                <div className={styles.riskItem}>
+                  <span className={styles.riskLabel}>Risk at Intake</span>
+                  <span className={`${styles.badge} ${styles[`badgeRisk${resident.initialRiskLevel}`] ?? styles.badgeRiskDefault}`}>
+                    {resident.initialRiskLevel || '--'}
+                  </span>
+                </div>
+                <div className={styles.riskItem}>
+                  <span className={styles.riskLabel}>Risk at Close</span>
+                  <span className={`${styles.badge} ${styles[`badgeRisk${resident.currentRiskLevel}`] ?? styles.badgeRiskDefault}`}>
+                    {resident.currentRiskLevel || '--'}
+                  </span>
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem', marginTop: '0.5rem' }}>
+                <div style={{ textAlign: 'center', padding: '0.5rem', background: 'rgba(15,27,45,0.02)', borderRadius: '8px' }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-strong)' }}>{recordings.length}</div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Sessions</div>
+                </div>
+                <div style={{ textAlign: 'center', padding: '0.5rem', background: 'rgba(15,27,45,0.02)', borderRadius: '8px' }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-strong)' }}>{visitations.length}</div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Visits</div>
+                </div>
+                <div style={{ textAlign: 'center', padding: '0.5rem', background: 'rgba(15,27,45,0.02)', borderRadius: '8px' }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-strong)' }}>{educationRecords.length + healthRecords.length}</div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Records</div>
+                </div>
+              </div>
+              {emotionalTrends.length >= 2 && (
+                <div style={{ marginTop: '0.75rem' }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Emotional Journey</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.82rem' }}>
+                    <span style={{ color: emotionalColor(emotionalTrends[0].emotionalStateObserved), fontWeight: 600 }}>{emotionalTrends[0].emotionalStateObserved}</span>
+                    <span style={{ color: 'var(--text-muted)' }}>&rarr;</span>
+                    <span style={{ color: emotionalColor(emotionalTrends[emotionalTrends.length - 1].emotionalStateEnd), fontWeight: 700 }}>{emotionalTrends[emotionalTrends.length - 1].emotionalStateEnd}</span>
+                    {EMOTIONAL_ORDER.indexOf(emotionalTrends[emotionalTrends.length - 1].emotionalStateEnd) > EMOTIONAL_ORDER.indexOf(emotionalTrends[0].emotionalStateObserved) && (
+                      <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#27ae60', marginLeft: '0.25rem' }}>&#x2191; improved</span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          )}
 
           {/* Emotional Trajectory */}
           {emotionalTrends.length > 0 && (
@@ -466,7 +517,10 @@ export default function ResidentDetailPage() {
                 <p className={styles.noData}>No activity recorded yet.</p>
               ) : (
                 timeline.map((item, i) => (
-                  <div key={i} className={styles.timelineItem} onClick={() => item.route && navigate(item.route)}>
+                  <div key={i} className={`${styles.timelineItem} ${item.route || item.type === 'education' || item.type === 'health' ? styles.timelineClickable : ''}`} onClick={() => {
+                    if (item.route) navigate(item.route);
+                    else if (item.type === 'education' || item.type === 'health') setActiveTab('records');
+                  }}>
                     {timelineIcon(item.type)}
                     <div className={styles.timelineBody}>
                       <div className={styles.timelineTitle}>{item.title}</div>
