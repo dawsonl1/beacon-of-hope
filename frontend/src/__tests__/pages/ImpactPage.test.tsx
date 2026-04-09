@@ -1,38 +1,12 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import ImpactPage from '../../pages/ImpactPage';
 import { renderWithProviders } from '../helpers/renderWithProviders';
 
-// Mock recharts to avoid SVG rendering issues in jsdom
-vi.mock('recharts', () => {
-  const MockedResponsiveContainer = ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="responsive-container">{children}</div>
-  );
-  const MockedBarChart = ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="bar-chart">{children}</div>
-  );
-  return {
-    ResponsiveContainer: MockedResponsiveContainer,
-    BarChart: MockedBarChart,
-    Bar: () => <div />,
-    XAxis: () => <div />,
-    YAxis: () => <div />,
-    CartesianGrid: () => <div />,
-    Tooltip: () => <div />,
-    Cell: () => <div />,
-    ReferenceLine: () => <div />,
-  };
-});
-
 describe('ImpactPage', () => {
   it('renders the page headline', () => {
     renderWithProviders(<ImpactPage />);
-    expect(screen.getByText(/Our impact, by the numbers/)).toBeInTheDocument();
-  });
-
-  it('renders live data label', () => {
-    renderWithProviders(<ImpactPage />);
-    expect(screen.getByText(/Live data/)).toBeInTheDocument();
+    expect(screen.getByText(/Every number represents/)).toBeInTheDocument();
   });
 
   it('loads and shows impact summary stats', async () => {
@@ -42,9 +16,14 @@ describe('ImpactPage', () => {
     });
   });
 
+  it('renders where donations go section', () => {
+    renderWithProviders(<ImpactPage />);
+    expect(screen.getByText(/Where your donations go/)).toBeInTheDocument();
+  });
+
   it('renders stories section', () => {
     renderWithProviders(<ImpactPage />);
-    expect(screen.getAllByText('Stories of hope').length).toBeGreaterThan(0);
+    expect(screen.getByText('Stories of hope')).toBeInTheDocument();
   });
 
   it('renders donate CTA', () => {

@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Shield, Mic, Square, Sparkles } from 'lucide-react';
 import { apiFetch } from '../../api';
+import { APP_TODAY, APP_TODAY_STR } from '../../constants';
 import { useAuth } from '../../contexts/AuthContext';
 import styles from './RecordingFormPage.module.css';
 
@@ -130,7 +131,7 @@ export default function RecordingFormPage() {
 
   // Form state
   const [residentId, setResidentId] = useState('');
-  const [sessionDate, setSessionDate] = useState(new Date().toISOString().slice(0, 10));
+  const [sessionDate, setSessionDate] = useState(APP_TODAY_STR);
   const [socialWorker, setSocialWorker] = useState('');
   const [sessionType, setSessionType] = useState('');
   const [duration, setDuration] = useState('');
@@ -356,7 +357,7 @@ export default function RecordingFormPage() {
 
     if (data.sessionDate) {
       const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-      if (dateRegex.test(data.sessionDate) && new Date(data.sessionDate) <= new Date()) {
+      if (dateRegex.test(data.sessionDate) && new Date(data.sessionDate) <= APP_TODAY) {
         setSessionDate(data.sessionDate);
       }
     }
@@ -653,7 +654,7 @@ export default function RecordingFormPage() {
                 type="date"
                 value={sessionDate}
                 onChange={(e) => setSessionDate(e.target.value)}
-                max={new Date().toISOString().slice(0, 10)}
+                max={APP_TODAY_STR}
                 required
               />
             </div>

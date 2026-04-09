@@ -9,6 +9,7 @@ import CookieConsent from './components/CookieConsent';
 import CookiePreferencesModal from './components/CookiePreferencesModal';
 import AnalyticsLoader from './components/AnalyticsLoader';
 import ProtectedRoute from './components/ProtectedRoute';
+import ScrollToTop from './components/ScrollToTop';
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
   constructor(props: { children: ReactNode }) {
@@ -103,6 +104,7 @@ function App() {
     <AuthProvider>
       <CookieConsentProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             {/* Public pages */}
             <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
