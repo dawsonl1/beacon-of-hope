@@ -282,8 +282,8 @@ export default function ResidentFormPage() {
 
       <form onSubmit={handleSubmit} className={styles.form}>
         {/* ── Essential Info (always visible, quick entry) ── */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Admission</legend>
+        <div className={styles.fieldset}>
+          <h3 className={styles.legend}>Admission</h3>
           <p className={styles.sectionHint}>Start here — codes are auto-generated on save.</p>
           <div className={styles.fieldGrid}>
             <label className={styles.label}>
@@ -348,11 +348,11 @@ export default function ResidentFormPage() {
               </label>
             </div>
           )}
-        </fieldset>
+        </div>
 
         {/* ── About the Resident ── */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>About the Resident</legend>
+        <div className={styles.fieldset}>
+          <h3 className={styles.legend}>About the Resident</h3>
           <div className={styles.fieldGrid}>
             <label className={styles.label}>
               Sex
@@ -383,11 +383,11 @@ export default function ResidentFormPage() {
               <input className={styles.input} value={form.birthStatus} onChange={(e) => updateField('birthStatus', e.target.value)} placeholder="e.g. Legitimate" />
             </label>
           </div>
-        </fieldset>
+        </div>
 
         {/* ── Case Details ── */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Case Details</legend>
+        <div className={styles.fieldset}>
+          <h3 className={styles.legend}>Case Details</h3>
           <div className={styles.checkboxSection}>
             <span className={styles.checkboxLabel}>Sub-Categories (select all that apply)</span>
             <div className={styles.checkboxGrid}>
@@ -409,11 +409,11 @@ export default function ResidentFormPage() {
               <input className={styles.input} value={form.referringAgencyPerson} onChange={(e) => updateField('referringAgencyPerson', e.target.value)} placeholder="Name of referring person or agency" />
             </label>
           </div>
-        </fieldset>
+        </div>
 
         {/* ── Health & Family ── */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Health & Family</legend>
+        <div className={styles.fieldset}>
+          <h3 className={styles.legend}>Health & Family</h3>
           <div className={styles.checkboxSection}>
             <label className={styles.checkbox}>
               <input type="checkbox" checked={form.isPwd} onChange={(e) => updateField('isPwd', e.target.checked)} />
@@ -451,11 +451,11 @@ export default function ResidentFormPage() {
               ))}
             </div>
           </div>
-        </fieldset>
+        </div>
 
         {/* ── Assessment & Notes ── */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Assessment & Notes</legend>
+        <div className={styles.fieldset}>
+          <h3 className={styles.legend}>Assessment & Notes</h3>
           <div className={styles.fullWidthFields}>
             <label className={styles.label}>
               Initial Case Assessment
@@ -495,7 +495,7 @@ export default function ResidentFormPage() {
               <input type="date" className={styles.input} value={form.dateClosed} onChange={(e) => updateField('dateClosed', e.target.value)} />
             </label>
           </div>
-        </fieldset>
+        </div>
 
         {/* Actions */}
         <div className={styles.formActions}>
