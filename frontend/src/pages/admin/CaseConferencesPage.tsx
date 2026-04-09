@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Loader2, Users, Plus, X, AlertTriangle,
+  Loader2, Users, Plus, X,
   Calendar, Clock, CheckCircle, UserPlus, ChevronDown,
 } from 'lucide-react';
 import { apiFetch } from '../../api';
@@ -315,7 +315,7 @@ export default function CaseConferencesPage() {
       {alerts.length > 0 && (
         <div style={{ marginBottom: '2rem' }}>
           <h2 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-strong)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <AlertTriangle size={18} style={{ color: '#e74c3c' }} /> Residents Needing Review ({alerts.length}) <MlBadge />
+            Residents Needing Review ({alerts.length}) <MlBadge />
           </h2>
           <div className={styles.tableCard}>
             <table className={styles.table}>
