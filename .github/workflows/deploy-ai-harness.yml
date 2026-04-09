@@ -18,13 +18,15 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install dependencies
-        run: pip install -r ai_harness/requirements.txt
+      - name: Prepare deployment package
+        run: |
+          cp ai_harness/requirements.txt requirements.txt
+          zip -r deploy.zip ai_harness/ requirements.txt -x "ai_harness/.venv/*" "ai_harness/__pycache__/*" "ai_harness/tests/*"
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'intex-ai-harness'
           publish-profile: ${{ secrets.AZURE_AI_HARNESS_PUBLISH_PROFILE }}
-          package: .
-          startup-command: 'pip install -r ai_harness/requirements.txt && uvicorn ai_harness.app:app --host 0.0.0.0 --port 8000'
+          package: deploy.zip
+          type: zip
