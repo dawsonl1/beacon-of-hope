@@ -827,22 +827,25 @@ export default function HomePage() {
                         </p>
                       )}
                       <div className={styles.taskActions}>
-                        <button
-                          className={styles.scheduleBtn}
-                          onClick={e => { e.stopPropagation(); setScheduleTask(task); setScheduleForm({ eventDate: fmtDate(currentDate), startTime: '' }); }}
-                        >
-                          <Calendar size={12} /> Schedule
-                        </button>
-                        <button
-                          className={styles.completeBtn}
-                          onClick={e => {
-                            e.stopPropagation();
-                            if (task.residentId) navigate(`/admin/caseload/${task.residentId}`);
-                            else handleTaskAction(task.staffTaskId, 'Completed');
-                          }}
-                        >
-                          <CheckCircle size={12} /> {task.residentId ? 'View' : 'Done'}
-                        </button>
+                        {TASK_TYPE_TO_EVENT_TYPE[task.taskType] ? (
+                          <button
+                            className={styles.scheduleBtn}
+                            onClick={e => { e.stopPropagation(); setScheduleTask(task); setScheduleForm({ eventDate: fmtDate(currentDate), startTime: '' }); }}
+                          >
+                            <Calendar size={12} /> Schedule
+                          </button>
+                        ) : (
+                          <button
+                            className={styles.completeBtn}
+                            onClick={e => {
+                              e.stopPropagation();
+                              if (task.residentId) navigate(`/admin/caseload/${task.residentId}`);
+                              else handleTaskAction(task.staffTaskId, 'Completed');
+                            }}
+                          >
+                            <CheckCircle size={12} /> {task.residentId ? 'View' : 'Done'}
+                          </button>
+                        )}
                         <button className={styles.snoozeBtn} onClick={e => { e.stopPropagation(); handleTaskAction(task.staffTaskId, 'Snoozed', 30); }}>
                           <Clock size={12} />
                         </button>
@@ -863,8 +866,9 @@ export default function HomePage() {
       {scheduleTask && (
         <div className={styles.formOverlay} onClick={() => setScheduleTask(null)}>
           <div className={styles.formModal} onClick={e => e.stopPropagation()}>
-            <h3 className={styles.modalTitle}>Schedule: {scheduleTask.title}</h3>
+            <h3 className={styles.modalTitle}>{scheduleTask.title}</h3>
             {scheduleTask.residentCode && <p className={styles.modalMeta}>Resident: {scheduleTask.residentCode}</p>}
+            {scheduleTask.description && <p className={styles.modalMeta}>{scheduleTask.description}</p>}
             <div className={styles.formGrid}>
               <label className={styles.formLabel}>
                 Date
