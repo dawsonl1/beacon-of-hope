@@ -133,5 +133,19 @@ public static class IncidentEndpoints
                 .ToListAsync();
             return Results.Ok(items);
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
+
+        app.MapGet("/api/admin/residents/my-claimed", async (HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db, int? safehouseId) =>
+        {
+            var user = await userManager.GetUserAsync(httpContext.User);
+            if (user == null) return Results.Unauthorized();
+            var fullName = $"{user.FirstName} {user.LastName}";
+            var allowed = await SafehouseAuth.GetAllowedSafehouseIds(httpContext, db);
+            var query = db.Residents.Where(r => r.AssignedSocialWorker == fullName && r.CaseStatus == "Active");
+            query = SafehouseAuth.ApplyResidentFilter(query, allowed, safehouseId);
+            var items = await query.OrderByDescending(r => r.DateOfAdmission)
+                .Select(r => new { r.ResidentId, r.InternalCode, r.CaseControlNo, r.SafehouseId, safehouse = r.Safehouse != null ? r.Safehouse.Name : null, r.CaseCategory, r.CurrentRiskLevel, r.DateOfAdmission })
+                .ToListAsync();
+            return Results.Ok(items);
+        }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
     }
 }
