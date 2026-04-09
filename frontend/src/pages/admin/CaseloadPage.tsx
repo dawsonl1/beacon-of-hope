@@ -62,7 +62,7 @@ export default function CaseloadPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const isAdmin = user?.roles?.includes('Admin') ?? false;
+  const canManageResidents = user?.roles?.some(r => r === 'Admin' || r === 'Staff') ?? false;
 
   const [data, setData] = useState<PagedResult | null>(null);
   const [filterOptions, setFilterOptions] = useState<FilterOptions | null>(null);
@@ -161,7 +161,7 @@ export default function CaseloadPage() {
             {data ? `${data.totalCount} resident${data.totalCount !== 1 ? 's' : ''}` : 'Loading...'}
           </p>
         </div>
-        {isAdmin && (
+        {canManageResidents && (
           <button className={styles.addBtn} onClick={() => navigate('/admin/caseload/new')}>
             <Plus size={16} />
             Add Resident

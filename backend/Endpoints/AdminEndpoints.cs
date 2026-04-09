@@ -493,7 +493,7 @@ public static class AdminEndpoints
             db.Residents.Add(resident);
             await db.SaveChangesAsync();
             return Results.Created($"/api/admin/residents/{resident.ResidentId}", new { resident.ResidentId });
-        }).RequireAuthorization("AdminOnly");
+        }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
         app.MapPut("/api/admin/residents/{id:int}", async (int id, HttpContext httpContext, AppDbContext db) =>
         {
