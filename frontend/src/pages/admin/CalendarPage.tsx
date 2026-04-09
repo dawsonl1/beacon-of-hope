@@ -133,6 +133,13 @@ function DraggableChip({ evt, onClick }: { evt: CalendarEventItem; onClick: () =
 }
 
 /* ── Droppable time slot ─────────────────────────────────── */
+/*
+ * KEY FIX: The droppable ref goes on a SEPARATE invisible overlay div,
+ * not on the slot container. This prevents the droppable from capturing
+ * pointer events before they reach the draggable chips inside.
+ * The overlay sits behind the content in the stacking order (z-index: 0)
+ * so draggable chips (z-index: 1) receive pointer events first.
+ */
 
 function TimeSlot({
   timeStr,
@@ -151,9 +158,10 @@ function TimeSlot({
 
   return (
     <div
-      ref={setNodeRef}
       className={`${styles.timeSlot} ${isHalf ? styles.halfHourSlot : ''} ${isOver || isHighlighted ? styles.slotHighlight : ''}`}
     >
+      {/* Invisible droppable overlay — receives drop events but doesn't block draggable children */}
+      <div ref={setNodeRef} className={styles.dropOverlay} />
       <div className={styles.timeLabel}>
         {minute === 0 ? formatHour(hour) : ''}
       </div>
