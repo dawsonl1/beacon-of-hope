@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { apiFetch } from '../api';
 import type { ImpactSummary } from '../types';
 import { ApiError } from '../components/ApiError';
@@ -64,6 +64,8 @@ export default function HomePage() {
   const involvedRef = useReveal();
   const donateRef = useReveal();
 
+  const location = useLocation();
+
   const [impact, setImpact] = useState<ImpactSummary | null>(null);
   const [error, setError] = useState(false);
 
@@ -72,6 +74,16 @@ export default function HomePage() {
       .then(setImpact)
       .catch((e) => { console.error('Failed to fetch impact summary', e); setError(true); });
   }, []);
+
+  // Handle hash anchor scrolling (e.g. /#mission, /#involved)
+  useEffect(() => {
+    if (location.hash) {
+      const el = document.querySelector(location.hash);
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 100);
+      }
+    }
+  }, [location.hash]);
 
   return (
     <main>
@@ -241,7 +253,7 @@ export default function HomePage() {
               <h3>Donate</h3>
               <p>Your financial support funds shelter, education, counseling, and care.</p>
             </Link>
-            <Link to="/donate" className={`${styles.involvedCard} reveal`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Link to="/volunteer" className={`${styles.involvedCard} reveal`} style={{ textDecoration: 'none', color: 'inherit' }}>
               <Users size={28} className={styles.involvedIcon} />
               <h3>Volunteer</h3>
               <p>Give your time and skills to help our team on the ground.</p>
@@ -254,7 +266,7 @@ export default function HomePage() {
             <Link to="/newsletter" className={`${styles.involvedCard} reveal`} style={{ textDecoration: 'none', color: 'inherit' }}>
               <Megaphone size={28} className={styles.involvedIcon} />
               <h3>Advocate</h3>
-              <p>Amplify our voice on social media and raise awareness.</p>
+              <p>Stay informed and share our story.</p>
             </Link>
           </div>
         </div>

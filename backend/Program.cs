@@ -1236,6 +1236,45 @@ app.MapGet("/api/impact/snapshots", async (AppDbContext db) =>
     return data;
 });
 
+// ── Volunteer sign-up (public) ─────────────────────────────
+
+app.MapPost("/api/volunteer", async (AppDbContext db, HttpContext httpContext) =>
+{
+    var body = await httpContext.Request.ReadFromJsonAsync<VolunteerSignupRequest>();
+    if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+
+    if (string.IsNullOrWhiteSpace(body.FirstName) || string.IsNullOrWhiteSpace(body.LastName))
+        return Results.BadRequest(new { error = "First and last name are required." });
+    if (string.IsNullOrWhiteSpace(body.Email))
+        return Results.BadRequest(new { error = "Email is required." });
+    if (string.IsNullOrWhiteSpace(body.Region))
+        return Results.BadRequest(new { error = "Region is required." });
+
+    // Check if this email is already registered as a volunteer
+    var existing = await db.Supporters
+        .FirstOrDefaultAsync(s => s.Email == body.Email.Trim() && s.SupporterType == "Volunteer");
+    if (existing != null)
+        return Results.Ok(new { message = "You're already signed up. We'll be in touch!" });
+
+    var supporter = new backend.Models.Supporter
+    {
+        SupporterType = "Volunteer",
+        FirstName = body.FirstName.Trim(),
+        LastName = body.LastName.Trim(),
+        DisplayName = $"{body.FirstName.Trim()} {body.LastName.Trim()}",
+        Email = body.Email.Trim(),
+        Region = body.Region.Trim(),
+        Country = "Guam",
+        Status = "Prospective",
+        AcquisitionChannel = "Direct",
+        CreatedAt = DateTime.UtcNow,
+    };
+
+    db.Supporters.Add(supporter);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { message = "Thank you for your interest!" });
+});
+
 // ── Admin endpoints ────────────────────────────────────────
 
 app.MapGet("/api/admin/metrics", async (AppDbContext db) =>
@@ -2879,5 +2918,17 @@ public class EducationRecordRequest { public int ResidentId { get; set; } public
 public class HealthRecordRequest { public int ResidentId { get; set; } public DateOnly? RecordDate { get; set; } public decimal? WeightKg { get; set; } public decimal? HeightCm { get; set; } public decimal? Bmi { get; set; } public decimal? NutritionScore { get; set; } public decimal? SleepQualityScore { get; set; } public decimal? EnergyLevelScore { get; set; } public decimal? GeneralHealthScore { get; set; } public bool? MedicalCheckupDone { get; set; } public bool? DentalCheckupDone { get; set; } public bool? PsychologicalCheckupDone { get; set; } public string? Notes { get; set; } }
 
 public class InterventionPlanRequest { public int ResidentId { get; set; } public string? PlanCategory { get; set; } public string? PlanDescription { get; set; } public string? ServicesProvided { get; set; } public decimal? TargetValue { get; set; } public DateOnly? TargetDate { get; set; } public string? Status { get; set; } public DateOnly? CaseConferenceDate { get; set; } }
+
+public class VolunteerSignupRequest
+{
+    [StringLength(100)]
+    public string? FirstName { get; set; }
+    [StringLength(100)]
+    public string? LastName { get; set; }
+    [EmailAddress]
+    public string? Email { get; set; }
+    [StringLength(100)]
+    public string? Region { get; set; }
+}
 
 public partial class Program { }
