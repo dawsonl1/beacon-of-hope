@@ -544,7 +544,7 @@ export default function CalendarPage() {
                 <Dropdown
                   value={newEvent.residentId}
                   placeholder="None"
-                  options={[{ value: '', label: 'None' }, ...residents.map(r => ({ value: r.residentId, label: r.internalCode }))]}
+                  options={[{ value: '', label: 'None' }, ...residents.map(r => ({ value: String(r.residentId), label: r.internalCode }))]}
                   onChange={v => setNewEvent({ ...newEvent, residentId: v })}
                 />
               </div>

@@ -238,7 +238,7 @@ export default function CaseConferencesPage() {
             <Dropdown
               value={createSafehouseId}
               placeholder="Select safehouse..."
-              options={safehouses.map(s => ({ value: s.safehouseId, label: s.name }))}
+              options={safehouses.map(s => ({ value: String(s.safehouseId), label: s.name }))}
               onChange={setCreateSafehouseId}
             />
           </div>
