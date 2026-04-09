@@ -19,7 +19,7 @@ describe('CaseloadPage', () => {
   it('shows filter dropdowns', () => {
     renderWithProviders(<CaseloadPage />);
     expect(screen.getByText('All Statuses')).toBeInTheDocument();
-    expect(screen.getByText('All Safehouses')).toBeInTheDocument();
+    expect(screen.getByText('All Categories')).toBeInTheDocument();
   });
 
   it('loads and displays resident data in table', async () => {

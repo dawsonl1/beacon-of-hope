@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, CheckCircle, Clock, X, Stethoscope, GraduationCap, Heart, AlertTriangle, Home, ClipboardList } from 'lucide-react';
+import { Loader2, CheckCircle, Clock, X, Stethoscope, GraduationCap, Heart, AlertTriangle, Home, ClipboardList, CalendarPlus } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useSafehouse } from '../../contexts/SafehouseContext';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
@@ -127,8 +127,22 @@ export default function StaffTasksPage() {
                   )}
                 </div>
                 <div className={styles.taskActions}>
+                  {task.taskType === 'IncidentFollowUp' && task.residentId && (
+                    <button
+                      className={styles.completeBtn}
+                      onClick={() => {
+                        const params = new URLSearchParams();
+                        params.set('sourceTaskId', String(task.staffTaskId));
+                        if (task.residentId) params.set('residentId', String(task.residentId));
+                        params.set('title', `Follow-up: ${task.description?.split(' \u2014 ')[0] || 'Incident'}`);
+                        navigate(`/admin/calendar?${params.toString()}`);
+                      }}
+                    >
+                      <CalendarPlus size={14} /> Schedule
+                    </button>
+                  )}
                   <button
-                    className={styles.completeBtn}
+                    className={task.taskType === 'IncidentFollowUp' ? styles.snoozeBtn : styles.completeBtn}
                     onClick={() => {
                       if (task.residentId) navigate(`/admin/caseload/${task.residentId}`);
                       else handleAction(task.staffTaskId, 'Completed');

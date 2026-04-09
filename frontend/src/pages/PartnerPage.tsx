@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { HandHeart, CheckCircle } from 'lucide-react';
 import { apiFetch } from '../api';
+import Dropdown from '../components/admin/Dropdown';
 import styles from './PartnerPage.module.css';
 
 const PARTNER_TYPES = ['Organization', 'Individual'] as const;
@@ -185,17 +186,13 @@ export default function PartnerPage() {
           </div>
 
           <div className={styles.fieldGroup}>
-            <label className={styles.label} htmlFor="roleType">Area of Interest (optional)</label>
-            <select
-              id="roleType"
-              className={styles.select}
+            <label className={styles.label}>Area of Interest (optional)</label>
+            <Dropdown
               value={roleType}
-              onChange={e => setRoleType(e.target.value)}
-            >
-              {ROLE_OPTIONS.map(r => (
-                <option key={r.value} value={r.value}>{r.label}</option>
-              ))}
-            </select>
+              placeholder="Select an area of interest..."
+              options={ROLE_OPTIONS.filter(r => r.value !== '').map(r => ({ value: r.value, label: r.label }))}
+              onChange={v => setRoleType(v)}
+            />
           </div>
 
           <div className={styles.fieldGroup}>

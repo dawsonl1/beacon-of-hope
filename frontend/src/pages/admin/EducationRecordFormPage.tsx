@@ -4,6 +4,8 @@ import { ArrowLeft } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { APP_TODAY_STR } from '../../constants';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import Dropdown from '../../components/admin/Dropdown';
+import DatePicker from '../../components/admin/DatePicker';
 import styles from './VisitationFormPage.module.css';
 
 interface FormData {
@@ -35,6 +37,8 @@ export default function EducationRecordFormPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const residentId = params.get('residentId');
+  const taskId = params.get('taskId');
+  const fromCalendar = Boolean(taskId);
 
   const [form, setForm] = useState<FormData>({ ...emptyForm, residentId: residentId ? Number(residentId) : '' });
   const [residents, setResidents] = useState<{ residentId: number; internalCode: string }[]>([]);
@@ -71,7 +75,14 @@ export default function EducationRecordFormPage() {
           notes: form.notes || null,
         }),
       });
-      navigate(residentId ? `/admin/caseload/${residentId}` : '/admin/caseload');
+      // Mark task as completed if linked
+      if (taskId) {
+        await apiFetch(`/api/staff/tasks/${taskId}`, {
+          method: 'PUT',
+          body: JSON.stringify({ status: 'Completed' }),
+        }).catch(() => {});
+      }
+      navigate(fromCalendar ? '/admin' : residentId ? `/admin/caseload/${residentId}` : '/admin/caseload');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save');
     } finally {
@@ -81,36 +92,42 @@ export default function EducationRecordFormPage() {
 
   return (
     <div className={styles.page}>
-      <Link to={residentId ? `/admin/caseload/${residentId}` : '/admin/caseload'} className={styles.backLink}>
-        <ArrowLeft size={16} /> Back
+      <Link to={fromCalendar ? '/admin' : residentId ? `/admin/caseload/${residentId}` : '/admin/caseload'} className={styles.backLink}>
+        <ArrowLeft size={16} /> {fromCalendar ? 'Back to Calendar' : 'Back'}
       </Link>
       <h1 className={styles.title}>Update Education Record</h1>
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.grid}>
-          <label className={styles.label}>
+          <div className={styles.label}>
             Resident *
-            <select className={styles.select} value={form.residentId} onChange={e => handleChange('residentId', e.target.value ? Number(e.target.value) : '')} required>
-              <option value="">Select resident</option>
-              {residents.map(r => <option key={r.residentId} value={r.residentId}>{r.internalCode}</option>)}
-            </select>
-          </label>
-          <label className={styles.label}>
+            <Dropdown
+              value={String(form.residentId)}
+              placeholder="Select resident"
+              options={residents.map(r => ({ value: String(r.residentId), label: r.internalCode }))}
+              onChange={v => handleChange('residentId', v ? Number(v) : '')}
+            />
+          </div>
+          <div className={styles.label}>
             Record Date
-            <input type="date" className={styles.input} value={form.recordDate} onChange={e => handleChange('recordDate', e.target.value)} />
-          </label>
-          <label className={styles.label}>
+            <DatePicker value={form.recordDate} onChange={v => handleChange('recordDate', v)} placeholder="Select date..." />
+          </div>
+          <div className={styles.label}>
             Education Level
-            <select className={styles.select} value={form.educationLevel} onChange={e => handleChange('educationLevel', e.target.value)}>
-              <option value="">Select</option>
-              <option value="Bridge Program">Bridge Program</option>
-              <option value="Secondary Support">Secondary Support</option>
-              <option value="Vocational Skills">Vocational Skills</option>
-              <option value="Literacy Boost">Literacy Boost</option>
-              <option value="Elementary">Elementary</option>
-              <option value="High School">High School</option>
-            </select>
-          </label>
+            <Dropdown
+              value={form.educationLevel}
+              placeholder="Select"
+              options={[
+                { value: 'Bridge Program', label: 'Bridge Program' },
+                { value: 'Secondary Support', label: 'Secondary Support' },
+                { value: 'Vocational Skills', label: 'Vocational Skills' },
+                { value: 'Literacy Boost', label: 'Literacy Boost' },
+                { value: 'Elementary', label: 'Elementary' },
+                { value: 'High School', label: 'High School' },
+              ]}
+              onChange={v => handleChange('educationLevel', v)}
+            />
+          </div>
           <label className={styles.label}>
             School Name
             <input className={styles.input} value={form.schoolName} onChange={e => handleChange('schoolName', e.target.value)} placeholder="School name" />
@@ -123,26 +140,34 @@ export default function EducationRecordFormPage() {
             Progress (%)
             <input type="number" min="0" max="100" step="0.1" className={styles.input} value={form.progressPercent} onChange={e => handleChange('progressPercent', e.target.value)} placeholder="0-100" />
           </label>
-          <label className={styles.label}>
+          <div className={styles.label}>
             Completion Status
-            <select className={styles.select} value={form.completionStatus} onChange={e => handleChange('completionStatus', e.target.value)}>
-              <option value="">Select</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Completed">Completed</option>
-              <option value="Dropped">Dropped</option>
-              <option value="On Hold">On Hold</option>
-            </select>
-          </label>
-          <label className={styles.label}>
+            <Dropdown
+              value={form.completionStatus}
+              placeholder="Select"
+              options={[
+                { value: 'In Progress', label: 'In Progress' },
+                { value: 'Completed', label: 'Completed' },
+                { value: 'Dropped', label: 'Dropped' },
+                { value: 'On Hold', label: 'On Hold' },
+              ]}
+              onChange={v => handleChange('completionStatus', v)}
+            />
+          </div>
+          <div className={styles.label}>
             Enrollment Status
-            <select className={styles.select} value={form.enrollmentStatus} onChange={e => handleChange('enrollmentStatus', e.target.value)}>
-              <option value="">Select</option>
-              <option value="Enrolled">Enrolled</option>
-              <option value="Not Enrolled">Not Enrolled</option>
-              <option value="Graduated">Graduated</option>
-              <option value="Transferred">Transferred</option>
-            </select>
-          </label>
+            <Dropdown
+              value={form.enrollmentStatus}
+              placeholder="Select"
+              options={[
+                { value: 'Enrolled', label: 'Enrolled' },
+                { value: 'Not Enrolled', label: 'Not Enrolled' },
+                { value: 'Graduated', label: 'Graduated' },
+                { value: 'Transferred', label: 'Transferred' },
+              ]}
+              onChange={v => handleChange('enrollmentStatus', v)}
+            />
+          </div>
         </div>
 
         <label className={styles.label} style={{ marginTop: '0.75rem' }}>

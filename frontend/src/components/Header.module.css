@@ -251,9 +251,22 @@
 
 .menuToggle {
   display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
   color: var(--text-strong);
-  padding: 0.25rem;
+  padding: 0.35rem;
   border-radius: 8px;
+  position: relative;
+}
+
+.menuToggle:hover {
+  background: rgba(15, 27, 45, 0.05);
+}
+
+/* ── Mobile nav backdrop ───────────────────────────────── */
+.navBackdrop {
+  display: none;
 }
 
 @media (max-width: 768px) {
@@ -269,19 +282,24 @@
     padding: 0 1.25rem;
   }
 
+  .menuToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 201;
+  }
+
   .nav {
     display: none;
     position: fixed;
-    top: var(--header-height);
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(248, 247, 243, 0.98);
+    inset: 0;
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(12px);
     flex-direction: column;
-    justify-content: flex-start;
-    padding-top: 1rem;
+    align-items: center;
+    justify-content: center;
     gap: 0;
-    z-index: 99;
+    z-index: 200;
   }
 
   .navOpen {
@@ -289,12 +307,13 @@
   }
 
   .navLink {
-    font-size: 1.05rem;
+    font-size: 1.2rem;
     font-weight: 600;
-    padding: 1rem 2rem;
+    padding: 1.1rem 2rem;
     width: 100%;
-    text-align: left;
-    border-bottom: 1px solid rgba(15, 27, 45, 0.08);
+    max-width: 300px;
+    text-align: center;
+    border-bottom: 1px solid rgba(15, 27, 45, 0.06);
   }
 
   .navLink::after {
@@ -320,7 +339,7 @@
     padding: 0.5rem;
   }
 
-  .menuToggle {
-    display: block;
+  .navBackdrop {
+    display: none;
   }
 }

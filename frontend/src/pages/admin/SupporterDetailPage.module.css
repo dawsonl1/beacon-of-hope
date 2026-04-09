@@ -198,6 +198,92 @@
   color: var(--text-muted);
 }
 
+/* ── Retention Risk card ─────────────────────────────── */
+.riskCard {
+  background: var(--surface-1);
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.riskHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.riskTitle {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  margin: 0;
+}
+
+.riskBody {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.riskScore {
+  display: flex;
+  align-items: baseline;
+  gap: 0.15rem;
+}
+
+.riskScoreValue {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.riskScoreMax {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.riskLabel {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.riskFactors {
+  border-top: 1px solid rgba(15, 27, 45, 0.06);
+  padding-top: 0.75rem;
+}
+
+.riskFactorsLabel {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.riskFactorsList {
+  margin: 0.35rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  list-style: disc;
+}
+
+.riskFactorsList li {
+  margin-bottom: 0.15rem;
+}
+
 /* ── Donations history ────────────────────────────────── */
 .sectionTitle {
   font-family: var(--font-display);

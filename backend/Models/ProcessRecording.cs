@@ -39,5 +39,8 @@ public partial class ProcessRecording
 
     public bool? ReadyForReintegration { get; set; }
 
+    public int? SourceCalendarEventId { get; set; }
+
     public virtual Resident Resident { get; set; } = null!;
+    public virtual CalendarEvent? SourceCalendarEvent { get; set; }
 }

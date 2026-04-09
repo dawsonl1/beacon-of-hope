@@ -5,6 +5,8 @@ import { apiFetch } from '../../api';
 import { formatEnumLabel, APP_TODAY_STR } from '../../constants';
 import { DONATION_TYPES } from '../../domain';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import Dropdown from '../../components/admin/Dropdown';
+import DatePicker from '../../components/admin/DatePicker';
 import styles from './DonationFormPage.module.css';
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'AUD', 'CAD'];
 
@@ -173,28 +175,29 @@ export default function DonationFormPage() {
           {/* Supporter selector */}
           <div className={`${styles.field} ${styles.fieldFull}`}>
             <label>Supporter</label>
-            <select value={form.supporterId} onChange={e => set('supporterId', e.target.value)}>
-              <option value="">Select supporter...</option>
-              {supporters.map(s => (
-                <option key={s.supporterId} value={s.supporterId}>
-                  {s.displayName ?? `Supporter #${s.supporterId}`}
-                </option>
-              ))}
-            </select>
+            <Dropdown
+              value={form.supporterId}
+              placeholder="Select supporter..."
+              options={supporters.map(s => ({ value: String(s.supporterId), label: s.displayName ?? `Supporter #${s.supporterId}` }))}
+              onChange={(v) => set('supporterId', v)}
+            />
           </div>
 
           {/* Donation type */}
           <div className={styles.field}>
             <label>Donation Type</label>
-            <select value={form.donationType} onChange={e => set('donationType', e.target.value)}>
-              {DONATION_TYPES.map(t => <option key={t} value={t}>{formatEnumLabel(t)}</option>)}
-            </select>
+            <Dropdown
+              value={form.donationType}
+              placeholder="Select type..."
+              options={DONATION_TYPES.map(t => ({ value: t, label: formatEnumLabel(t) }))}
+              onChange={(v) => set('donationType', v)}
+            />
           </div>
 
           {/* Date */}
           <div className={styles.field}>
             <label>Date</label>
-            <input type="date" value={form.donationDate} onChange={e => set('donationDate', e.target.value)} />
+            <DatePicker value={form.donationDate} onChange={v => set('donationDate', v)} placeholder="Select date..." />
           </div>
 
           {/* Type-specific fields */}
@@ -215,9 +218,12 @@ export default function DonationFormPage() {
                 </div>
                 <div className={styles.field}>
                   <label>Currency</label>
-                  <select value={form.currencyCode} onChange={e => set('currencyCode', e.target.value)}>
-                    {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
+                  <Dropdown
+                    value={form.currencyCode}
+                    placeholder="Select currency..."
+                    options={CURRENCIES.map(c => ({ value: c, label: c }))}
+                    onChange={(v) => set('currencyCode', v)}
+                  />
                 </div>
               </div>
             </div>

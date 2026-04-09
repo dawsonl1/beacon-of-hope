@@ -4,19 +4,19 @@ import { renderWithProviders } from '../../helpers/renderWithProviders';
 import RecordingFormPage from '../../../pages/admin/RecordingFormPage';
 
 describe('RecordingFormPage — New Fields', () => {
-  it('shows Needs Case Conference checkbox', () => {
+  it('shows Needs Case Conference flag', () => {
     renderWithProviders(<RecordingFormPage />, { route: '/admin/recordings/new' });
     expect(screen.getByText('Needs Case Conference')).toBeInTheDocument();
   });
 
-  it('shows Ready for Reintegration Assessment checkbox', () => {
+  it('shows Ready for Reintegration flag', () => {
     renderWithProviders(<RecordingFormPage />, { route: '/admin/recordings/new' });
-    expect(screen.getByText('Ready for Reintegration Assessment')).toBeInTheDocument();
+    expect(screen.getByText('Ready for Reintegration')).toBeInTheDocument();
   });
 
-  it('shows Restricted Notes field', () => {
+  it('shows Confidential Notes section', () => {
     renderWithProviders(<RecordingFormPage />, { route: '/admin/recordings/new' });
-    expect(screen.getByText('Restricted Notes')).toBeInTheDocument();
+    expect(screen.getByText('Confidential Notes')).toBeInTheDocument();
   });
 
   it('shows restricted notes placeholder', () => {

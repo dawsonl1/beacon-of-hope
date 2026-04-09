@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
+import Dropdown from '../../components/admin/Dropdown';
 import styles from './SupporterFormPage.module.css';
 
 const PARTNER_TYPES = ['Organization', 'Individual'];
@@ -114,16 +115,22 @@ export default function PartnerFormPage() {
         <div className={styles.formGrid}>
           <div className={styles.field}>
             <label>Partner Type</label>
-            <select value={form.partnerType} onChange={e => set('partnerType', e.target.value)}>
-              {PARTNER_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
+            <Dropdown
+              value={form.partnerType}
+              placeholder="Select type..."
+              options={PARTNER_TYPES.map(t => ({ value: t, label: t }))}
+              onChange={(v) => set('partnerType', v)}
+            />
           </div>
 
           <div className={styles.field}>
             <label>Status</label>
-            <select value={form.status} onChange={e => set('status', e.target.value)}>
-              {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
+            <Dropdown
+              value={form.status}
+              placeholder="Select status..."
+              options={STATUSES.map(s => ({ value: s, label: s }))}
+              onChange={(v) => set('status', v)}
+            />
           </div>
 
           <div className={`${styles.field} ${styles.fieldFull}`}>
@@ -138,10 +145,12 @@ export default function PartnerFormPage() {
 
           <div className={styles.field}>
             <label>Role Type</label>
-            <select value={form.roleType} onChange={e => set('roleType', e.target.value)}>
-              <option value="">Select role...</option>
-              {ROLE_TYPES.map(r => <option key={r} value={r}>{r}</option>)}
-            </select>
+            <Dropdown
+              value={form.roleType}
+              placeholder="Select role..."
+              options={ROLE_TYPES.map(r => ({ value: r, label: r }))}
+              onChange={(v) => set('roleType', v)}
+            />
           </div>
 
           <div className={styles.field}>

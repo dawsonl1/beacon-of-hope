@@ -120,12 +120,12 @@ export default function Header() {
         <div className={styles.actions}>
           {isAuthenticated && user ? (
             <>
-              <Link to={user.roles?.includes('Admin') || user.roles?.includes('Staff') ? '/admin' : '/donor'} className={styles.loginBtn}>
-                <User size={16} />
-                <span>{user.roles?.includes('Admin') || user.roles?.includes('Staff') ? 'Admin Dashboard' : user.firstName}</span>
+              <Link to={user.roles?.includes('Admin') || user.roles?.includes('Staff') ? '/admin' : '/donor'} className={styles.loginBtn} aria-label={user.roles?.includes('Admin') || user.roles?.includes('Staff') ? 'Dashboard' : user.firstName}>
+                <User size={16} aria-hidden="true" />
+                <span>{user.roles?.includes('Admin') || user.roles?.includes('Staff') ? 'Dashboard' : user.firstName}</span>
               </Link>
-              <button onClick={handleLogout} className={styles.logoutBtn}>
-                <LogOut size={16} />
+              <button onClick={handleLogout} className={styles.logoutBtn} aria-label="Logout">
+                <LogOut size={16} aria-hidden="true" />
                 <span>Logout</span>
               </button>
             </>

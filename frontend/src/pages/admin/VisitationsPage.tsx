@@ -5,6 +5,7 @@ import { apiFetch } from '../../api';
 import { formatDate } from '../../constants';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Pagination from '../../components/admin/Pagination';
+import Dropdown from '../../components/admin/Dropdown';
 import styles from './VisitationsPage.module.css';
 
 /* ── Types ──────────────────────────────────────────── */
@@ -176,16 +177,16 @@ export default function VisitationsPage() {
       {activeTab === 'visitations' && (
         <>
           <div className={styles.filters}>
-            <select
-              className={styles.filterSelect}
+            <Dropdown
               value={visitTypeFilter}
-              onChange={(e) => { setVisitTypeFilter(e.target.value); setPage(1); }}
-            >
-              <option value="">All Visit Types</option>
-              {VISIT_TYPES.map((t) => (
-                <option key={t} value={t}>{t}</option>
-              ))}
-            </select>
+              placeholder="All Visit Types"
+              options={[
+                { value: '', label: 'All Visit Types' },
+                ...VISIT_TYPES.map((t) => ({ value: t, label: t })),
+              ]}
+              onChange={(v) => { setVisitTypeFilter(v); setPage(1); }}
+              compact
+            />
             <button
               className={`${styles.safetyToggle} ${safetyOnly ? styles.safetyToggleActive : ''}`}
               onClick={() => { setSafetyOnly(!safetyOnly); setPage(1); }}

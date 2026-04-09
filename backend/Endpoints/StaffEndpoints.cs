@@ -95,6 +95,11 @@ public static class StaffEndpoints
             if (body == null) return Results.BadRequest(new { error = "Request body is required." });
             var (valid, err) = DtoValidator.Validate(body);
             if (!valid) return Results.BadRequest(new { error = err });
+            if (body.ResidentId.HasValue)
+            {
+                var denied = await SafehouseAuth.ValidateResidentAccess(httpContext, db, body.ResidentId.Value);
+                if (denied != null) return denied;
+            }
             var evt = new CalendarEvent { StaffUserId = user.Id, SafehouseId = body.SafehouseId, ResidentId = body.ResidentId, EventType = body.EventType ?? "Other", Title = body.Title ?? "", Description = body.Description, EventDate = DateOnly.Parse(body.EventDate), StartTime = !string.IsNullOrEmpty(body.StartTime) ? TimeOnly.Parse(body.StartTime) : null, EndTime = !string.IsNullOrEmpty(body.EndTime) ? TimeOnly.Parse(body.EndTime) : null, RecurrenceRule = body.RecurrenceRule, SourceTaskId = body.SourceTaskId, Status = "Scheduled" };
             db.CalendarEvents.Add(evt);
             if (body.SourceTaskId.HasValue) { var task = await db.StaffTasks.FirstOrDefaultAsync(t => t.StaffTaskId == body.SourceTaskId.Value); if (task != null) { task.Status = "Completed"; task.CompletedAt = DateTime.UtcNow; } }
@@ -111,8 +116,8 @@ public static class StaffEndpoints
             var body = await httpContext.Request.ReadFromJsonAsync<UpdateCalendarEventRequest>();
             if (body == null) return Results.BadRequest(new { error = "Request body is required." });
             if (!string.IsNullOrEmpty(body.Status)) evt.Status = body.Status;
-            if (!string.IsNullOrEmpty(body.StartTime)) evt.StartTime = TimeOnly.Parse(body.StartTime);
-            if (!string.IsNullOrEmpty(body.EndTime)) evt.EndTime = TimeOnly.Parse(body.EndTime);
+            if (body.StartTime != null) evt.StartTime = body.StartTime == "" ? null : TimeOnly.Parse(body.StartTime);
+            if (body.EndTime != null) evt.EndTime = body.EndTime == "" ? null : TimeOnly.Parse(body.EndTime);
             if (!string.IsNullOrEmpty(body.EventDate)) evt.EventDate = DateOnly.Parse(body.EventDate);
             if (body.Title != null) evt.Title = body.Title;
             if (body.Description != null) evt.Description = body.Description;

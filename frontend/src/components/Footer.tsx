@@ -21,20 +21,20 @@ export default function Footer() {
 
           <div className={styles.links}>
             <div className={styles.linkGroup}>
-              <h4 className={styles.linkGroupTitle}>Organization</h4>
+              <h3 className={styles.linkGroupTitle}>Organization</h3>
               <Link to="/#mission">Our Mission</Link>
               <Link to="/#impact">Our Impact</Link>
               <Link to="/#involved">Get Involved</Link>
             </div>
             <div className={styles.linkGroup}>
-              <h4 className={styles.linkGroupTitle}>Legal</h4>
+              <h3 className={styles.linkGroupTitle}>Legal</h3>
               <Link to="/privacy-policy">Privacy Policy</Link>
               <button className={styles.cookieBtn} onClick={openPreferencesModal}>
                 Cookie Settings
               </button>
             </div>
             <div className={styles.linkGroup}>
-              <h4 className={styles.linkGroupTitle}>Connect</h4>
+              <h3 className={styles.linkGroupTitle}>Connect</h3>
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a>
               <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>

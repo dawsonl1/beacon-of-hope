@@ -1,16 +1,15 @@
 .page {
-  padding: 2rem 2.5rem;
-  max-width: 1080px;
+  padding: 1.5rem 2rem;
+  max-width: 1280px;
   margin: 0 auto;
-  background: transparent;
 }
 
-/* ── Top bar ────────────────────────────────────────────── */
+/* ── Top bar ──────────────────────────────────────── */
 .topBar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .backLink {
@@ -19,7 +18,7 @@
   gap: 0.35rem;
   font-size: 0.82rem;
   font-weight: 600;
-  color: var(--color-amber-dark);
+  color: var(--text-muted);
   background: none;
   border: none;
   cursor: pointer;
@@ -27,80 +26,70 @@
   transition: color 0.15s;
 }
 
-.backLink:hover {
-  color: var(--text-strong);
-}
+.backLink:hover { color: var(--text-strong); }
 
-.actions {
-  display: flex;
-  gap: 0.5rem;
+.actions { display: flex; gap: 0.5rem; }
+
+.editBtn, .deleteBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
 }
 
 .editBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-  font-family: var(--font-body);
   color: var(--text-strong);
-  background: var(--surface-1);
+  background: #fff;
   border: 1px solid rgba(15, 27, 45, 0.08);
-  padding: 0.45rem 0.85rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.15s;
 }
 
-.editBtn:hover {
-  border-color: var(--color-sage);
-  background: rgba(15, 143, 125, 0.05);
-}
+.editBtn:hover { border-color: var(--color-sage); background: rgba(15, 143, 125, 0.05); }
 
 .deleteBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-  font-family: var(--font-body);
-  color: var(--color-rose);
-  background: var(--surface-1);
-  border: 1px solid rgba(203, 87, 104, 0.3);
-  padding: 0.45rem 0.85rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.15s;
+  color: #c0392b;
+  background: #fff;
+  border: 1px solid rgba(192, 57, 43, 0.2);
 }
 
-.deleteBtn:hover {
-  background: rgba(203, 87, 104, 0.06);
-  border-color: var(--color-rose);
+.deleteBtn:hover { background: rgba(192, 57, 43, 0.05); }
+
+/* ── Profile header card ──────────────────────────── */
+.headerCard {
+  background: #fff;
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 2px 8px rgba(15, 27, 45, 0.04);
 }
 
-/* ── Detail Header ──────────────────────────────────────── */
-.detailHeader {
+.headerTop {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 1.75rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid rgba(15, 27, 45, 0.08);
+  gap: 1rem;
+  margin-bottom: 0.6rem;
 }
 
-.title {
+.headerTitle {
   font-family: var(--font-display);
-  font-size: 1.75rem;
+  font-size: 1.6rem;
   font-weight: 500;
   color: var(--text-strong);
   letter-spacing: -0.03em;
-  margin: 0 0 0.2rem;
+  margin: 0;
 }
 
 .headerMeta {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
-  margin: 0;
+  margin: 0.15rem 0 0;
 }
 
 .headerBadges {
@@ -110,160 +99,426 @@
 }
 
 .badge {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  padding: 0.2rem 0.65rem;
+  padding: 0.2rem 0.6rem;
   border-radius: 999px;
   border: 1px solid;
+  white-space: nowrap;
 }
 
-.badgeStatus {
-  color: var(--color-sage);
-  background: rgba(15, 143, 125, 0.1);
-  border-color: rgba(15, 143, 125, 0.25);
-}
+.badgeStatus { color: var(--color-sage); background: rgba(15, 143, 125, 0.1); border-color: rgba(15, 143, 125, 0.25); }
+.badgeRiskCritical { color: #fff; background: #c0392b; border-color: #c0392b; }
+.badgeRiskHigh { color: #c0392b; background: rgba(192, 57, 43, 0.1); border-color: rgba(192, 57, 43, 0.3); }
+.badgeRiskMedium { color: #e67e22; background: rgba(230, 126, 34, 0.1); border-color: rgba(230, 126, 34, 0.3); }
+.badgeRiskLow { color: var(--color-sage); background: rgba(15, 143, 125, 0.1); border-color: rgba(15, 143, 125, 0.25); }
+.badgeRiskDefault { color: var(--text-muted); background: rgba(82, 97, 120, 0.1); border-color: rgba(82, 97, 120, 0.25); }
 
-.badgeRiskCritical {
-  color: #fff;
-  background: var(--color-rose);
-  border-color: var(--color-rose);
-}
-
-.badgeRiskHigh {
-  color: var(--color-rose);
-  background: rgba(203, 87, 104, 0.1);
-  border-color: rgba(203, 87, 104, 0.3);
-}
-
-.badgeRiskMedium {
-  color: var(--color-amber);
-  background: rgba(255, 159, 67, 0.1);
-  border-color: rgba(255, 159, 67, 0.3);
-}
-
-.badgeRiskLow {
-  color: var(--color-sage);
-  background: rgba(15, 143, 125, 0.1);
-  border-color: rgba(15, 143, 125, 0.25);
-}
-
-.badgeRiskDefault {
-  color: var(--text-muted);
-  background: rgba(82, 97, 120, 0.1);
-  border-color: rgba(82, 97, 120, 0.25);
-}
-
-/* ── Sections ───────────────────────────────────────────── */
-.section {
-  background: var(--surface-1);
-  border: 1px solid rgba(15, 27, 45, 0.08);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-sm);
-  margin-bottom: 0.65rem;
-  overflow: hidden;
-}
-
-.sectionHeader {
+.headerDetails {
   display: flex;
-  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.8rem;
+}
+
+.headerDetail { display: flex; align-items: center; gap: 0.3rem; }
+.headerDetailLabel { font-weight: 600; }
+
+.headerActions {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.actionBtn {
+  display: inline-flex;
   align-items: center;
-  width: 100%;
-  padding: 0.75rem 1.15rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 0.88rem;
+  gap: 0.25rem;
+  font-size: 0.75rem;
   font-weight: 600;
   font-family: var(--font-body);
+  padding: 0.35rem 0.65rem;
+  border-radius: 7px;
+  border: 1px solid rgba(15, 27, 45, 0.1);
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.15s;
   color: var(--text-strong);
-  transition: background 0.15s;
 }
 
-.sectionHeader:hover {
-  background: var(--surface-2);
+.actionBtn:hover { background: rgba(15, 27, 45, 0.03); border-color: rgba(15, 27, 45, 0.18); }
+
+.actionBtnPrimary {
+  composes: actionBtn;
+  background: var(--color-sage);
+  color: #fff;
+  border-color: transparent;
 }
 
-.sectionLeft {
+.actionBtnPrimary:hover { filter: brightness(1.08); }
+
+/* ── Two-column body ──────────────────────────────── */
+.body {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+/* ── Cards ────────────────────────────────────────── */
+.card {
+  background: #fff;
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.cardHeader {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-strong);
+  border-bottom: 1px solid rgba(15, 27, 45, 0.06);
 }
 
-.sectionIcon {
-  color: var(--color-amber-dark);
-}
+.cardIcon { color: var(--text-muted); flex-shrink: 0; }
 
-.sectionBody {
-  padding: 0.25rem 1.15rem 1rem;
-}
+.cardBody { padding: 0.75rem 1rem; }
 
-/* ── Fields ─────────────────────────────────────────────── */
-.fieldGrid {
+/* ── ML Predictions ───────────────────────────────── */
+.predictionGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.6rem;
 }
 
-.field {
+.predictionCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid;
+}
+
+.predictionIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.predictionLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.predictionValue {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+}
+
+.predictionScore { font-size: 1.2rem; font-weight: 700; }
+.predictionTier { font-size: 0.75rem; font-weight: 600; }
+
+.predictionFactors {
+  margin-top: 0.5rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid rgba(15, 27, 45, 0.06);
+}
+
+.predictionFactorsLabel {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.predictionFactorTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.predictionFactorTag {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.12rem 0.4rem;
+  border-radius: 999px;
+  background: rgba(192, 57, 43, 0.08);
+  color: #c0392b;
+  text-transform: capitalize;
+}
+
+.predictionProtocol {
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+  font-style: italic;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.predictionMetrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.predictionMetrics span {
+  background: rgba(15, 27, 45, 0.04);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}
+
+/* ── Risk levels side by side ─────────────────────── */
+.riskPair {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.riskItem {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
 }
 
-.fieldLabel {
-  font-size: 0.7rem;
+.riskLabel {
+  font-size: 0.65rem;
   font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
-.fieldValue {
-  font-size: 0.88rem;
-  color: var(--text-strong);
-}
-
-/* ── Tags ───────────────────────────────────────────────── */
-.tagSection {
-  margin-top: 0.75rem;
-}
-
-.tagWrap {
+/* ── Emotional trajectory ─────────────────────────── */
+.emotionalRow {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin-top: 0.3rem;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.8rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(15, 27, 45, 0.03);
 }
+
+.emotionalRow:last-child { border-bottom: none; }
+
+.emotionalDate { min-width: 80px; font-weight: 600; color: var(--text-muted); font-size: 0.75rem; }
+.emotionalState { min-width: 90px; font-size: 0.78rem; }
+.emotionalArrow { color: var(--text-muted); font-size: 0.75rem; }
+.emotionalDelta { font-size: 0.7rem; font-weight: 600; }
+
+/* ── Recent activity timeline ─────────────────────── */
+.timelineItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgba(15, 27, 45, 0.04);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.1s;
+  margin: 0 -1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.timelineItem:hover { background: rgba(15, 27, 45, 0.015); }
+.timelineItem:last-child { border-bottom: none; }
+
+.timelineIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.timelineBody { flex: 1; min-width: 0; }
+.timelineTitle { font-weight: 600; color: var(--text-strong); }
+.timelineDate { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+/* ── Right column tabs ────────────────────────────── */
+.tabBar {
+  display: flex;
+  border-bottom: 1px solid rgba(15, 27, 45, 0.08);
+  padding: 0 1rem;
+}
+
+.tab {
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  padding: 0.55rem 0.75rem;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.tab:hover { color: var(--text-strong); }
+
+.tabActive {
+  color: var(--color-sage);
+  border-bottom-color: var(--color-sage);
+}
+
+.tabContent { padding: 0.75rem 1rem; }
+
+/* ── Field grids ──────────────────────────────────── */
+.fieldGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.field { display: flex; flex-direction: column; gap: 0.1rem; }
+
+.fieldLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.fieldValue { font-size: 0.82rem; color: var(--text-strong); }
+
+/* ── Tags ─────────────────────────────────────────── */
+.tagWrap { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.3rem; }
 
 .tag {
-  display: inline-block;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 600;
   color: var(--text-strong);
   background: rgba(15, 143, 125, 0.1);
   border: 1px solid rgba(15, 143, 125, 0.25);
-  padding: 0.18rem 0.55rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 999px;
 }
 
+/* ── Record rows ──────────────────────────────────── */
+.recordRow {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.78rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid rgba(15, 27, 45, 0.04);
+  align-items: center;
+}
+
+.recordRow:last-child { border-bottom: none; }
+
+.recordDate { font-weight: 600; min-width: 75px; color: var(--text-muted); font-size: 0.72rem; }
+.recordClickable { cursor: pointer; transition: background 0.1s; margin: 0 -1rem; padding-left: 1rem; padding-right: 1rem; }
+.recordClickable:hover { background: rgba(15, 27, 45, 0.015); }
+
+/* ── Section divider ──────────────────────────────── */
+.sectionLabel {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0.75rem 0 0.4rem;
+}
+
+.sectionLabel:first-child { margin-top: 0; }
+
+/* ── View all / Add buttons ───────────────────────── */
+.inlineBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  color: var(--color-sage);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem 0;
+  transition: opacity 0.15s;
+}
+
+.inlineBtn:hover { opacity: 0.7; }
+
+.addBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  border: none;
+  background: var(--color-sage);
+  color: #fff;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.addBtn:hover { filter: brightness(1.08); }
+
 .noData {
-  font-size: 0.82rem;
-  color: var(--color-light-gray);
+  font-size: 0.78rem;
+  color: var(--text-muted);
   font-style: italic;
-  margin: 0.5rem 0 0;
+  margin: 0.4rem 0;
 }
 
 .notes {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
   line-height: 1.6;
   white-space: pre-wrap;
   margin: 0;
 }
 
-/* ── States ─────────────────────────────────────────────── */
-.loadingState,
-.errorState {
+/* ── Severity badges ──────────────────────────────── */
+.severityBadge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.statusBadge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+/* ── States ───────────────────────────────────────── */
+.loadingState, .errorState {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -274,33 +529,20 @@
   font-size: 0.88rem;
 }
 
-.spinner {
-  animation: spin 0.8s linear infinite;
+.spinner { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Responsive ───────────────────────────────────── */
+@media (max-width: 900px) {
+  .page { padding: 1rem; }
+  .body { grid-template-columns: 1fr; }
+  .headerTop { flex-direction: column; }
+  .fieldGrid { grid-template-columns: 1fr 1fr; }
+  .predictionGrid { grid-template-columns: 1fr 1fr; }
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* ── Responsive ─────────────────────────────────────────── */
-@media (max-width: 768px) {
-  .page {
-    padding: 1.25rem;
-  }
-
-  .detailHeader {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .fieldGrid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .topBar {
-    flex-direction: column;
-    gap: 0.75rem;
-    align-items: flex-start;
-  }
+@media (max-width: 600px) {
+  .fieldGrid { grid-template-columns: 1fr; }
+  .predictionGrid { grid-template-columns: 1fr; }
+  .headerDetails { flex-direction: column; gap: 0.5rem; }
 }

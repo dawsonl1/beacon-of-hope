@@ -30,9 +30,9 @@ describe('CaseConferencesPage', () => {
     await user.click(screen.getByRole('button', { name: /schedule conference/i }));
 
     await waitFor(() => {
-      expect(screen.getByLabelText(/resident/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/category/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/conference date/i)).toBeInTheDocument();
+      expect(screen.getByText(/^resident$/i)).toBeInTheDocument();
+      expect(screen.getByText(/^category$/i)).toBeInTheDocument();
+      expect(screen.getByText(/conference date/i)).toBeInTheDocument();
     });
   });
 });

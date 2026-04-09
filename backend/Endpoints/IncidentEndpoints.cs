@@ -12,15 +12,25 @@ public static class IncidentEndpoints
     {
         // ── Incident Management ─────────────────────────────────────
 
-        app.MapGet("/api/admin/incidents", async (AppDbContext db, int? safehouseId, int? residentId, string? severity, bool? resolved, int page = 1, int pageSize = 20) =>
+        app.MapGet("/api/admin/incidents", async (HttpContext httpContext, AppDbContext db, int? safehouseId, int? residentId, string? severity, bool? resolved, string? sortBy = null, string? sortDir = null, int page = 1, int pageSize = 20) =>
         {
+            var allowed = await SafehouseAuth.GetAllowedSafehouseIds(httpContext, db);
             var query = db.IncidentReports.AsQueryable();
-            if (safehouseId.HasValue) query = query.Where(i => i.SafehouseId == safehouseId.Value);
+            query = SafehouseAuth.ApplyIncidentFilter(query, allowed, safehouseId);
             if (residentId.HasValue) query = query.Where(i => i.ResidentId == residentId.Value);
             if (!string.IsNullOrEmpty(severity)) query = query.Where(i => i.Severity == severity);
             if (resolved.HasValue) query = query.Where(i => i.Resolved == resolved.Value);
             var total = await query.CountAsync();
-            var items = await query.OrderByDescending(i => i.IncidentDate).Skip((page - 1) * pageSize).Take(pageSize)
+            var descending = string.Equals(sortDir, "asc", StringComparison.OrdinalIgnoreCase) ? false : true;
+            IOrderedQueryable<IncidentReport> ordered = sortBy?.ToLower() switch
+            {
+                "type" => descending ? query.OrderByDescending(i => i.IncidentType) : query.OrderBy(i => i.IncidentType),
+                "severity" => descending ? query.OrderByDescending(i => i.Severity) : query.OrderBy(i => i.Severity),
+                "reportedby" => descending ? query.OrderByDescending(i => i.ReportedBy) : query.OrderBy(i => i.ReportedBy),
+                "status" => descending ? query.OrderByDescending(i => i.Resolved) : query.OrderBy(i => i.Resolved),
+                _ => descending ? query.OrderByDescending(i => i.IncidentDate) : query.OrderBy(i => i.IncidentDate),
+            };
+            var items = await ordered.Skip((page - 1) * pageSize).Take(pageSize)
                 .Select(i => new { i.IncidentId, i.ResidentId, residentCode = i.Resident != null ? i.Resident.InternalCode : null, i.SafehouseId, i.IncidentDate, i.IncidentType, i.Severity, i.Description, i.ResponseTaken, i.ReportedBy, i.Resolved, i.ResolutionDate, i.FollowUpRequired })
                 .ToListAsync();
             return Results.Ok(new { total, page, pageSize, items });
@@ -40,6 +50,11 @@ public static class IncidentEndpoints
             if (body == null) return Results.BadRequest(new { error = "Request body is required." });
             var (valid, err) = DtoValidator.Validate(body);
             if (!valid) return Results.BadRequest(new { error = err });
+            if (body.ResidentId.HasValue)
+            {
+                var denied = await SafehouseAuth.ValidateResidentAccess(httpContext, db, body.ResidentId.Value);
+                if (denied != null) return denied;
+            }
             var incident = new IncidentReport { ResidentId = body.ResidentId, SafehouseId = body.SafehouseId, IncidentDate = body.IncidentDate, IncidentType = body.IncidentType, Severity = body.Severity, Description = body.Description, ResponseTaken = body.ResponseTaken, ReportedBy = body.ReportedBy, Resolved = body.Resolved ?? false, ResolutionDate = body.ResolutionDate, FollowUpRequired = body.FollowUpRequired ?? false };
             db.IncidentReports.Add(incident);
             await db.SaveChangesAsync();
@@ -51,7 +66,7 @@ public static class IncidentEndpoints
                     var assignedUser = await db.UserSafehouses.Where(us => us.SafehouseId == (incident.SafehouseId ?? resident.SafehouseId ?? 0)).Select(us => us.UserId).FirstOrDefaultAsync();
                     if (assignedUser != null)
                     {
-                        db.StaffTasks.Add(new StaffTask { StaffUserId = assignedUser, ResidentId = incident.ResidentId, SafehouseId = incident.SafehouseId ?? resident.SafehouseId ?? 0, TaskType = "IncidentFollowUp", Title = $"Follow up on incident for {resident.InternalCode}", Description = $"Incident: {incident.IncidentType} ({incident.Severity}) - {incident.Description}", SourceEntityType = "IncidentReport", SourceEntityId = incident.IncidentId });
+                        db.StaffTasks.Add(new StaffTask { StaffUserId = assignedUser, ResidentId = incident.ResidentId, SafehouseId = incident.SafehouseId ?? resident.SafehouseId ?? 0, TaskType = "IncidentFollowUp", Title = "Incident Follow-Up", Description = $"{incident.IncidentType} ({incident.Severity}) — {incident.Description}", SourceEntityType = "IncidentReport", SourceEntityId = incident.IncidentId });
                         await db.SaveChangesAsync();
                     }
                 }
@@ -101,6 +116,26 @@ public static class IncidentEndpoints
             return Results.Ok(history);
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
+        // ── ML Org-Level Insights (entity_id is null) ───────────────
+
+        app.MapGet("/api/ml/insights", async (AppDbContext db) =>
+        {
+            var insights = await db.MlPredictions.Where(p => p.EntityId == null)
+                .Select(p => new { p.Id, p.EntityType, p.EntityId, p.ModelName, p.ModelVersion, p.Score, p.ScoreLabel, p.PredictedAt, p.Metadata })
+                .ToListAsync();
+            return Results.Ok(insights);
+        }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
+
+        // ── ML Prediction Summary by Entity Type ───────────────────
+
+        app.MapGet("/api/ml/predictions/{entityType}/summary", async (string entityType, AppDbContext db) =>
+        {
+            var summary = await db.MlPredictions.Where(p => p.EntityType == entityType)
+                .Select(p => new { p.EntityId, p.ModelName, p.Score, p.ScoreLabel })
+                .ToListAsync();
+            return Results.Ok(summary);
+        }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
+
         // ── Case Claiming ───────────────────────────────────────────
 
         app.MapPost("/api/admin/residents/{id}/claim", async (int id, HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db) =>
@@ -112,15 +147,30 @@ public static class IncidentEndpoints
             resident.AssignedSocialWorker = $"{user.FirstName} {user.LastName}";
             await db.SaveChangesAsync();
             // Auto-generate initial home visit to-do
-            db.StaffTasks.Add(new StaffTask { StaffUserId = user.Id, ResidentId = id, SafehouseId = resident.SafehouseId ?? 1, TaskType = "ScheduleHomeVisit", Title = $"Schedule initial home visit for {resident.InternalCode}", Description = "Initial assessment visit after claiming case", Status = "Pending" });
+            db.StaffTasks.Add(new StaffTask { StaffUserId = user.Id, ResidentId = id, SafehouseId = resident.SafehouseId ?? 1, TaskType = "ScheduleHomeVisit", Title = "Schedule Initial Home Visit", Description = "Initial assessment visit after claiming case", Status = "Pending" });
             await db.SaveChangesAsync();
             return Results.Ok(new { claimed = true });
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
-        app.MapGet("/api/admin/residents/unclaimed", async (AppDbContext db, int? safehouseId) =>
+        app.MapGet("/api/admin/residents/unclaimed", async (HttpContext httpContext, AppDbContext db, int? safehouseId) =>
         {
+            var allowed = await SafehouseAuth.GetAllowedSafehouseIds(httpContext, db);
             var query = db.Residents.Where(r => r.AssignedSocialWorker == null || r.AssignedSocialWorker == "").Where(r => r.CaseStatus == "Active");
-            if (safehouseId.HasValue) query = query.Where(r => r.SafehouseId == safehouseId.Value);
+            query = SafehouseAuth.ApplyResidentFilter(query, allowed, safehouseId);
+            var items = await query.OrderByDescending(r => r.DateOfAdmission)
+                .Select(r => new { r.ResidentId, r.InternalCode, r.CaseControlNo, r.SafehouseId, safehouse = r.Safehouse != null ? r.Safehouse.Name : null, r.CaseCategory, r.CurrentRiskLevel, r.DateOfAdmission })
+                .ToListAsync();
+            return Results.Ok(items);
+        }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
+
+        app.MapGet("/api/admin/residents/my-claimed", async (HttpContext httpContext, UserManager<ApplicationUser> userManager, AppDbContext db, int? safehouseId) =>
+        {
+            var user = await userManager.GetUserAsync(httpContext.User);
+            if (user == null) return Results.Unauthorized();
+            var fullName = $"{user.FirstName} {user.LastName}";
+            var allowed = await SafehouseAuth.GetAllowedSafehouseIds(httpContext, db);
+            var query = db.Residents.Where(r => r.AssignedSocialWorker == fullName && r.CaseStatus == "Active");
+            query = SafehouseAuth.ApplyResidentFilter(query, allowed, safehouseId);
             var items = await query.OrderByDescending(r => r.DateOfAdmission)
                 .Select(r => new { r.ResidentId, r.InternalCode, r.CaseControlNo, r.SafehouseId, safehouse = r.Safehouse != null ? r.Safehouse.Name : null, r.CaseCategory, r.CurrentRiskLevel, r.DateOfAdmission })
                 .ToListAsync();

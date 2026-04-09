@@ -1,11 +1,13 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowUpRight, AlertTriangle, Calendar, UserPlus, DollarSign, FileText } from 'lucide-react';
+import { ArrowUpRight, AlertTriangle, Calendar, UserPlus, DollarSign, FileText, Sparkles, HeartCrack, ShieldAlert, CircleCheckBig } from 'lucide-react';
 import { useSafehouse } from '../contexts/SafehouseContext';
+import { useAuth } from '../contexts/AuthContext';
 import { apiFetch } from '../api';
 import { formatMonthLabel, formatEnumLabel } from '../constants';
 import { ChartTooltip } from '../components/ChartTooltip';
 import { ApiError } from '../components/ApiError';
+import MlBadge from '../components/admin/MlBadge';
 import {
   AreaChart,
   Area,
@@ -21,7 +23,7 @@ import {
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import styles from './AdminDashboard.module.css';
 
-const channelColors = ['#D4A853', '#B8913A', '#7A9E7E', '#5A6B7A', '#C4756E'];
+const channelColors = ['#D4A853', '#4A7A4E', '#7A9E7E', '#5A6B7A', '#C4756E', '#8B6DB0', '#3A8FB7'];
 
 type Severity = 'Low' | 'Medium' | 'High' | 'Critical';
 
@@ -84,11 +86,19 @@ interface ApiDonation {
   campaignName: string | null;
 }
 
+interface MlPredictionSummary {
+  entityId: number;
+  modelName: string;
+  score: number;
+  scoreLabel: string;
+}
 
 export default function AdminDashboard() {
   useDocumentTitle('Dashboard');
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { activeSafehouseId: safehouseId } = useSafehouse();
+  const displayRole = user?.roles?.[0] ?? 'Staff';
 
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [residents, setResidents] = useState<ResidentRow[]>([]);
@@ -99,6 +109,9 @@ export default function AdminDashboard() {
   const [flaggedChart, setFlaggedChart] = useState<Array<{ month: string; count: number }>>([]);
   const [channels, setChannels] = useState<Array<{ channel: string; count: number }>>([]);
   const [error, setError] = useState(false);
+  const [donorsAtRisk, setDonorsAtRisk] = useState(0);
+  const [incidentAlerts, setIncidentAlerts] = useState(0);
+  const [reintegrationReady, setReintegrationReady] = useState(0);
 
   const fetchData = useCallback((shId: number | null) => {
     const onErr = (e: unknown) => { console.error('API fetch failed', e); };
@@ -150,6 +163,15 @@ export default function AdminDashboard() {
     apiFetch<Array<{ channel: string; count: number }>>('/api/admin/donations-by-channel').then(data => {
       setChannels(data.map(d => ({ channel: formatEnumLabel(d.channel), count: d.count })));
     }).catch(onErr);
+
+    apiFetch<MlPredictionSummary[]>('/api/ml/predictions/supporter/summary').then(data => {
+      setDonorsAtRisk(data.filter(d => d.scoreLabel === 'Critical' || d.scoreLabel === 'High').length);
+    }).catch(onErr);
+
+    apiFetch<MlPredictionSummary[]>('/api/ml/predictions/resident/summary').then(data => {
+      setIncidentAlerts(data.filter(d => d.scoreLabel === 'Critical' || d.scoreLabel === 'High').length);
+      setReintegrationReady(data.filter(d => d.scoreLabel === 'Ready').length);
+    }).catch(onErr);
   }, []);
 
   useEffect(() => { fetchData(safehouseId); }, [safehouseId, fetchData]);
@@ -163,7 +185,7 @@ export default function AdminDashboard() {
         <div>
           <div className={styles.headerRow}>
             <h1 className={styles.title}>Dashboard</h1>
-            <span className={styles.roleBadge}>Admin</span>
+            <span className={styles.roleBadge}>{displayRole}</span>
           </div>
           <p className={styles.dateText}>{dataDateStr}</p>
         </div>
@@ -223,6 +245,40 @@ export default function AdminDashboard() {
           <span className={styles.metricSub}>upcoming</span>
         </div>
       </section>}
+
+      {/* ── ML Insights ──────────────────────────────────── */}
+      <section className={styles.mlInsightsCard}>
+        <div className={styles.mlInsightsHeader}>
+          <Sparkles size={18} className={styles.mlInsightsIcon} />
+          <span className={styles.mlInsightsTitle}>ML-Powered Insights</span>
+          <MlBadge />
+          <button className={styles.mlViewAll} onClick={() => navigate('/admin/reports?tab=ml')}>View Details <ArrowUpRight size={12} /></button>
+        </div>
+        <div className={styles.mlInsightsDivider} />
+        <div className={styles.mlInsightsStats}>
+          <div className={styles.mlStat} style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/donors')}>
+            <div className={styles.mlStatIconRisk}><HeartCrack size={16} /></div>
+            <div className={styles.mlStatText}>
+              <span className={styles.mlStatNumber}>{donorsAtRisk}</span>
+              <span className={styles.mlStatLabel}>donors predicted to churn</span>
+            </div>
+          </div>
+          <div className={styles.mlStat} style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/caseload')}>
+            <div className={styles.mlStatIconAlert}><ShieldAlert size={16} /></div>
+            <div className={styles.mlStatText}>
+              <span className={styles.mlStatNumber}>{incidentAlerts}</span>
+              <span className={styles.mlStatLabel}>high-risk residents</span>
+            </div>
+          </div>
+          <div className={styles.mlStat} style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/caseload')}>
+            <div className={styles.mlStatIconReady}><CircleCheckBig size={16} /></div>
+            <div className={styles.mlStatText}>
+              <span className={styles.mlStatNumber}>{reintegrationReady}</span>
+              <span className={styles.mlStatLabel}>predicted reintegration-ready</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ── Two-column: Table + Donations ──────────────── */}
       <section className={styles.mainGrid}>
@@ -344,7 +400,13 @@ export default function AdminDashboard() {
         <div className={styles.chartCard}>
           <div className={styles.chartMeta}>
             <h2 className={styles.cardTitle}>Active Residents</h2>
-            {activeResidentsChart.length > 0 && <span className={styles.chartCallout}>+3 admitted this month</span>}
+            {activeResidentsChart.length >= 2 && (() => {
+              const curr = activeResidentsChart[activeResidentsChart.length - 1].count;
+              const prev = activeResidentsChart[activeResidentsChart.length - 2].count;
+              const diff = curr - prev;
+              if (diff === 0) return null;
+              return <span className={diff > 0 ? styles.chartCallout : styles.chartCalloutWarning}>{diff > 0 ? '+' : ''}{diff} from last month</span>;
+            })()}
           </div>
           {activeResidentsChart.length === 0 ? (
             <div className={styles.emptyState}>No trend data for this safehouse</div>

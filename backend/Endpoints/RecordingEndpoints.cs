@@ -124,11 +124,20 @@ public static class RecordingEndpoints
             var resident = await db.Residents.AnyAsync(r => r.ResidentId == body.ResidentId);
             if (!resident)
                 return Results.BadRequest(new { error = "Resident not found." });
+            var denied = await SafehouseAuth.ValidateResidentAccess(httpContext, db, body.ResidentId);
+            if (denied != null) return denied;
 
             var recording = new ProcessRecording();
             EntityMapper.MapRecording(recording, body);
 
             db.ProcessRecordings.Add(recording);
+
+            if (!string.IsNullOrWhiteSpace(body.UpdatedRiskLevel))
+            {
+                var res = await db.Residents.FindAsync(body.ResidentId);
+                if (res != null) res.CurrentRiskLevel = body.UpdatedRiskLevel;
+            }
+
             await db.SaveChangesAsync();
 
             return Results.Created($"/api/admin/recordings/{recording.RecordingId}", new { recording.RecordingId });
@@ -147,6 +156,12 @@ public static class RecordingEndpoints
                 return Results.NotFound(new { error = "Recording not found." });
 
             EntityMapper.MapRecording(recording, body);
+
+            if (!string.IsNullOrWhiteSpace(body.UpdatedRiskLevel))
+            {
+                var res = await db.Residents.FindAsync(recording.ResidentId);
+                if (res != null) res.CurrentRiskLevel = body.UpdatedRiskLevel;
+            }
 
             await db.SaveChangesAsync();
             return Results.Ok(new { recording.RecordingId });

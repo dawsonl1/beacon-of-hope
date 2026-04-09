@@ -22,7 +22,7 @@ describe('IncidentFormPage', () => {
 
   it('shows description textarea', () => {
     renderWithProviders(<IncidentFormPage />, { route: '/admin/incidents/new' });
-    expect(screen.getByPlaceholderText(/Describe the incident/)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Describe what happened/)).toBeInTheDocument();
   });
 
   it('shows follow-up checkbox', () => {

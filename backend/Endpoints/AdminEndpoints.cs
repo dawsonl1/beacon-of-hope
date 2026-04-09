@@ -96,6 +96,56 @@ public static class AdminEndpoints
             return Results.Ok(new { deleted = true });
         }).RequireAuthorization("AdminOnly");
 
+        app.MapPut("/api/admin/users/{id}", async (
+            string id,
+            UserManager<ApplicationUser> userManager,
+            AppDbContext db,
+            HttpContext httpContext) =>
+        {
+            var body = await httpContext.Request.ReadFromJsonAsync<UpdateUserRequest>();
+            if (body == null) return Results.BadRequest(new { error = "Request body is required." });
+
+            var user = await userManager.FindByIdAsync(id);
+            if (user == null) return Results.NotFound();
+
+            if (body.FirstName != null) user.FirstName = body.FirstName;
+            if (body.LastName != null) user.LastName = body.LastName;
+
+            if (!string.IsNullOrWhiteSpace(body.Email) && body.Email != user.Email)
+            {
+                var existing = await userManager.FindByEmailAsync(body.Email);
+                if (existing != null && existing.Id != id)
+                    return Results.BadRequest(new { error = "A user with this email already exists." });
+                user.Email = body.Email;
+                user.UserName = body.Email;
+            }
+
+            var updateResult = await userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+                return Results.BadRequest(new { error = string.Join("; ", updateResult.Errors.Select(e => e.Description)) });
+
+            if (!string.IsNullOrWhiteSpace(body.Role))
+            {
+                var currentRoles = await userManager.GetRolesAsync(user);
+                if (!currentRoles.Contains(body.Role))
+                {
+                    await userManager.RemoveFromRolesAsync(user, currentRoles);
+                    await userManager.AddToRoleAsync(user, body.Role);
+                }
+            }
+
+            if (body.SafehouseIds != null)
+            {
+                var existingAssignments = await db.UserSafehouses.Where(us => us.UserId == id).ToListAsync();
+                db.UserSafehouses.RemoveRange(existingAssignments);
+                foreach (var sid in body.SafehouseIds)
+                    db.UserSafehouses.Add(new UserSafehouse { UserId = id, SafehouseId = sid });
+                await db.SaveChangesAsync();
+            }
+
+            return Results.Ok(new { updated = true });
+        }).RequireAuthorization("AdminOnly");
+
         // ── Admin partners list ─────────────────────────────────
 
         app.MapGet("/api/admin/partners", async (AppDbContext db, string? search, string? status, string? partnerType, int page = 1, int pageSize = 20) =>
@@ -324,7 +374,9 @@ public static class AdminEndpoints
                 "casecontrolno" => desc ? query.OrderByDescending(r => r.CaseControlNo) : query.OrderBy(r => r.CaseControlNo),
                 "casestatus" => desc ? query.OrderByDescending(r => r.CaseStatus) : query.OrderBy(r => r.CaseStatus),
                 "casecategory" => desc ? query.OrderByDescending(r => r.CaseCategory) : query.OrderBy(r => r.CaseCategory),
-                "risklevel" => desc ? query.OrderByDescending(r => r.CurrentRiskLevel) : query.OrderBy(r => r.CurrentRiskLevel),
+                "risklevel" => desc
+                    ? query.OrderByDescending(r => r.CurrentRiskLevel == "Critical" ? 0 : r.CurrentRiskLevel == "High" ? 1 : r.CurrentRiskLevel == "Medium" ? 2 : r.CurrentRiskLevel == "Low" ? 3 : 4)
+                    : query.OrderBy(r => r.CurrentRiskLevel == "Critical" ? 0 : r.CurrentRiskLevel == "High" ? 1 : r.CurrentRiskLevel == "Medium" ? 2 : r.CurrentRiskLevel == "Low" ? 3 : 4),
                 "dateofadmission" => desc ? query.OrderByDescending(r => r.DateOfAdmission) : query.OrderBy(r => r.DateOfAdmission),
                 "socialworker" => desc ? query.OrderByDescending(r => r.AssignedSocialWorker) : query.OrderBy(r => r.AssignedSocialWorker),
                 _ => query.OrderByDescending(r => r.DateOfAdmission)
@@ -368,8 +420,8 @@ public static class AdminEndpoints
                 .Distinct().OrderBy(x => x).ToListAsync();
 
             var safehouses = await db.Safehouses
-                .Select(s => new { s.SafehouseId, label = s.SafehouseCode + " " + s.City })
-                .OrderBy(s => s.label)
+                .Select(s => new { s.SafehouseId, s.SafehouseCode, s.Name })
+                .OrderBy(s => s.Name)
                 .ToListAsync();
 
             var categories = await db.Residents
@@ -377,10 +429,15 @@ public static class AdminEndpoints
                 .Select(r => r.CaseCategory!)
                 .Distinct().OrderBy(x => x).ToListAsync();
 
-            var riskLevels = await db.Residents
+            var riskOrder = new[] { "Critical", "High", "Medium", "Low" };
+            var riskLevelsRaw = await db.Residents
                 .Where(r => r.CurrentRiskLevel != null)
                 .Select(r => r.CurrentRiskLevel!)
-                .Distinct().OrderBy(x => x).ToListAsync();
+                .Distinct().ToListAsync();
+            var riskLevels = riskOrder
+                .Where(r => riskLevelsRaw.Contains(r))
+                .Concat(riskLevelsRaw.Where(r => !riskOrder.Contains(r)).OrderBy(r => r))
+                .ToList();
 
             var socialWorkers = await db.Residents
                 .Where(r => r.AssignedSocialWorker != null)
@@ -388,6 +445,30 @@ public static class AdminEndpoints
                 .Distinct().OrderBy(x => x).ToListAsync();
 
             return new { caseStatuses, safehouses, categories, riskLevels, socialWorkers };
+        }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
+
+        // Returns staff members assigned to a specific safehouse
+        app.MapGet("/api/admin/safehouses/{safehouseId:int}/staff", async (int safehouseId, AppDbContext db, UserManager<ApplicationUser> userManager) =>
+        {
+            var staffUsers = await db.UserSafehouses
+                .Where(us => us.SafehouseId == safehouseId)
+                .Join(db.Users, us => us.UserId, u => u.Id,
+                    (us, u) => new { u.Id, u.FirstName, u.LastName })
+                .OrderBy(u => u.LastName).ThenBy(u => u.FirstName)
+                .ToListAsync();
+
+            var result = new List<object>();
+            foreach (var u in staffUsers)
+            {
+                var user = await userManager.FindByIdAsync(u.Id);
+                if (user != null)
+                {
+                    var roles = await userManager.GetRolesAsync(user);
+                    if (roles.Contains("Staff") || roles.Contains("Admin"))
+                        result.Add(new { name = $"{u.FirstName} {u.LastName}" });
+                }
+            }
+            return Results.Ok(result);
         }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
         app.MapGet("/api/admin/residents/{id:int}", async (int id, AppDbContext db) =>
@@ -436,13 +517,18 @@ public static class AdminEndpoints
             db.Residents.Add(resident);
             await db.SaveChangesAsync();
             return Results.Created($"/api/admin/residents/{resident.ResidentId}", new { resident.ResidentId });
-        }).RequireAuthorization("AdminOnly");
+        }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
         app.MapPut("/api/admin/residents/{id:int}", async (int id, HttpContext httpContext, AppDbContext db) =>
         {
             var resident = await db.Residents.FindAsync(id);
             if (resident == null)
                 return Results.NotFound(new { error = "Resident not found." });
+
+            // Staff can only edit residents in their assigned safehouses
+            var allowed = await SafehouseAuth.GetAllowedSafehouseIds(httpContext, db);
+            if (allowed != null && (!resident.SafehouseId.HasValue || !allowed.Contains(resident.SafehouseId.Value)))
+                return Results.Forbid();
 
             var body = await httpContext.Request.ReadFromJsonAsync<ResidentRequest>();
             if (body == null)
@@ -454,7 +540,7 @@ public static class AdminEndpoints
 
             await db.SaveChangesAsync();
             return Results.Ok(new { resident.ResidentId });
-        }).RequireAuthorization("AdminOnly");
+        }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
         app.MapDelete("/api/admin/residents/{id:int}", async (int id, AppDbContext db) =>
         {
@@ -555,9 +641,14 @@ public static class AdminEndpoints
 
         // ── Safehouses & Residents list ──────────────────────────
 
-        app.MapGet("/api/admin/residents-list", async (AppDbContext db) =>
+        app.MapGet("/api/admin/residents-list", async (HttpContext httpContext, AppDbContext db) =>
         {
-            var data = await db.Residents
+            var allowed = await SafehouseAuth.GetAllowedSafehouseIds(httpContext, db);
+            var query = db.Residents.AsQueryable();
+            if (allowed != null)
+                query = query.Where(r => r.SafehouseId.HasValue && allowed.Contains(r.SafehouseId.Value));
+
+            var data = await query
                 .OrderBy(r => r.InternalCode)
                 .Select(r => new
                 {

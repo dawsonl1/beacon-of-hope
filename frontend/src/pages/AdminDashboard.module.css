@@ -152,6 +152,126 @@
   color: var(--color-light-gray);
 }
 
+/* ── ML Insights Card ────────────────────────────────── */
+.mlInsightsCard {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: linear-gradient(135deg, rgba(142, 68, 173, 0.04), rgba(142, 68, 173, 0.02));
+  border: 1px solid rgba(142, 68, 173, 0.18);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.mlInsightsHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.mlInsightsTitle {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  white-space: nowrap;
+  flex: 1;
+}
+
+.mlViewAll {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  color: #8e44ad;
+  background: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.mlViewAll:hover { opacity: 0.7; }
+
+.mlInsightsIcon {
+  color: #8e44ad;
+  flex-shrink: 0;
+}
+
+.mlInsightsDivider {
+  width: 1px;
+  height: 36px;
+  background: rgba(142, 68, 173, 0.18);
+  flex-shrink: 0;
+}
+
+.mlInsightsStats {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex: 1;
+}
+
+.mlStat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mlStatIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.mlStatIconRisk {
+  composes: mlStatIcon;
+  background: rgba(196, 117, 110, 0.12);
+  color: #A5524D;
+}
+
+.mlStatIconAlert {
+  composes: mlStatIcon;
+  background: rgba(181, 145, 58, 0.12);
+  color: #B5913A;
+}
+
+.mlStatIconReady {
+  composes: mlStatIcon;
+  background: rgba(74, 122, 78, 0.12);
+  color: #4A7A4E;
+}
+
+.mlStatNumber {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.mlStatLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+.mlStatText {
+  display: flex;
+  flex-direction: column;
+}
+
 /* ── Main Grid (Table + Right col) ────────────────────── */
 .mainGrid {
   display: grid;
@@ -523,6 +643,19 @@
 
   .chartsRow {
     grid-template-columns: 1fr;
+  }
+
+  .mlInsightsCard {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .mlInsightsDivider {
+    display: none;
+  }
+
+  .mlInsightsStats {
+    gap: 1.25rem;
   }
 }
 

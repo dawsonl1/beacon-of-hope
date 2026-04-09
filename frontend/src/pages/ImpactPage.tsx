@@ -165,7 +165,14 @@ export default function ImpactPage() {
                   ${Math.round(goalData.raised).toLocaleString()} of ${goalData.goal.toLocaleString()}
                 </span>
               </div>
-              <div className={styles.goalBar}>
+              <div
+                className={styles.goalBar}
+                role="progressbar"
+                aria-valuenow={Math.round(goalData.raised)}
+                aria-valuemin={0}
+                aria-valuemax={goalData.goal}
+                aria-label={`${Math.round((goalData.raised / goalData.goal) * 100)}% of monthly goal reached`}
+              >
                 <div
                   className={styles.goalFill}
                   style={{ width: `${Math.min(100, (goalData.raised / goalData.goal) * 100)}%` }}
@@ -176,13 +183,13 @@ export default function ImpactPage() {
                   {Math.round((goalData.raised / goalData.goal) * 100)}% funded
                 </span>
                 <span className={styles.goalDonors}>
-                  <Users size={14} />
+                  <Users size={14} aria-hidden="true" />
                   {goalData.donorCount} donor{goalData.donorCount !== 1 ? 's' : ''} this month
                 </span>
               </div>
             </div>
             <Link to="/donate" className={styles.goalCta}>
-              <Heart size={16} />
+              <Heart size={16} aria-hidden="true" />
               Help Us Get There
             </Link>
           </div>
@@ -200,7 +207,7 @@ export default function ImpactPage() {
           <div className={styles.impactGrid}>
             {IMPACT_CARDS.map((card) => (
               <div key={card.amount} className={styles.impactCard}>
-                <div className={styles.impactIconWrap} style={{ background: card.color }}>
+                <div className={styles.impactIconWrap} style={{ background: card.color }} aria-hidden="true">
                   <card.icon size={22} color="#fff" />
                 </div>
                 <span className={styles.impactAmount}>{card.amount}</span>
@@ -223,8 +230,8 @@ export default function ImpactPage() {
           {/* Story 1 */}
           <div className={styles.storyRow}>
             <div className={styles.storyImage}>
-              <div className={styles.storyPlaceholder} aria-label="A girl studying at a desk">
-                <GraduationCap size={48} strokeWidth={1.2} />
+              <div className={styles.storyPlaceholder} role="img" aria-label="A girl studying at a desk">
+                <GraduationCap size={48} strokeWidth={1.2} aria-hidden="true" />
                 <span>Photo coming soon</span>
               </div>
             </div>
@@ -249,8 +256,8 @@ export default function ImpactPage() {
           {/* Story 2 */}
           <div className={`${styles.storyRow} ${styles.storyRowReverse}`}>
             <div className={styles.storyImage}>
-              <div className={`${styles.storyPlaceholder} ${styles.storyPlaceholderWarm}`} aria-label="A family embracing">
-                <Heart size={48} strokeWidth={1.2} />
+              <div className={`${styles.storyPlaceholder} ${styles.storyPlaceholderWarm}`} role="img" aria-label="A family embracing">
+                <Heart size={48} strokeWidth={1.2} aria-hidden="true" />
                 <span>Photo coming soon</span>
               </div>
             </div>
@@ -285,7 +292,7 @@ export default function ImpactPage() {
             and reintegration services.
           </p>
           <Link to="/donate" className={styles.ctaButton}>
-            <Heart size={16} />
+            <Heart size={16} aria-hidden="true" />
             Donate Now
           </Link>
         </div>

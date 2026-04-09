@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { Users, CheckCircle } from 'lucide-react';
 import { apiFetch } from '../api';
+import Dropdown from '../components/admin/Dropdown';
 import styles from './VolunteerPage.module.css';
 
 const GUAM_REGIONS = [
@@ -154,20 +155,16 @@ export default function VolunteerPage() {
           </div>
 
           <div className={styles.fieldGroup}>
-            <label className={styles.label} htmlFor="region">Region</label>
-            <select
-              id="region"
-              className={styles.select}
+            <label className={styles.label}>Region</label>
+            <Dropdown
               value={region}
-              onChange={e => setRegion(e.target.value)}
-              required
-            >
-              <option value="">Select your region...</option>
-              {GUAM_REGIONS.map(r => (
-                <option key={r} value={r}>{r}</option>
-              ))}
-              <option value="Outside Guam">Outside Guam</option>
-            </select>
+              placeholder="Select your region..."
+              options={[
+                ...GUAM_REGIONS.map(r => ({ value: r, label: r })),
+                { value: 'Outside Guam', label: 'Outside Guam' },
+              ]}
+              onChange={v => setRegion(v)}
+            />
           </div>
 
           {error && <p className={styles.error} role="alert">{error}</p>}

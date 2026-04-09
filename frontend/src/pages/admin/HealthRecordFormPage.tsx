@@ -4,6 +4,8 @@ import { ArrowLeft } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { APP_TODAY_STR } from '../../constants';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import Dropdown from '../../components/admin/Dropdown';
+import DatePicker from '../../components/admin/DatePicker';
 import styles from './VisitationFormPage.module.css';
 
 interface FormData {
@@ -36,6 +38,8 @@ export default function HealthRecordFormPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const residentId = params.get('residentId');
+  const taskId = params.get('taskId');
+  const fromCalendar = Boolean(taskId);
 
   const [form, setForm] = useState<FormData>({ ...emptyForm, residentId: residentId ? Number(residentId) : '' });
   const [residents, setResidents] = useState<{ residentId: number; internalCode: string }[]>([]);
@@ -86,7 +90,13 @@ export default function HealthRecordFormPage() {
           notes: form.notes || null,
         }),
       });
-      navigate(residentId ? `/admin/caseload/${residentId}` : '/admin/caseload');
+      if (taskId) {
+        await apiFetch(`/api/staff/tasks/${taskId}`, {
+          method: 'PUT',
+          body: JSON.stringify({ status: 'Completed' }),
+        }).catch(() => {});
+      }
+      navigate(fromCalendar ? '/admin' : residentId ? `/admin/caseload/${residentId}` : '/admin/caseload');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save');
     } finally {
@@ -96,24 +106,26 @@ export default function HealthRecordFormPage() {
 
   return (
     <div className={styles.page}>
-      <Link to={residentId ? `/admin/caseload/${residentId}` : '/admin/caseload'} className={styles.backLink}>
-        <ArrowLeft size={16} /> Back
+      <Link to={fromCalendar ? '/admin' : residentId ? `/admin/caseload/${residentId}` : '/admin/caseload'} className={styles.backLink}>
+        <ArrowLeft size={16} /> {fromCalendar ? 'Back to Calendar' : 'Back'}
       </Link>
       <h1 className={styles.title}>Input Health Record</h1>
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.grid}>
-          <label className={styles.label}>
+          <div className={styles.label}>
             Resident *
-            <select className={styles.select} value={form.residentId} onChange={e => handleChange('residentId', e.target.value ? Number(e.target.value) : '')} required>
-              <option value="">Select resident</option>
-              {residents.map(r => <option key={r.residentId} value={r.residentId}>{r.internalCode}</option>)}
-            </select>
-          </label>
-          <label className={styles.label}>
+            <Dropdown
+              value={String(form.residentId)}
+              placeholder="Select resident"
+              options={residents.map(r => ({ value: String(r.residentId), label: r.internalCode }))}
+              onChange={v => handleChange('residentId', v ? Number(v) : '')}
+            />
+          </div>
+          <div className={styles.label}>
             Record Date
-            <input type="date" className={styles.input} value={form.recordDate} onChange={e => handleChange('recordDate', e.target.value)} />
-          </label>
+            <DatePicker value={form.recordDate} onChange={v => handleChange('recordDate', v)} placeholder="Select date..." />
+          </div>
           <label className={styles.label}>
             Weight (kg)
             <input type="number" step="0.1" className={styles.input} value={form.weightKg} onChange={e => handleChange('weightKg', e.target.value)} placeholder="kg" />
@@ -167,7 +179,7 @@ export default function HealthRecordFormPage() {
         {error && <p className={styles.error} role="alert">{error}</p>}
 
         <div className={styles.actions}>
-          <button type="button" className={styles.cancelBtn} onClick={() => navigate(-1)}>Cancel</button>
+          <button type="button" className={styles.cancelBtn} onClick={() => navigate(fromCalendar ? '/admin' : -1 as any)}>Cancel</button>
           <button type="submit" className={styles.saveBtn} disabled={saving}>
             {saving ? 'Saving...' : 'Save Health Record'}
           </button>

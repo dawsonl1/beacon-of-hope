@@ -1,10 +1,12 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Shield, Mic, Square, Sparkles, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { APP_TODAY, APP_TODAY_STR } from '../../constants';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import Dropdown from '../../components/admin/Dropdown';
+import DatePicker from '../../components/admin/DatePicker';
 import styles from './RecordingFormPage.module.css';
 
 interface ResidentOption {
@@ -27,6 +29,8 @@ interface RecordingData {
   progressNoted: boolean | null;
   concernsFlagged: boolean | null;
   referralMade: boolean | null;
+  needsCaseConference: boolean | null;
+  readyForReintegration: boolean | null;
   notesRestricted: string | null;
   needsCaseConference: boolean | null;
   readyForReintegration: boolean | null;
@@ -46,6 +50,7 @@ interface GeminiResponse {
   progressNoted: boolean;
   concernsFlagged: boolean;
   referralMade: boolean;
+  riskLevel: string | null;
 }
 
 const SESSION_TYPES = [
@@ -70,6 +75,8 @@ const EMOTIONAL_STATES = [
   'Thriving',
 ];
 
+const RISK_LEVELS = ['Critical', 'High', 'Medium', 'Low'];
+
 const GEMINI_PROMPT = `You are a clinical documentation assistant for a children's residential care facility. A social worker has just recorded a voice memo summarizing a counseling session with a resident. Your job is to extract structured data from the audio and return it as JSON.
 
 Return ONLY a JSON object with these exact keys. Use null for any field the speaker did not mention or that you cannot confidently determine:
@@ -87,7 +94,8 @@ Return ONLY a JSON object with these exact keys. Use null for any field the spea
   "followUpActions": string | null,
   "progressNoted": boolean,
   "concernsFlagged": boolean,
-  "referralMade": boolean
+  "referralMade": boolean,
+  "riskLevel": string | null
 }
 
 Rules:
@@ -97,6 +105,7 @@ Rules:
 - For socialWorker: this is the person recording.
 - For durationMinutes: integer, e.g. 45.
 - For the narrative field: clean up filler words, false starts, and verbal tics. Exclude filler words or pauses, but try to keep the recorder's voice. This should sound like a professional clinician, NOT AI. Do NOT fabricate details for any reason — only include what the speaker actually said.
+- For riskLevel: MUST be one of: "Critical", "High", "Medium", "Low". Only set if the speaker explicitly mentions a risk level change or assessment. If not mentioned, use null.
 - For boolean flags: only set to true if the speaker explicitly mentions progress, concerns, or a referral. Default to false.
 - If the audio is unclear, too short, or contains no session-relevant content, return all fields as null except the three booleans (which should be false).
 - DO NOT hallucinate under any circumstances or infer data that was not spoken. When in doubt, use null.`;
@@ -126,6 +135,9 @@ export default function RecordingFormPage() {
   const { id } = useParams<{ id: string }>();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const calendarEventId = searchParams.get('calendarEventId');
+  const fromCalendar = Boolean(calendarEventId);
   const { user } = useAuth();
 
   const [residents, setResidents] = useState<ResidentOption[]>([]);
@@ -150,6 +162,7 @@ export default function RecordingFormPage() {
   const [notesRestricted, setNotesRestricted] = useState('');
   const [needsCaseConference, setNeedsCaseConference] = useState(false);
   const [readyForReintegration, setReadyForReintegration] = useState(false);
+  const [updatedRiskLevel, setUpdatedRiskLevel] = useState('');
 
   // Voice memo state
   const [memoState, setMemoState] = useState<'idle' | 'requesting_mic' | 'recording' | 'processing' | 'done'>('idle');
@@ -393,6 +406,10 @@ export default function RecordingFormPage() {
     if (data.progressNoted === true) setProgressNoted(true);
     if (data.concernsFlagged === true) setConcernsFlagged(true);
     if (data.referralMade === true) setReferralMade(true);
+
+    if (data.riskLevel && RISK_LEVELS.includes(data.riskLevel)) {
+      setUpdatedRiskLevel(data.riskLevel);
+    }
   }
 
   // Pre-fill social worker name from current user
@@ -485,6 +502,7 @@ export default function RecordingFormPage() {
         notesRestricted: notesRestricted || null,
         needsCaseConference,
         readyForReintegration,
+        updatedRiskLevel: updatedRiskLevel || null,
       };
 
       if (isEdit) {
@@ -494,11 +512,18 @@ export default function RecordingFormPage() {
         });
         navigate(`/admin/recordings/${id}`, { replace: true });
       } else {
-        const result = await apiFetch<{ recordingId: number }>('/api/admin/recordings', {
+        await apiFetch<{ recordingId: number }>('/api/admin/recordings', {
           method: 'POST',
           body: JSON.stringify(body),
         });
-        navigate(`/admin/recordings/${result.recordingId}`, { replace: true });
+        // Mark calendar event as completed if linked
+        if (calendarEventId) {
+          await apiFetch(`/api/staff/calendar/${calendarEventId}`, {
+            method: 'PUT',
+            body: JSON.stringify({ status: 'Completed' }),
+          }).catch(() => {});
+        }
+        navigate(fromCalendar ? '/admin' : '/admin/recordings', { replace: true });
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Failed to save recording.';
@@ -522,9 +547,9 @@ export default function RecordingFormPage() {
       <button
         type="button"
         className={styles.backLink}
-        onClick={() => navigate(isEdit ? `/admin/recordings/${id}` : '/admin/recordings')}
+        onClick={() => navigate(fromCalendar ? '/admin' : isEdit ? `/admin/recordings/${id}` : '/admin/recordings')}
       >
-        <ArrowLeft size={14} /> {isEdit ? 'Back to recording' : 'Back to recordings'}
+        <ArrowLeft size={14} /> {fromCalendar ? 'Back to Calendar' : isEdit ? 'Back to recording' : 'Back to recordings'}
       </button>
 
       {/* Header */}
@@ -631,222 +656,128 @@ export default function RecordingFormPage() {
 
       {errorMsg && <div className={styles.errorMsg}>{errorMsg}</div>}
 
-      <form className={styles.formCard} onSubmit={handleSubmit}>
-        {/* Session Details */}
-        <div className={styles.section}>
+      <form onSubmit={handleSubmit}>
+        {/* ── Session Details ─────────────────────── */}
+        <div className={styles.formCard}>
           <h2 className={styles.sectionTitle}>Session Details</h2>
           <div className={styles.fieldGrid}>
             <div className={styles.field}>
-              <label>
-                Resident <span className={styles.required}>*</span>
-              </label>
-              <select
-                value={residentId}
-                onChange={(e) => setResidentId(e.target.value)}
-                required
-              >
-                <option value="">Select resident...</option>
-                {residents.map((r) => (
-                  <option key={r.residentId} value={r.residentId}>
-                    {r.internalCode}
-                  </option>
-                ))}
-              </select>
+              <label>Resident <span className={styles.required}>*</span></label>
+              <Dropdown value={residentId} placeholder="Select resident..." options={residents.map(r => ({ value: String(r.residentId), label: r.internalCode }))} onChange={v => setResidentId(v)} />
             </div>
-
             <div className={styles.field}>
-              <label>
-                Session Date <span className={styles.required}>*</span>
-              </label>
-              <input
-                type="date"
-                value={sessionDate}
-                onChange={(e) => setSessionDate(e.target.value)}
-                max={APP_TODAY_STR}
-                required
-              />
+              <label>Session Date <span className={styles.required}>*</span></label>
+              <DatePicker value={sessionDate} onChange={v => setSessionDate(v)} placeholder="Select date..." max={APP_TODAY_STR} required />
             </div>
-
             <div className={styles.field}>
               <label>Social Worker</label>
-              <input
-                type="text"
-                value={socialWorker}
-                onChange={(e) => setSocialWorker(e.target.value)}
-                placeholder="Name of social worker"
-              />
+              <input type="text" value={socialWorker} onChange={e => setSocialWorker(e.target.value)} placeholder="Name of social worker" />
             </div>
-
             <div className={styles.field}>
-              <label>
-                Session Type <span className={styles.required}>*</span>
-              </label>
-              <select
-                value={sessionType}
-                onChange={(e) => setSessionType(e.target.value)}
-                required
-              >
-                <option value="">Select type...</option>
-                {SESSION_TYPES.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
-                  </option>
-                ))}
-              </select>
+              <label>Session Type <span className={styles.required}>*</span></label>
+              <Dropdown value={sessionType} placeholder="Select type..." options={SESSION_TYPES.map(t => ({ value: t, label: t }))} onChange={v => setSessionType(v)} />
             </div>
-
             <div className={styles.field}>
               <label>Duration (minutes)</label>
-              <input
-                type="number"
-                value={duration}
-                onChange={(e) => setDuration(e.target.value)}
-                min="1"
-                max="480"
-                placeholder="e.g. 45"
-              />
+              <input type="number" value={duration} onChange={e => setDuration(e.target.value)} min="1" max="480" placeholder="e.g. 45" />
             </div>
           </div>
         </div>
 
-        {/* Emotional State */}
-        <div className={styles.section}>
+        {/* ── Emotional State ─────────────────────── */}
+        <div className={styles.formCard}>
           <h2 className={styles.sectionTitle}>Emotional State</h2>
           <div className={styles.fieldGrid}>
             <div className={styles.field}>
               <label>Observed at Start</label>
-              <select
-                value={emotionalStart}
-                onChange={(e) => setEmotionalStart(e.target.value)}
-              >
-                <option value="">Select state...</option>
-                {EMOTIONAL_STATES.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
+              <Dropdown value={emotionalStart} placeholder="Select state..." options={EMOTIONAL_STATES.map(s => ({ value: s, label: s }))} onChange={v => setEmotionalStart(v)} />
             </div>
-
             <div className={styles.field}>
               <label>Observed at End</label>
-              <select
-                value={emotionalEnd}
-                onChange={(e) => setEmotionalEnd(e.target.value)}
-              >
-                <option value="">Select state...</option>
-                {EMOTIONAL_STATES.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
+              <Dropdown value={emotionalEnd} placeholder="Select state..." options={EMOTIONAL_STATES.map(s => ({ value: s, label: s }))} onChange={v => setEmotionalEnd(v)} />
             </div>
           </div>
         </div>
 
-        {/* Narrative */}
-        <div className={styles.section}>
+        {/* ── Session Narrative ────────────────────── */}
+        <div className={styles.formCard}>
           <h2 className={styles.sectionTitle}>Session Narrative</h2>
           <div className={`${styles.field} ${styles.fieldFull}`}>
             <label>Narrative Summary</label>
-            <textarea
-              className={styles.narrativeField}
-              value={narrative}
-              onChange={(e) => setNarrative(e.target.value)}
-              placeholder="Describe the session, observations, topics discussed, and resident's responses..."
-            />
+            <textarea className={styles.narrativeField} value={narrative} onChange={e => setNarrative(e.target.value)} placeholder="Describe the session, observations, topics discussed, and resident's responses..." />
           </div>
         </div>
 
-        {/* Interventions */}
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Interventions &amp; Follow-up</h2>
-          <div className={styles.fieldGrid}>
-            <div className={`${styles.field} ${styles.fieldFull}`}>
-              <label>Interventions Applied</label>
-              <textarea
-                className={styles.textareaField}
-                value={interventions}
-                onChange={(e) => setInterventions(e.target.value)}
-                placeholder="List interventions used during this session (e.g., CBT, Play Therapy, Grounding Techniques)..."
-              />
-            </div>
-
-            <div className={`${styles.field} ${styles.fieldFull}`}>
-              <label>Follow-up Actions</label>
-              <textarea
-                className={styles.textareaField}
-                value={followUp}
-                onChange={(e) => setFollowUp(e.target.value)}
-                placeholder="Describe any follow-up actions needed after this session..."
-              />
-            </div>
+        {/* ── Interventions & Follow-up ────────────── */}
+        <div className={styles.formCard}>
+          <h2 className={styles.sectionTitle}>Interventions & Follow-up</h2>
+          <div className={`${styles.field} ${styles.fieldFull}`}>
+            <label>Interventions Applied</label>
+            <textarea className={styles.textareaField} value={interventions} onChange={e => setInterventions(e.target.value)} placeholder="List interventions used during this session (e.g., CBT, Play Therapy, Grounding Techniques)..." />
+          </div>
+          <div className={`${styles.field} ${styles.fieldFull}`} style={{ marginTop: '0.75rem' }}>
+            <label>Follow-up Actions</label>
+            <textarea className={styles.textareaField} value={followUp} onChange={e => setFollowUp(e.target.value)} placeholder="Describe any follow-up actions needed after this session..." />
           </div>
         </div>
 
-        {/* Flags */}
-        <div className={styles.section}>
+        {/* ── Risk Assessment ─────────────────────── */}
+        <div className={styles.formCard}>
+          <h2 className={styles.sectionTitle}>Risk Assessment</h2>
+          <div className={styles.field} style={{ maxWidth: '300px' }}>
+            <label>Updated Risk Level</label>
+            <Dropdown value={updatedRiskLevel} placeholder="No change" options={[{ value: '', label: 'No change' }, ...RISK_LEVELS.map(l => ({ value: l, label: l }))]} onChange={v => setUpdatedRiskLevel(v)} />
+            <span className={styles.fieldHint}>Updates the resident's current risk level on the caseload inventory.</span>
+          </div>
+        </div>
+
+        {/* ── Session Flags ───────────────────────── */}
+        <div className={styles.formCard}>
           <h2 className={styles.sectionTitle}>Session Flags</h2>
-          <div className={styles.checkboxRow}>
-            <label className={styles.checkbox}>
-              <input
-                type="checkbox"
-                checked={progressNoted}
-                onChange={(e) => setProgressNoted(e.target.checked)}
-              />
-              <span>Progress Noted</span>
-            </label>
-            <label className={styles.checkbox}>
-              <input
-                type="checkbox"
-                checked={concernsFlagged}
-                onChange={(e) => setConcernsFlagged(e.target.checked)}
-              />
-              <span>Concerns Flagged</span>
-            </label>
-            <label className={styles.checkbox}>
-              <input
-                type="checkbox"
-                checked={referralMade}
-                onChange={(e) => setReferralMade(e.target.checked)}
-              />
-              <span>Referral Made</span>
-            </label>
-            <label className={styles.checkbox}>
-              <input type="checkbox" checked={needsCaseConference} onChange={(e) => setNeedsCaseConference(e.target.checked)} />
-              <span>Needs Case Conference</span>
-            </label>
-            <label className={styles.checkbox}>
-              <input type="checkbox" checked={readyForReintegration} onChange={(e) => setReadyForReintegration(e.target.checked)} />
-              <span>Ready for Reintegration Assessment</span>
-            </label>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+            {([
+              { checked: progressNoted, set: setProgressNoted, label: 'Progress Noted' },
+              { checked: concernsFlagged, set: setConcernsFlagged, label: 'Concerns Flagged' },
+              { checked: referralMade, set: setReferralMade, label: 'Referral Made' },
+              { checked: needsCaseConference, set: setNeedsCaseConference, label: 'Needs Case Conference' },
+              { checked: readyForReintegration, set: setReadyForReintegration, label: 'Ready for Reintegration' },
+            ] as const).map(({ checked, set, label }) => (
+              <button
+                key={label}
+                type="button"
+                onClick={() => set(!checked)}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
+                  padding: '0.4rem 0.75rem', borderRadius: '999px', fontSize: '0.78rem',
+                  fontWeight: 600, fontFamily: 'var(--font-body)', cursor: 'pointer',
+                  border: checked ? '1px solid var(--color-sage)' : '1px solid rgba(15,27,45,0.12)',
+                  background: checked ? 'rgba(15,143,125,0.1)' : '#fff',
+                  color: checked ? 'var(--color-sage)' : 'var(--text-muted)',
+                  transition: 'all 0.15s',
+                }}
+              >
+                {checked && <span style={{ fontSize: '0.65rem' }}>&#10003;</span>}
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Restricted Notes */}
-        <div className={styles.section}>
-          <label className={styles.label}>
-            <span>Restricted Notes</span>
-            <textarea
-              className={styles.textarea}
-              rows={3}
-              value={notesRestricted}
-              onChange={(e) => setNotesRestricted(e.target.value)}
-              placeholder="Sensitive notes visible only to authorized staff..."
-            />
-          </label>
+        {/* ── Restricted Notes ─────────────────────── */}
+        <div className={styles.formCard}>
+          <div style={{ background: 'rgba(203,87,104,0.04)', border: '1px solid rgba(203,87,104,0.2)', borderRadius: 'var(--radius-sm)', padding: '1rem 1.15rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.88rem', fontWeight: 700, color: 'var(--color-rose)', marginBottom: '0.6rem' }}>
+              <Shield size={16} /> Confidential Notes
+            </div>
+            <div className={styles.field}>
+              <textarea className={styles.textareaField} rows={3} value={notesRestricted} onChange={e => setNotesRestricted(e.target.value)} placeholder="Sensitive notes visible only to authorized staff..." style={{ background: '#fff' }} />
+            </div>
+          </div>
         </div>
 
-        {/* Actions */}
+        {/* ── Actions ─────────────────────────────── */}
         <div className={styles.actions}>
-          <button
-            type="button"
-            className={styles.cancelBtn}
-            onClick={() =>
-              navigate(isEdit ? `/admin/recordings/${id}` : '/admin/recordings')
-            }
-          >
+          <button type="button" className={styles.cancelBtn} onClick={() => navigate(fromCalendar ? '/admin' : isEdit ? `/admin/recordings/${id}` : '/admin/recordings')}>
             Cancel
           </button>
           <button type="submit" className={styles.saveBtn} disabled={saving}>

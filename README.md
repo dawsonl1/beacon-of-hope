@@ -86,9 +86,21 @@ The app treats **February 16, 2026** as "today" (`DATA_CUTOFF`). All seeded data
 
 ## Deployment
 
-- **Frontend** — Auto-deploys to Vercel from the `main` branch
-- **Backend** — Deployed to Microsoft Azure
+- **Frontend** — Vercel (auto-deploy currently disabled via `vercel.json`)
+- **Backend** — Auto-deploys to Azure via GitHub Actions on push to `main` (changes in `backend/`)
 - **Database** — Azure Database for PostgreSQL Flexible Server
+
+### Manual Frontend Deploy
+
+Auto-deploy is disabled. To deploy the frontend manually:
+
+```bash
+cd frontend && npx vercel --prod
+```
+
+Or from the Vercel dashboard: **Deployments** → **...** menu → **Redeploy**.
+
+To re-enable auto-deploy, remove the `"git"` block from `frontend/vercel.json`.
 
 ## Team Workflow
 

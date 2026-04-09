@@ -5,11 +5,19 @@ import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import { formatDate, formatAmount, formatEnumLabel } from '../../constants';
 import Pagination from '../../components/admin/Pagination';
+import Dropdown from '../../components/admin/Dropdown';
 import { SUPPORTER_TYPES, SUPPORTER_STATUSES, DONATION_TYPES } from '../../domain';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './DonorsPage.module.css';
 
 /* ── Types ──────────────────────────────────────────────── */
+
+interface ChurnSummary {
+  entityId: number;
+  modelName: string;
+  score: number;
+  scoreLabel: string;
+}
 
 interface SupporterRow {
   supporterId: number;
@@ -106,6 +114,9 @@ export default function DonorsPage() {
   const [partners, setPartners] = useState<PagedResult<PartnerRow> | null>(null);
   const [pLoading, setPLoading] = useState(false);
   const [pError, setPError] = useState<string | null>(null);
+
+  // Churn predictions
+  const [churnMap, setChurnMap] = useState<Map<number, ChurnSummary>>(new Map());
 
   // Allocations state
   const [allocByProgram, setAllocByProgram] = useState<AllocationByProgram[]>([]);
@@ -221,6 +232,21 @@ export default function DonorsPage() {
     else fetchAllocations();
   }, [activeTab, fetchSupporters, fetchPartners, fetchDonations, fetchAllocations]);
 
+  // Fetch churn predictions once
+  useEffect(() => {
+    apiFetch<ChurnSummary[]>('/api/ml/predictions/supporter/summary')
+      .then(items => {
+        const map = new Map<number, ChurnSummary>();
+        for (const item of items) {
+          if (item.modelName === 'donor-churn') {
+            map.set(item.entityId, item);
+          }
+        }
+        setChurnMap(map);
+      })
+      .catch(() => { /* ML predictions are non-critical */ });
+  }, []);
+
   // Debounced search
   function handleSearchChange(value: string) {
     setSearchInput(value);
@@ -240,6 +266,16 @@ export default function DonorsPage() {
     if (k === 'active') return styles.statusActive;
     if (k === 'lapsed') return styles.statusLapsed;
     return styles.statusInactive;
+  }
+
+  function churnColor(label: string) {
+    switch (label) {
+      case 'Critical': return '#c0392b';
+      case 'High': return '#d35400';
+      case 'Medium': return '#f39c12';
+      case 'Low': return '#27ae60';
+      default: return 'var(--text-muted)';
+    }
   }
 
   const hasFilters = search || supporterType || status || donationType;
@@ -311,22 +347,26 @@ export default function DonorsPage() {
                 onChange={e => handleSearchChange(e.target.value)}
               />
             </div>
-            <select
-              className={styles.filterSelect}
+            <Dropdown
               value={supporterType}
-              onChange={e => setParam('supporterType', e.target.value)}
-            >
-              <option value="">All Types</option>
-              {SUPPORTER_TYPES.map(t => <option key={t} value={t}>{formatEnumLabel(t)}</option>)}
-            </select>
-            <select
-              className={styles.filterSelect}
+              placeholder="All Types"
+              options={[
+                { value: '', label: 'All Types' },
+                ...SUPPORTER_TYPES.map(t => ({ value: t, label: formatEnumLabel(t) })),
+              ]}
+              onChange={v => setParam('supporterType', v)}
+              compact
+            />
+            <Dropdown
               value={status}
-              onChange={e => setParam('status', e.target.value)}
-            >
-              <option value="">All Statuses</option>
-              {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
+              placeholder="All Statuses"
+              options={[
+                { value: '', label: 'All Statuses' },
+                ...STATUSES.map(s => ({ value: s, label: s })),
+              ]}
+              onChange={v => setParam('status', v)}
+              compact
+            />
           </>
         )}
         {activeTab === 'partners' && (
@@ -340,36 +380,42 @@ export default function DonorsPage() {
                 onChange={e => handleSearchChange(e.target.value)}
               />
             </div>
-            <select
-              className={styles.filterSelect}
+            <Dropdown
               value={supporterType}
-              onChange={e => setParam('supporterType', e.target.value)}
-            >
-              <option value="">All Types</option>
-              <option value="Organization">Organization</option>
-              <option value="Individual">Individual</option>
-            </select>
-            <select
-              className={styles.filterSelect}
+              placeholder="All Types"
+              options={[
+                { value: '', label: 'All Types' },
+                { value: 'Organization', label: 'Organization' },
+                { value: 'Individual', label: 'Individual' },
+              ]}
+              onChange={v => setParam('supporterType', v)}
+              compact
+            />
+            <Dropdown
               value={status}
-              onChange={e => setParam('status', e.target.value)}
-            >
-              <option value="">All Statuses</option>
-              <option value="Prospective">Prospective</option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
+              placeholder="All Statuses"
+              options={[
+                { value: '', label: 'All Statuses' },
+                { value: 'Prospective', label: 'Prospective' },
+                { value: 'Active', label: 'Active' },
+                { value: 'Inactive', label: 'Inactive' },
+              ]}
+              onChange={v => setParam('status', v)}
+              compact
+            />
           </>
         )}
         {activeTab === 'donations' && (
-          <select
-            className={styles.filterSelect}
+          <Dropdown
             value={donationType}
-            onChange={e => setParam('donationType', e.target.value)}
-          >
-            <option value="">All Types</option>
-            {DONATION_TYPES.map(t => <option key={t} value={t}>{formatEnumLabel(t)}</option>)}
-          </select>
+            placeholder="All Types"
+            options={[
+              { value: '', label: 'All Types' },
+              ...DONATION_TYPES.map(t => ({ value: t, label: formatEnumLabel(t) })),
+            ]}
+            onChange={v => setParam('donationType', v)}
+            compact
+          />
         )}
         {hasFilters && (
           <button className={styles.clearBtn} onClick={clearFilters}>
@@ -400,6 +446,7 @@ export default function DonorsPage() {
                       <th>Region</th>
                       <th>Total Given</th>
                       <th>Last Donation</th>
+                      <th>Risk</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -415,6 +462,22 @@ export default function DonorsPage() {
                         <td>{[s.region, s.country].filter(Boolean).join(', ') || '--'}</td>
                         <td className={styles.amountCol}>{formatAmount(s.totalDonated)}</td>
                         <td>{formatDate(s.lastDonationDate)}</td>
+                        <td>
+                          {churnMap.has(s.supporterId) ? (
+                            <span
+                              className={styles.riskBadge}
+                              style={{
+                                color: churnColor(churnMap.get(s.supporterId)!.scoreLabel),
+                                background: `${churnColor(churnMap.get(s.supporterId)!.scoreLabel)}14`,
+                                borderColor: `${churnColor(churnMap.get(s.supporterId)!.scoreLabel)}40`,
+                              }}
+                            >
+                              {churnMap.get(s.supporterId)!.scoreLabel}
+                            </span>
+                          ) : (
+                            <span style={{ color: 'var(--text-muted)' }}>&mdash;</span>
+                          )}
+                        </td>
                       </tr>
                     ))}
                   </tbody>

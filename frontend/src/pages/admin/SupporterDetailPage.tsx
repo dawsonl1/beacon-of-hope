@@ -5,6 +5,7 @@ import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import { formatDate, formatAmount, formatEnumLabel } from '../../constants';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
+import MlBadge from '../../components/admin/MlBadge';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './SupporterDetailPage.module.css';
 
@@ -45,6 +46,13 @@ interface DetailResponse {
   donations: DonationRow[];
 }
 
+interface MlPrediction {
+  modelName: string;
+  score: number;
+  scoreLabel: string;
+  metadata: string | null;
+}
+
 export default function SupporterDetailPage() {
   useDocumentTitle('Supporter Detail');
   const { id } = useParams<{ id: string }>();
@@ -58,6 +66,7 @@ export default function SupporterDetailPage() {
   const [showDelete, setShowDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [churn, setChurn] = useState<MlPrediction | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -66,7 +75,34 @@ export default function SupporterDetailPage() {
       .then(setData)
       .catch(e => setError(e instanceof Error ? e.message : 'Failed to load'))
       .finally(() => setLoading(false));
+
+    apiFetch<MlPrediction[]>(`/api/ml/predictions/supporter/${id}`)
+      .then(preds => {
+        const c = preds.find(p => p.modelName === 'donor-churn');
+        setChurn(c ?? null);
+      })
+      .catch(() => { /* ML predictions are non-critical */ });
   }, [id]);
+
+  function churnColor(label: string) {
+    switch (label) {
+      case 'Critical': return '#c0392b';
+      case 'High': return '#d35400';
+      case 'Medium': return '#f39c12';
+      case 'Low': return '#27ae60';
+      default: return 'var(--text-muted)';
+    }
+  }
+
+  function parseRiskFactors(metadata: string | null): string[] {
+    if (!metadata) return [];
+    try {
+      const parsed = JSON.parse(metadata);
+      return Array.isArray(parsed.top_risk_factors) ? parsed.top_risk_factors : [];
+    } catch {
+      return [];
+    }
+  }
 
   async function handleDelete() {
     if (!id) return;
@@ -174,6 +210,41 @@ export default function SupporterDetailPage() {
         <span className={styles.totalAmount}>{formatAmount(s.totalDonated)}</span>
         <span className={styles.totalCount}>{data.donations.length} donation{data.donations.length !== 1 ? 's' : ''}</span>
       </div>
+
+      {/* Retention Risk */}
+      {churn && (
+        <div className={styles.riskCard}>
+          <div className={styles.riskHeader}>
+            <h2 className={styles.riskTitle}>Retention Risk</h2>
+            <MlBadge />
+          </div>
+          <div className={styles.riskBody}>
+            <div className={styles.riskScore}>
+              <span className={styles.riskScoreValue} style={{ color: churnColor(churn.scoreLabel) }}>
+                {Math.round(churn.score)}
+              </span>
+              <span className={styles.riskScoreMax}>/ 100</span>
+            </div>
+            <span className={styles.riskLabel} style={{
+              color: churnColor(churn.scoreLabel),
+              background: `${churnColor(churn.scoreLabel)}14`,
+              borderColor: `${churnColor(churn.scoreLabel)}40`,
+            }}>
+              {churn.scoreLabel}
+            </span>
+          </div>
+          {parseRiskFactors(churn.metadata).length > 0 && (
+            <div className={styles.riskFactors}>
+              <span className={styles.riskFactorsLabel}>Top risk factors</span>
+              <ul className={styles.riskFactorsList}>
+                {parseRiskFactors(churn.metadata).map((f, i) => (
+                  <li key={i}>{f}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Donation History */}
       <h2 className={styles.sectionTitle}>Donation History</h2>

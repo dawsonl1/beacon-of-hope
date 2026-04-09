@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Loader2 } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, Shield } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { APP_TODAY_STR } from '../../constants';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
-import styles from './ResidentFormPage.module.css';
+import Dropdown from '../../components/admin/Dropdown';
+import DatePicker from '../../components/admin/DatePicker';
+import styles from './VisitationFormPage.module.css';
 
 interface SafehouseOption {
   safehouseId: number;
@@ -147,6 +149,28 @@ function toPayload(form: FormData) {
   };
 }
 
+/* ── Pill toggle for boolean fields ──────────────── */
+function PillToggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(!checked)}
+      style={{
+        display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
+        padding: '0.35rem 0.7rem', borderRadius: '999px', fontSize: '0.78rem',
+        fontWeight: 600, fontFamily: 'var(--font-body)', cursor: 'pointer',
+        border: checked ? '1px solid var(--color-sage)' : '1px solid rgba(15,27,45,0.12)',
+        background: checked ? 'rgba(15,143,125,0.1)' : '#fff',
+        color: checked ? 'var(--color-sage)' : 'var(--text-muted)',
+        transition: 'all 0.15s',
+      }}
+    >
+      {checked && <span style={{ fontSize: '0.65rem' }}>&#10003;</span>}
+      {label}
+    </button>
+  );
+}
+
 export default function ResidentFormPage() {
   useDocumentTitle('Resident Form');
   const { id } = useParams<{ id: string }>();
@@ -160,9 +184,7 @@ export default function ResidentFormPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    apiFetch<FilterOptions>('/api/admin/residents/filter-options')
-      .then(setOptions)
-      .catch(() => {});
+    apiFetch<FilterOptions>('/api/admin/residents/filter-options').then(setOptions).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -181,24 +203,15 @@ export default function ResidentFormPage() {
           placeOfBirth: (data.placeOfBirth as string) ?? '',
           religion: (data.religion as string) ?? '',
           caseCategory: (data.caseCategory as string) ?? '',
-          subCatOrphaned: !!data.subCatOrphaned,
-          subCatTrafficked: !!data.subCatTrafficked,
-          subCatChildLabor: !!data.subCatChildLabor,
-          subCatPhysicalAbuse: !!data.subCatPhysicalAbuse,
-          subCatSexualAbuse: !!data.subCatSexualAbuse,
-          subCatOsaec: !!data.subCatOsaec,
-          subCatCicl: !!data.subCatCicl,
-          subCatAtRisk: !!data.subCatAtRisk,
-          subCatStreetChild: !!data.subCatStreetChild,
-          subCatChildWithHiv: !!data.subCatChildWithHiv,
-          isPwd: !!data.isPwd,
-          pwdType: (data.pwdType as string) ?? '',
-          hasSpecialNeeds: !!data.hasSpecialNeeds,
-          specialNeedsDiagnosis: (data.specialNeedsDiagnosis as string) ?? '',
-          familyIs4ps: !!data.familyIs4ps,
-          familySoloParent: !!data.familySoloParent,
-          familyIndigenous: !!data.familyIndigenous,
-          familyParentPwd: !!data.familyParentPwd,
+          subCatOrphaned: !!data.subCatOrphaned, subCatTrafficked: !!data.subCatTrafficked,
+          subCatChildLabor: !!data.subCatChildLabor, subCatPhysicalAbuse: !!data.subCatPhysicalAbuse,
+          subCatSexualAbuse: !!data.subCatSexualAbuse, subCatOsaec: !!data.subCatOsaec,
+          subCatCicl: !!data.subCatCicl, subCatAtRisk: !!data.subCatAtRisk,
+          subCatStreetChild: !!data.subCatStreetChild, subCatChildWithHiv: !!data.subCatChildWithHiv,
+          isPwd: !!data.isPwd, pwdType: (data.pwdType as string) ?? '',
+          hasSpecialNeeds: !!data.hasSpecialNeeds, specialNeedsDiagnosis: (data.specialNeedsDiagnosis as string) ?? '',
+          familyIs4ps: !!data.familyIs4ps, familySoloParent: !!data.familySoloParent,
+          familyIndigenous: !!data.familyIndigenous, familyParentPwd: !!data.familyParentPwd,
           familyInformalSettler: !!data.familyInformalSettler,
           dateOfAdmission: (data.dateOfAdmission as string) ?? '',
           ageUponAdmission: (data.ageUponAdmission as string) ?? '',
@@ -224,7 +237,7 @@ export default function ResidentFormPage() {
       .finally(() => setLoading(false));
   }, [id, isEdit]);
 
-  function updateField(key: keyof FormData, value: string | boolean) {
+  function u(key: keyof FormData, value: string | boolean) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
@@ -235,16 +248,10 @@ export default function ResidentFormPage() {
     try {
       const payload = toPayload(form);
       if (isEdit) {
-        await apiFetch(`/api/admin/residents/${id}`, {
-          method: 'PUT',
-          body: JSON.stringify(payload),
-        });
+        await apiFetch(`/api/admin/residents/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
         navigate(`/admin/caseload/${id}`);
       } else {
-        const result = await apiFetch<{ residentId: number }>('/api/admin/residents', {
-          method: 'POST',
-          body: JSON.stringify(payload),
-        });
+        const result = await apiFetch<{ residentId: number }>('/api/admin/residents', { method: 'POST', body: JSON.stringify(payload) });
         navigate(`/admin/caseload/${result.residentId}`);
       }
     } catch (err: unknown) {
@@ -255,253 +262,216 @@ export default function ResidentFormPage() {
   }
 
   if (loading) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.loadingState}>
-          <Loader2 size={24} className={styles.spinner} />
-          <span>Loading...</span>
-        </div>
-      </div>
-    );
+    return <div className={styles.page}><div className={styles.loading}><Loader2 size={24} style={{ animation: 'spin 1s linear infinite' }} /> Loading...</div></div>;
   }
 
   return (
     <div className={styles.page}>
-      <div className={styles.topBar}>
-        <button
-          className={styles.backLink}
-          onClick={() => navigate(isEdit ? `/admin/caseload/${id}` : '/admin/caseload')}
-        >
-          <ArrowLeft size={16} /> Cancel
-        </button>
-      </div>
-
+      <a href="#" className={styles.backLink} onClick={e => { e.preventDefault(); navigate(isEdit ? `/admin/caseload/${id}` : '/admin/caseload'); }}>
+        <ArrowLeft size={16} /> {isEdit ? 'Back to Resident' : 'Back to Caseload'}
+      </a>
       <h1 className={styles.title}>{isEdit ? 'Edit Resident' : 'Add New Resident'}</h1>
 
-      {error && <div className={styles.errorBanner}>{error}</div>}
+      {error && <div className={styles.error}>{error}</div>}
 
-      <form onSubmit={handleSubmit} className={styles.form}>
-        {/* ── Essential Info (always visible, quick entry) ── */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Admission</legend>
-          <p className={styles.sectionHint}>Start here — codes are auto-generated on save.</p>
+      <form onSubmit={handleSubmit}>
+        {/* ── Admission & Assignment ──────────────── */}
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Admission & Assignment</h2>
           <div className={styles.fieldGrid}>
-            <label className={styles.label}>
-              Safehouse *
-              <select className={styles.select} value={form.safehouseId} onChange={(e) => updateField('safehouseId', e.target.value)} required>
-                <option value="">Select safehouse</option>
-                {options?.safehouses.map((s) => (
-                  <option key={s.safehouseId} value={String(s.safehouseId)}>{s.label}</option>
-                ))}
-              </select>
-            </label>
-            <label className={styles.label}>
-              Case Category *
-              <select className={styles.select} value={form.caseCategory} onChange={(e) => updateField('caseCategory', e.target.value)} required>
-                <option value="">Select category</option>
-                {options?.categories.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-            </label>
-            <label className={styles.label}>
-              Risk Level *
-              <select className={styles.select} value={form.currentRiskLevel} onChange={(e) => { updateField('currentRiskLevel', e.target.value); if (!form.initialRiskLevel) updateField('initialRiskLevel', e.target.value); }} required>
-                <option value="">Select risk level</option>
-                {options?.riskLevels.map((r) => (
-                  <option key={r} value={r}>{r}</option>
-                ))}
-              </select>
-            </label>
-            <label className={styles.label}>
-              Assigned Social Worker *
-              <select className={styles.select} value={form.assignedSocialWorker} onChange={(e) => updateField('assignedSocialWorker', e.target.value)} required>
-                <option value="">Select social worker</option>
-                {options?.socialWorkers.map((sw) => (
-                  <option key={sw} value={sw}>{sw}</option>
-                ))}
-              </select>
-            </label>
-            <label className={styles.label}>
-              Date of Admission
-              <input type="date" className={styles.input} value={form.dateOfAdmission} onChange={(e) => updateField('dateOfAdmission', e.target.value)} />
-            </label>
-            <label className={styles.label}>
-              Case Status
-              <select className={styles.select} value={form.caseStatus} onChange={(e) => updateField('caseStatus', e.target.value)}>
-                <option value="">Select status</option>
-                {options?.caseStatuses.map((s) => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
-            </label>
+            <div className={styles.field}>
+              <div className={styles.label}>Safehouse <span className={styles.required}>*</span></div>
+              <Dropdown value={form.safehouseId} placeholder="Select safehouse..." options={options?.safehouses.map(s => ({ value: String(s.safehouseId), label: s.label })) ?? []} onChange={v => u('safehouseId', v)} />
+            </div>
+            <div className={styles.field}>
+              <div className={styles.label}>Case Category <span className={styles.required}>*</span></div>
+              <Dropdown value={form.caseCategory} placeholder="Select category..." options={options?.categories.map(c => ({ value: c, label: c })) ?? []} onChange={v => u('caseCategory', v)} />
+            </div>
+            <div className={styles.field}>
+              <div className={styles.label}>Risk Level <span className={styles.required}>*</span></div>
+              <Dropdown value={form.currentRiskLevel} placeholder="Select risk level..." options={options?.riskLevels.map(r => ({ value: r, label: r })) ?? []} onChange={v => { u('currentRiskLevel', v); if (!form.initialRiskLevel) u('initialRiskLevel', v); }} />
+            </div>
+            <div className={styles.field}>
+              <div className={styles.label}>Assigned Social Worker <span className={styles.required}>*</span></div>
+              <Dropdown value={form.assignedSocialWorker} placeholder="Select social worker..." options={options?.socialWorkers.map(sw => ({ value: sw, label: sw })) ?? []} onChange={v => u('assignedSocialWorker', v)} />
+            </div>
+            <div className={styles.field}>
+              <div className={styles.label}>Date of Admission</div>
+              <DatePicker value={form.dateOfAdmission} onChange={v => u('dateOfAdmission', v)} placeholder="Select date..." />
+            </div>
+            <div className={styles.field}>
+              <div className={styles.label}>Case Status</div>
+              <Dropdown value={form.caseStatus} placeholder="Select status..." options={options?.caseStatuses.map(s => ({ value: s, label: s })) ?? []} onChange={v => u('caseStatus', v)} />
+            </div>
           </div>
           {isEdit && (
             <div className={styles.fieldGrid} style={{ marginTop: '0.75rem' }}>
-              <label className={styles.label}>
-                Internal Code
-                <input className={styles.input} value={form.internalCode} readOnly style={{ background: '#f5f5f5' }} />
-              </label>
-              <label className={styles.label}>
-                Case Control No.
-                <input className={styles.input} value={form.caseControlNo} readOnly style={{ background: '#f5f5f5' }} />
-              </label>
+              <div className={styles.field}>
+                <label className={styles.label}>Internal Code</label>
+                <input className={styles.input} value={form.internalCode} readOnly style={{ background: 'var(--surface-2)', color: 'var(--text-muted)' }} />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.label}>Case Control No.</label>
+                <input className={styles.input} value={form.caseControlNo} readOnly style={{ background: 'var(--surface-2)', color: 'var(--text-muted)' }} />
+              </div>
             </div>
           )}
-        </fieldset>
+        </div>
 
-        {/* ── About the Resident ── */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>About the Resident</legend>
+        {/* ── Demographics ────────────────────────── */}
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Demographics</h2>
           <div className={styles.fieldGrid}>
-            <label className={styles.label}>
-              Sex
-              <select className={styles.select} value={form.sex} onChange={(e) => updateField('sex', e.target.value)}>
-                <option value="">Select</option>
-                <option value="Female">Female</option>
-                <option value="Male">Male</option>
-              </select>
-            </label>
-            <label className={styles.label}>
-              Date of Birth
-              <input type="date" className={styles.input} value={form.dateOfBirth} onChange={(e) => updateField('dateOfBirth', e.target.value)} />
-            </label>
-            <label className={styles.label}>
-              Age upon Admission
-              <input className={styles.input} type="number" min="0" max="18" value={form.ageUponAdmission} onChange={(e) => updateField('ageUponAdmission', e.target.value)} placeholder="e.g. 14" />
-            </label>
-            <label className={styles.label}>
-              Place of Birth
-              <input className={styles.input} value={form.placeOfBirth} onChange={(e) => updateField('placeOfBirth', e.target.value)} placeholder="Village or city" />
-            </label>
-            <label className={styles.label}>
-              Religion
-              <input className={styles.input} value={form.religion} onChange={(e) => updateField('religion', e.target.value)} placeholder="e.g. Catholic" />
-            </label>
-            <label className={styles.label}>
-              Birth Status
-              <input className={styles.input} value={form.birthStatus} onChange={(e) => updateField('birthStatus', e.target.value)} placeholder="e.g. Legitimate" />
-            </label>
-          </div>
-        </fieldset>
-
-        {/* ── Case Details ── */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Case Details</legend>
-          <div className={styles.checkboxSection}>
-            <span className={styles.checkboxLabel}>Sub-Categories (select all that apply)</span>
-            <div className={styles.checkboxGrid}>
-              {SUB_CAT_FIELDS.map(({ key, label }) => (
-                <label key={key} className={styles.checkbox}>
-                  <input type="checkbox" checked={form[key]} onChange={(e) => updateField(key, e.target.checked)} />
-                  <span>{label}</span>
-                </label>
-              ))}
+            <div className={styles.field}>
+              <div className={styles.label}>Sex</div>
+              <Dropdown value={form.sex} placeholder="Select..." options={[{ value: 'Female', label: 'Female' }, { value: 'Male', label: 'Male' }]} onChange={v => u('sex', v)} />
+            </div>
+            <div className={styles.field}>
+              <div className={styles.label}>Date of Birth</div>
+              <DatePicker value={form.dateOfBirth} onChange={v => u('dateOfBirth', v)} placeholder="Select date..." />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Age upon Admission</label>
+              <input className={styles.input} type="number" min="0" max="18" value={form.ageUponAdmission} onChange={e => u('ageUponAdmission', e.target.value)} placeholder="e.g. 14" />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Place of Birth</label>
+              <input className={styles.input} value={form.placeOfBirth} onChange={e => u('placeOfBirth', e.target.value)} placeholder="Village or city" />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Religion</label>
+              <input className={styles.input} value={form.religion} onChange={e => u('religion', e.target.value)} placeholder="e.g. Catholic" />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Birth Status</label>
+              <input className={styles.input} value={form.birthStatus} onChange={e => u('birthStatus', e.target.value)} placeholder="e.g. Legitimate" />
             </div>
           </div>
-          <div className={styles.fieldGrid} style={{ marginTop: '1rem' }}>
-            <label className={styles.label}>
-              Referral Source
-              <input className={styles.input} value={form.referralSource} onChange={(e) => updateField('referralSource', e.target.value)} placeholder="e.g. DSWD, Court Order" />
-            </label>
-            <label className={styles.label}>
-              Referring Agency/Person
-              <input className={styles.input} value={form.referringAgencyPerson} onChange={(e) => updateField('referringAgencyPerson', e.target.value)} placeholder="Name of referring person or agency" />
-            </label>
-          </div>
-        </fieldset>
+        </div>
 
-        {/* ── Health & Family ── */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Health & Family</legend>
+        {/* ── Case Classification ─────────────────── */}
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Case Classification</h2>
+          <div className={styles.label} style={{ marginBottom: '0.5rem' }}>Sub-Categories</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1rem' }}>
+            {SUB_CAT_FIELDS.map(({ key, label }) => (
+              <PillToggle key={key} label={label} checked={form[key]} onChange={v => u(key, v)} />
+            ))}
+          </div>
           <div className={styles.fieldGrid}>
-            <label className={styles.checkbox}>
-              <input type="checkbox" checked={form.isPwd} onChange={(e) => updateField('isPwd', e.target.checked)} />
-              <span>Person with Disability (PWD)</span>
-            </label>
+            <div className={styles.field}>
+              <label className={styles.label}>Referral Source</label>
+              <input className={styles.input} value={form.referralSource} onChange={e => u('referralSource', e.target.value)} placeholder="e.g. DSWD, Court Order" />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Referring Agency / Person</label>
+              <input className={styles.input} value={form.referringAgencyPerson} onChange={e => u('referringAgencyPerson', e.target.value)} placeholder="Name of referring party" />
+            </div>
+          </div>
+        </div>
+
+        {/* ── Health & Special Needs ───────────────── */}
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Health & Special Needs</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div className={styles.toggleRow}>
+              <button type="button" className={`${styles.toggle} ${form.isPwd ? styles.toggleActive : ''}`} onClick={() => u('isPwd', !form.isPwd)} />
+              <div>
+                <div className={styles.toggleLabel}>Person with Disability (PWD)</div>
+              </div>
+            </div>
             {form.isPwd && (
-              <label className={styles.label}>
-                PWD Type
-                <input className={styles.input} value={form.pwdType} onChange={(e) => updateField('pwdType', e.target.value)} placeholder="Type of disability" />
-              </label>
+              <div className={styles.field} style={{ maxWidth: '350px' }}>
+                <label className={styles.label}>PWD Type</label>
+                <input className={styles.input} value={form.pwdType} onChange={e => u('pwdType', e.target.value)} placeholder="Type of disability" />
+              </div>
             )}
-            <label className={styles.checkbox}>
-              <input type="checkbox" checked={form.hasSpecialNeeds} onChange={(e) => updateField('hasSpecialNeeds', e.target.checked)} />
-              <span>Has Special Needs</span>
-            </label>
+            <div className={styles.toggleRow}>
+              <button type="button" className={`${styles.toggle} ${form.hasSpecialNeeds ? styles.toggleActive : ''}`} onClick={() => u('hasSpecialNeeds', !form.hasSpecialNeeds)} />
+              <div>
+                <div className={styles.toggleLabel}>Has Special Needs</div>
+              </div>
+            </div>
             {form.hasSpecialNeeds && (
-              <label className={styles.label}>
-                Diagnosis
-                <input className={styles.input} value={form.specialNeedsDiagnosis} onChange={(e) => updateField('specialNeedsDiagnosis', e.target.value)} placeholder="Diagnosis details" />
-              </label>
+              <div className={styles.field} style={{ maxWidth: '350px' }}>
+                <label className={styles.label}>Diagnosis</label>
+                <input className={styles.input} value={form.specialNeedsDiagnosis} onChange={e => u('specialNeedsDiagnosis', e.target.value)} placeholder="Diagnosis details" />
+              </div>
             )}
           </div>
-          <div className={styles.checkboxSection}>
-            <span className={styles.checkboxLabel}>Family Background</span>
-            <div className={styles.checkboxGrid}>
-              {FAMILY_FIELDS.map(({ key, label }) => (
-                <label key={key} className={styles.checkbox}>
-                  <input type="checkbox" checked={form[key]} onChange={(e) => updateField(key, e.target.checked)} />
-                  <span>{label}</span>
-                </label>
-              ))}
+        </div>
+
+        {/* ── Family Background ───────────────────── */}
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Family Background</h2>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+            {FAMILY_FIELDS.map(({ key, label }) => (
+              <PillToggle key={key} label={label} checked={form[key]} onChange={v => u(key, v)} />
+            ))}
+          </div>
+        </div>
+
+        {/* ── Documentation ───────────────────────── */}
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Documentation</h2>
+          <div className={styles.fieldGrid}>
+            <div className={styles.field}>
+              <div className={styles.label}>COLB Registered</div>
+              <DatePicker value={form.dateColbRegistered} onChange={v => u('dateColbRegistered', v)} placeholder="Select date..." />
+            </div>
+            <div className={styles.field}>
+              <div className={styles.label}>COLB Obtained</div>
+              <DatePicker value={form.dateColbObtained} onChange={v => u('dateColbObtained', v)} placeholder="Select date..." />
+            </div>
+            <div className={styles.field}>
+              <div className={styles.label}>Date Enrolled</div>
+              <DatePicker value={form.dateEnrolled} onChange={v => u('dateEnrolled', v)} placeholder="Select date..." />
+            </div>
+            <div className={styles.field}>
+              <div className={styles.label}>Date Closed</div>
+              <DatePicker value={form.dateClosed} onChange={v => u('dateClosed', v)} placeholder="Select date..." />
             </div>
           </div>
-        </fieldset>
+        </div>
 
-        {/* ── Assessment & Notes ── */}
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Assessment & Notes</legend>
-          <label className={styles.label}>
-            Initial Case Assessment
-            <textarea className={styles.textarea} value={form.initialCaseAssessment} onChange={(e) => updateField('initialCaseAssessment', e.target.value)} rows={3} placeholder="Brief assessment of the resident's situation..." />
-          </label>
-          <label className={styles.label} style={{ marginTop: '0.75rem' }}>
-            Confidential Notes
-            <textarea className={styles.textarea} value={form.notesRestricted} onChange={(e) => updateField('notesRestricted', e.target.value)} rows={3} placeholder="Restricted notes — only visible to authorized staff" />
-          </label>
-          <div className={styles.fieldGrid} style={{ marginTop: '0.75rem' }}>
-            <label className={styles.label}>
-              Reintegration Type
-              <select className={styles.select} value={form.reintegrationType} onChange={(e) => updateField('reintegrationType', e.target.value)}>
-                <option value="">Not applicable</option>
-                <option value="Family Reunification">Family Reunification</option>
-                <option value="Foster Care">Foster Care</option>
-                <option value="Independent Living">Independent Living</option>
-              </select>
-            </label>
-            <label className={styles.label}>
-              Reintegration Status
-              <select className={styles.select} value={form.reintegrationStatus} onChange={(e) => updateField('reintegrationStatus', e.target.value)}>
-                <option value="">Select status...</option>
-                <option value="Not Started">Not Started</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
-                <option value="On Hold">On Hold</option>
-              </select>
-            </label>
-            <label className={styles.label}>
-              Date Enrolled
-              <input type="date" className={styles.input} value={form.dateEnrolled} onChange={(e) => updateField('dateEnrolled', e.target.value)} />
-            </label>
-            <label className={styles.label}>
-              Date Closed
-              <input type="date" className={styles.input} value={form.dateClosed} onChange={(e) => updateField('dateClosed', e.target.value)} />
-            </label>
+        {/* ── Assessment & Planning ────────────────── */}
+        <div className={styles.formCard}>
+          <h2 className={styles.formSection}>Assessment & Planning</h2>
+          <div className={`${styles.field} ${styles.fieldFull}`}>
+            <label className={styles.label}>Initial Case Assessment</label>
+            <textarea className={styles.textarea} value={form.initialCaseAssessment} onChange={e => u('initialCaseAssessment', e.target.value)} rows={3} placeholder="Brief assessment of the resident's situation..." />
           </div>
-        </fieldset>
+          <div className={styles.fieldGrid} style={{ marginTop: '0.75rem' }}>
+            <div className={styles.field}>
+              <div className={styles.label}>Reintegration Type</div>
+              <Dropdown value={form.reintegrationType} placeholder="Not applicable" options={[{ value: 'Family Reunification', label: 'Family Reunification' }, { value: 'Foster Care', label: 'Foster Care' }, { value: 'Independent Living', label: 'Independent Living' }]} onChange={v => u('reintegrationType', v)} />
+            </div>
+            <div className={styles.field}>
+              <div className={styles.label}>Reintegration Status</div>
+              <Dropdown value={form.reintegrationStatus} placeholder="Select status..." options={[{ value: 'Not Started', label: 'Not Started' }, { value: 'In Progress', label: 'In Progress' }, { value: 'Completed', label: 'Completed' }, { value: 'On Hold', label: 'On Hold' }]} onChange={v => u('reintegrationStatus', v)} />
+            </div>
+          </div>
+        </div>
 
-        {/* Actions */}
-        <div className={styles.formActions}>
-          <button
-            type="button"
-            className={styles.cancelBtn}
-            onClick={() => navigate(isEdit ? `/admin/caseload/${id}` : '/admin/caseload')}
-          >
+        {/* ── Restricted Notes ─────────────────────── */}
+        <div className={styles.formCard}>
+          <div className={styles.safetySection}>
+            <div className={styles.safetySectionHeader}>
+              <Shield size={16} /> Confidential Notes
+            </div>
+            <div className={styles.field}>
+              <textarea className={styles.textarea} value={form.notesRestricted} onChange={e => u('notesRestricted', e.target.value)} rows={3} placeholder="Restricted notes — only visible to authorized staff..." style={{ background: '#fff' }} />
+            </div>
+          </div>
+        </div>
+
+        {/* ── Actions ─────────────────────────────── */}
+        <div className={styles.actions}>
+          <button type="button" className={styles.cancelBtn} onClick={() => navigate(isEdit ? `/admin/caseload/${id}` : '/admin/caseload')}>
             Cancel
           </button>
-          <button type="submit" className={styles.saveBtn} disabled={saving}>
-            {saving ? <Loader2 size={16} className={styles.spinner} /> : <Save size={16} />}
+          <button type="submit" className={styles.submitBtn} disabled={saving}>
+            {saving ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <Save size={14} />}
             {saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Create Resident'}
           </button>
         </div>

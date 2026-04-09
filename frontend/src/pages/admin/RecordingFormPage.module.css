@@ -249,14 +249,7 @@
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   padding: 1.5rem;
-}
-
-.section {
-  margin-bottom: 1.5rem;
-}
-
-.section:last-child {
-  margin-bottom: 0;
+  margin-bottom: 0.85rem;
 }
 
 .sectionTitle {
@@ -321,6 +314,12 @@
 
 .field select {
   cursor: pointer;
+}
+
+.fieldHint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
 }
 
 /* ── Narrative textarea ──────────────────────────────── */
@@ -412,6 +411,17 @@
 .saveBtn:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+/* ── Retry warning ───────────────────────────────────── */
+.retryWarning {
+  font-size: 0.78rem;
+  color: #d4a853;
+  background: rgba(212, 168, 83, 0.08);
+  border: 1px solid rgba(212, 168, 83, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.85rem;
+  margin-bottom: 1rem;
 }
 
 /* ── Error ───────────────────────────────────────────── */

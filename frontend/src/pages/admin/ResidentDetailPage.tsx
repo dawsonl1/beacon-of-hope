@@ -1,16 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft, Edit, Trash2, ChevronDown, ChevronRight,
-  Loader2, User, Briefcase, Heart, Home, Shield, ClipboardList, RefreshCw,
+  ArrowLeft, Edit, Trash2, Loader2, User, Shield, ClipboardList,
   AlertTriangle, Activity, GraduationCap, Stethoscope, Plus, Users,
+  Calendar, Home, Heart, FileText, Mic, Eye,
 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { formatDate } from '../../constants';
 import { useAuth } from '../../contexts/AuthContext';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
+import MlBadge from '../../components/admin/MlBadge';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './ResidentDetailPage.module.css';
+
+/* ── Types ───────────────────────────────────────── */
 
 interface MlPrediction {
   id: number;
@@ -20,17 +23,6 @@ interface MlPrediction {
   predictedAt: string;
   metadata: string | null;
 }
-
-const ML_SCORE_COLORS: Record<string, string> = {
-  Critical: '#c0392b',
-  High: '#d35400',
-  Medium: '#f39c12',
-  Low: '#27ae60',
-  Ready: '#27ae60',
-  Progressing: '#3498db',
-  'Early Stage': '#f39c12',
-  'Not Ready': '#c0392b',
-};
 
 interface ResidentDetail {
   residentId: number;
@@ -85,18 +77,31 @@ interface ResidentDetail {
   notesRestricted: string | null;
 }
 
-const SUB_CAT_LABELS: Record<string, string> = {
-  subCatOrphaned: 'Orphaned',
-  subCatTrafficked: 'Trafficked',
-  subCatChildLabor: 'Child Labor',
-  subCatPhysicalAbuse: 'Physical Abuse',
-  subCatSexualAbuse: 'Sexual Abuse',
-  subCatOsaec: 'OSAEC',
-  subCatCicl: 'CICL',
-  subCatAtRisk: 'At Risk',
-  subCatStreetChild: 'Street Child',
-  subCatChildWithHiv: 'Child with HIV',
+/* ── Constants ───────────────────────────────────── */
+
+const ML_SCORE_COLORS: Record<string, string> = {
+  Critical: '#c0392b', High: '#d35400', Medium: '#f39c12', Low: '#27ae60',
+  Ready: '#27ae60', Progressing: '#3498db', 'Early Stage': '#f39c12', 'Not Ready': '#c0392b',
 };
+
+const SUB_CAT_LABELS: Record<string, string> = {
+  subCatOrphaned: 'Orphaned', subCatTrafficked: 'Trafficked', subCatChildLabor: 'Child Labor',
+  subCatPhysicalAbuse: 'Physical Abuse', subCatSexualAbuse: 'Sexual Abuse', subCatOsaec: 'OSAEC',
+  subCatCicl: 'CICL', subCatAtRisk: 'At Risk', subCatStreetChild: 'Street Child', subCatChildWithHiv: 'Child with HIV',
+};
+
+const EMOTIONAL_ORDER = ['Severe Distress', 'Distressed', 'Struggling', 'Unsettled', 'Neutral', 'Coping', 'Stable', 'Good', 'Thriving'];
+
+function emotionalColor(state: string): string {
+  const idx = EMOTIONAL_ORDER.indexOf(state);
+  if (idx <= 1) return '#c0392b';
+  if (idx <= 3) return '#e67e22';
+  if (idx === 4) return '#95a5a6';
+  if (idx <= 6) return '#3498db';
+  return '#27ae60';
+}
+
+/* ── Helpers ─────────────────────────────────────── */
 
 function InfoField({ label, value }: { label: string; value: string | null | undefined }) {
   return (
@@ -107,36 +112,16 @@ function InfoField({ label, value }: { label: string; value: string | null | und
   );
 }
 
-function BoolTag({ label, value }: { label: string; value: boolean | null }) {
-  if (!value) return null;
-  return <span className={styles.tag}>{label}</span>;
+interface TimelineEntry {
+  type: 'recording' | 'visit' | 'incident' | 'education' | 'health' | 'conference';
+  date: string;
+  title: string;
+  detail?: string;
+  id?: number;
+  route?: string;
 }
 
-function Section({
-  title,
-  icon: Icon,
-  defaultOpen = false,
-  children,
-}: {
-  title: string;
-  icon: React.ElementType;
-  defaultOpen?: boolean;
-  children: React.ReactNode;
-}) {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <div className={styles.section}>
-      <button className={styles.sectionHeader} onClick={() => setOpen(!open)}>
-        <div className={styles.sectionLeft}>
-          <Icon size={16} className={styles.sectionIcon} />
-          <span>{title}</span>
-        </div>
-        {open ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-      </button>
-      {open && <div className={styles.sectionBody}>{children}</div>}
-    </div>
-  );
-}
+/* ── Component ───────────────────────────────────── */
 
 export default function ResidentDetailPage() {
   useDocumentTitle('Resident Detail');
@@ -156,6 +141,11 @@ export default function ResidentDetailPage() {
   const [incidents, setIncidents] = useState<any[]>([]);
   const [conferences, setConferences] = useState<any[]>([]);
   const [emotionalTrends, setEmotionalTrends] = useState<{ sessionDate: string; emotionalStateObserved: string; emotionalStateEnd: string }[]>([]);
+  const [recordings, setRecordings] = useState<any[]>([]);
+  const [visitations, setVisitations] = useState<any[]>([]);
+
+  // Right panel tab
+  const [activeTab, setActiveTab] = useState<'profile' | 'records' | 'incidents' | 'plan'>('profile');
 
   useEffect(() => {
     setLoading(true);
@@ -166,15 +156,38 @@ export default function ResidentDetailPage() {
   }, [id]);
 
   useEffect(() => {
-    if (id) {
-      apiFetch<MlPrediction[]>(`/api/ml/predictions/resident/${id}`).then(setPredictions).catch(() => {});
-      apiFetch<any[]>(`/api/admin/education-records?residentId=${id}`).then(setEducationRecords).catch(() => {});
-      apiFetch<any[]>(`/api/admin/health-records?residentId=${id}`).then(setHealthRecords).catch(() => {});
-      apiFetch<{ items: any[] }>(`/api/admin/incidents?residentId=${id}`).then(d => setIncidents(d.items || [])).catch(() => {});
-      apiFetch<any[]>(`/api/admin/intervention-plans?residentId=${id}`).then(setConferences).catch(() => {});
-      apiFetch<any[]>(`/api/admin/recordings/emotional-trends?residentId=${id}`).then(setEmotionalTrends).catch(() => {});
-    }
+    if (!id) return;
+    apiFetch<MlPrediction[]>(`/api/ml/predictions/resident/${id}`).then(setPredictions).catch(() => {});
+    apiFetch<any[]>(`/api/admin/education-records?residentId=${id}`).then(setEducationRecords).catch(() => {});
+    apiFetch<any[]>(`/api/admin/health-records?residentId=${id}`).then(setHealthRecords).catch(() => {});
+    apiFetch<{ items: any[] }>(`/api/admin/incidents?residentId=${id}`).then(d => setIncidents(d.items || [])).catch(() => {});
+    apiFetch<any[]>(`/api/admin/intervention-plans?residentId=${id}`).then(setConferences).catch(() => {});
+    apiFetch<any[]>(`/api/admin/recordings/emotional-trends?residentId=${id}`).then(setEmotionalTrends).catch(() => {});
+    apiFetch<{ items: any[] }>(`/api/admin/recordings?residentId=${id}`).then(d => setRecordings(Array.isArray(d) ? d : d.items || [])).catch(() => {});
+    apiFetch<{ items: any[] }>(`/api/admin/visitations?residentId=${id}`).then(d => setVisitations(Array.isArray(d) ? d : d.items || [])).catch(() => {});
   }, [id]);
+
+  // Build unified timeline from all record types
+  const timeline = useMemo<TimelineEntry[]>(() => {
+    const items: TimelineEntry[] = [];
+    for (const r of recordings.slice(0, 20)) {
+      items.push({ type: 'recording', date: r.sessionDate || r.createdAt, title: `Counseling — ${r.sessionType || 'Session'}`, detail: r.socialWorker ? `by ${r.socialWorker}` : undefined, id: r.recordingId, route: `/admin/recordings/${r.recordingId}` });
+    }
+    for (const v of visitations.slice(0, 20)) {
+      items.push({ type: 'visit', date: v.visitDate || v.createdAt, title: `${v.visitType || 'Home'} Visit`, detail: v.socialWorker ? `by ${v.socialWorker}` : undefined, id: v.visitationId, route: `/admin/visitations/${v.visitationId}` });
+    }
+    for (const i of incidents.slice(0, 20)) {
+      items.push({ type: 'incident', date: i.incidentDate, title: `${i.incidentType || 'Incident'} — ${i.severity}`, detail: i.resolved ? 'Resolved' : 'Open', id: i.incidentId, route: `/admin/incidents/${i.incidentId}` });
+    }
+    for (const e of educationRecords.slice(0, 10)) {
+      items.push({ type: 'education', date: e.recordDate, title: `Education — ${e.educationLevel || 'Update'}`, detail: e.attendanceRate != null ? `${e.attendanceRate}% attendance` : undefined });
+    }
+    for (const h of healthRecords.slice(0, 10)) {
+      items.push({ type: 'health', date: h.recordDate, title: 'Health Check', detail: h.generalHealthScore != null ? `Health: ${h.generalHealthScore}/10` : undefined });
+    }
+    items.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    return items.slice(0, 15);
+  }, [recordings, visitations, incidents, educationRecords, healthRecords]);
 
   async function handleDelete() {
     setIsDeleting(true);
@@ -189,14 +202,7 @@ export default function ResidentDetailPage() {
   }
 
   if (loading) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.loadingState}>
-          <Loader2 size={24} className={styles.spinner} />
-          <span>Loading resident...</span>
-        </div>
-      </div>
-    );
+    return <div className={styles.page}><div className={styles.loadingState}><Loader2 size={24} className={styles.spinner} /> Loading resident...</div></div>;
   }
 
   if (error || !resident) {
@@ -204,9 +210,7 @@ export default function ResidentDetailPage() {
       <div className={styles.page}>
         <div className={styles.errorState}>
           <p>{error ?? 'Resident not found.'}</p>
-          <button className={styles.backLink} onClick={() => navigate('/admin/caseload')}>
-            <ArrowLeft size={16} /> Back to Caseload
-          </button>
+          <button className={styles.backLink} onClick={() => navigate('/admin/caseload')}><ArrowLeft size={16} /> Back to Caseload</button>
         </div>
       </div>
     );
@@ -214,6 +218,27 @@ export default function ResidentDetailPage() {
 
   const activeSubCats = Object.entries(SUB_CAT_LABELS)
     .filter(([key]) => (resident as unknown as Record<string, unknown>)[key] === true);
+
+  const familyFlags = [
+    resident.familyIs4ps && '4Ps Beneficiary',
+    resident.familySoloParent && 'Solo Parent',
+    resident.familyIndigenous && 'Indigenous',
+    resident.familyParentPwd && 'Parent with Disability',
+    resident.familyInformalSettler && 'Informal Settler',
+  ].filter(Boolean) as string[];
+
+  function timelineIcon(type: string) {
+    const iconMap: Record<string, { icon: typeof Mic; bg: string; color: string }> = {
+      recording: { icon: Mic, bg: 'rgba(52,152,219,0.1)', color: '#3498db' },
+      visit: { icon: Eye, bg: 'rgba(15,143,125,0.1)', color: '#0f8f7d' },
+      incident: { icon: AlertTriangle, bg: 'rgba(231,76,60,0.1)', color: '#e74c3c' },
+      education: { icon: GraduationCap, bg: 'rgba(46,204,113,0.1)', color: '#2ecc71' },
+      health: { icon: Heart, bg: 'rgba(230,126,34,0.1)', color: '#e67e22' },
+    };
+    const m = iconMap[type] || { icon: FileText, bg: 'rgba(149,165,166,0.1)', color: '#95a5a6' };
+    const Icon = m.icon;
+    return <div className={styles.timelineIcon} style={{ background: m.bg }}><Icon size={14} style={{ color: m.color }} /></div>;
+  }
 
   return (
     <div className={styles.page}>
@@ -229,338 +254,357 @@ export default function ResidentDetailPage() {
 
       {/* Top bar */}
       <div className={styles.topBar}>
-        <button className={styles.backLink} onClick={() => navigate('/admin/caseload')}>
-          <ArrowLeft size={16} /> Back to Caseload
-        </button>
+        <button className={styles.backLink} onClick={() => navigate('/admin/caseload')}><ArrowLeft size={16} /> Back to Caseload</button>
         {isAdmin && (
           <div className={styles.actions}>
-            <button className={styles.editBtn} onClick={() => navigate(`/admin/caseload/${id}/edit`)}>
-              <Edit size={15} /> Edit
-            </button>
-            <button className={styles.deleteBtn} onClick={() => setShowDelete(true)}>
-              <Trash2 size={15} /> Delete
-            </button>
+            <button className={styles.editBtn} onClick={() => navigate(`/admin/caseload/${id}/edit`)}><Edit size={14} /> Edit</button>
+            <button className={styles.deleteBtn} onClick={() => setShowDelete(true)}><Trash2 size={14} /> Delete</button>
           </div>
         )}
       </div>
 
-      {/* Header */}
-      <div className={styles.detailHeader}>
-        <div>
-          <h1 className={styles.title}>{resident.internalCode ?? 'No Code'}</h1>
-          <p className={styles.headerMeta}>
-            Case #{resident.caseControlNo ?? '--'}
-            {resident.safehouse && <> &middot; {resident.safehouse}</>}
-          </p>
-        </div>
-        <div className={styles.headerBadges}>
-          {resident.caseStatus && (
-            <span className={`${styles.badge} ${styles.badgeStatus}`}>{resident.caseStatus}</span>
-          )}
-          {resident.currentRiskLevel && (
-            <span className={`${styles.badge} ${styles[`badgeRisk${resident.currentRiskLevel}`] ?? styles.badgeRiskDefault}`}>
-              {resident.currentRiskLevel} Risk
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* ML Predictions */}
-      {predictions.length > 0 && (
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-          {predictions.map(p => {
-            const color = ML_SCORE_COLORS[p.scoreLabel || ''] || '#95a5a6';
-            const isIncidentModel = p.modelName.includes('incident');
-            const label = p.modelName
-              .replace('incident-early-warning-', '')
-              .replace('reintegration-readiness', 'Reintegration Readiness')
-              .replace('selfharm', 'Self-Harm Risk')
-              .replace('runaway', 'Runaway Risk');
-            return (
-              <div
-                key={p.id}
-                style={{
-                  background: '#fff',
-                  border: `1px solid ${color}30`,
-                  borderRadius: '12px',
-                  padding: '0.85rem 1.1rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  minWidth: '220px',
-                }}
-              >
-                <div style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: '50%',
-                  background: `${color}18`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
-                  {isIncidentModel ? (
-                    <AlertTriangle size={20} style={{ color }} />
-                  ) : (
-                    <Activity size={20} style={{ color }} />
-                  )}
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                    {label}
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
-                    {p.score !== null && (
-                      <span style={{ fontSize: '1.3rem', fontWeight: 700, color }}>{Math.round(p.score)}</span>
-                    )}
-                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color }}>
-                      {p.scoreLabel}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Sections */}
-      <Section title="Identity" icon={User} defaultOpen>
-        <div className={styles.fieldGrid}>
-          <InfoField label="Internal Code" value={resident.internalCode} />
-          <InfoField label="Case Control No." value={resident.caseControlNo} />
-          <InfoField label="Safehouse" value={resident.safehouse} />
-          <InfoField label="Date Enrolled" value={formatDate(resident.dateEnrolled)} />
-          <InfoField label="Date Closed" value={formatDate(resident.dateClosed)} />
-          <InfoField label="Created" value={formatDate(resident.createdAt)} />
-        </div>
-      </Section>
-
-      <Section title="Demographics" icon={User}>
-        <div className={styles.fieldGrid}>
-          <InfoField label="Sex" value={resident.sex} />
-          <InfoField label="Date of Birth" value={formatDate(resident.dateOfBirth)} />
-          <InfoField label="Birth Status" value={resident.birthStatus} />
-          <InfoField label="Place of Birth" value={resident.placeOfBirth} />
-          <InfoField label="Religion" value={resident.religion} />
-          <InfoField label="Present Age" value={resident.presentAge} />
-        </div>
-      </Section>
-
-      <Section title="Case Information" icon={Briefcase} defaultOpen>
-        <div className={styles.fieldGrid}>
-          <InfoField label="Case Category" value={resident.caseCategory} />
-          <InfoField label="Case Status" value={resident.caseStatus} />
-        </div>
-        {activeSubCats.length > 0 && (
-          <div className={styles.tagSection}>
-            <span className={styles.fieldLabel}>Sub-Categories</span>
-            <div className={styles.tagWrap}>
-              {activeSubCats.map(([, label]) => (
-                <span key={label} className={styles.tag}>{label}</span>
-              ))}
-            </div>
+      {/* ── Profile header card ────────────────────── */}
+      <div className={styles.headerCard}>
+        <div className={styles.headerTop}>
+          <div>
+            <h1 className={styles.headerTitle}>{resident.internalCode ?? 'No Code'}</h1>
+            <p className={styles.headerMeta}>
+              Case #{resident.caseControlNo ?? '--'}
+              {resident.safehouse && <> &middot; {resident.safehouse}</>}
+            </p>
           </div>
-        )}
-      </Section>
-
-      <Section title="Disability / Special Needs" icon={Heart}>
-        <div className={styles.fieldGrid}>
-          <InfoField label="Is PWD" value={resident.isPwd ? 'Yes' : 'No'} />
-          <InfoField label="PWD Type" value={resident.pwdType} />
-          <InfoField label="Has Special Needs" value={resident.hasSpecialNeeds ? 'Yes' : 'No'} />
-          <InfoField label="Diagnosis" value={resident.specialNeedsDiagnosis} />
-        </div>
-      </Section>
-
-      <Section title="Family Profile" icon={Home}>
-        <div className={styles.tagWrap}>
-          <BoolTag label="4Ps Beneficiary" value={resident.familyIs4ps} />
-          <BoolTag label="Solo Parent" value={resident.familySoloParent} />
-          <BoolTag label="Indigenous" value={resident.familyIndigenous} />
-          <BoolTag label="Parent with Disability" value={resident.familyParentPwd} />
-          <BoolTag label="Informal Settler" value={resident.familyInformalSettler} />
-        </div>
-        {!resident.familyIs4ps && !resident.familySoloParent && !resident.familyIndigenous
-          && !resident.familyParentPwd && !resident.familyInformalSettler && (
-          <p className={styles.noData}>No family flags set.</p>
-        )}
-      </Section>
-
-      <Section title="Admission & Referral" icon={ClipboardList}>
-        <div className={styles.fieldGrid}>
-          <InfoField label="Date of Admission" value={formatDate(resident.dateOfAdmission)} />
-          <InfoField label="Age upon Admission" value={resident.ageUponAdmission} />
-          <InfoField label="Length of Stay" value={resident.lengthOfStay} />
-          <InfoField label="Referral Source" value={resident.referralSource} />
-          <InfoField label="Referring Agency/Person" value={resident.referringAgencyPerson} />
-          <InfoField label="COLB Registered" value={formatDate(resident.dateColbRegistered)} />
-          <InfoField label="COLB Obtained" value={formatDate(resident.dateColbObtained)} />
-        </div>
-      </Section>
-
-      <Section title="Social Worker & Assessment" icon={User}>
-        <div className={styles.fieldGrid}>
-          <InfoField label="Assigned Social Worker" value={resident.assignedSocialWorker} />
-          <InfoField label="Initial Assessment" value={resident.initialCaseAssessment} />
-          <InfoField label="Case Study Prepared" value={formatDate(resident.dateCaseStudyPrepared)} />
-        </div>
-      </Section>
-
-      <Section title="Reintegration" icon={RefreshCw}>
-        <div className={styles.fieldGrid}>
-          <InfoField label="Reintegration Type" value={resident.reintegrationType} />
-          <InfoField label="Reintegration Status" value={resident.reintegrationStatus} />
-        </div>
-      </Section>
-
-      <Section title="Risk Assessment" icon={Shield}>
-        <div className={styles.fieldGrid}>
-          <InfoField label="Initial Risk Level" value={resident.initialRiskLevel} />
-          <InfoField label="Current Risk Level" value={resident.currentRiskLevel} />
-        </div>
-      </Section>
-
-      {emotionalTrends.length > 0 && (
-        <Section title="Emotional Trajectory" icon={Activity} defaultOpen>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', padding: '0.5rem 0' }}>
-            {(() => {
-              const EMOTIONAL_ORDER = ['Severe Distress', 'Distressed', 'Struggling', 'Unsettled', 'Neutral', 'Coping', 'Stable', 'Good', 'Thriving'];
-              const getIndex = (s: string) => EMOTIONAL_ORDER.indexOf(s);
-              const getColor = (idx: number) => {
-                if (idx <= 1) return '#c0392b';
-                if (idx <= 3) return '#e67e22';
-                if (idx === 4) return '#95a5a6';
-                if (idx <= 6) return '#3498db';
-                return '#27ae60';
-              };
-              return emotionalTrends.slice(-12).map((t, i) => {
-                const startIdx = getIndex(t.emotionalStateObserved);
-                const endIdx = getIndex(t.emotionalStateEnd);
-                const improved = endIdx > startIdx;
-                const declined = endIdx < startIdx;
-                return (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.82rem' }}>
-                    <span style={{ minWidth: '80px', color: 'var(--text-muted)', fontWeight: 600 }}>{t.sessionDate}</span>
-                    <span style={{ minWidth: '100px', color: getColor(startIdx) }}>{t.emotionalStateObserved || '-'}</span>
-                    <span style={{ color: 'var(--text-muted)' }}>&rarr;</span>
-                    <span style={{ minWidth: '100px', color: getColor(endIdx), fontWeight: 600 }}>{t.emotionalStateEnd || '-'}</span>
-                    {improved && <span style={{ color: '#27ae60', fontSize: '0.75rem' }}>+improved</span>}
-                    {declined && <span style={{ color: '#c0392b', fontSize: '0.75rem' }}>-declined</span>}
-                  </div>
-                );
-              });
-            })()}
-          </div>
-        </Section>
-      )}
-
-      <Section title="Education Records" icon={GraduationCap}>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.75rem' }}>
-          <button
-            onClick={() => navigate(`/admin/caseload/${id}/education/new?residentId=${id}`)}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.78rem', fontWeight: 600, fontFamily: 'var(--font-body)', padding: '0.35rem 0.7rem', borderRadius: '8px', border: 'none', background: 'var(--color-sage)', color: '#fff', cursor: 'pointer' }}
-          >
-            <Plus size={14} /> Update Education Record
-          </button>
-        </div>
-        {educationRecords.length === 0 ? (
-          <p className={styles.noData}>No education records yet.</p>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {educationRecords.slice(0, 5).map((r: any) => (
-              <div key={r.educationRecordId} style={{ display: 'flex', gap: '1rem', fontSize: '0.82rem', padding: '0.5rem 0', borderBottom: '1px solid rgba(15,27,45,0.04)' }}>
-                <span style={{ fontWeight: 600, minWidth: '90px' }}>{r.recordDate || '-'}</span>
-                <span>{r.educationLevel || '-'}</span>
-                <span>Attendance: {r.attendanceRate != null ? `${r.attendanceRate}%` : '-'}</span>
-                <span>Progress: {r.progressPercent != null ? `${r.progressPercent}%` : '-'}</span>
-                <span>{r.completionStatus || '-'}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </Section>
-
-      <Section title="Health Records" icon={Stethoscope}>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.75rem' }}>
-          <button
-            onClick={() => navigate(`/admin/caseload/${id}/health/new?residentId=${id}`)}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.78rem', fontWeight: 600, fontFamily: 'var(--font-body)', padding: '0.35rem 0.7rem', borderRadius: '8px', border: 'none', background: 'var(--color-sage)', color: '#fff', cursor: 'pointer' }}
-          >
-            <Plus size={14} /> Input Health Record
-          </button>
-        </div>
-        {healthRecords.length === 0 ? (
-          <p className={styles.noData}>No health records yet.</p>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {healthRecords.slice(0, 5).map((r: any) => (
-              <div key={r.healthRecordId} style={{ display: 'flex', gap: '1rem', fontSize: '0.82rem', padding: '0.5rem 0', borderBottom: '1px solid rgba(15,27,45,0.04)' }}>
-                <span style={{ fontWeight: 600, minWidth: '90px' }}>{r.recordDate || '-'}</span>
-                <span>Health: {r.generalHealthScore ?? '-'}/10</span>
-                <span>BMI: {r.bmi ?? '-'}</span>
-                <span>Nutrition: {r.nutritionScore ?? '-'}/10</span>
-                <span>Sleep: {r.sleepQualityScore ?? '-'}/10</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </Section>
-
-      <Section title="Incidents" icon={AlertTriangle}>
-        {incidents.length === 0 ? (
-          <p className={styles.noData}>No incidents recorded.</p>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {incidents.slice(0, 5).map((inc: any) => (
-              <div
-                key={inc.incidentId}
-                style={{ display: 'flex', gap: '1rem', fontSize: '0.82rem', padding: '0.5rem 0', borderBottom: '1px solid rgba(15,27,45,0.04)', cursor: 'pointer' }}
-                onClick={() => navigate(`/admin/incidents/${inc.incidentId}`)}
-              >
-                <span style={{ fontWeight: 600, minWidth: '90px' }}>{inc.incidentDate || '-'}</span>
-                <span>{inc.incidentType || '-'}</span>
-                <span style={{ color: inc.severity === 'Critical' ? '#c0392b' : inc.severity === 'High' ? '#d35400' : 'inherit' }}>{inc.severity}</span>
-                <span style={{ color: inc.resolved ? '#27ae60' : '#e74c3c' }}>{inc.resolved ? 'Resolved' : 'Open'}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </Section>
-
-      <Section title="Case Conferences" icon={Users}>
-        {conferences.length === 0 ? (
-          <p className={styles.noData}>No case conferences recorded.</p>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {conferences.slice(0, 5).map((conf: any) => (
-              <div
-                key={conf.planId}
-                style={{ display: 'flex', gap: '1rem', fontSize: '0.82rem', padding: '0.5rem 0', borderBottom: '1px solid rgba(15,27,45,0.04)', cursor: 'pointer' }}
-                onClick={() => navigate('/admin/conferences')}
-              >
-                <span style={{ fontWeight: 600, minWidth: '90px' }}>{conf.caseConferenceDate || '-'}</span>
-                <span>{conf.planCategory || '-'}</span>
-                <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '0.15rem 0.45rem', borderRadius: '4px', background: conf.status === 'Open' ? '#3498db18' : conf.status === 'Achieved' ? '#27ae6018' : '#95a5a618', color: conf.status === 'Open' ? '#3498db' : conf.status === 'Achieved' ? '#27ae60' : '#95a5a6', textTransform: 'uppercase' as const }}>
-                  {conf.status || '-'}
-                </span>
-              </div>
-            ))}
-            {conferences.length > 5 && (
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => navigate('/admin/conferences')}>
-                View all {conferences.length} conferences...
-              </p>
+          <div className={styles.headerBadges}>
+            {resident.caseStatus && <span className={`${styles.badge} ${styles.badgeStatus}`}>{resident.caseStatus}</span>}
+            {resident.currentRiskLevel && (
+              <span className={`${styles.badge} ${styles[`badgeRisk${resident.currentRiskLevel}`] ?? styles.badgeRiskDefault}`}>
+                {resident.currentRiskLevel} Risk
+              </span>
             )}
           </div>
-        )}
-      </Section>
+        </div>
 
-      {resident.notesRestricted && (
-        <Section title="Notes (Restricted)" icon={ClipboardList}>
-          <p className={styles.notes}>{resident.notesRestricted}</p>
-        </Section>
-      )}
+        <div className={styles.headerDetails}>
+          {resident.assignedSocialWorker && <span className={styles.headerDetail}><User size={13} /> <span className={styles.headerDetailLabel}>SW:</span> {resident.assignedSocialWorker}</span>}
+          {resident.dateOfAdmission && <span className={styles.headerDetail}><Calendar size={13} /> <span className={styles.headerDetailLabel}>Admitted:</span> {formatDate(resident.dateOfAdmission)}</span>}
+          {resident.presentAge && <span className={styles.headerDetail}>Age: {resident.presentAge}</span>}
+          {resident.caseCategory && <span className={styles.headerDetail}>{resident.caseCategory}</span>}
+        </div>
+
+        <div className={styles.headerActions}>
+          <button className={styles.actionBtnPrimary} onClick={() => navigate(`/admin/recordings/new?residentId=${id}`)}><Mic size={13} /> Log Recording</button>
+          <button className={styles.actionBtn} onClick={() => navigate(`/admin/visitations/new?residentId=${id}`)}><Eye size={13} /> Log Visit</button>
+          <button className={styles.actionBtn} onClick={() => navigate(`/admin/caseload/${id}/health/new?residentId=${id}`)}><Heart size={13} /> Health Record</button>
+          <button className={styles.actionBtn} onClick={() => navigate(`/admin/caseload/${id}/education/new?residentId=${id}`)}><GraduationCap size={13} /> Education Record</button>
+        </div>
+      </div>
+
+      {/* ── Two-column body ────────────────────────── */}
+      <div className={styles.body}>
+        {/* ── Left column: active case data ─────── */}
+        <div>
+          {/* Risk & Predictions */}
+          <div className={styles.card}>
+            <div className={styles.cardHeader}><Shield size={15} className={styles.cardIcon} /> Risk & Predictions <MlBadge /></div>
+            <div className={styles.cardBody}>
+              <div className={styles.riskPair}>
+                <div className={styles.riskItem}>
+                  <span className={styles.riskLabel}>Initial Risk</span>
+                  <span className={`${styles.badge} ${styles[`badgeRisk${resident.initialRiskLevel}`] ?? styles.badgeRiskDefault}`}>
+                    {resident.initialRiskLevel || '--'}
+                  </span>
+                </div>
+                <div className={styles.riskItem}>
+                  <span className={styles.riskLabel}>Current Risk</span>
+                  <span className={`${styles.badge} ${styles[`badgeRisk${resident.currentRiskLevel}`] ?? styles.badgeRiskDefault}`}>
+                    {resident.currentRiskLevel || '--'}
+                  </span>
+                </div>
+              </div>
+              {predictions.length > 0 && (
+                <div className={styles.predictionGrid}>
+                  {predictions.map(p => {
+                    const color = ML_SCORE_COLORS[p.scoreLabel || ''] || '#95a5a6';
+                    const isIncident = p.modelName.includes('incident');
+                    const label = p.modelName
+                      .replace('incident-early-warning-', '').replace('reintegration-readiness', 'Reintegration Readiness')
+                      .replace('selfharm', 'Self-Harm Risk').replace('runaway', 'Runaway Risk');
+                    const meta = p.metadata ? (() => { try { return JSON.parse(p.metadata); } catch { return null; } })() : null;
+                    const riskFactors: string[] = meta?.top_risk_factors ?? [];
+                    const protocol: string | null = meta?.recommended_protocol ?? null;
+                    return (
+                      <div key={p.id} className={styles.predictionCard} style={{ borderColor: `${color}30` }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                          <div className={styles.predictionIcon} style={{ background: `${color}18` }}>
+                            {isIncident ? <AlertTriangle size={18} style={{ color }} /> : <Activity size={18} style={{ color }} />}
+                          </div>
+                          <div>
+                            <div className={styles.predictionLabel}>{label}</div>
+                            <div className={styles.predictionValue}>
+                              {p.score !== null && <span className={styles.predictionScore} style={{ color }}>{Math.round(p.score)}</span>}
+                              <span className={styles.predictionTier} style={{ color }}>{p.scoreLabel}</span>
+                            </div>
+                          </div>
+                        </div>
+                        {riskFactors.length > 0 && (
+                          <div className={styles.predictionFactors}>
+                            <span className={styles.predictionFactorsLabel}>Key factors:</span>
+                            <div className={styles.predictionFactorTags}>
+                              {riskFactors.slice(0, 3).map((f, i) => (
+                                <span key={i} className={styles.predictionFactorTag}>{f.replace(/_/g, ' ').replace(/sub cat /i, '')}</span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {protocol && (
+                          <div className={styles.predictionProtocol}>{protocol}</div>
+                        )}
+                        {!isIncident && meta && (
+                          <div className={styles.predictionFactors}>
+                            <span className={styles.predictionFactorsLabel}>Contributing metrics:</span>
+                            <div className={styles.predictionMetrics}>
+                              {meta.family_coop_rate != null && <span>Family cooperation: {(meta.family_coop_rate * 100).toFixed(0)}%</span>}
+                              {meta.visits_per_month != null && <span>Visits/month: {meta.visits_per_month.toFixed(1)}</span>}
+                              {meta.positive_session_rate != null && <span>Positive sessions: {(meta.positive_session_rate * 100).toFixed(0)}%</span>}
+                              {meta.health_trend != null && <span>Health trend: {meta.health_trend > 0 ? 'improving' : meta.health_trend < 0 ? 'declining' : 'stable'}</span>}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Emotional Trajectory */}
+          {emotionalTrends.length > 0 && (
+            <div className={styles.card}>
+              <div className={styles.cardHeader}><Activity size={15} className={styles.cardIcon} /> Emotional Trajectory</div>
+              <div className={styles.cardBody}>
+                {emotionalTrends.slice(-12).map((t, i) => {
+                  const startIdx = EMOTIONAL_ORDER.indexOf(t.emotionalStateObserved);
+                  const endIdx = EMOTIONAL_ORDER.indexOf(t.emotionalStateEnd);
+                  return (
+                    <div key={i} className={styles.emotionalRow}>
+                      <span className={styles.emotionalDate}>{t.sessionDate}</span>
+                      <span className={styles.emotionalState} style={{ color: emotionalColor(t.emotionalStateObserved) }}>{t.emotionalStateObserved || '-'}</span>
+                      <span className={styles.emotionalArrow}>&rarr;</span>
+                      <span className={styles.emotionalState} style={{ color: emotionalColor(t.emotionalStateEnd), fontWeight: 600 }}>{t.emotionalStateEnd || '-'}</span>
+                      {endIdx > startIdx && <span className={styles.emotionalDelta} style={{ color: '#27ae60' }}>+improved</span>}
+                      {endIdx < startIdx && <span className={styles.emotionalDelta} style={{ color: '#c0392b' }}>-declined</span>}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Recent Activity Timeline */}
+          <div className={styles.card}>
+            <div className={styles.cardHeader}><ClipboardList size={15} className={styles.cardIcon} /> Recent Activity</div>
+            <div className={styles.cardBody}>
+              {timeline.length === 0 ? (
+                <p className={styles.noData}>No activity recorded yet.</p>
+              ) : (
+                timeline.map((item, i) => (
+                  <div key={i} className={styles.timelineItem} onClick={() => item.route && navigate(item.route)}>
+                    {timelineIcon(item.type)}
+                    <div className={styles.timelineBody}>
+                      <div className={styles.timelineTitle}>{item.title}</div>
+                      <div className={styles.timelineDate}>
+                        {formatDate(item.date)}
+                        {item.detail && <> &middot; {item.detail}</>}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Right column: tabbed reference ────── */}
+        <div className={styles.card}>
+          <div className={styles.tabBar}>
+            {(['profile', 'records', 'incidents', 'plan'] as const).map(tab => (
+              <button key={tab} className={`${styles.tab} ${activeTab === tab ? styles.tabActive : ''}`} onClick={() => setActiveTab(tab)}>
+                {tab === 'profile' ? 'Profile' : tab === 'records' ? 'Records' : tab === 'incidents' ? 'Incidents' : 'Plan'}
+              </button>
+            ))}
+          </div>
+
+          <div className={styles.tabContent}>
+            {/* ── Profile tab ──────────────────── */}
+            {activeTab === 'profile' && (
+              <>
+                <p className={styles.sectionLabel}>Demographics</p>
+                <div className={styles.fieldGrid}>
+                  <InfoField label="Sex" value={resident.sex} />
+                  <InfoField label="Date of Birth" value={formatDate(resident.dateOfBirth)} />
+                  <InfoField label="Present Age" value={resident.presentAge} />
+                  <InfoField label="Place of Birth" value={resident.placeOfBirth} />
+                  <InfoField label="Birth Status" value={resident.birthStatus} />
+                  <InfoField label="Religion" value={resident.religion} />
+                </div>
+
+                <p className={styles.sectionLabel}>Case Info</p>
+                <div className={styles.fieldGrid}>
+                  <InfoField label="Category" value={resident.caseCategory} />
+                  <InfoField label="Status" value={resident.caseStatus} />
+                  <InfoField label="Internal Code" value={resident.internalCode} />
+                  <InfoField label="Case Control No." value={resident.caseControlNo} />
+                </div>
+                {activeSubCats.length > 0 && (
+                  <div className={styles.tagWrap} style={{ marginTop: '0.5rem' }}>
+                    {activeSubCats.map(([, label]) => <span key={label} className={styles.tag}>{label}</span>)}
+                  </div>
+                )}
+
+                <p className={styles.sectionLabel}>Family</p>
+                {familyFlags.length > 0 ? (
+                  <div className={styles.tagWrap}>{familyFlags.map(f => <span key={f} className={styles.tag}>{f}</span>)}</div>
+                ) : (
+                  <p className={styles.noData}>No family flags set.</p>
+                )}
+
+                <p className={styles.sectionLabel}>Disability / Special Needs</p>
+                <div className={styles.fieldGrid}>
+                  <InfoField label="Is PWD" value={resident.isPwd ? 'Yes' : 'No'} />
+                  <InfoField label="PWD Type" value={resident.pwdType} />
+                  <InfoField label="Special Needs" value={resident.hasSpecialNeeds ? 'Yes' : 'No'} />
+                  <InfoField label="Diagnosis" value={resident.specialNeedsDiagnosis} />
+                </div>
+
+                <p className={styles.sectionLabel}>Admission & Referral</p>
+                <div className={styles.fieldGrid}>
+                  <InfoField label="Date of Admission" value={formatDate(resident.dateOfAdmission)} />
+                  <InfoField label="Age at Admission" value={resident.ageUponAdmission} />
+                  <InfoField label="Length of Stay" value={resident.lengthOfStay} />
+                  <InfoField label="Referral Source" value={resident.referralSource} />
+                  <InfoField label="Referring Party" value={resident.referringAgencyPerson} />
+                  <InfoField label="COLB Registered" value={formatDate(resident.dateColbRegistered)} />
+                  <InfoField label="COLB Obtained" value={formatDate(resident.dateColbObtained)} />
+                  <InfoField label="Date Enrolled" value={formatDate(resident.dateEnrolled)} />
+                  <InfoField label="Date Closed" value={formatDate(resident.dateClosed)} />
+                </div>
+
+                {resident.notesRestricted && (
+                  <>
+                    <p className={styles.sectionLabel}>Restricted Notes</p>
+                    <p className={styles.notes}>{resident.notesRestricted}</p>
+                  </>
+                )}
+              </>
+            )}
+
+            {/* ── Records tab ──────────────────── */}
+            {activeTab === 'records' && (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <p className={styles.sectionLabel}>Education</p>
+                  <button className={styles.addBtn} onClick={() => navigate(`/admin/caseload/${id}/education/new?residentId=${id}`)}><Plus size={12} /> Add</button>
+                </div>
+                {educationRecords.length === 0 ? (
+                  <p className={styles.noData}>No education records.</p>
+                ) : (
+                  educationRecords.slice(0, 5).map((r: any) => (
+                    <div key={r.educationRecordId} className={styles.recordRow}>
+                      <span className={styles.recordDate}>{r.recordDate || '-'}</span>
+                      <span>{r.educationLevel || '-'}</span>
+                      <span style={{ marginLeft: 'auto', color: 'var(--text-muted)' }}>{r.attendanceRate != null ? `${r.attendanceRate}%` : '-'}</span>
+                    </div>
+                  ))
+                )}
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
+                  <p className={styles.sectionLabel}>Health</p>
+                  <button className={styles.addBtn} onClick={() => navigate(`/admin/caseload/${id}/health/new?residentId=${id}`)}><Plus size={12} /> Add</button>
+                </div>
+                {healthRecords.length === 0 ? (
+                  <p className={styles.noData}>No health records.</p>
+                ) : (
+                  healthRecords.slice(0, 5).map((r: any) => (
+                    <div key={r.healthRecordId} className={styles.recordRow}>
+                      <span className={styles.recordDate}>{r.recordDate || '-'}</span>
+                      <span>Health: {r.generalHealthScore ?? '-'}/10</span>
+                      <span style={{ marginLeft: 'auto', color: 'var(--text-muted)' }}>BMI: {r.bmi ?? '-'}</span>
+                    </div>
+                  ))
+                )}
+              </>
+            )}
+
+            {/* ── Incidents tab ────────────────── */}
+            {activeTab === 'incidents' && (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <p className={styles.sectionLabel}>Incident History</p>
+                  <button className={styles.addBtn} onClick={() => navigate(`/admin/incidents/new?residentId=${id}`)}><Plus size={12} /> Report</button>
+                </div>
+                {incidents.length === 0 ? (
+                  <p className={styles.noData}>No incidents recorded.</p>
+                ) : (
+                  incidents.slice(0, 10).map((inc: any) => {
+                    const sevColor = inc.severity === 'Critical' ? '#c0392b' : inc.severity === 'High' ? '#d35400' : inc.severity === 'Medium' ? '#f39c12' : '#27ae60';
+                    return (
+                      <div key={inc.incidentId} className={`${styles.recordRow} ${styles.recordClickable}`} onClick={() => navigate(`/admin/incidents/${inc.incidentId}`)}>
+                        <span className={styles.recordDate}>{inc.incidentDate || '-'}</span>
+                        <span>{inc.incidentType || '-'}</span>
+                        <span className={styles.severityBadge} style={{ background: `${sevColor}18`, color: sevColor }}>{inc.severity}</span>
+                        <span className={styles.statusBadge} style={{ background: inc.resolved ? '#27ae6018' : '#e74c3c18', color: inc.resolved ? '#27ae60' : '#e74c3c', marginLeft: 'auto' }}>
+                          {inc.resolved ? 'Resolved' : 'Open'}
+                        </span>
+                      </div>
+                    );
+                  })
+                )}
+              </>
+            )}
+
+            {/* ── Plan tab ─────────────────────── */}
+            {activeTab === 'plan' && (
+              <>
+                <p className={styles.sectionLabel}>Reintegration</p>
+                <div className={styles.fieldGrid}>
+                  <InfoField label="Type" value={resident.reintegrationType} />
+                  <InfoField label="Status" value={resident.reintegrationStatus} />
+                </div>
+
+                <p className={styles.sectionLabel}>Social Worker</p>
+                <div className={styles.fieldGrid}>
+                  <InfoField label="Assigned SW" value={resident.assignedSocialWorker} />
+                  <InfoField label="Case Study Date" value={formatDate(resident.dateCaseStudyPrepared)} />
+                </div>
+                {resident.initialCaseAssessment && (
+                  <>
+                    <p className={styles.sectionLabel}>Initial Assessment</p>
+                    <p className={styles.notes}>{resident.initialCaseAssessment}</p>
+                  </>
+                )}
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
+                  <p className={styles.sectionLabel}>Case Conferences</p>
+                </div>
+                {conferences.length === 0 ? (
+                  <p className={styles.noData}>No conferences recorded.</p>
+                ) : (
+                  conferences.slice(0, 8).map((conf: any) => {
+                    const confColor = conf.status === 'Open' ? '#3498db' : conf.status === 'Achieved' ? '#27ae60' : '#95a5a6';
+                    return (
+                      <div key={conf.planId} className={`${styles.recordRow} ${styles.recordClickable}`} onClick={() => navigate('/admin/conferences')}>
+                        <span className={styles.recordDate}>{conf.caseConferenceDate || '-'}</span>
+                        <span>{conf.planCategory || '-'}</span>
+                        <span className={styles.statusBadge} style={{ background: `${confColor}18`, color: confColor, marginLeft: 'auto' }}>{conf.status || '-'}</span>
+                      </div>
+                    );
+                  })
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

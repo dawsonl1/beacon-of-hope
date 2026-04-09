@@ -4,6 +4,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { SUPPORTER_TYPES, SUPPORTER_STATUSES, ACQUISITION_CHANNELS } from '../../domain';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import Dropdown from '../../components/admin/Dropdown';
 import styles from './SupporterFormPage.module.css';
 
 const STATUSES = SUPPORTER_STATUSES;
@@ -123,17 +124,22 @@ export default function SupporterFormPage() {
         <div className={styles.formGrid}>
           <div className={`${styles.field}`}>
             <label>Supporter Type</label>
-            <select value={form.supporterType} onChange={e => set('supporterType', e.target.value)}>
-              <option value="">Select type...</option>
-              {SUPPORTER_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
+            <Dropdown
+              value={form.supporterType}
+              placeholder="Select type..."
+              options={SUPPORTER_TYPES.map(t => ({ value: t, label: t }))}
+              onChange={(v) => set('supporterType', v)}
+            />
           </div>
 
           <div className={styles.field}>
             <label>Status</label>
-            <select value={form.status} onChange={e => set('status', e.target.value)}>
-              {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
+            <Dropdown
+              value={form.status}
+              placeholder="Select status..."
+              options={STATUSES.map(s => ({ value: s, label: s }))}
+              onChange={(v) => set('status', v)}
+            />
           </div>
 
           <div className={styles.field}>
@@ -178,10 +184,12 @@ export default function SupporterFormPage() {
 
           <div className={styles.field}>
             <label>Acquisition Channel</label>
-            <select value={form.acquisitionChannel} onChange={e => set('acquisitionChannel', e.target.value)}>
-              <option value="">Select channel...</option>
-              {CHANNELS.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
+            <Dropdown
+              value={form.acquisitionChannel}
+              placeholder="Select channel..."
+              options={CHANNELS.map(c => ({ value: c, label: c }))}
+              onChange={(v) => set('acquisitionChannel', v)}
+            />
           </div>
         </div>
 

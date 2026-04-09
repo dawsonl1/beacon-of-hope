@@ -22,56 +22,54 @@ function renderResidentDetail(id = '1') {
   );
 }
 
-describe('ResidentDetailPage — New Sections', () => {
+describe('ResidentDetailPage — Redesigned Layout', () => {
   it('renders without crashing', async () => {
     renderResidentDetail();
     await waitFor(() => {
-      // Should show either the resident data or loading state
       const page = document.querySelector('[class*="page"]');
       expect(page).toBeTruthy();
     });
   });
 
-  it('shows Education Records section header', async () => {
+  it('shows Risk & Predictions card header', async () => {
     renderResidentDetail();
     await waitFor(() => {
-      expect(screen.getByText('Education Records')).toBeInTheDocument();
+      expect(screen.getByText('Risk & Predictions')).toBeInTheDocument();
     }, { timeout: 3000 });
   });
 
-  it('shows Health Records section header', async () => {
+  it('shows Recent Activity card header', async () => {
     renderResidentDetail();
     await waitFor(() => {
-      expect(screen.getByText('Health Records')).toBeInTheDocument();
+      expect(screen.getByText('Recent Activity')).toBeInTheDocument();
     }, { timeout: 3000 });
   });
 
-  it('shows Incidents section header', async () => {
+  it('shows tab buttons for Profile, Records, Incidents, Plan', async () => {
     renderResidentDetail();
     await waitFor(() => {
+      expect(screen.getByText('Profile')).toBeInTheDocument();
+      expect(screen.getByText('Records')).toBeInTheDocument();
       expect(screen.getByText('Incidents')).toBeInTheDocument();
+      expect(screen.getByText('Plan')).toBeInTheDocument();
     }, { timeout: 3000 });
   });
 
   it('shows ML prediction cards when data loads', async () => {
     renderResidentDetail();
     await waitFor(() => {
-      // The ML predictions render with uppercase labels
       const selfHarm = screen.queryByText(/SELF.HARM RISK/i);
       const runaway = screen.queryByText(/RUNAWAY RISK/i);
-      // At least one should render if ML data loaded
       expect(selfHarm || runaway).toBeTruthy();
     }, { timeout: 3000 });
   });
 
   it('shows Emotional Trajectory section when data exists', async () => {
     renderResidentDetail();
-    // Emotional trajectory only shows if the API returns data
-    // In test env, the MSW handler may or may not match the query param format
     await waitFor(() => {
       const section = screen.queryByText('Emotional Trajectory');
-      // Pass if section exists OR if the page loaded without crashing
-      expect(section !== null || screen.getByText('Education Records')).toBeTruthy();
+      // Pass if section exists or page loaded without crashing
+      expect(section !== null || screen.getByText('Risk & Predictions')).toBeTruthy();
     }, { timeout: 3000 });
   });
 });

@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { ArrowLeft, AlertTriangle, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { VISIT_TYPES, COOPERATION_LEVELS } from '../../domain';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import Dropdown from '../../components/admin/Dropdown';
+import DatePicker from '../../components/admin/DatePicker';
 import styles from './VisitationFormPage.module.css';
 
 interface ResidentOption {
@@ -49,6 +51,9 @@ export default function VisitationFormPage() {
   const { id } = useParams<{ id: string }>();
   const isEditing = Boolean(id);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const calendarEventId = searchParams.get('calendarEventId');
+  const fromCalendar = Boolean(calendarEventId);
 
   const [form, setForm] = useState<FormData>(emptyForm);
   const [residents, setResidents] = useState<ResidentOption[]>([]);
@@ -139,11 +144,18 @@ export default function VisitationFormPage() {
         });
         navigate(`/admin/visitations/${id}`, { replace: true });
       } else {
-        const result = await apiFetch<{ visitationId: number }>('/api/admin/visitations', {
+        await apiFetch<{ visitationId: number }>('/api/admin/visitations', {
           method: 'POST',
           body: JSON.stringify(payload),
         });
-        navigate(`/admin/visitations/${result.visitationId}`, { replace: true });
+        // Mark calendar event as completed if linked
+        if (calendarEventId) {
+          await apiFetch(`/api/staff/calendar/${calendarEventId}`, {
+            method: 'PUT',
+            body: JSON.stringify({ status: 'Completed' }),
+          }).catch(() => {}); // best-effort
+        }
+        navigate(fromCalendar ? '/admin' : '/admin/visitations', { replace: true });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save visitation.');
@@ -157,9 +169,9 @@ export default function VisitationFormPage() {
 
   return (
     <div className={styles.page}>
-      <Link to="/admin/visitations" className={styles.backLink}>
+      <Link to={fromCalendar ? '/admin' : '/admin/visitations'} className={styles.backLink}>
         <ArrowLeft size={15} />
-        Back to Visitations
+        {fromCalendar ? 'Back to Calendar' : 'Back to Visitations'}
       </Link>
 
       <h1 className={styles.title}>
@@ -174,34 +186,21 @@ export default function VisitationFormPage() {
           <h2 className={styles.formSection}>Visit Details</h2>
           <div className={styles.fieldGrid}>
             <div className={styles.field}>
-              <label className={styles.label}>
+              <div className={styles.label}>
                 Resident <span className={styles.required}>*</span>
-              </label>
-              <select
-                className={styles.select}
-                value={form.residentId}
-                onChange={(e) => updateField('residentId', e.target.value ? Number(e.target.value) : '')}
-                required
-              >
-                <option value="">Select resident...</option>
-                {residents.map((r) => (
-                  <option key={r.residentId} value={r.residentId}>
-                    {r.internalCode ?? `#${r.residentId}`} {r.caseStatus ? `(${r.caseStatus})` : ''}
-                  </option>
-                ))}
-              </select>
+              </div>
+              <Dropdown
+                value={String(form.residentId)}
+                placeholder="Select resident..."
+                options={residents.map(r => ({ value: String(r.residentId), label: `${r.internalCode ?? `#${r.residentId}`}${r.caseStatus ? ` (${r.caseStatus})` : ''}` }))}
+                onChange={v => updateField('residentId', v ? Number(v) : '')}
+              />
             </div>
             <div className={styles.field}>
-              <label className={styles.label}>
+              <div className={styles.label}>
                 Visit Date <span className={styles.required}>*</span>
-              </label>
-              <input
-                type="date"
-                className={styles.input}
-                value={form.visitDate}
-                onChange={(e) => updateField('visitDate', e.target.value)}
-                required
-              />
+              </div>
+              <DatePicker value={form.visitDate} onChange={v => updateField('visitDate', v)} placeholder="Select date..." required />
             </div>
             <div className={styles.field}>
               <label className={styles.label}>Social Worker</label>
@@ -214,20 +213,15 @@ export default function VisitationFormPage() {
               />
             </div>
             <div className={styles.field}>
-              <label className={styles.label}>
+              <div className={styles.label}>
                 Visit Type <span className={styles.required}>*</span>
-              </label>
-              <select
-                className={styles.select}
+              </div>
+              <Dropdown
                 value={form.visitType}
-                onChange={(e) => updateField('visitType', e.target.value)}
-                required
-              >
-                <option value="">Select type...</option>
-                {VISIT_TYPES.map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
+                placeholder="Select type..."
+                options={VISIT_TYPES.map(t => ({ value: t, label: t }))}
+                onChange={v => updateField('visitType', v)}
+              />
             </div>
             <div className={styles.field}>
               <label className={styles.label}>Location Visited</label>
@@ -276,17 +270,13 @@ export default function VisitationFormPage() {
               />
             </div>
             <div className={styles.field}>
-              <label className={styles.label}>Family Cooperation Level</label>
-              <select
-                className={styles.select}
+              <div className={styles.label}>Family Cooperation Level</div>
+              <Dropdown
                 value={form.familyCooperationLevel}
-                onChange={(e) => updateField('familyCooperationLevel', e.target.value)}
-              >
-                <option value="">Select level...</option>
-                {COOPERATION_LEVELS.map((l) => (
-                  <option key={l} value={l}>{l}</option>
-                ))}
-              </select>
+                placeholder="Select level..."
+                options={COOPERATION_LEVELS.map(l => ({ value: l, label: l }))}
+                onChange={v => updateField('familyCooperationLevel', v)}
+              />
             </div>
           </div>
         </div>

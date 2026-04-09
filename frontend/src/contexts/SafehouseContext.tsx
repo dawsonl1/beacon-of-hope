@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { useAuth } from './AuthContext';
+import { apiFetch } from '../api';
 
 export interface SafehouseOption {
   safehouseId: number;
@@ -20,7 +21,19 @@ const SafehouseContext = createContext<SafehouseContextValue | null>(null);
 export function SafehouseProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const isAdmin = user?.roles?.includes('Admin') ?? false;
-  const safehouses: SafehouseOption[] = (user as any)?.safehouses ?? [];
+  const userSafehouses: SafehouseOption[] = (user as any)?.safehouses ?? [];
+  const [fetchedSafehouses, setFetchedSafehouses] = useState<SafehouseOption[]>([]);
+
+  // Fetch all safehouses if the user has none assigned (or is admin)
+  useEffect(() => {
+    if (userSafehouses.length === 0 && user) {
+      apiFetch<{ safehouses: SafehouseOption[] }>('/api/admin/residents/filter-options')
+        .then(resp => setFetchedSafehouses(resp.safehouses ?? []))
+        .catch(() => {});
+    }
+  }, [userSafehouses.length, user]);
+
+  const safehouses = userSafehouses.length > 0 ? userSafehouses : fetchedSafehouses;
 
   // Admins default to "All" (null); Staff default to their first safehouse
   const [activeSafehouseId, setActiveSafehouseId] = useState<number | null>(() =>

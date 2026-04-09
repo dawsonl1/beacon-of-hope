@@ -6,6 +6,7 @@ import { ApiError } from '../../components/ApiError';
 import { formatDate } from '../../constants';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Pagination from '../../components/admin/Pagination';
+import Dropdown from '../../components/admin/Dropdown';
 import styles from './ProcessRecordingsPage.module.css';
 
 interface RecordingRow {
@@ -149,34 +150,33 @@ export default function ProcessRecordingsPage() {
 
       {/* Filters */}
       <div className={styles.filters}>
-        <select
-          className={styles.filterSelect}
+        <Dropdown
           value={residentFilter}
-          onChange={(e) => {
-            setResidentFilter(e.target.value);
+          placeholder="All Residents"
+          options={[
+            { value: '', label: 'All Residents' },
+            ...residents.map((r) => ({ value: String(r.residentId), label: r.internalCode })),
+          ]}
+          onChange={(v) => {
+            setResidentFilter(v);
             setPage(1);
           }}
-        >
-          <option value="">All Residents</option>
-          {residents.map((r) => (
-            <option key={r.residentId} value={r.residentId}>
-              {r.internalCode}
-            </option>
-          ))}
-        </select>
-        <select
-          className={styles.filterSelect}
+          compact
+        />
+        <Dropdown
           value={sortBy}
-          onChange={(e) => {
-            setSortBy(e.target.value);
+          placeholder="Newest First"
+          options={[
+            { value: 'date_desc', label: 'Newest First' },
+            { value: 'date_asc', label: 'Oldest First' },
+            { value: 'worker', label: 'By Social Worker' },
+          ]}
+          onChange={(v) => {
+            setSortBy(v);
             setPage(1);
           }}
-          style={{ minWidth: 150 }}
-        >
-          <option value="date_desc">Newest First</option>
-          <option value="date_asc">Oldest First</option>
-          <option value="worker">By Social Worker</option>
-        </select>
+          compact
+        />
         <span className={styles.countLabel}>
           {totalCount} recording{totalCount !== 1 ? 's' : ''} total
         </span>
@@ -246,16 +246,16 @@ export default function ProcessRecordingsPage() {
                       </td>
                       <td>
                         <div className={styles.flagsCell}>
-                          {r.concernsFlagged && (
-                            <span className={`${styles.flagBadge} ${styles.flagConcern}`}>
-                              <AlertTriangle size={10} />
-                              Concern
-                            </span>
-                          )}
                           {r.progressNoted && (
                             <span className={`${styles.flagBadge} ${styles.flagProgress}`}>
                               <CheckCircle size={10} />
                               Progress
+                            </span>
+                          )}
+                          {r.concernsFlagged && (
+                            <span className={`${styles.flagBadge} ${styles.flagConcern}`}>
+                              <AlertTriangle size={10} />
+                              Concern
                             </span>
                           )}
                         </div>

@@ -323,7 +323,11 @@ export const newFeatureHandlers = [
     HttpResponse.json([
       { id: '1', email: 'admin@beaconofhope.org', firstName: 'Director', lastName: 'Reyes', roles: ['Admin'], safehouses: [] },
       { id: '2', email: 'staff@beaconofhope.org', firstName: 'Elena', lastName: 'Reyes', roles: ['Staff'], safehouses: [] },
+      { id: '3', email: 'donor@beaconofhope.org', firstName: 'Maria', lastName: 'Chen', roles: ['Donor'], safehouses: [] },
     ]),
+  ),
+  http.put(`${API}/api/admin/users/:id`, () =>
+    HttpResponse.json({ updated: true }),
   ),
 ];
 

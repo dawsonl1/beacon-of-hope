@@ -32,10 +32,10 @@ describe('Header', () => {
     });
   });
 
-  it('shows Admin Dashboard label and Logout when authenticated as admin', async () => {
+  it('shows Dashboard label and Logout when authenticated as admin', async () => {
     renderWithProviders(<Header />);
     await waitFor(() => {
-      expect(screen.getByText('Admin Dashboard')).toBeInTheDocument();
+      expect(screen.getByText('Dashboard')).toBeInTheDocument();
     });
     expect(screen.getByText('Logout')).toBeInTheDocument();
   });

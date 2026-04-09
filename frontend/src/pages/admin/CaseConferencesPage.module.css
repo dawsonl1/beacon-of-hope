@@ -1,0 +1,461 @@
+.page {
+  padding: 2rem 2.5rem;
+  max-width: 1280px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--text-strong);
+  letter-spacing: -0.03em;
+  margin: 0 0 0.15rem;
+}
+
+.subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.addBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  color: #fff;
+  background: linear-gradient(120deg, var(--color-sage), #13a490);
+  border: none;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.22s, filter 0.22s;
+  box-shadow: 0 6px 16px rgba(15, 143, 125, 0.2);
+}
+
+.addBtn:hover { transform: translateY(-1px); filter: brightness(1.08); }
+
+.loading, .error, .empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+}
+
+.error { color: #c0392b; }
+.spinner { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Section headings ───────────────────────────── */
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-strong);
+  margin: 0 0 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ── Conference cards ───────────────────────────── */
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(15, 27, 45, 0.06);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.cardResident {
+  font-weight: 600;
+  color: var(--color-sage);
+  font-size: 0.9rem;
+}
+
+.statusBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.cardMeta {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+}
+
+.cardDesc {
+  font-size: 0.82rem;
+  color: var(--text-strong);
+}
+
+.cardTarget {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+}
+
+/* ── Table ──────────────────────────────────────── */
+.tableCard {
+  background: #fff;
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+}
+
+.table thead th {
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(15, 27, 45, 0.08);
+}
+
+.table tbody td {
+  padding: 0.65rem 1rem;
+  color: var(--text-strong);
+  border-bottom: 1px solid rgba(15, 27, 45, 0.04);
+}
+
+.table tbody tr {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.table tbody tr:hover {
+  background: rgba(15, 143, 125, 0.03);
+}
+
+/* ── Schedule modal ─────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 16px;
+  max-width: 480px;
+  width: 92%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  animation: modalIn 0.2s ease-out;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.25rem 0;
+}
+
+.modalTitle {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  margin: 0;
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.closeBtn:hover { background: rgba(15, 27, 45, 0.06); }
+
+.modalBody {
+  padding: 0.8rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+/* ── Custom dropdown ────────────────────────────── */
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.fieldLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdownTrigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.82rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  color: var(--text-strong);
+  background: #fff;
+  border: 1px solid rgba(15, 27, 45, 0.12);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  text-align: left;
+}
+
+.dropdownTrigger:hover { border-color: rgba(15, 27, 45, 0.25); }
+.dropdownTrigger:focus { outline: 2px solid var(--color-sage); outline-offset: 1px; }
+
+.dropdownPlaceholder { color: var(--text-muted); }
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+  animation: dropIn 0.12s ease-out;
+}
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdownOption {
+  display: block;
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.82rem;
+  font-family: var(--font-body);
+  color: var(--text-strong);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.dropdownOption:hover { background: rgba(15, 143, 125, 0.06); }
+.dropdownOptionSelected { background: rgba(15, 143, 125, 0.1); font-weight: 600; color: var(--color-sage); }
+
+/* ── Textarea ───────────────────────────────────── */
+.textarea {
+  font-size: 0.82rem;
+  font-family: var(--font-body);
+  padding: 0.5rem 0.65rem;
+  border: 1px solid rgba(15, 27, 45, 0.12);
+  border-radius: 8px;
+  color: var(--text-strong);
+  resize: vertical;
+  min-height: 60px;
+  transition: border-color 0.15s;
+}
+
+.textarea:hover { border-color: rgba(15, 27, 45, 0.25); }
+.textarea:focus { outline: 2px solid var(--color-sage); outline-offset: 1px; }
+
+/* ── Mini calendar (reused pattern from HomePage) ─ */
+.miniCal {
+  border: 1px solid rgba(15, 27, 45, 0.08);
+  border-radius: 10px;
+  padding: 0.6rem;
+}
+
+.miniCalNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.miniCalMonth {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.navBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(15, 27, 45, 0.1);
+  background: #fff;
+  cursor: pointer;
+  color: var(--text-strong);
+  transition: all 0.2s;
+}
+
+.navBtn:hover { background: rgba(15, 27, 45, 0.03); }
+
+.miniCalGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.miniCalDayLabel {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 0.15rem 0 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.miniCalDay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  border: none;
+  background: none;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+  color: var(--text-strong);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.miniCalDay:hover { background: rgba(15, 27, 45, 0.05); }
+.miniCalDayToday { color: var(--color-sage); font-weight: 700; }
+.miniCalDaySelected { background: var(--color-sage) !important; color: #fff !important; font-weight: 700; }
+
+/* ── Footer ─────────────────────────────────────── */
+.modalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1.25rem;
+  border-top: 1px solid rgba(15, 27, 45, 0.06);
+  background: rgba(15, 27, 45, 0.015);
+}
+
+.footerSummary {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.footerActions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.btn {
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(15, 27, 45, 0.1);
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn:hover { background: rgba(15, 27, 45, 0.03); }
+
+.btnPrimary {
+  composes: btn;
+  background: var(--color-sage);
+  color: #fff;
+  border-color: transparent;
+}
+
+.btnPrimary:hover { filter: brightness(1.08); }
+.btnPrimary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.formError {
+  font-size: 0.78rem;
+  color: #c0392b;
+  margin: 0;
+}
+
+@media (max-width: 700px) {
+  .page { padding: 1rem; }
+  .cardGrid { grid-template-columns: 1fr; }
+}

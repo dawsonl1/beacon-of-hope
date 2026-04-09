@@ -12,8 +12,6 @@ import {
   LogOut,
   Menu,
   X,
-  CheckSquare,
-  Calendar,
   AlertTriangle,
   Inbox,
   MessageSquare,
@@ -23,6 +21,7 @@ import {
   Settings,
   ChevronDown,
   Check,
+  CalendarDays,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { SafehouseProvider, useSafehouse } from '../contexts/SafehouseContext';
@@ -76,18 +75,17 @@ interface NavGroup {
 
 const navGroups: NavGroup[] = [
   {
-    label: 'Work',
+    label: 'Home',
     items: [
-      { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
-      { to: '/admin/tasks', icon: CheckSquare, label: 'To-Do' },
-      { to: '/admin/calendar', icon: Calendar, label: 'Calendar' },
-      { to: '/admin/queue', icon: Inbox, label: 'Queue' },
+      { to: '/admin', icon: CalendarDays, label: 'Calendar & To-Do', end: true },
+      { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     ],
   },
   {
     label: 'Cases',
     items: [
       { to: '/admin/caseload', icon: Users, label: 'Caseload' },
+      { to: '/admin/queue', icon: Inbox, label: 'Queue' },
       { to: '/admin/incidents', icon: AlertTriangle, label: 'Incidents' },
       { to: '/admin/conferences', icon: MessageSquare, label: 'Conferences' },
       { to: '/admin/post-placement', icon: HomeIcon, label: 'Placed' },
@@ -98,7 +96,6 @@ const navGroups: NavGroup[] = [
     items: [
       { to: '/admin/recordings', icon: AudioLines, label: 'Recordings' },
       { to: '/admin/visitations', icon: Eye, label: 'Visitations' },
-      { to: '/admin/donors', icon: HandHeart, label: 'Donors' },
     ],
   },
   {
@@ -113,6 +110,7 @@ const navGroups: NavGroup[] = [
     label: 'Admin',
     items: [
       { to: '/admin/reports', icon: BarChart3, label: 'Reports' },
+      { to: '/admin/donors', icon: HandHeart, label: 'Donors' },
       { to: '/admin/users', icon: Shield, label: 'Users' },
     ],
   },
@@ -209,7 +207,7 @@ function AdminLayoutInner() {
             <span className={styles.logoText}>Beacon of Hope</span>
           </NavLink>
 
-          {/* Desktop nav: category hover dropdowns */}
+          {/* Desktop nav: Home link + category hover dropdowns */}
           <nav className={styles.nav}>
             {navGroups.map(group => {
               const groupActive = group.items.some(item =>

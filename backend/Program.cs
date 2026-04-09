@@ -27,8 +27,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opts =>
 {
     opts.Password.RequiredLength = 12;
-    opts.Password.RequireUppercase = false;
-    opts.Password.RequireLowercase = false;
+    opts.Password.RequireUppercase = true;
+    opts.Password.RequireLowercase = true;
     opts.Password.RequireDigit = true;
     opts.Password.RequireNonAlphanumeric = true;
 
@@ -42,7 +42,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opts =>
 .AddDefaultTokenProviders();
 
 builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "dp-keys")));
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "dp-keys")))
+    .SetApplicationName("BeaconOfHope");
 
 builder.Services.ConfigureApplicationCookie(opts =>
 {
@@ -85,6 +86,8 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
                 "http://localhost:5173",
                 "http://localhost:5174",
+                "http://localhost:5175",
+                "http://localhost:5176",
                 "https://intex2-1.vercel.app",
                 "https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net")
               .AllowAnyHeader()
@@ -112,7 +115,8 @@ using (var scope = app.Services.CreateScope())
         await db.Database.EnsureCreatedAsync();
     else
         await db.Database.MigrateAsync();
-    await IdentitySeeder.SeedAsync(scope.ServiceProvider);
+    try { await IdentitySeeder.SeedAsync(scope.ServiceProvider); }
+    catch (Exception ex) { Console.WriteLine($"Seeder skipped (data already exists): {ex.Message}"); }
 }
 
 if (app.Environment.IsDevelopment())
@@ -158,7 +162,7 @@ app.Use(async (context, next) =>
         "form-action 'self'; " +
         "base-uri 'self'"
     );
-    context.Response.Headers.Append("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+    // HSTS is handled by app.UseHsts() — no duplicate header needed
     context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
     context.Response.Headers.Append("X-Frame-Options", "DENY");
     context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");

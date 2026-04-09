@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   ResponsiveContainer,
   LineChart, Line,
@@ -10,6 +11,7 @@ import { apiFetch } from '../../api';
 import { formatMonthLabel, formatEnumLabel } from '../../constants';
 import { ChartTooltip } from '../../components/ChartTooltip';
 import KpiCard from '../../components/admin/KpiCard';
+import MlBadge from '../../components/admin/MlBadge';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import styles from './ReportsPage.module.css';
 
@@ -47,6 +49,7 @@ const TABS = [
   { key: 'outcomes', label: 'Outcomes' },
   { key: 'safehouses', label: 'Safehouses' },
   { key: 'aar', label: 'Annual Report' },
+  { key: 'ml', label: 'ML Insights' },
 ] as const;
 
 type TabKey = typeof TABS[number]['key'];
@@ -499,10 +502,356 @@ function SafehousesTab() {
   );
 }
 
+// ── ML Insights Tab ─────────────────────────────────────
+interface MlPrediction {
+  modelName: string;
+  scoreLabel: string;
+  metadata: string;
+  predictedAt: string;
+  entityType?: string;
+}
+
+interface TimingSummary {
+  scoreLabel: string;
+  avgScore: number;
+}
+
+function humanize(s: string): string {
+  return s
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function MlInsightsTab() {
+  const [predictions, setPredictions] = useState<MlPrediction[]>([]);
+  const [timingSummary, setTimingSummary] = useState<TimingSummary[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      try {
+        const [preds, timing] = await Promise.all([
+          apiFetch<MlPrediction[]>('/api/ml/insights'),
+          apiFetch<TimingSummary[]>('/api/ml/predictions/platform_timing/summary').catch(() => []),
+        ]);
+        if (cancelled) return;
+        setPredictions(preds);
+        setTimingSummary(timing);
+      } catch (e) {
+        console.error('Failed to load ML insights', e);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
+
+  if (loading) return <Loading />;
+
+  // Parse predictions by model
+  const byModel = (name: string) => predictions.filter(p => p.modelName === name);
+
+  // Reintegration drivers
+  const reintPred = byModel('reintegration-drivers')[0];
+  const reintDrivers: { feature: string; coefficient: number; p_value: number; label?: string }[] =
+    reintPred ? (JSON.parse(reintPred.metadata).top_drivers ?? []) : [];
+
+  // Donor churn drivers
+  const donorPred = byModel('donor-churn-drivers')[0];
+  const donorDrivers: { feature: string; odds_ratio: number; p_value: number }[] =
+    donorPred ? (JSON.parse(donorPred.metadata).top_drivers ?? []) : [];
+
+  // Incident risk drivers
+  const incidentPred = byModel('incident-risk-drivers')[0];
+  const incidentMeta = incidentPred ? JSON.parse(incidentPred.metadata) : {};
+  const selfharmDrivers: { feature: string; coefficient: number; odds_ratio: number; p_value: number }[] =
+    incidentMeta.selfharm_drivers ?? [];
+  const runawayDrivers: { feature: string; coefficient: number; odds_ratio: number; p_value: number }[] =
+    incidentMeta.runaway_drivers ?? [];
+
+  // Social media content
+  const contentPred = byModel('social-media-content')[0];
+  const contentFindings: { feature: string; effect: string; label?: string }[] =
+    contentPred ? (JSON.parse(contentPred.metadata).top_findings ?? []) : [];
+
+  // Social media timing — parse timing summary into best time per platform
+  const platformBest: { platform: string; day: string; hour: string; score: number }[] = [];
+  if (timingSummary.length > 0) {
+    const grouped: Record<string, { day: string; hour: string; score: number }[]> = {};
+    for (const t of timingSummary) {
+      // scoreLabel format: "Platform_Day_Hour" e.g. "Facebook_Monday_9"
+      const parts = t.scoreLabel.split('_');
+      if (parts.length >= 3) {
+        const platform = parts[0];
+        const day = parts[1];
+        const hour = parts.slice(2).join('_');
+        if (!grouped[platform]) grouped[platform] = [];
+        grouped[platform].push({ day, hour, score: t.avgScore });
+      }
+    }
+    for (const [platform, entries] of Object.entries(grouped)) {
+      entries.sort((a, b) => b.score - a.score);
+      if (entries.length > 0) {
+        platformBest.push({ platform, ...entries[0] });
+      }
+    }
+    platformBest.sort((a, b) => b.score - a.score);
+  }
+
+  const cardStyle: React.CSSProperties = {
+    background: 'var(--surface-1)',
+    border: '1px solid rgba(15, 27, 45, 0.08)',
+    borderRadius: 'var(--radius-md)',
+    boxShadow: 'var(--shadow-sm)',
+    padding: '1.5rem',
+    marginBottom: '1.25rem',
+  };
+
+  const headerStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    marginBottom: '1rem',
+  };
+
+  const rankStyle: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '1.5rem',
+    height: '1.5rem',
+    borderRadius: '50%',
+    background: 'rgba(15, 27, 45, 0.06)',
+    fontSize: '0.72rem',
+    fontWeight: 700,
+    color: 'var(--text-muted)',
+    flexShrink: 0,
+  };
+
+  const rowStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.65rem',
+    padding: '0.5rem 0',
+    borderBottom: '1px solid rgba(15, 27, 45, 0.04)',
+    fontSize: '0.85rem',
+  };
+
+  const sigBadge = (pValue: number) => {
+    const isSig = pValue < 0.05;
+    return (
+      <span style={{
+        fontSize: '0.65rem',
+        fontWeight: 600,
+        padding: '0.1rem 0.4rem',
+        borderRadius: '999px',
+        background: isSig ? 'rgba(122,158,126,0.12)' : 'rgba(138,128,120,0.1)',
+        color: isSig ? '#2d6a4f' : '#8A8078',
+      }}>
+        {isSig ? 'significant' : 'suggestive'}
+      </span>
+    );
+  };
+
+  return (
+    <>
+      {/* Section 1: Reintegration Drivers */}
+      {reintDrivers.length > 0 && (
+        <div style={cardStyle}>
+          <div style={headerStyle}>
+            <h3 className={styles.chartTitle} style={{ margin: 0 }}>What Drives Reintegration Success</h3>
+            <MlBadge />
+          </div>
+          <div style={{ marginBottom: '1rem' }}>
+            <ResponsiveContainer width="100%" height={Math.max(reintDrivers.length * 32, 120)}>
+              <BarChart data={reintDrivers.slice(0, 8).map(d => ({ name: humanize(d.feature), value: d.coefficient }))} layout="vertical" margin={{ left: 120, right: 20, top: 4, bottom: 4 }}>
+                <XAxis type="number" tick={{ fontSize: 11 }} />
+                <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={120} />
+                <Tooltip formatter={(v: number) => v.toFixed(3)} />
+                <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                  {reintDrivers.slice(0, 8).map((d, i) => (
+                    <Cell key={i} fill={d.coefficient >= 0 ? '#27ae60' : '#c0392b'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          {reintDrivers.map((d, i) => (
+            <div key={d.feature} style={rowStyle}>
+              <span style={rankStyle}>{i + 1}</span>
+              <span style={{ flex: 1, color: 'var(--text-strong)', fontWeight: 500 }}>
+                {humanize(d.feature)}
+              </span>
+              <span style={{
+                fontSize: '1rem',
+                color: d.coefficient >= 0 ? '#2d6a4f' : '#c0392b',
+                fontWeight: 700,
+              }}>
+                {d.coefficient >= 0 ? '\u2191' : '\u2193'}
+              </span>
+              {sigBadge(d.p_value)}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Section 2: Donor Retention Drivers */}
+      {donorDrivers.length > 0 && (
+        <div style={cardStyle}>
+          <div style={headerStyle}>
+            <h3 className={styles.chartTitle} style={{ margin: 0 }}>What Drives Donor Retention</h3>
+            <MlBadge />
+          </div>
+          {donorDrivers.map((d, i) => (
+            <div key={d.feature} style={rowStyle}>
+              <span style={rankStyle}>{i + 1}</span>
+              <span style={{ flex: 1, color: 'var(--text-strong)', fontWeight: 500 }}>
+                {humanize(d.feature)}
+              </span>
+              <span style={{
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                color: d.odds_ratio >= 1 ? '#2d6a4f' : '#c0392b',
+              }}>
+                {d.odds_ratio >= 1
+                  ? `${d.odds_ratio.toFixed(1)}x more likely`
+                  : `${d.odds_ratio.toFixed(1)}x less likely`}
+              </span>
+              {sigBadge(d.p_value)}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Section 3: Incident Risk Factors */}
+      {(selfharmDrivers.length > 0 || runawayDrivers.length > 0) && (
+        <div style={cardStyle}>
+          <div style={headerStyle}>
+            <h3 className={styles.chartTitle} style={{ margin: 0 }}>Incident Risk Factors</h3>
+            <MlBadge />
+          </div>
+
+          {selfharmDrivers.length > 0 && (
+            <>
+              <h4 style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-strong)', margin: '0.75rem 0 0.5rem' }}>
+                Self-Harm Risk Factors
+              </h4>
+              {selfharmDrivers.map((d, i) => (
+                <div key={d.feature} style={rowStyle}>
+                  <span style={rankStyle}>{i + 1}</span>
+                  <span style={{ flex: 1, color: 'var(--text-strong)', fontWeight: 500 }}>
+                    {humanize(d.feature)}
+                  </span>
+                  <span style={{
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    color: d.odds_ratio >= 1 ? '#c0392b' : '#2d6a4f',
+                  }}>
+                    {d.odds_ratio.toFixed(1)}x
+                  </span>
+                  {sigBadge(d.p_value)}
+                </div>
+              ))}
+            </>
+          )}
+
+          {runawayDrivers.length > 0 && (
+            <>
+              <h4 style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-strong)', margin: '1rem 0 0.5rem' }}>
+                Runaway Risk Factors
+              </h4>
+              {runawayDrivers.map((d, i) => (
+                <div key={d.feature} style={rowStyle}>
+                  <span style={rankStyle}>{i + 1}</span>
+                  <span style={{ flex: 1, color: 'var(--text-strong)', fontWeight: 500 }}>
+                    {humanize(d.feature)}
+                  </span>
+                  <span style={{
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    color: d.odds_ratio >= 1 ? '#c0392b' : '#2d6a4f',
+                  }}>
+                    {d.odds_ratio.toFixed(1)}x
+                  </span>
+                  {sigBadge(d.p_value)}
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Section 4: Social Media Strategy */}
+      {(contentFindings.length > 0 || platformBest.length > 0) && (
+        <div style={cardStyle}>
+          <div style={headerStyle}>
+            <h3 className={styles.chartTitle} style={{ margin: 0 }}>Social Media Insights</h3>
+            <MlBadge />
+          </div>
+
+          {contentFindings.length > 0 && (
+            <>
+              <h4 style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-strong)', margin: '0.5rem 0' }}>
+                Content That Works
+              </h4>
+              {contentFindings.map((f, i) => (
+                <div key={i} style={rowStyle}>
+                  <span style={{ flex: 1, color: 'var(--text-strong)', fontWeight: 500 }}>
+                    {humanize(f.feature)}
+                  </span>
+                  <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                    {f.effect}
+                  </span>
+                </div>
+              ))}
+            </>
+          )}
+
+          {platformBest.length > 0 && (
+            <>
+              <h4 style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-strong)', margin: '1rem 0 0.5rem' }}>
+                Best Times to Post
+              </h4>
+              <table className={styles.table} style={{ marginTop: '0.25rem' }}>
+                <thead>
+                  <tr>
+                    <th>Platform</th>
+                    <th>Best Day</th>
+                    <th>Best Hour</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {platformBest.map(p => (
+                    <tr key={p.platform}>
+                      <td style={{ fontWeight: 600, color: 'var(--color-deep-navy)' }}>{p.platform}</td>
+                      <td>{p.day}</td>
+                      <td>{parseInt(p.hour, 10) > 12 ? `${parseInt(p.hour, 10) - 12}:00 PM` : parseInt(p.hour, 10) === 0 ? '12:00 AM' : `${parseInt(p.hour, 10)}:00 ${parseInt(p.hour, 10) === 12 ? 'PM' : 'AM'}`}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+        </div>
+      )}
+
+      {predictions.length === 0 && (
+        <div className={styles.empty} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
+          No ML insights available yet. Run the ML pipelines to generate org-level predictions.
+        </div>
+      )}
+    </>
+  );
+}
+
 // ── Main Page ────────────────────────────────────────────
 export default function ReportsPage() {
   useDocumentTitle('Reports & Analytics');
-  const [activeTab, setActiveTab] = useState<TabKey>('overview');
+  const [searchParams] = useSearchParams();
+  const initialTab = (searchParams.get('tab') as TabKey) || 'overview';
+  const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
 
   const handleTabChange = useCallback((key: TabKey) => {
     setActiveTab(key);
@@ -523,6 +872,7 @@ export default function ReportsPage() {
             onClick={() => handleTabChange(t.key)}
           >
             {t.label}
+            {t.key === 'ml' && <> <MlBadge /></>}
           </button>
         ))}
       </div>
@@ -532,6 +882,7 @@ export default function ReportsPage() {
       {activeTab === 'outcomes' && <OutcomesTab />}
       {activeTab === 'safehouses' && <SafehousesTab />}
       {activeTab === 'aar' && <AARTab />}
+      {activeTab === 'ml' && <MlInsightsTab />}
     </div>
   );
 }

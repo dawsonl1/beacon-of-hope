@@ -341,6 +341,19 @@
   border: 1px solid rgba(15, 143, 125, 0.25);
 }
 
+/* ── Risk badge ──────────────────────────────────────── */
+.riskBadge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
 /* ── Responsive ───────────────────────────────────────── */
 @media (max-width: 768px) {
   .page {
