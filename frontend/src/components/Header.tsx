@@ -102,10 +102,6 @@ export default function Header() {
           <span className={styles.logoText}>Beacon of Hope</span>
         </Link>
 
-        <div
-          className={`${styles.navBackdrop} ${menuOpen ? styles.navBackdropVisible : ''}`}
-          onClick={() => setMenuOpen(false)}
-        />
         <nav className={`${styles.nav} ${menuOpen ? styles.navOpen : ''}`}>
           <Link to="/" className={styles.navLink} onClick={() => setMenuOpen(false)}>
             Home
