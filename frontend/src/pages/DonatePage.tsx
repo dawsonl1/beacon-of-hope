@@ -3,7 +3,7 @@ import { Heart } from 'lucide-react';
 import { apiFetch } from '../api';
 import styles from './DonatePage.module.css';
 
-const PRESET_AMOUNTS = [500, 1000, 2500, 5000, 10000];
+const PRESET_AMOUNTS = [250, 500, 750, 1000, 1500];
 
 type Mode = 'one-time' | 'recurring';
 type Cadence = 'monthly' | 'quarterly' | 'yearly';
@@ -11,7 +11,7 @@ type Cadence = 'monthly' | 'quarterly' | 'yearly';
 export default function DonatePage() {
   const [mode, setMode] = useState<Mode>('one-time');
   const [cadence, setCadence] = useState<Cadence>('monthly');
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(1000);
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(500);
   const [customAmount, setCustomAmount] = useState('');
   const [donorEmail, setDonorEmail] = useState('');
   const [newsletter, setNewsletter] = useState(true);
