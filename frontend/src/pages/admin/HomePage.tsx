@@ -450,16 +450,16 @@ export default function HomePage() {
     }
   }
 
-  function getCursorQuarter(e: React.DragEvent): number {
+  function getCursorMinuteInCell(e: React.DragEvent): number {
     const rect = e.currentTarget.getBoundingClientRect();
     const y = e.clientY - rect.top;
-    const quarter = Math.round((y / rect.height) * 4);
-    return [0, 15, 30, 45][Math.min(Math.max(quarter, 0), 3)];
+    return Math.max(0, Math.min(Math.round((y / rect.height) * 60), 59));
   }
 
-  function computeDropTime(cellHour: number, cursorQuarter: number): { hour: number; minute: number } {
-    const cursorAbsMinute = cellHour * 60 + cursorQuarter;
+  function computeDropTime(cellHour: number, cursorMinute: number): { hour: number; minute: number } {
+    const cursorAbsMinute = cellHour * 60 + cursorMinute;
     const eventTopMinute = cursorAbsMinute - dragOffsetMinutes.current;
+    // Snap to 15-min AFTER offset subtraction
     const snapped = Math.round(eventTopMinute / 15) * 15;
     const clamped = Math.max(snapped, 0);
     return { hour: Math.floor(clamped / 60), minute: clamped % 60 };
@@ -474,7 +474,7 @@ export default function HomePage() {
     if (!dragTaskId) return;
     const task = tasks.find(t => t.staffTaskId === dragTaskId);
     if (!task) return;
-    const cursorQ = e ? getCursorQuarter(e) : dropMinuteRef.current;
+    const cursorQ = e ? getCursorMinuteInCell(e) : dropMinuteRef.current;
     const drop = computeDropTime(hour, cursorQ);
     const startTime = formatDropTime(drop.hour, drop.minute);
     const targetDate = date || fmtDate(currentDate);
@@ -489,7 +489,7 @@ export default function HomePage() {
   function handleEventDrop(hour: number, date: string, e?: React.DragEvent) {
     if (!dragEventId) return;
     const evt = events.find(ev => ev.calendarEventId === dragEventId);
-    const cursorQ = e ? getCursorQuarter(e) : dropMinuteRef.current;
+    const cursorQ = e ? getCursorMinuteInCell(e) : dropMinuteRef.current;
     const drop = computeDropTime(hour, cursorQ);
     const startTime = formatDropTime(drop.hour, drop.minute);
 
@@ -765,7 +765,7 @@ export default function HomePage() {
                           onDragOver={e => {
                             e.preventDefault();
                             e.dataTransfer.dropEffect = 'move';
-                            const cursorQ = getCursorQuarter(e);
+                            const cursorQ = getCursorMinuteInCell(e);
                             const drop = computeDropTime(hour, cursorQ);
                             dropMinuteRef.current = cursorQ;
                             if (dropIndicatorRef.current) {
