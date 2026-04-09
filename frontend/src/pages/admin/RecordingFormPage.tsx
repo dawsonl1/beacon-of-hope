@@ -8,6 +8,7 @@ import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Dropdown from '../../components/admin/Dropdown';
 import MultiSelectDropdown from '../../components/admin/MultiSelectDropdown';
 import DatePicker from '../../components/admin/DatePicker';
+import TextArea from '../../components/admin/TextArea';
 import styles from './RecordingFormPage.module.css';
 
 const GROUP_SESSION_TYPES = ['Group Therapy', 'Family Counseling', 'Psychoeducation'];
@@ -771,7 +772,7 @@ export default function RecordingFormPage() {
           <h2 className={styles.sectionTitle}>Session Narrative</h2>
           <div className={`${styles.field} ${styles.fieldFull}`}>
             <label>Narrative Summary</label>
-            <textarea className={styles.narrativeField} value={narrative} onChange={e => setNarrative(e.target.value)} placeholder="Describe the session, observations, topics discussed, and resident's responses..." />
+            <TextArea className={styles.narrativeField} value={narrative} onChange={e => setNarrative(e.target.value)} placeholder="Describe the session, observations, topics discussed, and resident's responses..." />
           </div>
         </div>
 
@@ -780,11 +781,11 @@ export default function RecordingFormPage() {
           <h2 className={styles.sectionTitle}>Interventions & Follow-up</h2>
           <div className={`${styles.field} ${styles.fieldFull}`}>
             <label>Interventions Applied</label>
-            <textarea className={styles.textareaField} value={interventions} onChange={e => setInterventions(e.target.value)} placeholder="List interventions used during this session (e.g., CBT, Play Therapy, Grounding Techniques)..." />
+            <TextArea className={styles.textareaField} value={interventions} onChange={e => setInterventions(e.target.value)} placeholder="List interventions used during this session (e.g., CBT, Play Therapy, Grounding Techniques)..." />
           </div>
           <div className={`${styles.field} ${styles.fieldFull}`} style={{ marginTop: '0.75rem' }}>
             <label>Follow-up Actions</label>
-            <textarea className={styles.textareaField} value={followUp} onChange={e => setFollowUp(e.target.value)} placeholder="Describe any follow-up actions needed after this session..." />
+            <TextArea className={styles.textareaField} value={followUp} onChange={e => setFollowUp(e.target.value)} placeholder="Describe any follow-up actions needed after this session..." />
           </div>
         </div>
 
@@ -885,7 +886,7 @@ export default function RecordingFormPage() {
               <Shield size={16} /> Confidential Notes
             </div>
             <div className={styles.field}>
-              <textarea className={styles.textareaField} rows={3} value={notesRestricted} onChange={e => setNotesRestricted(e.target.value)} placeholder="Sensitive notes visible only to authorized staff..." style={{ background: '#fff' }} />
+              <TextArea className={styles.textareaField} rows={3} value={notesRestricted} onChange={e => setNotesRestricted(e.target.value)} placeholder="Sensitive notes visible only to authorized staff..." style={{ background: '#fff' }} />
             </div>
           </div>
         </div>

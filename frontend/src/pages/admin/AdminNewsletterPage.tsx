@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { ChevronDown, Sparkles, Users } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import TextArea from '../../components/admin/TextArea';
 import styles from './AdminNewsletterPage.module.css';
 
 interface Newsletter {
@@ -175,7 +176,7 @@ export default function AdminNewsletterPage() {
                     </div>
                     <div className={styles.editField}>
                       <label>HTML Content</label>
-                      <textarea value={editHtml} onChange={e => setEditHtml(e.target.value)} />
+                      <TextArea value={editHtml} onChange={e => setEditHtml(e.target.value)} />
                     </div>
                     <div className={styles.editActions}>
                       <button className={styles.btnSave} onClick={() => saveEdit(nl.newsletterId)}

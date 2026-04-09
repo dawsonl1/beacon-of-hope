@@ -6,6 +6,7 @@ import { APP_TODAY_STR } from '../../constants';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Dropdown from '../../components/admin/Dropdown';
 import DatePicker from '../../components/admin/DatePicker';
+import TextArea from '../../components/admin/TextArea';
 import styles from './VisitationFormPage.module.css';
 
 interface SafehouseOption {
@@ -439,7 +440,7 @@ export default function ResidentFormPage() {
           <h2 className={styles.formSection}>Assessment & Planning</h2>
           <div className={`${styles.field} ${styles.fieldFull}`}>
             <label className={styles.label}>Initial Case Assessment</label>
-            <textarea className={styles.textarea} value={form.initialCaseAssessment} onChange={e => u('initialCaseAssessment', e.target.value)} rows={3} placeholder="Brief assessment of the resident's situation..." />
+            <TextArea className={styles.textarea} value={form.initialCaseAssessment} onChange={e => u('initialCaseAssessment', e.target.value)} rows={3} placeholder="Brief assessment of the resident's situation..." />
           </div>
           <div className={styles.fieldGrid} style={{ marginTop: '0.75rem' }}>
             <div className={styles.field}>
@@ -460,7 +461,7 @@ export default function ResidentFormPage() {
               <Shield size={16} /> Confidential Notes
             </div>
             <div className={styles.field}>
-              <textarea className={styles.textarea} value={form.notesRestricted} onChange={e => u('notesRestricted', e.target.value)} rows={3} placeholder="Restricted notes — only visible to authorized staff..." style={{ background: '#fff' }} />
+              <TextArea className={styles.textarea} value={form.notesRestricted} onChange={e => u('notesRestricted', e.target.value)} rows={3} placeholder="Restricted notes — only visible to authorized staff..." style={{ background: '#fff' }} />
             </div>
           </div>
         </div>

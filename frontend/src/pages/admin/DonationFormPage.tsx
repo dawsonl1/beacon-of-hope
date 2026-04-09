@@ -8,6 +8,7 @@ import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import Dropdown from '../../components/admin/Dropdown';
 import DatePicker from '../../components/admin/DatePicker';
 import DeleteConfirmDialog from '../../components/admin/DeleteConfirmDialog';
+import TextArea from '../../components/admin/TextArea';
 import styles from './DonationFormPage.module.css';
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'AUD', 'CAD'];
 
@@ -344,7 +345,7 @@ export default function DonationFormPage() {
 
           <div className={`${styles.field} ${styles.fieldFull}`}>
             <label>Notes</label>
-            <textarea value={form.notes} onChange={e => set('notes', e.target.value)} placeholder="Additional notes..." />
+            <TextArea value={form.notes} onChange={e => set('notes', e.target.value)} placeholder="Additional notes..." />
           </div>
 
           {/* Recurring toggle */}
