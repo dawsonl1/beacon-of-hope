@@ -208,8 +208,8 @@ export default function HomePage() {
 
   /* ── Data fetching ─────────────────────────────── */
 
-  const fetchEvents = useCallback(async () => {
-    setEventsLoading(true);
+  const fetchEvents = useCallback(async (showLoading = true) => {
+    if (showLoading) setEventsLoading(true);
     try {
       const params = new URLSearchParams();
       if (activeSafehouseId) params.set('safehouseId', String(activeSafehouseId));
@@ -261,16 +261,20 @@ export default function HomePage() {
       });
       setShowNewForm(false);
       setNewEvent({ eventType: 'Counseling', title: '', description: '', eventDate: fmtDate(currentDate), startTime: '', endTime: '', residentId: '' });
-      fetchEvents();
+      fetchEvents(false);
     } catch { /* ignore */ }
   }
 
   async function handleUpdateEvent(id: number, updates: Record<string, unknown>) {
+    // Optimistically update local state
+    setEvents(prev => prev.map(e => e.calendarEventId === id ? { ...e, ...updates } as CalendarEventItem : e));
+    setSelectedEvent(null);
     try {
       await apiFetch(`/api/staff/calendar/${id}`, { method: 'PUT', body: JSON.stringify(updates) });
-      setSelectedEvent(null);
-      fetchEvents();
-    } catch { /* ignore */ }
+      fetchEvents(false); // silent background sync
+    } catch {
+      fetchEvents(false); // revert on error
+    }
   }
 
   /* ── Task actions ──────────────────────────────── */
@@ -304,7 +308,7 @@ export default function HomePage() {
           sourceTaskId: task.staffTaskId,
         }),
       });
-      fetchEvents();
+      fetchEvents(false);
       fetchTasks();
     } catch { /* ignore */ }
   }
