@@ -382,7 +382,14 @@ export default function HomePage() {
 
   function renderEventChip(evt: CalendarEventItem) {
     return (
-      <div key={evt.calendarEventId} className={getEventStyle(evt.eventType, evt.status)} onClick={e => handleEventClick(evt, e)}>
+      <div
+        key={evt.calendarEventId}
+        className={`${getEventStyle(evt.eventType, evt.status)} ${dragEventId === evt.calendarEventId ? styles.eventDragging : ''}`}
+        onClick={e => handleEventClick(evt, e)}
+        draggable
+        onDragStart={e => { e.stopPropagation(); setDragEventId(evt.calendarEventId); }}
+        onDragEnd={() => setDragEventId(null)}
+      >
         {evt.startTime && <span>{evt.startTime}</span>}
         <span>{evt.title}</span>
         {evt.residentCode && <span>({evt.residentCode})</span>}

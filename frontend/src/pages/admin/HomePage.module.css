@@ -202,7 +202,7 @@
   font-weight: 600;
   padding: 0.15rem 0.4rem;
   border-radius: 4px;
-  cursor: pointer;
+  cursor: grab;
   transition: filter 0.2s;
   white-space: nowrap;
   overflow: hidden;
@@ -222,6 +222,7 @@
 .eventReintegrationVisit { background: rgba(22, 160, 133, 0.12); color: #16a085; }
 .eventPostPlacementVisit { background: rgba(41, 128, 185, 0.12); color: #2980b9; }
 .eventCompleted { opacity: 0.5; text-decoration: line-through; }
+.eventDragging { opacity: 0.4; }
 
 /* ── Week view (Google Calendar-style grid) ──────── */
 .weekGrid {
