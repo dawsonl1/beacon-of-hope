@@ -287,7 +287,7 @@ export default function HomePage() {
   const [dragEventId, setDragEventId] = useState<number | null>(null);
   const [dropHour, setDropHour] = useState<number | null>(null);
   const [dropDate, setDropDate] = useState<string | null>(null);
-  const dragOffsetY = useRef<number>(0);
+  const dragOffsetMinutes = useRef<number>(0);
   const dropMinuteRef = useRef<number>(0);
   const dropIndicatorRef = useRef<HTMLDivElement | null>(null);
 
@@ -420,7 +420,7 @@ export default function HomePage() {
   /* ── Drag-and-drop handlers ────────────────────── */
 
   function handleDragStart(taskId: number) {
-    dragOffsetY.current = 0;
+    dragOffsetMinutes.current = 0;
     setDragTaskId(taskId);
   }
 
@@ -430,6 +430,7 @@ export default function HomePage() {
     setDropHour(null);
     setDropDate(null);
     dropMinuteRef.current = 0;
+    dragOffsetMinutes.current = 0;
     dropIndicatorRef.current = null;
     dragCounterRef.current = 0;
   }
@@ -449,11 +450,19 @@ export default function HomePage() {
     }
   }
 
-  function getQuarterFromEvent(e: React.DragEvent): number {
+  function getCursorQuarter(e: React.DragEvent): number {
     const rect = e.currentTarget.getBoundingClientRect();
-    const y = e.clientY - dragOffsetY.current - rect.top;
+    const y = e.clientY - rect.top;
     const quarter = Math.round((y / rect.height) * 4);
     return [0, 15, 30, 45][Math.min(Math.max(quarter, 0), 3)];
+  }
+
+  function computeDropTime(cellHour: number, cursorQuarter: number): { hour: number; minute: number } {
+    const cursorAbsMinute = cellHour * 60 + cursorQuarter;
+    const eventTopMinute = cursorAbsMinute - dragOffsetMinutes.current;
+    const snapped = Math.round(eventTopMinute / 15) * 15;
+    const clamped = Math.max(snapped, 0);
+    return { hour: Math.floor(clamped / 60), minute: clamped % 60 };
   }
 
   function formatDropTime(hour: number, minute: number): string | null {
@@ -465,8 +474,9 @@ export default function HomePage() {
     if (!dragTaskId) return;
     const task = tasks.find(t => t.staffTaskId === dragTaskId);
     if (!task) return;
-    const minute = e ? getQuarterFromEvent(e) : dropMinuteRef.current;
-    const startTime = formatDropTime(hour, minute);
+    const cursorQ = e ? getCursorQuarter(e) : dropMinuteRef.current;
+    const drop = computeDropTime(hour, cursorQ);
+    const startTime = formatDropTime(drop.hour, drop.minute);
     const targetDate = date || fmtDate(currentDate);
     scheduleTaskToCalendar(task, targetDate, startTime);
     setDragTaskId(null);
@@ -479,14 +489,15 @@ export default function HomePage() {
   function handleEventDrop(hour: number, date: string, e?: React.DragEvent) {
     if (!dragEventId) return;
     const evt = events.find(ev => ev.calendarEventId === dragEventId);
-    const minute = e ? getQuarterFromEvent(e) : dropMinuteRef.current;
-    const startTime = formatDropTime(hour, minute);
+    const cursorQ = e ? getCursorQuarter(e) : dropMinuteRef.current;
+    const drop = computeDropTime(hour, cursorQ);
+    const startTime = formatDropTime(drop.hour, drop.minute);
 
     // Preserve duration: shift end time by the same amount
     let endTime: string | null = null;
     if (evt && startTime) {
       const duration = getEventDuration(evt);
-      const newStartMin = hour * 60 + minute;
+      const newStartMin = drop.hour * 60 + drop.minute;
       const newEndMin = newStartMin + duration;
       const endH = Math.floor(newEndMin / 60);
       const endM = newEndMin % 60;
@@ -591,7 +602,15 @@ export default function HomePage() {
         }}
         onClick={e => handleEventClick(evt, e)}
         draggable
-        onDragStart={e => { e.stopPropagation(); dragOffsetY.current = Math.min(e.clientY - (e.currentTarget as HTMLElement).getBoundingClientRect().top, 45); setTimeout(() => setDragEventId(evt.calendarEventId), 0); }}
+        onDragStart={e => {
+          e.stopPropagation();
+          // Offset in minutes: how far into the event the user grabbed
+          const chipRect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+          const grabPx = e.clientY - chipRect.top;
+          const grabFraction = grabPx / chipRect.height;
+          dragOffsetMinutes.current = Math.round(grabFraction * getEventDuration(evt));
+          setTimeout(() => setDragEventId(evt.calendarEventId), 0);
+        }}
         onDragEnd={() => setDragEventId(null)}
       >
         {heightPx >= 40 ? (
@@ -700,7 +719,7 @@ export default function HomePage() {
                         key={evt.calendarEventId}
                         className={styles.allDayChip}
                         draggable
-                        onDragStart={e => { dragOffsetY.current = Math.min(e.clientY - (e.currentTarget as HTMLElement).getBoundingClientRect().top, 45); setTimeout(() => setDragEventId(evt.calendarEventId), 0); }}
+                        onDragStart={() => { dragOffsetMinutes.current = 0; setTimeout(() => setDragEventId(evt.calendarEventId), 0); }}
                         onDragEnd={() => setDragEventId(null)}
                         onClick={e => handleEventClick(evt, e)}
                       >
@@ -746,11 +765,13 @@ export default function HomePage() {
                           onDragOver={e => {
                             e.preventDefault();
                             e.dataTransfer.dropEffect = 'move';
-                            const minute = getQuarterFromEvent(e);
-                            dropMinuteRef.current = minute;
+                            const cursorQ = getCursorQuarter(e);
+                            const drop = computeDropTime(hour, cursorQ);
+                            dropMinuteRef.current = cursorQ;
                             if (dropIndicatorRef.current) {
-                              dropIndicatorRef.current.style.top = `${(minute / 60) * 100}%`;
-                              dropIndicatorRef.current.textContent = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                              const indicatorMinute = drop.hour * 60 + drop.minute - hour * 60;
+                              dropIndicatorRef.current.style.top = `${Math.max(0, Math.min((indicatorMinute / 60) * 100, 100))}%`;
+                              dropIndicatorRef.current.textContent = `${drop.hour.toString().padStart(2, '0')}:${drop.minute.toString().padStart(2, '0')}`;
                             }
                           }}
                           onDragEnter={() => handleSlotDragEnter(hour, dayStr)}
