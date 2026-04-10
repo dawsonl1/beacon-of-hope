@@ -128,9 +128,18 @@ def run_training() -> dict:
     X_train_sm = sm.add_constant(X_train_scaled)
     try:
         logit_model = sm.Logit(y_train, X_train_sm).fit(disp=0, maxiter=200)
+        # Detect quasi-complete separation: if any coefficient is absurdly large,
+        # the model didn't converge meaningfully. Fall back to regularized fit.
+        max_coef = float(logit_model.params.drop("const", errors="ignore").abs().max())
+        if max_coef > 20:
+            logger.warning(
+                "Max coefficient magnitude %.1f suggests separation. Using regularized fit.",
+                max_coef,
+            )
+            logit_model = sm.Logit(y_train, X_train_sm).fit_regularized(alpha=1.0, disp=0)
     except Exception:
         logger.warning("Standard fit failed, trying regularized fit.")
-        logit_model = sm.Logit(y_train, X_train_sm).fit_regularized(alpha=0.1, disp=0)
+        logit_model = sm.Logit(y_train, X_train_sm).fit_regularized(alpha=1.0, disp=0)
 
     pseudo_r2 = float(logit_model.prsquared)
     logger.info("Logit Pseudo-R²: %.4f", pseudo_r2)

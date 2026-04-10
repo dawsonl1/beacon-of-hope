@@ -400,14 +400,13 @@ export default function ResidentDetailPage() {
                         {protocol && (
                           <div className={styles.predictionProtocol}>{protocol}</div>
                         )}
-                        {!isIncident && meta && (
+                        {!isIncident && meta?.significant_drivers?.length > 0 && (
                           <div className={styles.predictionFactors}>
-                            <span className={styles.predictionFactorsLabel}>Contributing metrics:</span>
-                            <div className={styles.predictionMetrics}>
-                              {meta.family_coop_rate != null && <span>Family cooperation: {(meta.family_coop_rate * 100).toFixed(0)}%</span>}
-                              {meta.visits_per_month != null && <span>Visits/month: {meta.visits_per_month.toFixed(1)}</span>}
-                              {meta.positive_session_rate != null && <span>Positive sessions: {(meta.positive_session_rate * 100).toFixed(0)}%</span>}
-                              {meta.health_trend != null && <span>Health trend: {meta.health_trend > 0 ? 'improving' : meta.health_trend < 0 ? 'declining' : 'stable'}</span>}
+                            <span className={styles.predictionFactorsLabel}>Key factors:</span>
+                            <div className={styles.predictionFactorTags}>
+                              {(meta.significant_drivers as { feature: string; direction: string }[]).map((d: { feature: string; direction: string }, i: number) => (
+                                <span key={i} className={styles.predictionFactorTag}>{d.feature.replace(/_/g, ' ').replace(/sub cat /i, '').replace(/\bnum\b/gi, '').replace(/\s{2,}/g, ' ').trim()}</span>
+                              ))}
                             </div>
                           </div>
                         )}

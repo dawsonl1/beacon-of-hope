@@ -8,6 +8,7 @@ import pandas as pd
 
 from ml.config import (
     CHURN_LABELS,
+    DATA_FREEZE,
     MODEL_NAME_DONOR_CHURN,
     TABLE_DONATIONS,
     TABLE_SOCIAL_MEDIA_POSTS,
@@ -73,6 +74,7 @@ def run_inference() -> list[dict]:
         supporters=supporters,
         donations=donations,
         social_posts=social_posts,
+        as_of_date=DATA_FREEZE,
     )
     if features.empty:
         logger.info("No monetary donors available for donor churn inference.")

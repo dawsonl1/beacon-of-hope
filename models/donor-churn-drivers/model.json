@@ -220,6 +220,314 @@
           "ci_upper": 1.529861682889139
         }
       ]
+    },
+    {
+      "model_name": "donor-churn-drivers",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T05:34:17.791763+00:00",
+      "features": [
+        "recency_days",
+        "gap_trend"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "logistic_regression_explanatory",
+      "feature_list": [
+        "recency_days",
+        "gap_trend"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": null,
+      "f1": null,
+      "roc_auc": null,
+      "classification_report": null,
+      "pseudo_r2": 0.6088024214618224,
+      "n_observations": 51,
+      "coefficients": [
+        {
+          "feature": "recency_days",
+          "coefficient": 194.69783041555374,
+          "odds_ratio": 3.5990956445411395e+84,
+          "p_value": 0.9997058322632518,
+          "ci_lower": -1034838.3472635231,
+          "ci_upper": 1035227.7429243543
+        },
+        {
+          "feature": "gap_trend",
+          "coefficient": 1.0425346124610024,
+          "odds_ratio": 2.836397078547223,
+          "p_value": 0.1020620093910866,
+          "ci_lower": -0.20725594729270091,
+          "ci_upper": 2.2923251722147056
+        }
+      ]
+    },
+    {
+      "model_name": "donor-churn-drivers",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T06:26:51.382187+00:00",
+      "features": [
+        "recency_days",
+        "gap_trend"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "logistic_regression_explanatory",
+      "feature_list": [
+        "recency_days",
+        "gap_trend"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": null,
+      "f1": null,
+      "roc_auc": null,
+      "classification_report": null,
+      "pseudo_r2": 0.6088024214618224,
+      "n_observations": 51,
+      "coefficients": [
+        {
+          "feature": "recency_days",
+          "coefficient": 194.69783041555374,
+          "odds_ratio": 3.5990956445411395e+84,
+          "p_value": 0.9997058322632518,
+          "ci_lower": -1034838.3472635231,
+          "ci_upper": 1035227.7429243543
+        },
+        {
+          "feature": "gap_trend",
+          "coefficient": 1.0425346124610024,
+          "odds_ratio": 2.836397078547223,
+          "p_value": 0.1020620093910866,
+          "ci_lower": -0.20725594729270091,
+          "ci_upper": 2.2923251722147056
+        }
+      ]
+    },
+    {
+      "model_name": "donor-churn-drivers",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T06:52:27.068852+00:00",
+      "features": [
+        "recency_days",
+        "gap_trend"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "logistic_regression_explanatory",
+      "feature_list": [
+        "recency_days",
+        "gap_trend"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": null,
+      "f1": null,
+      "roc_auc": null,
+      "classification_report": null,
+      "pseudo_r2": 0.6088024214618224,
+      "n_observations": 51,
+      "coefficients": [
+        {
+          "feature": "recency_days",
+          "coefficient": 194.69783041555374,
+          "odds_ratio": 3.5990956445411395e+84,
+          "p_value": 0.9997058322632518,
+          "ci_lower": -1034838.3472635231,
+          "ci_upper": 1035227.7429243543
+        },
+        {
+          "feature": "gap_trend",
+          "coefficient": 1.0425346124610024,
+          "odds_ratio": 2.836397078547223,
+          "p_value": 0.1020620093910866,
+          "ci_lower": -0.20725594729270091,
+          "ci_upper": 2.2923251722147056
+        }
+      ]
+    },
+    {
+      "model_name": "donor-churn-drivers",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T07:00:20.567040+00:00",
+      "features": [
+        "recency_days",
+        "gap_trend"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "logistic_regression_explanatory",
+      "feature_list": [
+        "recency_days",
+        "gap_trend"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": null,
+      "f1": null,
+      "roc_auc": null,
+      "classification_report": null,
+      "pseudo_r2": 0.44456968277414677,
+      "n_observations": 51,
+      "coefficients": [
+        {
+          "feature": "recency_days",
+          "coefficient": 3.119048451881283,
+          "odds_ratio": 22.624840772491304,
+          "p_value": 0.0010502568874991543,
+          "ci_lower": 1.253387406918532,
+          "ci_upper": 4.984709496844034
+        },
+        {
+          "feature": "gap_trend",
+          "coefficient": 0.7823930840324604,
+          "odds_ratio": 2.1866989634133054,
+          "p_value": 0.08119840484378546,
+          "ci_lower": -0.09699940441504007,
+          "ci_upper": 1.6617855724799608
+        }
+      ]
+    },
+    {
+      "model_name": "donor-churn-drivers",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T07:59:27.625159+00:00",
+      "features": [
+        "recency_days",
+        "gap_trend"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "logistic_regression_explanatory",
+      "feature_list": [
+        "recency_days",
+        "gap_trend"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": null,
+      "f1": null,
+      "roc_auc": null,
+      "classification_report": null,
+      "pseudo_r2": 0.44456968277414677,
+      "n_observations": 51,
+      "coefficients": [
+        {
+          "feature": "recency_days",
+          "coefficient": 3.119048451881283,
+          "odds_ratio": 22.624840772491304,
+          "p_value": 0.0010502568874991543,
+          "ci_lower": 1.253387406918532,
+          "ci_upper": 4.984709496844034
+        },
+        {
+          "feature": "gap_trend",
+          "coefficient": 0.7823930840324604,
+          "odds_ratio": 2.1866989634133054,
+          "p_value": 0.08119840484378546,
+          "ci_lower": -0.09699940441504007,
+          "ci_upper": 1.6617855724799608
+        }
+      ]
+    },
+    {
+      "model_name": "donor-churn-drivers",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T08:16:13.436987+00:00",
+      "features": [
+        "recency_days",
+        "gap_trend"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "logistic_regression_explanatory",
+      "feature_list": [
+        "recency_days",
+        "gap_trend"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": null,
+      "f1": null,
+      "roc_auc": null,
+      "classification_report": null,
+      "pseudo_r2": 0.44456968277414677,
+      "n_observations": 51,
+      "coefficients": [
+        {
+          "feature": "recency_days",
+          "coefficient": 3.119048451881283,
+          "odds_ratio": 22.624840772491304,
+          "p_value": 0.0010502568874991543,
+          "ci_lower": 1.253387406918532,
+          "ci_upper": 4.984709496844034
+        },
+        {
+          "feature": "gap_trend",
+          "coefficient": 0.7823930840324604,
+          "odds_ratio": 2.1866989634133054,
+          "p_value": 0.08119840484378546,
+          "ci_lower": -0.09699940441504007,
+          "ci_upper": 1.6617855724799608
+        }
+      ]
+    },
+    {
+      "model_name": "donor-churn-drivers",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T08:29:29.601886+00:00",
+      "features": [
+        "recency_days",
+        "gap_trend"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "logistic_regression_explanatory",
+      "feature_list": [
+        "recency_days",
+        "gap_trend"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": null,
+      "f1": null,
+      "roc_auc": null,
+      "classification_report": null,
+      "pseudo_r2": 0.44456968277414677,
+      "n_observations": 51,
+      "coefficients": [
+        {
+          "feature": "recency_days",
+          "coefficient": 3.119048451881283,
+          "odds_ratio": 22.624840772491304,
+          "p_value": 0.0010502568874991543,
+          "ci_lower": 1.253387406918532,
+          "ci_upper": 4.984709496844034
+        },
+        {
+          "feature": "gap_trend",
+          "coefficient": 0.7823930840324604,
+          "odds_ratio": 2.1866989634133054,
+          "p_value": 0.08119840484378546,
+          "ci_lower": -0.09699940441504007,
+          "ci_upper": 1.6617855724799608
+        }
+      ]
     }
   ]
 }

@@ -916,18 +916,18 @@ function MlInsightsTab() {
   const reintDrivers: { feature: string; coefficient: number; p_value: number; label?: string }[] =
     reintPred ? (JSON.parse(reintPred.metadata).top_drivers ?? []) : [];
 
-  // Donor churn drivers
+  // Donor churn drivers — only statistically significant (p < 0.05)
   const donorPred = byModel('donor-churn-drivers')[0];
   const donorDrivers: { feature: string; odds_ratio: number; p_value: number }[] =
-    donorPred ? (JSON.parse(donorPred.metadata).top_drivers ?? []) : [];
+    (donorPred ? (JSON.parse(donorPred.metadata).top_drivers ?? []) : []).filter((d: { p_value: number }) => d.p_value < 0.05);
 
-  // Incident risk drivers
+  // Incident risk drivers — only statistically significant (p < 0.05)
   const incidentPred = byModel('incident-risk-drivers')[0];
   const incidentMeta = incidentPred ? JSON.parse(incidentPred.metadata) : {};
   const selfharmDrivers: { feature: string; coefficient: number; odds_ratio: number; p_value: number }[] =
-    incidentMeta.selfharm_drivers ?? [];
+    (incidentMeta.selfharm_drivers ?? []).filter((d: { p_value: number }) => d.p_value < 0.05);
   const runawayDrivers: { feature: string; coefficient: number; odds_ratio: number; p_value: number }[] =
-    incidentMeta.runaway_drivers ?? [];
+    (incidentMeta.runaway_drivers ?? []).filter((d: { p_value: number }) => d.p_value < 0.05);
 
   // Social media content
   const contentPred = byModel('social-media-content')[0];
@@ -1041,7 +1041,6 @@ function MlInsightsTab() {
               }}>
                 {d.coefficient >= 0 ? '\u2191' : '\u2193'}
               </span>
-              {sigBadge(d.p_value)}
             </div>
           ))}
         </div>
@@ -1067,7 +1066,6 @@ function MlInsightsTab() {
                   ? `${d.odds_ratio.toFixed(1)}x more likely`
                   : `${d.odds_ratio.toFixed(1)}x less likely`}
               </span>
-              {sigBadge(d.p_value)}
             </div>
           ))}
         </div>
@@ -1099,8 +1097,7 @@ function MlInsightsTab() {
                       ? `${d.odds_ratio.toFixed(1)}x more likely`
                       : `${d.odds_ratio.toFixed(1)}x less likely`}
                   </span>
-                  {sigBadge(d.p_value)}
-                </div>
+                    </div>
               ))}
             </>
           )}
@@ -1123,8 +1120,7 @@ function MlInsightsTab() {
                       ? `${d.odds_ratio.toFixed(1)}x more likely`
                       : `${d.odds_ratio.toFixed(1)}x less likely`}
                   </span>
-                  {sigBadge(d.p_value)}
-                </div>
+                    </div>
               ))}
             </>
           )}

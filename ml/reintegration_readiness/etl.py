@@ -51,22 +51,49 @@ def _residents_with_known_outcome(residents: pd.DataFrame) -> pd.DataFrame:
     return residents[residents["reintegration_status"].notna()].copy()
 
 
+def _apply_temporal_cutoff(
+    records: pd.DataFrame,
+    date_col: str,
+    cutoffs: pd.DataFrame,
+) -> pd.DataFrame:
+    """Filter records to only those that occurred before each resident's outcome date.
+
+    cutoffs: DataFrame with columns [resident_id, date_closed].
+    Records for residents without a date_closed are kept as-is.
+    """
+    if records.empty or date_col not in records.columns:
+        return records
+
+    merged = records.merge(cutoffs[["resident_id", "date_closed"]], on="resident_id", how="left")
+    record_dt = pd.to_datetime(merged[date_col], errors="coerce", utc=True)
+    cutoff_dt = pd.to_datetime(merged["date_closed"], errors="coerce", utc=True)
+
+    # Keep records where: no cutoff date, no record date, or record is before cutoff
+    keep = cutoff_dt.isna() | record_dt.isna() | (record_dt < cutoff_dt)
+    return records.loc[keep].copy()
+
+
 def build_training_frame() -> pd.DataFrame:
     """
     Return one-row-per-resident training frame with features + target.
     Filters to residents with known reintegration outcomes only.
+    Applies temporal cutoff: only uses records from before each resident's outcome date
+    to prevent data leakage.
     """
     tables = load_source_tables()
     residents = _residents_with_known_outcome(tables.residents)
     y = build_target(residents).rename("reintegration_complete")
 
+    # Build cutoff lookup for temporal filtering
+    cutoffs = residents[["resident_id", "date_closed"]].copy()
+
     X = build_reintegration_feature_frame(
         residents=residents,
-        health=tables.health,
-        education=tables.education,
-        process_recordings=tables.process_recordings,
-        home_visitations=tables.home_visitations,
-        intervention_plans=tables.intervention_plans,
+        health=_apply_temporal_cutoff(tables.health, "record_date", cutoffs),
+        education=_apply_temporal_cutoff(tables.education, "record_date", cutoffs),
+        process_recordings=_apply_temporal_cutoff(tables.process_recordings, "session_date", cutoffs),
+        home_visitations=_apply_temporal_cutoff(tables.home_visitations, "visit_date", cutoffs),
+        intervention_plans=_apply_temporal_cutoff(tables.intervention_plans, "target_date", cutoffs),
     )
     train_df = X.merge(
         residents[["resident_id"]].assign(reintegration_complete=y.values),

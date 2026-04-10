@@ -10,7 +10,14 @@ set in .env for local development).
 
 import os
 from pathlib import Path
+
+import pandas as pd
 from dotenv import load_dotenv
+
+# ── Data freeze date ──────────────────────────────────────────────────────────
+# The app's data is frozen to this date (see CLAUDE.md rule 9).
+# All feature computation at inference time must use this as "today".
+DATA_FREEZE = pd.Timestamp("2026-02-16")
 
 # ── Project paths ─────────────────────────────────────────────────────────────
 

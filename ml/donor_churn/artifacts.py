@@ -85,7 +85,14 @@ def load_metadata() -> dict:
     return _latest_run()
 
 
-def save_metrics(roc_auc: float, f1: float, accuracy: float, classification_report: dict[str, Any] | None = None) -> dict:
+def save_metrics(
+    roc_auc: float,
+    f1: float,
+    accuracy: float,
+    classification_report: dict[str, Any] | None = None,
+    cv_auc: float | None = None,
+    cv_auc_std: float | None = None,
+) -> dict:
     global _PENDING_METADATA
     now = datetime.now(timezone.utc)
     metrics = {
@@ -95,6 +102,8 @@ def save_metrics(roc_auc: float, f1: float, accuracy: float, classification_repo
         "accuracy": float(accuracy),
         "f1": float(f1),
         "roc_auc": float(roc_auc),
+        "cv_auc": float(cv_auc) if cv_auc is not None else None,
+        "cv_auc_std": float(cv_auc_std) if cv_auc_std is not None else None,
         "classification_report": classification_report,
     }
     if _PENDING_METADATA:

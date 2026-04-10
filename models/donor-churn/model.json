@@ -572,6 +572,592 @@
       "f1": 0.4,
       "roc_auc": 0.6666666666666666,
       "classification_report": null
+    },
+    {
+      "model_name": "donor-churn",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T04:48:27.790301+00:00",
+      "features": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "GaussianNB",
+      "feature_list": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "classification_report": {
+        "0": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 9.0
+        },
+        "1": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 4.0
+        },
+        "accuracy": 1.0,
+        "macro avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        },
+        "weighted avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        }
+      }
+    },
+    {
+      "model_name": "donor-churn",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T04:56:14.605098+00:00",
+      "features": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "GaussianNB",
+      "feature_list": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "cv_auc": 0.9494047619047619,
+      "cv_auc_std": 0.09113171051906968,
+      "classification_report": {
+        "0": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 9.0
+        },
+        "1": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 4.0
+        },
+        "accuracy": 1.0,
+        "macro avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        },
+        "weighted avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        }
+      }
+    },
+    {
+      "model_name": "donor-churn",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T05:37:11.860117+00:00",
+      "features": [
+        "recency_days",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "Naive Bayes",
+      "feature_list": [
+        "recency_days",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "cv_auc": 0.9386904761904763,
+      "cv_auc_std": 0.11249212620468103,
+      "classification_report": null
+    },
+    {
+      "model_name": "donor-churn",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T06:18:47.557347+00:00",
+      "features": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "GaussianNB",
+      "feature_list": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "cv_auc": 0.9494047619047619,
+      "cv_auc_std": 0.09113171051906968,
+      "classification_report": {
+        "0": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 9.0
+        },
+        "1": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 4.0
+        },
+        "accuracy": 1.0,
+        "macro avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        },
+        "weighted avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        }
+      }
+    },
+    {
+      "model_name": "donor-churn",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T06:42:10.611499+00:00",
+      "features": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "GaussianNB",
+      "feature_list": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "cv_auc": 0.9494047619047619,
+      "cv_auc_std": 0.09113171051906968,
+      "classification_report": {
+        "0": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 9.0
+        },
+        "1": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 4.0
+        },
+        "accuracy": 1.0,
+        "macro avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        },
+        "weighted avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        }
+      }
+    },
+    {
+      "model_name": "donor-churn",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T07:04:06.268585+00:00",
+      "features": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "GaussianNB",
+      "feature_list": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "cv_auc": 0.9494047619047619,
+      "cv_auc_std": 0.09113171051906968,
+      "classification_report": {
+        "0": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 9.0
+        },
+        "1": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 4.0
+        },
+        "accuracy": 1.0,
+        "macro avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        },
+        "weighted avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        }
+      }
+    },
+    {
+      "model_name": "donor-churn",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T07:49:12.607845+00:00",
+      "features": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "GaussianNB",
+      "feature_list": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "cv_auc": 0.9494047619047619,
+      "cv_auc_std": 0.09113171051906968,
+      "classification_report": {
+        "0": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 9.0
+        },
+        "1": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 4.0
+        },
+        "accuracy": 1.0,
+        "macro avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        },
+        "weighted avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        }
+      }
+    },
+    {
+      "model_name": "donor-churn",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T08:01:25.579333+00:00",
+      "features": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "GaussianNB",
+      "feature_list": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "cv_auc": 0.9494047619047619,
+      "cv_auc_std": 0.09113171051906968,
+      "classification_report": {
+        "0": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 9.0
+        },
+        "1": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 4.0
+        },
+        "accuracy": 1.0,
+        "macro avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        },
+        "weighted avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        }
+      }
+    },
+    {
+      "model_name": "donor-churn",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T08:15:06.391393+00:00",
+      "features": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "GaussianNB",
+      "feature_list": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "cv_auc": 0.9494047619047619,
+      "cv_auc_std": 0.09113171051906968,
+      "classification_report": {
+        "0": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 9.0
+        },
+        "1": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 4.0
+        },
+        "accuracy": 1.0,
+        "macro avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        },
+        "weighted avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        }
+      }
+    },
+    {
+      "model_name": "donor-churn",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T08:18:20.586069+00:00",
+      "features": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "GaussianNB",
+      "feature_list": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "cv_auc": 0.9494047619047619,
+      "cv_auc_std": 0.09113171051906968,
+      "classification_report": {
+        "0": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 9.0
+        },
+        "1": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 4.0
+        },
+        "accuracy": 1.0,
+        "macro avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        },
+        "weighted avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        }
+      }
+    },
+    {
+      "model_name": "donor-churn",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T08:31:02.682227+00:00",
+      "features": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "num_training_rows": 51,
+      "num_test_rows": 13,
+      "training_date": "20260410",
+      "model_type": "GaussianNB",
+      "feature_list": [
+        "recency_days",
+        "relationship_type_Local",
+        "relationship_type_PartnerOrganization",
+        "relationship_type_Unknown"
+      ],
+      "train_rows": 51,
+      "test_rows": 13,
+      "total_rows": 64,
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "cv_auc": 0.9494047619047619,
+      "cv_auc_std": 0.09113171051906968,
+      "classification_report": {
+        "0": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 9.0
+        },
+        "1": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 4.0
+        },
+        "accuracy": 1.0,
+        "macro avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        },
+        "weighted avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 13.0
+        }
+      }
     }
   ]
 }

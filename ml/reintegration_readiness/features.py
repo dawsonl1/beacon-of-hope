@@ -170,29 +170,24 @@ def engineer_home_visit_features(home_visitations: pd.DataFrame) -> pd.DataFrame
                 "favorable_rate",
                 "family_coop_rate",
                 "safety_concern_rate",
-                "post_placement_visits",
-                "reintegration_assessments",
             ]
         )
 
     df = home_visitations.copy()
     outcome = df.get("visit_outcome", pd.Series(index=df.index, dtype=object)).fillna("").astype(str)
     coop = df.get("family_cooperation_level", pd.Series(index=df.index, dtype=object)).fillna("").astype(str)
-    visit_type = df.get("visit_type", pd.Series(index=df.index, dtype=object)).fillna("").astype(str)
 
     df["is_favorable"] = outcome.eq("Favorable")
     df["is_cooperative"] = coop.isin(COOPERATIVE_LEVELS)
     df["safety_concerns_noted"] = _to_bool_series(df.get("safety_concerns_noted", pd.Series(False, index=df.index)))
-    df["is_post_placement"] = visit_type.eq("Post-Placement Monitoring")
-    df["is_reintegration_assessment"] = visit_type.eq("Reintegration Assessment")
 
+    # post_placement_visits and reintegration_assessments removed:
+    # they are definitionally post-outcome and leak the target.
     out = df.groupby("resident_id", as_index=False).agg(
         total_visits=("resident_id", "size"),
         favorable_rate=("is_favorable", "mean"),
         family_coop_rate=("is_cooperative", "mean"),
         safety_concern_rate=("safety_concerns_noted", "mean"),
-        post_placement_visits=("is_post_placement", "sum"),
-        reintegration_assessments=("is_reintegration_assessment", "sum"),
     )
     return out
 

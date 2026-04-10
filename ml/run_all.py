@@ -43,6 +43,26 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
     logger.info("=== Starting nightly ML pipeline run ===")
 
+    # ── Explanatory pipelines first ────────────────────────────────────────
+    # These must run before predictive inferences that embed their results
+    # (e.g., reintegration readiness infer reads reintegration drivers .sav).
+
+    logger.info("--- Donor Churn Drivers (explanatory) ---")
+    _safe_run("donor-churn-drivers train", train_donor_churn_drivers)
+    _safe_run("donor-churn-drivers infer", infer_donor_churn_drivers)
+
+    logger.info("--- Incident Risk Drivers (explanatory, dual-target) ---")
+    _safe_run("incident-risk-drivers train", train_incident_risk_drivers)
+    _safe_run("incident-risk-drivers infer", infer_incident_risk_drivers)
+
+    logger.info("--- Reintegration Drivers (explanatory) ---")
+    _safe_run("reintegration-drivers train", train_reintegration_drivers)
+    _safe_run("reintegration-drivers infer", infer_reintegration_drivers)
+
+    logger.info("--- Social Media Content (explanatory) ---")
+    _safe_run("social-media-content train", train_social_content)
+    _safe_run("social-media-content infer", infer_social_content)
+
     # ── Predictive pipelines ─────────────────────────────────────────────────
 
     logger.info("--- Donor Churn (predictive) ---")
@@ -60,24 +80,6 @@ def main() -> None:
     logger.info("--- Social Media Timing (predictive) ---")
     _safe_run("social-media-timing train", train_social_timing)
     _safe_run("social-media-timing infer", infer_social_timing)
-
-    # ── Explanatory pipelines ────────────────────────────────────────────────
-
-    logger.info("--- Donor Churn Drivers (explanatory) ---")
-    _safe_run("donor-churn-drivers train", train_donor_churn_drivers)
-    _safe_run("donor-churn-drivers infer", infer_donor_churn_drivers)
-
-    logger.info("--- Incident Risk Drivers (explanatory, dual-target) ---")
-    _safe_run("incident-risk-drivers train", train_incident_risk_drivers)
-    _safe_run("incident-risk-drivers infer", infer_incident_risk_drivers)
-
-    logger.info("--- Reintegration Drivers (explanatory) ---")
-    _safe_run("reintegration-drivers train", train_reintegration_drivers)
-    _safe_run("reintegration-drivers infer", infer_reintegration_drivers)
-
-    logger.info("--- Social Media Content (explanatory) ---")
-    _safe_run("social-media-content train", train_social_content)
-    _safe_run("social-media-content infer", infer_social_content)
 
     logger.info("=== Nightly ML pipeline run complete ===")
 

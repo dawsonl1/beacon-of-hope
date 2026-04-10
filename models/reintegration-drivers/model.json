@@ -1890,6 +1890,2085 @@
           "ci_upper": 0.17979334620062895
         }
       ]
+    },
+    {
+      "model_name": "reintegration-drivers",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T05:34:05.155232+00:00",
+      "features": [
+        "current_risk_num",
+        "risk_reduction",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "psych_checkups",
+        "health_trend",
+        "courses_completed",
+        "pct_concerns",
+        "total_visits",
+        "favorable_rate",
+        "safety_concern_rate",
+        "intervention_achieved_rate",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "training_date": "20260410",
+      "model_type": "OLS (statsmodels) + Logit comparison",
+      "feature_list": [
+        "current_risk_num",
+        "risk_reduction",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "psych_checkups",
+        "health_trend",
+        "courses_completed",
+        "pct_concerns",
+        "total_visits",
+        "favorable_rate",
+        "safety_concern_rate",
+        "intervention_achieved_rate",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected"
+      ],
+      "train_rows": 48,
+      "test_rows": 12,
+      "total_rows": 60,
+      "accuracy": null,
+      "f1": null,
+      "roc_auc": null,
+      "classification_report": null,
+      "adjusted_r2": 0.26381145209163304,
+      "pseudo_r2": 0.5779147329901728,
+      "n_observations": 48,
+      "ols_coefficients": [
+        {
+          "feature": "current_risk_num",
+          "coefficient": -0.007220751694615371,
+          "std_err": 0.06958477468730563,
+          "p_value": 0.9180002032817639,
+          "ci_lower": -0.14896029945234668,
+          "ci_upper": 0.13451879606311595
+        },
+        {
+          "feature": "risk_reduction",
+          "coefficient": 0.0006673587363317454,
+          "std_err": 0.06807475814668741,
+          "p_value": 0.9922390701689837,
+          "ci_lower": -0.13799638598063801,
+          "ci_upper": 0.13933110345330152
+        },
+        {
+          "feature": "trauma_severity_score",
+          "coefficient": 0.15188242054677592,
+          "std_err": 0.07536723581848499,
+          "p_value": 0.052345205227868105,
+          "ci_lower": -0.0016356150963166283,
+          "ci_upper": 0.30540045618986844
+        },
+        {
+          "feature": "family_vulnerability_score",
+          "coefficient": -0.02881658945250245,
+          "std_err": 0.06919215892151087,
+          "p_value": 0.6798450631538318,
+          "ci_lower": -0.1697564050657183,
+          "ci_upper": 0.11212322616071338
+        },
+        {
+          "feature": "psych_checkups",
+          "coefficient": 0.10614253126158066,
+          "std_err": 0.06761532128842287,
+          "p_value": 0.1262983279800031,
+          "ci_lower": -0.031585371199575524,
+          "ci_upper": 0.24387043372273684
+        },
+        {
+          "feature": "health_trend",
+          "coefficient": -0.01751767409062706,
+          "std_err": 0.06733543598750956,
+          "p_value": 0.7964106399562656,
+          "ci_lower": -0.15467546885000855,
+          "ci_upper": 0.11964012066875444
+        },
+        {
+          "feature": "courses_completed",
+          "coefficient": -0.18411994829335873,
+          "std_err": 0.06772058977406033,
+          "p_value": 0.010493463955231116,
+          "ci_lower": -0.3220622756429254,
+          "ci_upper": -0.046177620943792075
+        },
+        {
+          "feature": "pct_concerns",
+          "coefficient": 0.0605671837027282,
+          "std_err": 0.06906708593560847,
+          "p_value": 0.38705940470568817,
+          "ci_lower": -0.08011786657513689,
+          "ci_upper": 0.2012522339805933
+        },
+        {
+          "feature": "total_visits",
+          "coefficient": 0.03544086841720695,
+          "std_err": 0.07017568483437783,
+          "p_value": 0.6169980011617583,
+          "ci_lower": -0.10750232392208464,
+          "ci_upper": 0.17838406075649854
+        },
+        {
+          "feature": "favorable_rate",
+          "coefficient": 0.01944157830594717,
+          "std_err": 0.0657023331176453,
+          "p_value": 0.7692152459224768,
+          "ci_lower": -0.11438969476450742,
+          "ci_upper": 0.15327285137640176
+        },
+        {
+          "feature": "safety_concern_rate",
+          "coefficient": -0.04125217961026229,
+          "std_err": 0.06557372866424084,
+          "p_value": 0.5337517316538473,
+          "ci_lower": -0.17482149398145988,
+          "ci_upper": 0.09231713476093531
+        },
+        {
+          "feature": "intervention_achieved_rate",
+          "coefficient": -0.11328633294040386,
+          "std_err": 0.06020272590517492,
+          "p_value": 0.06899329952311524,
+          "ci_lower": -0.23591527270384388,
+          "ci_upper": 0.00934260682303617
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -0.06954785860023065,
+          "std_err": 0.07077992228701835,
+          "p_value": 0.3331789484053868,
+          "ci_lower": -0.21372184235417307,
+          "ci_upper": 0.0746261251537118
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -0.14668716769426302,
+          "std_err": 0.07267354824800758,
+          "p_value": 0.051992555106113406,
+          "ci_lower": -0.2947183413081861,
+          "ci_upper": 0.0013440059196600795
+        },
+        {
+          "feature": "case_category_Neglected",
+          "coefficient": -0.06192132671818712,
+          "std_err": 0.07685011825248438,
+          "p_value": 0.42633915070407347,
+          "ci_lower": -0.2184598950355243,
+          "ci_upper": 0.09461724159915005
+        }
+      ],
+      "logit_coefficients": [
+        {
+          "feature": "current_risk_num",
+          "coefficient": 0.18419028019619665,
+          "std_err": 0.6530914138184567,
+          "p_value": 0.777921788148531,
+          "ci_lower": -1.095845369500323,
+          "ci_upper": 1.4642259298927165
+        },
+        {
+          "feature": "risk_reduction",
+          "coefficient": -0.37527369512063624,
+          "std_err": 0.9767032254331501,
+          "p_value": 0.7008117676156238,
+          "ci_lower": -2.289576840553716,
+          "ci_upper": 1.5390294503124435
+        },
+        {
+          "feature": "trauma_severity_score",
+          "coefficient": 3.5664231059492155,
+          "std_err": 2.1985940163500786,
+          "p_value": 0.10477378331023399,
+          "ci_lower": -0.742741982722205,
+          "ci_upper": 7.8755881946206365
+        },
+        {
+          "feature": "family_vulnerability_score",
+          "coefficient": 0.4172215740228717,
+          "std_err": 1.0257589909627067,
+          "p_value": 0.6841958350095345,
+          "ci_lower": -1.59322910508218,
+          "ci_upper": 2.4276722531279233
+        },
+        {
+          "feature": "psych_checkups",
+          "coefficient": 2.500562783446346,
+          "std_err": 1.62094567105252,
+          "p_value": 0.12291408047984725,
+          "ci_lower": -0.6764323527127032,
+          "ci_upper": 5.677557919605395
+        },
+        {
+          "feature": "health_trend",
+          "coefficient": -0.31794176059596074,
+          "std_err": 0.9344652090555138,
+          "p_value": 0.7336763471439869,
+          "ci_lower": -2.14945991515046,
+          "ci_upper": 1.5135763939585387
+        },
+        {
+          "feature": "courses_completed",
+          "coefficient": -3.055210386025245,
+          "std_err": 1.731083714171872,
+          "p_value": 0.0775785599040829,
+          "ci_lower": -6.448072120025943,
+          "ci_upper": 0.3376513479754535
+        },
+        {
+          "feature": "pct_concerns",
+          "coefficient": 2.0008315534238728,
+          "std_err": 1.5252686665716226,
+          "p_value": 0.18959113948279893,
+          "ci_lower": -0.98864009980394,
+          "ci_upper": 4.990303206651685
+        },
+        {
+          "feature": "total_visits",
+          "coefficient": 0.9482246098999877,
+          "std_err": 0.9311581966948901,
+          "p_value": 0.30852203181408056,
+          "ci_lower": -0.8768119195312604,
+          "ci_upper": 2.7732611393312356
+        },
+        {
+          "feature": "favorable_rate",
+          "coefficient": 0.43459517859630575,
+          "std_err": 0.5933847361179339,
+          "p_value": 0.46392425532719583,
+          "ci_lower": -0.7284175331706484,
+          "ci_upper": 1.59760789036326
+        },
+        {
+          "feature": "safety_concern_rate",
+          "coefficient": -0.5723580417795263,
+          "std_err": 0.9604343938316962,
+          "p_value": 0.5512175575233007,
+          "ci_lower": -2.454774863203209,
+          "ci_upper": 1.3100587796441565
+        },
+        {
+          "feature": "intervention_achieved_rate",
+          "coefficient": -3.1365899398607087,
+          "std_err": 1.9236131181649576,
+          "p_value": 0.10298063381782856,
+          "ci_lower": -6.906802371652817,
+          "ci_upper": 0.6336224919313995
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -1.1430101009444138,
+          "std_err": 1.0907773568080346,
+          "p_value": 0.2946912263187559,
+          "ci_lower": -3.280894435439958,
+          "ci_upper": 0.99487423355113
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -1.943214883505337,
+          "std_err": 1.1224160477404919,
+          "p_value": 0.08340208641083124,
+          "ci_lower": -4.143109912746491,
+          "ci_upper": 0.256680145735817
+        },
+        {
+          "feature": "case_category_Neglected",
+          "coefficient": 0.06921953646348064,
+          "std_err": 0.7955912030568999,
+          "p_value": 0.9306684131207191,
+          "ci_lower": -1.490110567944936,
+          "ci_upper": 1.6285496408718974
+        }
+      ]
+    },
+    {
+      "model_name": "reintegration-drivers",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T06:27:25.072474+00:00",
+      "features": [
+        "current_risk_num",
+        "risk_reduction",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "psych_checkups",
+        "health_trend",
+        "courses_completed",
+        "pct_concerns",
+        "total_visits",
+        "favorable_rate",
+        "safety_concern_rate",
+        "intervention_achieved_rate",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "training_date": "20260410",
+      "model_type": "OLS_explanatory",
+      "feature_list": [
+        "current_risk_num",
+        "risk_reduction",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "psych_checkups",
+        "health_trend",
+        "courses_completed",
+        "pct_concerns",
+        "total_visits",
+        "favorable_rate",
+        "safety_concern_rate",
+        "intervention_achieved_rate",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected"
+      ],
+      "train_rows": 48,
+      "test_rows": 12,
+      "total_rows": 60,
+      "accuracy": null,
+      "f1": null,
+      "roc_auc": null,
+      "classification_report": null,
+      "adjusted_r2": 0.26381145209163304,
+      "pseudo_r2": 0.5779147329901728,
+      "n_observations": 48,
+      "ols_coefficients": [
+        {
+          "feature": "current_risk_num",
+          "coefficient": -0.007220751694615371,
+          "std_err": 0.06958477468730563,
+          "p_value": 0.9180002032817639,
+          "ci_lower": -0.14896029945234668,
+          "ci_upper": 0.13451879606311595
+        },
+        {
+          "feature": "risk_reduction",
+          "coefficient": 0.0006673587363317454,
+          "std_err": 0.06807475814668741,
+          "p_value": 0.9922390701689837,
+          "ci_lower": -0.13799638598063801,
+          "ci_upper": 0.13933110345330152
+        },
+        {
+          "feature": "trauma_severity_score",
+          "coefficient": 0.15188242054677592,
+          "std_err": 0.07536723581848499,
+          "p_value": 0.052345205227868105,
+          "ci_lower": -0.0016356150963166283,
+          "ci_upper": 0.30540045618986844
+        },
+        {
+          "feature": "family_vulnerability_score",
+          "coefficient": -0.02881658945250245,
+          "std_err": 0.06919215892151087,
+          "p_value": 0.6798450631538318,
+          "ci_lower": -0.1697564050657183,
+          "ci_upper": 0.11212322616071338
+        },
+        {
+          "feature": "psych_checkups",
+          "coefficient": 0.10614253126158066,
+          "std_err": 0.06761532128842287,
+          "p_value": 0.1262983279800031,
+          "ci_lower": -0.031585371199575524,
+          "ci_upper": 0.24387043372273684
+        },
+        {
+          "feature": "health_trend",
+          "coefficient": -0.01751767409062706,
+          "std_err": 0.06733543598750956,
+          "p_value": 0.7964106399562656,
+          "ci_lower": -0.15467546885000855,
+          "ci_upper": 0.11964012066875444
+        },
+        {
+          "feature": "courses_completed",
+          "coefficient": -0.18411994829335873,
+          "std_err": 0.06772058977406033,
+          "p_value": 0.010493463955231116,
+          "ci_lower": -0.3220622756429254,
+          "ci_upper": -0.046177620943792075
+        },
+        {
+          "feature": "pct_concerns",
+          "coefficient": 0.0605671837027282,
+          "std_err": 0.06906708593560847,
+          "p_value": 0.38705940470568817,
+          "ci_lower": -0.08011786657513689,
+          "ci_upper": 0.2012522339805933
+        },
+        {
+          "feature": "total_visits",
+          "coefficient": 0.03544086841720695,
+          "std_err": 0.07017568483437783,
+          "p_value": 0.6169980011617583,
+          "ci_lower": -0.10750232392208464,
+          "ci_upper": 0.17838406075649854
+        },
+        {
+          "feature": "favorable_rate",
+          "coefficient": 0.01944157830594717,
+          "std_err": 0.0657023331176453,
+          "p_value": 0.7692152459224768,
+          "ci_lower": -0.11438969476450742,
+          "ci_upper": 0.15327285137640176
+        },
+        {
+          "feature": "safety_concern_rate",
+          "coefficient": -0.04125217961026229,
+          "std_err": 0.06557372866424084,
+          "p_value": 0.5337517316538473,
+          "ci_lower": -0.17482149398145988,
+          "ci_upper": 0.09231713476093531
+        },
+        {
+          "feature": "intervention_achieved_rate",
+          "coefficient": -0.11328633294040386,
+          "std_err": 0.06020272590517492,
+          "p_value": 0.06899329952311524,
+          "ci_lower": -0.23591527270384388,
+          "ci_upper": 0.00934260682303617
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -0.06954785860023065,
+          "std_err": 0.07077992228701835,
+          "p_value": 0.3331789484053868,
+          "ci_lower": -0.21372184235417307,
+          "ci_upper": 0.0746261251537118
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -0.14668716769426302,
+          "std_err": 0.07267354824800758,
+          "p_value": 0.051992555106113406,
+          "ci_lower": -0.2947183413081861,
+          "ci_upper": 0.0013440059196600795
+        },
+        {
+          "feature": "case_category_Neglected",
+          "coefficient": -0.06192132671818712,
+          "std_err": 0.07685011825248438,
+          "p_value": 0.42633915070407347,
+          "ci_lower": -0.2184598950355243,
+          "ci_upper": 0.09461724159915005
+        }
+      ],
+      "logit_coefficients": [
+        {
+          "feature": "current_risk_num",
+          "coefficient": 0.18419028019619665,
+          "std_err": 0.6530914138184567,
+          "p_value": 0.777921788148531,
+          "ci_lower": -1.095845369500323,
+          "ci_upper": 1.4642259298927165
+        },
+        {
+          "feature": "risk_reduction",
+          "coefficient": -0.37527369512063624,
+          "std_err": 0.9767032254331501,
+          "p_value": 0.7008117676156238,
+          "ci_lower": -2.289576840553716,
+          "ci_upper": 1.5390294503124435
+        },
+        {
+          "feature": "trauma_severity_score",
+          "coefficient": 3.5664231059492155,
+          "std_err": 2.1985940163500786,
+          "p_value": 0.10477378331023399,
+          "ci_lower": -0.742741982722205,
+          "ci_upper": 7.8755881946206365
+        },
+        {
+          "feature": "family_vulnerability_score",
+          "coefficient": 0.4172215740228717,
+          "std_err": 1.0257589909627067,
+          "p_value": 0.6841958350095345,
+          "ci_lower": -1.59322910508218,
+          "ci_upper": 2.4276722531279233
+        },
+        {
+          "feature": "psych_checkups",
+          "coefficient": 2.500562783446346,
+          "std_err": 1.62094567105252,
+          "p_value": 0.12291408047984725,
+          "ci_lower": -0.6764323527127032,
+          "ci_upper": 5.677557919605395
+        },
+        {
+          "feature": "health_trend",
+          "coefficient": -0.31794176059596074,
+          "std_err": 0.9344652090555138,
+          "p_value": 0.7336763471439869,
+          "ci_lower": -2.14945991515046,
+          "ci_upper": 1.5135763939585387
+        },
+        {
+          "feature": "courses_completed",
+          "coefficient": -3.055210386025245,
+          "std_err": 1.731083714171872,
+          "p_value": 0.0775785599040829,
+          "ci_lower": -6.448072120025943,
+          "ci_upper": 0.3376513479754535
+        },
+        {
+          "feature": "pct_concerns",
+          "coefficient": 2.0008315534238728,
+          "std_err": 1.5252686665716226,
+          "p_value": 0.18959113948279893,
+          "ci_lower": -0.98864009980394,
+          "ci_upper": 4.990303206651685
+        },
+        {
+          "feature": "total_visits",
+          "coefficient": 0.9482246098999877,
+          "std_err": 0.9311581966948901,
+          "p_value": 0.30852203181408056,
+          "ci_lower": -0.8768119195312604,
+          "ci_upper": 2.7732611393312356
+        },
+        {
+          "feature": "favorable_rate",
+          "coefficient": 0.43459517859630575,
+          "std_err": 0.5933847361179339,
+          "p_value": 0.46392425532719583,
+          "ci_lower": -0.7284175331706484,
+          "ci_upper": 1.59760789036326
+        },
+        {
+          "feature": "safety_concern_rate",
+          "coefficient": -0.5723580417795263,
+          "std_err": 0.9604343938316962,
+          "p_value": 0.5512175575233007,
+          "ci_lower": -2.454774863203209,
+          "ci_upper": 1.3100587796441565
+        },
+        {
+          "feature": "intervention_achieved_rate",
+          "coefficient": -3.1365899398607087,
+          "std_err": 1.9236131181649576,
+          "p_value": 0.10298063381782856,
+          "ci_lower": -6.906802371652817,
+          "ci_upper": 0.6336224919313995
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -1.1430101009444138,
+          "std_err": 1.0907773568080346,
+          "p_value": 0.2946912263187559,
+          "ci_lower": -3.280894435439958,
+          "ci_upper": 0.99487423355113
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -1.943214883505337,
+          "std_err": 1.1224160477404919,
+          "p_value": 0.08340208641083124,
+          "ci_lower": -4.143109912746491,
+          "ci_upper": 0.256680145735817
+        },
+        {
+          "feature": "case_category_Neglected",
+          "coefficient": 0.06921953646348064,
+          "std_err": 0.7955912030568999,
+          "p_value": 0.9306684131207191,
+          "ci_lower": -1.490110567944936,
+          "ci_upper": 1.6285496408718974
+        }
+      ]
+    },
+    {
+      "model_name": "reintegration-drivers",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T06:53:02.453646+00:00",
+      "features": [
+        "current_risk_num",
+        "risk_reduction",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "psych_checkups",
+        "health_trend",
+        "courses_completed",
+        "pct_concerns",
+        "total_visits",
+        "favorable_rate",
+        "safety_concern_rate",
+        "intervention_achieved_rate",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "training_date": "20260410",
+      "model_type": "OLS_explanatory",
+      "feature_list": [
+        "current_risk_num",
+        "risk_reduction",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "psych_checkups",
+        "health_trend",
+        "courses_completed",
+        "pct_concerns",
+        "total_visits",
+        "favorable_rate",
+        "safety_concern_rate",
+        "intervention_achieved_rate",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected"
+      ],
+      "train_rows": 48,
+      "test_rows": 12,
+      "total_rows": 60,
+      "accuracy": null,
+      "f1": null,
+      "roc_auc": null,
+      "classification_report": null,
+      "adjusted_r2": 0.26381145209163304,
+      "pseudo_r2": 0.5779147329901728,
+      "n_observations": 48,
+      "ols_coefficients": [
+        {
+          "feature": "current_risk_num",
+          "coefficient": -0.007220751694615371,
+          "std_err": 0.06958477468730563,
+          "p_value": 0.9180002032817639,
+          "ci_lower": -0.14896029945234668,
+          "ci_upper": 0.13451879606311595
+        },
+        {
+          "feature": "risk_reduction",
+          "coefficient": 0.0006673587363317454,
+          "std_err": 0.06807475814668741,
+          "p_value": 0.9922390701689837,
+          "ci_lower": -0.13799638598063801,
+          "ci_upper": 0.13933110345330152
+        },
+        {
+          "feature": "trauma_severity_score",
+          "coefficient": 0.15188242054677592,
+          "std_err": 0.07536723581848499,
+          "p_value": 0.052345205227868105,
+          "ci_lower": -0.0016356150963166283,
+          "ci_upper": 0.30540045618986844
+        },
+        {
+          "feature": "family_vulnerability_score",
+          "coefficient": -0.02881658945250245,
+          "std_err": 0.06919215892151087,
+          "p_value": 0.6798450631538318,
+          "ci_lower": -0.1697564050657183,
+          "ci_upper": 0.11212322616071338
+        },
+        {
+          "feature": "psych_checkups",
+          "coefficient": 0.10614253126158066,
+          "std_err": 0.06761532128842287,
+          "p_value": 0.1262983279800031,
+          "ci_lower": -0.031585371199575524,
+          "ci_upper": 0.24387043372273684
+        },
+        {
+          "feature": "health_trend",
+          "coefficient": -0.01751767409062706,
+          "std_err": 0.06733543598750956,
+          "p_value": 0.7964106399562656,
+          "ci_lower": -0.15467546885000855,
+          "ci_upper": 0.11964012066875444
+        },
+        {
+          "feature": "courses_completed",
+          "coefficient": -0.18411994829335873,
+          "std_err": 0.06772058977406033,
+          "p_value": 0.010493463955231116,
+          "ci_lower": -0.3220622756429254,
+          "ci_upper": -0.046177620943792075
+        },
+        {
+          "feature": "pct_concerns",
+          "coefficient": 0.0605671837027282,
+          "std_err": 0.06906708593560847,
+          "p_value": 0.38705940470568817,
+          "ci_lower": -0.08011786657513689,
+          "ci_upper": 0.2012522339805933
+        },
+        {
+          "feature": "total_visits",
+          "coefficient": 0.03544086841720695,
+          "std_err": 0.07017568483437783,
+          "p_value": 0.6169980011617583,
+          "ci_lower": -0.10750232392208464,
+          "ci_upper": 0.17838406075649854
+        },
+        {
+          "feature": "favorable_rate",
+          "coefficient": 0.01944157830594717,
+          "std_err": 0.0657023331176453,
+          "p_value": 0.7692152459224768,
+          "ci_lower": -0.11438969476450742,
+          "ci_upper": 0.15327285137640176
+        },
+        {
+          "feature": "safety_concern_rate",
+          "coefficient": -0.04125217961026229,
+          "std_err": 0.06557372866424084,
+          "p_value": 0.5337517316538473,
+          "ci_lower": -0.17482149398145988,
+          "ci_upper": 0.09231713476093531
+        },
+        {
+          "feature": "intervention_achieved_rate",
+          "coefficient": -0.11328633294040386,
+          "std_err": 0.06020272590517492,
+          "p_value": 0.06899329952311524,
+          "ci_lower": -0.23591527270384388,
+          "ci_upper": 0.00934260682303617
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -0.06954785860023065,
+          "std_err": 0.07077992228701835,
+          "p_value": 0.3331789484053868,
+          "ci_lower": -0.21372184235417307,
+          "ci_upper": 0.0746261251537118
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -0.14668716769426302,
+          "std_err": 0.07267354824800758,
+          "p_value": 0.051992555106113406,
+          "ci_lower": -0.2947183413081861,
+          "ci_upper": 0.0013440059196600795
+        },
+        {
+          "feature": "case_category_Neglected",
+          "coefficient": -0.06192132671818712,
+          "std_err": 0.07685011825248438,
+          "p_value": 0.42633915070407347,
+          "ci_lower": -0.2184598950355243,
+          "ci_upper": 0.09461724159915005
+        }
+      ],
+      "logit_coefficients": [
+        {
+          "feature": "current_risk_num",
+          "coefficient": 0.18419028019619665,
+          "std_err": 0.6530914138184567,
+          "p_value": 0.777921788148531,
+          "ci_lower": -1.095845369500323,
+          "ci_upper": 1.4642259298927165
+        },
+        {
+          "feature": "risk_reduction",
+          "coefficient": -0.37527369512063624,
+          "std_err": 0.9767032254331501,
+          "p_value": 0.7008117676156238,
+          "ci_lower": -2.289576840553716,
+          "ci_upper": 1.5390294503124435
+        },
+        {
+          "feature": "trauma_severity_score",
+          "coefficient": 3.5664231059492155,
+          "std_err": 2.1985940163500786,
+          "p_value": 0.10477378331023399,
+          "ci_lower": -0.742741982722205,
+          "ci_upper": 7.8755881946206365
+        },
+        {
+          "feature": "family_vulnerability_score",
+          "coefficient": 0.4172215740228717,
+          "std_err": 1.0257589909627067,
+          "p_value": 0.6841958350095345,
+          "ci_lower": -1.59322910508218,
+          "ci_upper": 2.4276722531279233
+        },
+        {
+          "feature": "psych_checkups",
+          "coefficient": 2.500562783446346,
+          "std_err": 1.62094567105252,
+          "p_value": 0.12291408047984725,
+          "ci_lower": -0.6764323527127032,
+          "ci_upper": 5.677557919605395
+        },
+        {
+          "feature": "health_trend",
+          "coefficient": -0.31794176059596074,
+          "std_err": 0.9344652090555138,
+          "p_value": 0.7336763471439869,
+          "ci_lower": -2.14945991515046,
+          "ci_upper": 1.5135763939585387
+        },
+        {
+          "feature": "courses_completed",
+          "coefficient": -3.055210386025245,
+          "std_err": 1.731083714171872,
+          "p_value": 0.0775785599040829,
+          "ci_lower": -6.448072120025943,
+          "ci_upper": 0.3376513479754535
+        },
+        {
+          "feature": "pct_concerns",
+          "coefficient": 2.0008315534238728,
+          "std_err": 1.5252686665716226,
+          "p_value": 0.18959113948279893,
+          "ci_lower": -0.98864009980394,
+          "ci_upper": 4.990303206651685
+        },
+        {
+          "feature": "total_visits",
+          "coefficient": 0.9482246098999877,
+          "std_err": 0.9311581966948901,
+          "p_value": 0.30852203181408056,
+          "ci_lower": -0.8768119195312604,
+          "ci_upper": 2.7732611393312356
+        },
+        {
+          "feature": "favorable_rate",
+          "coefficient": 0.43459517859630575,
+          "std_err": 0.5933847361179339,
+          "p_value": 0.46392425532719583,
+          "ci_lower": -0.7284175331706484,
+          "ci_upper": 1.59760789036326
+        },
+        {
+          "feature": "safety_concern_rate",
+          "coefficient": -0.5723580417795263,
+          "std_err": 0.9604343938316962,
+          "p_value": 0.5512175575233007,
+          "ci_lower": -2.454774863203209,
+          "ci_upper": 1.3100587796441565
+        },
+        {
+          "feature": "intervention_achieved_rate",
+          "coefficient": -3.1365899398607087,
+          "std_err": 1.9236131181649576,
+          "p_value": 0.10298063381782856,
+          "ci_lower": -6.906802371652817,
+          "ci_upper": 0.6336224919313995
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -1.1430101009444138,
+          "std_err": 1.0907773568080346,
+          "p_value": 0.2946912263187559,
+          "ci_lower": -3.280894435439958,
+          "ci_upper": 0.99487423355113
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -1.943214883505337,
+          "std_err": 1.1224160477404919,
+          "p_value": 0.08340208641083124,
+          "ci_lower": -4.143109912746491,
+          "ci_upper": 0.256680145735817
+        },
+        {
+          "feature": "case_category_Neglected",
+          "coefficient": 0.06921953646348064,
+          "std_err": 0.7955912030568999,
+          "p_value": 0.9306684131207191,
+          "ci_lower": -1.490110567944936,
+          "ci_upper": 1.6285496408718974
+        }
+      ]
+    },
+    {
+      "model_name": "reintegration-drivers",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T08:00:03.456630+00:00",
+      "features": [
+        "current_risk_num",
+        "risk_reduction",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "psych_checkups",
+        "health_trend",
+        "courses_completed",
+        "pct_concerns",
+        "total_visits",
+        "favorable_rate",
+        "safety_concern_rate",
+        "intervention_achieved_rate",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "training_date": "20260410",
+      "model_type": "OLS_explanatory",
+      "feature_list": [
+        "current_risk_num",
+        "risk_reduction",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "psych_checkups",
+        "health_trend",
+        "courses_completed",
+        "pct_concerns",
+        "total_visits",
+        "favorable_rate",
+        "safety_concern_rate",
+        "intervention_achieved_rate",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected"
+      ],
+      "train_rows": 48,
+      "test_rows": 12,
+      "total_rows": 60,
+      "accuracy": null,
+      "f1": null,
+      "roc_auc": null,
+      "classification_report": null,
+      "adjusted_r2": 0.26381145209163304,
+      "pseudo_r2": 0.5779147329901728,
+      "n_observations": 48,
+      "ols_coefficients": [
+        {
+          "feature": "current_risk_num",
+          "coefficient": -0.007220751694615371,
+          "std_err": 0.06958477468730563,
+          "p_value": 0.9180002032817639,
+          "ci_lower": -0.14896029945234668,
+          "ci_upper": 0.13451879606311595
+        },
+        {
+          "feature": "risk_reduction",
+          "coefficient": 0.0006673587363317454,
+          "std_err": 0.06807475814668741,
+          "p_value": 0.9922390701689837,
+          "ci_lower": -0.13799638598063801,
+          "ci_upper": 0.13933110345330152
+        },
+        {
+          "feature": "trauma_severity_score",
+          "coefficient": 0.15188242054677592,
+          "std_err": 0.07536723581848499,
+          "p_value": 0.052345205227868105,
+          "ci_lower": -0.0016356150963166283,
+          "ci_upper": 0.30540045618986844
+        },
+        {
+          "feature": "family_vulnerability_score",
+          "coefficient": -0.02881658945250245,
+          "std_err": 0.06919215892151087,
+          "p_value": 0.6798450631538318,
+          "ci_lower": -0.1697564050657183,
+          "ci_upper": 0.11212322616071338
+        },
+        {
+          "feature": "psych_checkups",
+          "coefficient": 0.10614253126158066,
+          "std_err": 0.06761532128842287,
+          "p_value": 0.1262983279800031,
+          "ci_lower": -0.031585371199575524,
+          "ci_upper": 0.24387043372273684
+        },
+        {
+          "feature": "health_trend",
+          "coefficient": -0.01751767409062706,
+          "std_err": 0.06733543598750956,
+          "p_value": 0.7964106399562656,
+          "ci_lower": -0.15467546885000855,
+          "ci_upper": 0.11964012066875444
+        },
+        {
+          "feature": "courses_completed",
+          "coefficient": -0.18411994829335873,
+          "std_err": 0.06772058977406033,
+          "p_value": 0.010493463955231116,
+          "ci_lower": -0.3220622756429254,
+          "ci_upper": -0.046177620943792075
+        },
+        {
+          "feature": "pct_concerns",
+          "coefficient": 0.0605671837027282,
+          "std_err": 0.06906708593560847,
+          "p_value": 0.38705940470568817,
+          "ci_lower": -0.08011786657513689,
+          "ci_upper": 0.2012522339805933
+        },
+        {
+          "feature": "total_visits",
+          "coefficient": 0.03544086841720695,
+          "std_err": 0.07017568483437783,
+          "p_value": 0.6169980011617583,
+          "ci_lower": -0.10750232392208464,
+          "ci_upper": 0.17838406075649854
+        },
+        {
+          "feature": "favorable_rate",
+          "coefficient": 0.01944157830594717,
+          "std_err": 0.0657023331176453,
+          "p_value": 0.7692152459224768,
+          "ci_lower": -0.11438969476450742,
+          "ci_upper": 0.15327285137640176
+        },
+        {
+          "feature": "safety_concern_rate",
+          "coefficient": -0.04125217961026229,
+          "std_err": 0.06557372866424084,
+          "p_value": 0.5337517316538473,
+          "ci_lower": -0.17482149398145988,
+          "ci_upper": 0.09231713476093531
+        },
+        {
+          "feature": "intervention_achieved_rate",
+          "coefficient": -0.11328633294040386,
+          "std_err": 0.06020272590517492,
+          "p_value": 0.06899329952311524,
+          "ci_lower": -0.23591527270384388,
+          "ci_upper": 0.00934260682303617
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -0.06954785860023065,
+          "std_err": 0.07077992228701835,
+          "p_value": 0.3331789484053868,
+          "ci_lower": -0.21372184235417307,
+          "ci_upper": 0.0746261251537118
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -0.14668716769426302,
+          "std_err": 0.07267354824800758,
+          "p_value": 0.051992555106113406,
+          "ci_lower": -0.2947183413081861,
+          "ci_upper": 0.0013440059196600795
+        },
+        {
+          "feature": "case_category_Neglected",
+          "coefficient": -0.06192132671818712,
+          "std_err": 0.07685011825248438,
+          "p_value": 0.42633915070407347,
+          "ci_lower": -0.2184598950355243,
+          "ci_upper": 0.09461724159915005
+        }
+      ],
+      "logit_coefficients": [
+        {
+          "feature": "current_risk_num",
+          "coefficient": 0.18419028019619665,
+          "std_err": 0.6530914138184567,
+          "p_value": 0.777921788148531,
+          "ci_lower": -1.095845369500323,
+          "ci_upper": 1.4642259298927165
+        },
+        {
+          "feature": "risk_reduction",
+          "coefficient": -0.37527369512063624,
+          "std_err": 0.9767032254331501,
+          "p_value": 0.7008117676156238,
+          "ci_lower": -2.289576840553716,
+          "ci_upper": 1.5390294503124435
+        },
+        {
+          "feature": "trauma_severity_score",
+          "coefficient": 3.5664231059492155,
+          "std_err": 2.1985940163500786,
+          "p_value": 0.10477378331023399,
+          "ci_lower": -0.742741982722205,
+          "ci_upper": 7.8755881946206365
+        },
+        {
+          "feature": "family_vulnerability_score",
+          "coefficient": 0.4172215740228717,
+          "std_err": 1.0257589909627067,
+          "p_value": 0.6841958350095345,
+          "ci_lower": -1.59322910508218,
+          "ci_upper": 2.4276722531279233
+        },
+        {
+          "feature": "psych_checkups",
+          "coefficient": 2.500562783446346,
+          "std_err": 1.62094567105252,
+          "p_value": 0.12291408047984725,
+          "ci_lower": -0.6764323527127032,
+          "ci_upper": 5.677557919605395
+        },
+        {
+          "feature": "health_trend",
+          "coefficient": -0.31794176059596074,
+          "std_err": 0.9344652090555138,
+          "p_value": 0.7336763471439869,
+          "ci_lower": -2.14945991515046,
+          "ci_upper": 1.5135763939585387
+        },
+        {
+          "feature": "courses_completed",
+          "coefficient": -3.055210386025245,
+          "std_err": 1.731083714171872,
+          "p_value": 0.0775785599040829,
+          "ci_lower": -6.448072120025943,
+          "ci_upper": 0.3376513479754535
+        },
+        {
+          "feature": "pct_concerns",
+          "coefficient": 2.0008315534238728,
+          "std_err": 1.5252686665716226,
+          "p_value": 0.18959113948279893,
+          "ci_lower": -0.98864009980394,
+          "ci_upper": 4.990303206651685
+        },
+        {
+          "feature": "total_visits",
+          "coefficient": 0.9482246098999877,
+          "std_err": 0.9311581966948901,
+          "p_value": 0.30852203181408056,
+          "ci_lower": -0.8768119195312604,
+          "ci_upper": 2.7732611393312356
+        },
+        {
+          "feature": "favorable_rate",
+          "coefficient": 0.43459517859630575,
+          "std_err": 0.5933847361179339,
+          "p_value": 0.46392425532719583,
+          "ci_lower": -0.7284175331706484,
+          "ci_upper": 1.59760789036326
+        },
+        {
+          "feature": "safety_concern_rate",
+          "coefficient": -0.5723580417795263,
+          "std_err": 0.9604343938316962,
+          "p_value": 0.5512175575233007,
+          "ci_lower": -2.454774863203209,
+          "ci_upper": 1.3100587796441565
+        },
+        {
+          "feature": "intervention_achieved_rate",
+          "coefficient": -3.1365899398607087,
+          "std_err": 1.9236131181649576,
+          "p_value": 0.10298063381782856,
+          "ci_lower": -6.906802371652817,
+          "ci_upper": 0.6336224919313995
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -1.1430101009444138,
+          "std_err": 1.0907773568080346,
+          "p_value": 0.2946912263187559,
+          "ci_lower": -3.280894435439958,
+          "ci_upper": 0.99487423355113
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -1.943214883505337,
+          "std_err": 1.1224160477404919,
+          "p_value": 0.08340208641083124,
+          "ci_lower": -4.143109912746491,
+          "ci_upper": 0.256680145735817
+        },
+        {
+          "feature": "case_category_Neglected",
+          "coefficient": 0.06921953646348064,
+          "std_err": 0.7955912030568999,
+          "p_value": 0.9306684131207191,
+          "ci_lower": -1.490110567944936,
+          "ci_upper": 1.6285496408718974
+        }
+      ]
+    },
+    {
+      "model_name": "reintegration-drivers",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T08:16:46.900935+00:00",
+      "features": [
+        "current_risk_num",
+        "risk_reduction",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "psych_checkups",
+        "health_trend",
+        "courses_completed",
+        "pct_concerns",
+        "total_visits",
+        "favorable_rate",
+        "safety_concern_rate",
+        "intervention_achieved_rate",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "training_date": "20260410",
+      "model_type": "OLS_explanatory",
+      "feature_list": [
+        "current_risk_num",
+        "risk_reduction",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "psych_checkups",
+        "health_trend",
+        "courses_completed",
+        "pct_concerns",
+        "total_visits",
+        "favorable_rate",
+        "safety_concern_rate",
+        "intervention_achieved_rate",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected"
+      ],
+      "train_rows": 48,
+      "test_rows": 12,
+      "total_rows": 60,
+      "accuracy": null,
+      "f1": null,
+      "roc_auc": null,
+      "classification_report": null,
+      "adjusted_r2": 0.26381145209163304,
+      "pseudo_r2": 0.5779147329901728,
+      "n_observations": 48,
+      "ols_coefficients": [
+        {
+          "feature": "current_risk_num",
+          "coefficient": -0.007220751694615371,
+          "std_err": 0.06958477468730563,
+          "p_value": 0.9180002032817639,
+          "ci_lower": -0.14896029945234668,
+          "ci_upper": 0.13451879606311595
+        },
+        {
+          "feature": "risk_reduction",
+          "coefficient": 0.0006673587363317454,
+          "std_err": 0.06807475814668741,
+          "p_value": 0.9922390701689837,
+          "ci_lower": -0.13799638598063801,
+          "ci_upper": 0.13933110345330152
+        },
+        {
+          "feature": "trauma_severity_score",
+          "coefficient": 0.15188242054677592,
+          "std_err": 0.07536723581848499,
+          "p_value": 0.052345205227868105,
+          "ci_lower": -0.0016356150963166283,
+          "ci_upper": 0.30540045618986844
+        },
+        {
+          "feature": "family_vulnerability_score",
+          "coefficient": -0.02881658945250245,
+          "std_err": 0.06919215892151087,
+          "p_value": 0.6798450631538318,
+          "ci_lower": -0.1697564050657183,
+          "ci_upper": 0.11212322616071338
+        },
+        {
+          "feature": "psych_checkups",
+          "coefficient": 0.10614253126158066,
+          "std_err": 0.06761532128842287,
+          "p_value": 0.1262983279800031,
+          "ci_lower": -0.031585371199575524,
+          "ci_upper": 0.24387043372273684
+        },
+        {
+          "feature": "health_trend",
+          "coefficient": -0.01751767409062706,
+          "std_err": 0.06733543598750956,
+          "p_value": 0.7964106399562656,
+          "ci_lower": -0.15467546885000855,
+          "ci_upper": 0.11964012066875444
+        },
+        {
+          "feature": "courses_completed",
+          "coefficient": -0.18411994829335873,
+          "std_err": 0.06772058977406033,
+          "p_value": 0.010493463955231116,
+          "ci_lower": -0.3220622756429254,
+          "ci_upper": -0.046177620943792075
+        },
+        {
+          "feature": "pct_concerns",
+          "coefficient": 0.0605671837027282,
+          "std_err": 0.06906708593560847,
+          "p_value": 0.38705940470568817,
+          "ci_lower": -0.08011786657513689,
+          "ci_upper": 0.2012522339805933
+        },
+        {
+          "feature": "total_visits",
+          "coefficient": 0.03544086841720695,
+          "std_err": 0.07017568483437783,
+          "p_value": 0.6169980011617583,
+          "ci_lower": -0.10750232392208464,
+          "ci_upper": 0.17838406075649854
+        },
+        {
+          "feature": "favorable_rate",
+          "coefficient": 0.01944157830594717,
+          "std_err": 0.0657023331176453,
+          "p_value": 0.7692152459224768,
+          "ci_lower": -0.11438969476450742,
+          "ci_upper": 0.15327285137640176
+        },
+        {
+          "feature": "safety_concern_rate",
+          "coefficient": -0.04125217961026229,
+          "std_err": 0.06557372866424084,
+          "p_value": 0.5337517316538473,
+          "ci_lower": -0.17482149398145988,
+          "ci_upper": 0.09231713476093531
+        },
+        {
+          "feature": "intervention_achieved_rate",
+          "coefficient": -0.11328633294040386,
+          "std_err": 0.06020272590517492,
+          "p_value": 0.06899329952311524,
+          "ci_lower": -0.23591527270384388,
+          "ci_upper": 0.00934260682303617
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -0.06954785860023065,
+          "std_err": 0.07077992228701835,
+          "p_value": 0.3331789484053868,
+          "ci_lower": -0.21372184235417307,
+          "ci_upper": 0.0746261251537118
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -0.14668716769426302,
+          "std_err": 0.07267354824800758,
+          "p_value": 0.051992555106113406,
+          "ci_lower": -0.2947183413081861,
+          "ci_upper": 0.0013440059196600795
+        },
+        {
+          "feature": "case_category_Neglected",
+          "coefficient": -0.06192132671818712,
+          "std_err": 0.07685011825248438,
+          "p_value": 0.42633915070407347,
+          "ci_lower": -0.2184598950355243,
+          "ci_upper": 0.09461724159915005
+        }
+      ],
+      "logit_coefficients": [
+        {
+          "feature": "current_risk_num",
+          "coefficient": 0.18419028019619665,
+          "std_err": 0.6530914138184567,
+          "p_value": 0.777921788148531,
+          "ci_lower": -1.095845369500323,
+          "ci_upper": 1.4642259298927165
+        },
+        {
+          "feature": "risk_reduction",
+          "coefficient": -0.37527369512063624,
+          "std_err": 0.9767032254331501,
+          "p_value": 0.7008117676156238,
+          "ci_lower": -2.289576840553716,
+          "ci_upper": 1.5390294503124435
+        },
+        {
+          "feature": "trauma_severity_score",
+          "coefficient": 3.5664231059492155,
+          "std_err": 2.1985940163500786,
+          "p_value": 0.10477378331023399,
+          "ci_lower": -0.742741982722205,
+          "ci_upper": 7.8755881946206365
+        },
+        {
+          "feature": "family_vulnerability_score",
+          "coefficient": 0.4172215740228717,
+          "std_err": 1.0257589909627067,
+          "p_value": 0.6841958350095345,
+          "ci_lower": -1.59322910508218,
+          "ci_upper": 2.4276722531279233
+        },
+        {
+          "feature": "psych_checkups",
+          "coefficient": 2.500562783446346,
+          "std_err": 1.62094567105252,
+          "p_value": 0.12291408047984725,
+          "ci_lower": -0.6764323527127032,
+          "ci_upper": 5.677557919605395
+        },
+        {
+          "feature": "health_trend",
+          "coefficient": -0.31794176059596074,
+          "std_err": 0.9344652090555138,
+          "p_value": 0.7336763471439869,
+          "ci_lower": -2.14945991515046,
+          "ci_upper": 1.5135763939585387
+        },
+        {
+          "feature": "courses_completed",
+          "coefficient": -3.055210386025245,
+          "std_err": 1.731083714171872,
+          "p_value": 0.0775785599040829,
+          "ci_lower": -6.448072120025943,
+          "ci_upper": 0.3376513479754535
+        },
+        {
+          "feature": "pct_concerns",
+          "coefficient": 2.0008315534238728,
+          "std_err": 1.5252686665716226,
+          "p_value": 0.18959113948279893,
+          "ci_lower": -0.98864009980394,
+          "ci_upper": 4.990303206651685
+        },
+        {
+          "feature": "total_visits",
+          "coefficient": 0.9482246098999877,
+          "std_err": 0.9311581966948901,
+          "p_value": 0.30852203181408056,
+          "ci_lower": -0.8768119195312604,
+          "ci_upper": 2.7732611393312356
+        },
+        {
+          "feature": "favorable_rate",
+          "coefficient": 0.43459517859630575,
+          "std_err": 0.5933847361179339,
+          "p_value": 0.46392425532719583,
+          "ci_lower": -0.7284175331706484,
+          "ci_upper": 1.59760789036326
+        },
+        {
+          "feature": "safety_concern_rate",
+          "coefficient": -0.5723580417795263,
+          "std_err": 0.9604343938316962,
+          "p_value": 0.5512175575233007,
+          "ci_lower": -2.454774863203209,
+          "ci_upper": 1.3100587796441565
+        },
+        {
+          "feature": "intervention_achieved_rate",
+          "coefficient": -3.1365899398607087,
+          "std_err": 1.9236131181649576,
+          "p_value": 0.10298063381782856,
+          "ci_lower": -6.906802371652817,
+          "ci_upper": 0.6336224919313995
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -1.1430101009444138,
+          "std_err": 1.0907773568080346,
+          "p_value": 0.2946912263187559,
+          "ci_lower": -3.280894435439958,
+          "ci_upper": 0.99487423355113
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -1.943214883505337,
+          "std_err": 1.1224160477404919,
+          "p_value": 0.08340208641083124,
+          "ci_lower": -4.143109912746491,
+          "ci_upper": 0.256680145735817
+        },
+        {
+          "feature": "case_category_Neglected",
+          "coefficient": 0.06921953646348064,
+          "std_err": 0.7955912030568999,
+          "p_value": 0.9306684131207191,
+          "ci_lower": -1.490110567944936,
+          "ci_upper": 1.6285496408718974
+        }
+      ]
+    },
+    {
+      "model_name": "reintegration-drivers",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T08:29:45.632850+00:00",
+      "features": [
+        "current_risk_num",
+        "risk_reduction",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "psych_checkups",
+        "health_trend",
+        "courses_completed",
+        "pct_concerns",
+        "total_visits",
+        "favorable_rate",
+        "safety_concern_rate",
+        "intervention_achieved_rate",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "training_date": "20260410",
+      "model_type": "OLS_explanatory",
+      "feature_list": [
+        "current_risk_num",
+        "risk_reduction",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "psych_checkups",
+        "health_trend",
+        "courses_completed",
+        "pct_concerns",
+        "total_visits",
+        "favorable_rate",
+        "safety_concern_rate",
+        "intervention_achieved_rate",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected"
+      ],
+      "train_rows": 48,
+      "test_rows": 12,
+      "total_rows": 60,
+      "accuracy": null,
+      "f1": null,
+      "roc_auc": null,
+      "classification_report": null,
+      "adjusted_r2": 0.26381145209163304,
+      "pseudo_r2": 0.5779147329901728,
+      "n_observations": 48,
+      "ols_coefficients": [
+        {
+          "feature": "current_risk_num",
+          "coefficient": -0.007220751694615371,
+          "std_err": 0.06958477468730563,
+          "p_value": 0.9180002032817639,
+          "ci_lower": -0.14896029945234668,
+          "ci_upper": 0.13451879606311595
+        },
+        {
+          "feature": "risk_reduction",
+          "coefficient": 0.0006673587363317454,
+          "std_err": 0.06807475814668741,
+          "p_value": 0.9922390701689837,
+          "ci_lower": -0.13799638598063801,
+          "ci_upper": 0.13933110345330152
+        },
+        {
+          "feature": "trauma_severity_score",
+          "coefficient": 0.15188242054677592,
+          "std_err": 0.07536723581848499,
+          "p_value": 0.052345205227868105,
+          "ci_lower": -0.0016356150963166283,
+          "ci_upper": 0.30540045618986844
+        },
+        {
+          "feature": "family_vulnerability_score",
+          "coefficient": -0.02881658945250245,
+          "std_err": 0.06919215892151087,
+          "p_value": 0.6798450631538318,
+          "ci_lower": -0.1697564050657183,
+          "ci_upper": 0.11212322616071338
+        },
+        {
+          "feature": "psych_checkups",
+          "coefficient": 0.10614253126158066,
+          "std_err": 0.06761532128842287,
+          "p_value": 0.1262983279800031,
+          "ci_lower": -0.031585371199575524,
+          "ci_upper": 0.24387043372273684
+        },
+        {
+          "feature": "health_trend",
+          "coefficient": -0.01751767409062706,
+          "std_err": 0.06733543598750956,
+          "p_value": 0.7964106399562656,
+          "ci_lower": -0.15467546885000855,
+          "ci_upper": 0.11964012066875444
+        },
+        {
+          "feature": "courses_completed",
+          "coefficient": -0.18411994829335873,
+          "std_err": 0.06772058977406033,
+          "p_value": 0.010493463955231116,
+          "ci_lower": -0.3220622756429254,
+          "ci_upper": -0.046177620943792075
+        },
+        {
+          "feature": "pct_concerns",
+          "coefficient": 0.0605671837027282,
+          "std_err": 0.06906708593560847,
+          "p_value": 0.38705940470568817,
+          "ci_lower": -0.08011786657513689,
+          "ci_upper": 0.2012522339805933
+        },
+        {
+          "feature": "total_visits",
+          "coefficient": 0.03544086841720695,
+          "std_err": 0.07017568483437783,
+          "p_value": 0.6169980011617583,
+          "ci_lower": -0.10750232392208464,
+          "ci_upper": 0.17838406075649854
+        },
+        {
+          "feature": "favorable_rate",
+          "coefficient": 0.01944157830594717,
+          "std_err": 0.0657023331176453,
+          "p_value": 0.7692152459224768,
+          "ci_lower": -0.11438969476450742,
+          "ci_upper": 0.15327285137640176
+        },
+        {
+          "feature": "safety_concern_rate",
+          "coefficient": -0.04125217961026229,
+          "std_err": 0.06557372866424084,
+          "p_value": 0.5337517316538473,
+          "ci_lower": -0.17482149398145988,
+          "ci_upper": 0.09231713476093531
+        },
+        {
+          "feature": "intervention_achieved_rate",
+          "coefficient": -0.11328633294040386,
+          "std_err": 0.06020272590517492,
+          "p_value": 0.06899329952311524,
+          "ci_lower": -0.23591527270384388,
+          "ci_upper": 0.00934260682303617
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -0.06954785860023065,
+          "std_err": 0.07077992228701835,
+          "p_value": 0.3331789484053868,
+          "ci_lower": -0.21372184235417307,
+          "ci_upper": 0.0746261251537118
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -0.14668716769426302,
+          "std_err": 0.07267354824800758,
+          "p_value": 0.051992555106113406,
+          "ci_lower": -0.2947183413081861,
+          "ci_upper": 0.0013440059196600795
+        },
+        {
+          "feature": "case_category_Neglected",
+          "coefficient": -0.06192132671818712,
+          "std_err": 0.07685011825248438,
+          "p_value": 0.42633915070407347,
+          "ci_lower": -0.2184598950355243,
+          "ci_upper": 0.09461724159915005
+        }
+      ],
+      "logit_coefficients": [
+        {
+          "feature": "current_risk_num",
+          "coefficient": 0.18419028019619665,
+          "std_err": 0.6530914138184567,
+          "p_value": 0.777921788148531,
+          "ci_lower": -1.095845369500323,
+          "ci_upper": 1.4642259298927165
+        },
+        {
+          "feature": "risk_reduction",
+          "coefficient": -0.37527369512063624,
+          "std_err": 0.9767032254331501,
+          "p_value": 0.7008117676156238,
+          "ci_lower": -2.289576840553716,
+          "ci_upper": 1.5390294503124435
+        },
+        {
+          "feature": "trauma_severity_score",
+          "coefficient": 3.5664231059492155,
+          "std_err": 2.1985940163500786,
+          "p_value": 0.10477378331023399,
+          "ci_lower": -0.742741982722205,
+          "ci_upper": 7.8755881946206365
+        },
+        {
+          "feature": "family_vulnerability_score",
+          "coefficient": 0.4172215740228717,
+          "std_err": 1.0257589909627067,
+          "p_value": 0.6841958350095345,
+          "ci_lower": -1.59322910508218,
+          "ci_upper": 2.4276722531279233
+        },
+        {
+          "feature": "psych_checkups",
+          "coefficient": 2.500562783446346,
+          "std_err": 1.62094567105252,
+          "p_value": 0.12291408047984725,
+          "ci_lower": -0.6764323527127032,
+          "ci_upper": 5.677557919605395
+        },
+        {
+          "feature": "health_trend",
+          "coefficient": -0.31794176059596074,
+          "std_err": 0.9344652090555138,
+          "p_value": 0.7336763471439869,
+          "ci_lower": -2.14945991515046,
+          "ci_upper": 1.5135763939585387
+        },
+        {
+          "feature": "courses_completed",
+          "coefficient": -3.055210386025245,
+          "std_err": 1.731083714171872,
+          "p_value": 0.0775785599040829,
+          "ci_lower": -6.448072120025943,
+          "ci_upper": 0.3376513479754535
+        },
+        {
+          "feature": "pct_concerns",
+          "coefficient": 2.0008315534238728,
+          "std_err": 1.5252686665716226,
+          "p_value": 0.18959113948279893,
+          "ci_lower": -0.98864009980394,
+          "ci_upper": 4.990303206651685
+        },
+        {
+          "feature": "total_visits",
+          "coefficient": 0.9482246098999877,
+          "std_err": 0.9311581966948901,
+          "p_value": 0.30852203181408056,
+          "ci_lower": -0.8768119195312604,
+          "ci_upper": 2.7732611393312356
+        },
+        {
+          "feature": "favorable_rate",
+          "coefficient": 0.43459517859630575,
+          "std_err": 0.5933847361179339,
+          "p_value": 0.46392425532719583,
+          "ci_lower": -0.7284175331706484,
+          "ci_upper": 1.59760789036326
+        },
+        {
+          "feature": "safety_concern_rate",
+          "coefficient": -0.5723580417795263,
+          "std_err": 0.9604343938316962,
+          "p_value": 0.5512175575233007,
+          "ci_lower": -2.454774863203209,
+          "ci_upper": 1.3100587796441565
+        },
+        {
+          "feature": "intervention_achieved_rate",
+          "coefficient": -3.1365899398607087,
+          "std_err": 1.9236131181649576,
+          "p_value": 0.10298063381782856,
+          "ci_lower": -6.906802371652817,
+          "ci_upper": 0.6336224919313995
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -1.1430101009444138,
+          "std_err": 1.0907773568080346,
+          "p_value": 0.2946912263187559,
+          "ci_lower": -3.280894435439958,
+          "ci_upper": 0.99487423355113
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -1.943214883505337,
+          "std_err": 1.1224160477404919,
+          "p_value": 0.08340208641083124,
+          "ci_lower": -4.143109912746491,
+          "ci_upper": 0.256680145735817
+        },
+        {
+          "feature": "case_category_Neglected",
+          "coefficient": 0.06921953646348064,
+          "std_err": 0.7955912030568999,
+          "p_value": 0.9306684131207191,
+          "ci_lower": -1.490110567944936,
+          "ci_upper": 1.6285496408718974
+        }
+      ]
+    },
+    {
+      "model_name": "reintegration-drivers",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T08:54:33.323351+00:00",
+      "features": [
+        "current_risk_num",
+        "risk_reduction",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "psych_checkups",
+        "health_trend",
+        "courses_completed",
+        "pct_concerns",
+        "total_visits",
+        "favorable_rate",
+        "safety_concern_rate",
+        "intervention_achieved_rate",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected"
+      ],
+      "num_training_rows": 48,
+      "num_test_rows": 12,
+      "training_date": "20260410",
+      "model_type": "OLS (statsmodels) + Logit comparison",
+      "feature_list": [
+        "current_risk_num",
+        "risk_reduction",
+        "trauma_severity_score",
+        "family_vulnerability_score",
+        "psych_checkups",
+        "health_trend",
+        "courses_completed",
+        "pct_concerns",
+        "total_visits",
+        "favorable_rate",
+        "safety_concern_rate",
+        "intervention_achieved_rate",
+        "case_category_Abandoned",
+        "case_category_Foundling",
+        "case_category_Neglected"
+      ],
+      "train_rows": 48,
+      "test_rows": 12,
+      "total_rows": 60,
+      "accuracy": null,
+      "f1": null,
+      "roc_auc": null,
+      "classification_report": null,
+      "adjusted_r2": 0.26381145209163304,
+      "pseudo_r2": 0.5779147329901728,
+      "n_observations": 48,
+      "ols_coefficients": [
+        {
+          "feature": "current_risk_num",
+          "coefficient": -0.007220751694615371,
+          "std_err": 0.06958477468730563,
+          "p_value": 0.9180002032817639,
+          "ci_lower": -0.14896029945234668,
+          "ci_upper": 0.13451879606311595
+        },
+        {
+          "feature": "risk_reduction",
+          "coefficient": 0.0006673587363317454,
+          "std_err": 0.06807475814668741,
+          "p_value": 0.9922390701689837,
+          "ci_lower": -0.13799638598063801,
+          "ci_upper": 0.13933110345330152
+        },
+        {
+          "feature": "trauma_severity_score",
+          "coefficient": 0.15188242054677592,
+          "std_err": 0.07536723581848499,
+          "p_value": 0.052345205227868105,
+          "ci_lower": -0.0016356150963166283,
+          "ci_upper": 0.30540045618986844
+        },
+        {
+          "feature": "family_vulnerability_score",
+          "coefficient": -0.02881658945250245,
+          "std_err": 0.06919215892151087,
+          "p_value": 0.6798450631538318,
+          "ci_lower": -0.1697564050657183,
+          "ci_upper": 0.11212322616071338
+        },
+        {
+          "feature": "psych_checkups",
+          "coefficient": 0.10614253126158066,
+          "std_err": 0.06761532128842287,
+          "p_value": 0.1262983279800031,
+          "ci_lower": -0.031585371199575524,
+          "ci_upper": 0.24387043372273684
+        },
+        {
+          "feature": "health_trend",
+          "coefficient": -0.01751767409062706,
+          "std_err": 0.06733543598750956,
+          "p_value": 0.7964106399562656,
+          "ci_lower": -0.15467546885000855,
+          "ci_upper": 0.11964012066875444
+        },
+        {
+          "feature": "courses_completed",
+          "coefficient": -0.18411994829335873,
+          "std_err": 0.06772058977406033,
+          "p_value": 0.010493463955231116,
+          "ci_lower": -0.3220622756429254,
+          "ci_upper": -0.046177620943792075
+        },
+        {
+          "feature": "pct_concerns",
+          "coefficient": 0.0605671837027282,
+          "std_err": 0.06906708593560847,
+          "p_value": 0.38705940470568817,
+          "ci_lower": -0.08011786657513689,
+          "ci_upper": 0.2012522339805933
+        },
+        {
+          "feature": "total_visits",
+          "coefficient": 0.03544086841720695,
+          "std_err": 0.07017568483437783,
+          "p_value": 0.6169980011617583,
+          "ci_lower": -0.10750232392208464,
+          "ci_upper": 0.17838406075649854
+        },
+        {
+          "feature": "favorable_rate",
+          "coefficient": 0.01944157830594717,
+          "std_err": 0.0657023331176453,
+          "p_value": 0.7692152459224768,
+          "ci_lower": -0.11438969476450742,
+          "ci_upper": 0.15327285137640176
+        },
+        {
+          "feature": "safety_concern_rate",
+          "coefficient": -0.04125217961026229,
+          "std_err": 0.06557372866424084,
+          "p_value": 0.5337517316538473,
+          "ci_lower": -0.17482149398145988,
+          "ci_upper": 0.09231713476093531
+        },
+        {
+          "feature": "intervention_achieved_rate",
+          "coefficient": -0.11328633294040386,
+          "std_err": 0.06020272590517492,
+          "p_value": 0.06899329952311524,
+          "ci_lower": -0.23591527270384388,
+          "ci_upper": 0.00934260682303617
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -0.06954785860023065,
+          "std_err": 0.07077992228701835,
+          "p_value": 0.3331789484053868,
+          "ci_lower": -0.21372184235417307,
+          "ci_upper": 0.0746261251537118
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -0.14668716769426302,
+          "std_err": 0.07267354824800758,
+          "p_value": 0.051992555106113406,
+          "ci_lower": -0.2947183413081861,
+          "ci_upper": 0.0013440059196600795
+        },
+        {
+          "feature": "case_category_Neglected",
+          "coefficient": -0.06192132671818712,
+          "std_err": 0.07685011825248438,
+          "p_value": 0.42633915070407347,
+          "ci_lower": -0.2184598950355243,
+          "ci_upper": 0.09461724159915005
+        }
+      ],
+      "logit_coefficients": [
+        {
+          "feature": "current_risk_num",
+          "coefficient": 0.18419028019619665,
+          "std_err": 0.6530914138184567,
+          "p_value": 0.777921788148531,
+          "ci_lower": -1.095845369500323,
+          "ci_upper": 1.4642259298927165
+        },
+        {
+          "feature": "risk_reduction",
+          "coefficient": -0.37527369512063624,
+          "std_err": 0.9767032254331501,
+          "p_value": 0.7008117676156238,
+          "ci_lower": -2.289576840553716,
+          "ci_upper": 1.5390294503124435
+        },
+        {
+          "feature": "trauma_severity_score",
+          "coefficient": 3.5664231059492155,
+          "std_err": 2.1985940163500786,
+          "p_value": 0.10477378331023399,
+          "ci_lower": -0.742741982722205,
+          "ci_upper": 7.8755881946206365
+        },
+        {
+          "feature": "family_vulnerability_score",
+          "coefficient": 0.4172215740228717,
+          "std_err": 1.0257589909627067,
+          "p_value": 0.6841958350095345,
+          "ci_lower": -1.59322910508218,
+          "ci_upper": 2.4276722531279233
+        },
+        {
+          "feature": "psych_checkups",
+          "coefficient": 2.500562783446346,
+          "std_err": 1.62094567105252,
+          "p_value": 0.12291408047984725,
+          "ci_lower": -0.6764323527127032,
+          "ci_upper": 5.677557919605395
+        },
+        {
+          "feature": "health_trend",
+          "coefficient": -0.31794176059596074,
+          "std_err": 0.9344652090555138,
+          "p_value": 0.7336763471439869,
+          "ci_lower": -2.14945991515046,
+          "ci_upper": 1.5135763939585387
+        },
+        {
+          "feature": "courses_completed",
+          "coefficient": -3.055210386025245,
+          "std_err": 1.731083714171872,
+          "p_value": 0.0775785599040829,
+          "ci_lower": -6.448072120025943,
+          "ci_upper": 0.3376513479754535
+        },
+        {
+          "feature": "pct_concerns",
+          "coefficient": 2.0008315534238728,
+          "std_err": 1.5252686665716226,
+          "p_value": 0.18959113948279893,
+          "ci_lower": -0.98864009980394,
+          "ci_upper": 4.990303206651685
+        },
+        {
+          "feature": "total_visits",
+          "coefficient": 0.9482246098999877,
+          "std_err": 0.9311581966948901,
+          "p_value": 0.30852203181408056,
+          "ci_lower": -0.8768119195312604,
+          "ci_upper": 2.7732611393312356
+        },
+        {
+          "feature": "favorable_rate",
+          "coefficient": 0.43459517859630575,
+          "std_err": 0.5933847361179339,
+          "p_value": 0.46392425532719583,
+          "ci_lower": -0.7284175331706484,
+          "ci_upper": 1.59760789036326
+        },
+        {
+          "feature": "safety_concern_rate",
+          "coefficient": -0.5723580417795263,
+          "std_err": 0.9604343938316962,
+          "p_value": 0.5512175575233007,
+          "ci_lower": -2.454774863203209,
+          "ci_upper": 1.3100587796441565
+        },
+        {
+          "feature": "intervention_achieved_rate",
+          "coefficient": -3.1365899398607087,
+          "std_err": 1.9236131181649576,
+          "p_value": 0.10298063381782856,
+          "ci_lower": -6.906802371652817,
+          "ci_upper": 0.6336224919313995
+        },
+        {
+          "feature": "case_category_Abandoned",
+          "coefficient": -1.1430101009444138,
+          "std_err": 1.0907773568080346,
+          "p_value": 0.2946912263187559,
+          "ci_lower": -3.280894435439958,
+          "ci_upper": 0.99487423355113
+        },
+        {
+          "feature": "case_category_Foundling",
+          "coefficient": -1.943214883505337,
+          "std_err": 1.1224160477404919,
+          "p_value": 0.08340208641083124,
+          "ci_lower": -4.143109912746491,
+          "ci_upper": 0.256680145735817
+        },
+        {
+          "feature": "case_category_Neglected",
+          "coefficient": 0.06921953646348064,
+          "std_err": 0.7955912030568999,
+          "p_value": 0.9306684131207191,
+          "ci_lower": -1.490110567944936,
+          "ci_upper": 1.6285496408718974
+        }
+      ]
     }
   ]
 }

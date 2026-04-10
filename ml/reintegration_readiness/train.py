@@ -46,6 +46,10 @@ PFI_DROP_FRACTION = 0.2
 PFI_AUC_TOLERANCE = 0.02
 PFI_MIN_FEATURES = 3
 PFI_MAX_ITERATIONS = 10
+MIN_SAMPLES_FOR_TREES = 100  # Below this, tree ensembles overfit on small datasets
+
+
+TREE_MODELS = {"DecisionTree", "RandomForest", "GradientBoosting", "AdaBoost", "ExtraTrees"}
 
 
 def _build_candidates() -> list[tuple[str, Pipeline, dict]]:
@@ -208,6 +212,11 @@ def run_training() -> dict:
     )
 
     candidates = _build_candidates()
+    if len(X_train) < MIN_SAMPLES_FOR_TREES:
+        excluded = [name for name, _, _ in candidates if name in TREE_MODELS]
+        candidates = [(name, pipe, grid) for name, pipe, grid in candidates if name not in TREE_MODELS]
+        logger.info("Small dataset (%d rows < %d): excluding tree models %s",
+                     len(X_train), MIN_SAMPLES_FOR_TREES, excluded)
     results = _run_grid_search(candidates, X_train, y_train, cv)
 
     stack_result = _build_stacking(results, X_train, y_train, cv)
@@ -227,6 +236,13 @@ def run_training() -> dict:
     # Final evaluation
     X_tr_final = X_train[final_features]
     X_te_final = X_test[final_features]
+
+    # Cross-validated AUC on training set (more reliable than single test split)
+    cv_scores = cross_val_score(best_est, X_tr_final, y_train, cv=cv, scoring="roc_auc")
+    cv_auc_mean = float(cv_scores.mean())
+    cv_auc_std = float(cv_scores.std())
+    logger.info("Final CV AUC: %.4f ± %.4f", cv_auc_mean, cv_auc_std)
+
     best_est.fit(X_tr_final, y_train)
     y_proba = best_est.predict_proba(X_te_final)[:, 1]
     y_pred = (y_proba >= 0.5).astype(int)
@@ -250,12 +266,14 @@ def run_training() -> dict:
         feature_list=final_features,
         train_rows=len(X_train), test_rows=len(X_test), total_rows=len(X_filtered),
     )
-    save_metrics(roc_auc=test_auc, f1=test_f1, accuracy=test_acc, classification_report=report)
+    save_metrics(roc_auc=test_auc, f1=test_f1, accuracy=test_acc, classification_report=report,
+                 cv_auc=cv_auc_mean, cv_auc_std=cv_auc_std)
 
     logger.info("Reintegration readiness model saved successfully.")
     return {
         "model_name": "reintegration-readiness",
         "model_type": best["name"],
+        "cv_auc": cv_auc_mean, "cv_auc_std": cv_auc_std,
         "test_auc": test_auc, "test_f1": test_f1, "test_accuracy": test_acc,
         "n_features": len(final_features), "n_train": len(X_train), "n_test": len(X_test),
     }

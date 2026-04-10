@@ -1055,6 +1055,367 @@
         "f1": 0.6153846153846154,
         "roc_auc": 0.703125
       }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T06:19:57.000688+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "case_category_Foundling",
+        "sub_cat_sexual_abuse",
+        "initial_risk_num",
+        "sub_cat_trafficked",
+        "has_special_needs"
+      ],
+      "num_training_rows": 90,
+      "num_test_rows": 23,
+      "total_rows": 113,
+      "selfharm_metrics": {
+        "selected_model": "Pipeline(steps=[('clf',\n                 RandomForestClassifier(class_weight='balanced', max_depth=4,\n                                        min_samples_leaf=2, n_estimators=200,\n                                        random_state=42))])",
+        "selected_features": [
+          "initial_risk_num",
+          "sub_cat_sexual_abuse",
+          "sub_cat_trafficked"
+        ],
+        "n_features": 3,
+        "roc_auc": 1.0,
+        "recall": 1.0,
+        "precision": 0.1111111111111111,
+        "f1": 0.2
+      },
+      "runaway_metrics": {
+        "selected_model": "Pipeline(steps=[('scaler', StandardScaler()),\n                ('clf',\n                 LogisticRegression(C=0.01, class_weight='balanced',\n                                    max_iter=2000, random_state=42))])",
+        "selected_features": [
+          "age_at_admission",
+          "has_special_needs",
+          "case_category_Foundling"
+        ],
+        "n_features": 3,
+        "roc_auc": 0.7777777777777778,
+        "recall": 1.0,
+        "precision": 0.21739130434782608,
+        "f1": 0.35714285714285715
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T06:43:59.052316+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "initial_risk_num",
+        "has_special_needs",
+        "sub_cat_trafficked",
+        "case_category_Foundling",
+        "sub_cat_sexual_abuse"
+      ],
+      "num_training_rows": 90,
+      "num_test_rows": 23,
+      "total_rows": 113,
+      "selfharm_metrics": {
+        "selected_model": "Pipeline(steps=[('clf',\n                 RandomForestClassifier(class_weight='balanced', max_depth=4,\n                                        min_samples_leaf=2, n_estimators=200,\n                                        random_state=42))])",
+        "selected_features": [
+          "initial_risk_num",
+          "sub_cat_sexual_abuse",
+          "sub_cat_trafficked"
+        ],
+        "n_features": 3,
+        "roc_auc": 1.0,
+        "recall": 1.0,
+        "precision": 0.1111111111111111,
+        "f1": 0.2
+      },
+      "runaway_metrics": {
+        "selected_model": "Pipeline(steps=[('scaler', StandardScaler()),\n                ('clf',\n                 LogisticRegression(C=0.01, class_weight='balanced',\n                                    max_iter=2000, random_state=42))])",
+        "selected_features": [
+          "age_at_admission",
+          "has_special_needs",
+          "case_category_Foundling"
+        ],
+        "n_features": 3,
+        "roc_auc": 0.7777777777777778,
+        "recall": 1.0,
+        "precision": 0.21739130434782608,
+        "f1": 0.35714285714285715
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T07:05:38.371960+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "sub_cat_trafficked",
+        "initial_risk_num",
+        "has_special_needs",
+        "age_at_admission",
+        "sub_cat_sexual_abuse",
+        "case_category_Foundling"
+      ],
+      "num_training_rows": 90,
+      "num_test_rows": 23,
+      "total_rows": 113,
+      "selfharm_metrics": {
+        "selected_model": "Pipeline(steps=[('clf',\n                 RandomForestClassifier(class_weight='balanced', max_depth=4,\n                                        min_samples_leaf=2, n_estimators=200,\n                                        random_state=42))])",
+        "selected_features": [
+          "initial_risk_num",
+          "sub_cat_sexual_abuse",
+          "sub_cat_trafficked"
+        ],
+        "n_features": 3,
+        "roc_auc": 1.0,
+        "recall": 1.0,
+        "precision": 0.1111111111111111,
+        "f1": 0.2
+      },
+      "runaway_metrics": {
+        "selected_model": "Pipeline(steps=[('scaler', StandardScaler()),\n                ('clf',\n                 LogisticRegression(C=0.01, class_weight='balanced',\n                                    max_iter=2000, random_state=42))])",
+        "selected_features": [
+          "age_at_admission",
+          "has_special_needs",
+          "case_category_Foundling"
+        ],
+        "n_features": 3,
+        "roc_auc": 0.7777777777777778,
+        "recall": 1.0,
+        "precision": 0.21739130434782608,
+        "f1": 0.35714285714285715
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T07:50:27.563082+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "has_special_needs",
+        "sub_cat_trafficked",
+        "initial_risk_num",
+        "sub_cat_sexual_abuse",
+        "age_at_admission",
+        "case_category_Foundling"
+      ],
+      "num_training_rows": 90,
+      "num_test_rows": 23,
+      "total_rows": 113,
+      "selfharm_metrics": {
+        "selected_model": "Pipeline(steps=[('clf',\n                 RandomForestClassifier(class_weight='balanced', max_depth=4,\n                                        min_samples_leaf=2, n_estimators=200,\n                                        random_state=42))])",
+        "selected_features": [
+          "initial_risk_num",
+          "sub_cat_sexual_abuse",
+          "sub_cat_trafficked"
+        ],
+        "n_features": 3,
+        "roc_auc": 1.0,
+        "recall": 1.0,
+        "precision": 0.1111111111111111,
+        "f1": 0.2
+      },
+      "runaway_metrics": {
+        "selected_model": "Pipeline(steps=[('scaler', StandardScaler()),\n                ('clf',\n                 LogisticRegression(C=0.01, class_weight='balanced',\n                                    max_iter=2000, random_state=42))])",
+        "selected_features": [
+          "age_at_admission",
+          "has_special_needs",
+          "case_category_Foundling"
+        ],
+        "n_features": 3,
+        "roc_auc": 0.7777777777777778,
+        "recall": 1.0,
+        "precision": 0.21739130434782608,
+        "f1": 0.35714285714285715
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T08:02:33.817632+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "case_category_Foundling",
+        "initial_risk_num",
+        "sub_cat_trafficked",
+        "has_special_needs",
+        "age_at_admission",
+        "sub_cat_sexual_abuse"
+      ],
+      "num_training_rows": 90,
+      "num_test_rows": 23,
+      "total_rows": 113,
+      "selfharm_metrics": {
+        "selected_model": "Pipeline(steps=[('clf',\n                 RandomForestClassifier(class_weight='balanced', max_depth=4,\n                                        min_samples_leaf=2, n_estimators=200,\n                                        random_state=42))])",
+        "selected_features": [
+          "initial_risk_num",
+          "sub_cat_sexual_abuse",
+          "sub_cat_trafficked"
+        ],
+        "n_features": 3,
+        "roc_auc": 1.0,
+        "recall": 1.0,
+        "precision": 0.1111111111111111,
+        "f1": 0.2
+      },
+      "runaway_metrics": {
+        "selected_model": "Pipeline(steps=[('scaler', StandardScaler()),\n                ('clf',\n                 LogisticRegression(C=0.01, class_weight='balanced',\n                                    max_iter=2000, random_state=42))])",
+        "selected_features": [
+          "age_at_admission",
+          "has_special_needs",
+          "case_category_Foundling"
+        ],
+        "n_features": 3,
+        "roc_auc": 0.7777777777777778,
+        "recall": 1.0,
+        "precision": 0.21739130434782608,
+        "f1": 0.35714285714285715
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T08:19:35.214929+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "has_special_needs",
+        "sub_cat_trafficked",
+        "age_at_admission",
+        "sub_cat_sexual_abuse",
+        "case_category_Foundling",
+        "initial_risk_num"
+      ],
+      "num_training_rows": 90,
+      "num_test_rows": 23,
+      "total_rows": 113,
+      "selfharm_metrics": {
+        "selected_model": "Pipeline(steps=[('clf',\n                 RandomForestClassifier(class_weight='balanced', max_depth=4,\n                                        min_samples_leaf=2, n_estimators=200,\n                                        random_state=42))])",
+        "selected_features": [
+          "initial_risk_num",
+          "sub_cat_sexual_abuse",
+          "sub_cat_trafficked"
+        ],
+        "n_features": 3,
+        "roc_auc": 1.0,
+        "recall": 1.0,
+        "precision": 0.1111111111111111,
+        "f1": 0.2
+      },
+      "runaway_metrics": {
+        "selected_model": "Pipeline(steps=[('scaler', StandardScaler()),\n                ('clf',\n                 LogisticRegression(C=0.01, class_weight='balanced',\n                                    max_iter=2000, random_state=42))])",
+        "selected_features": [
+          "age_at_admission",
+          "has_special_needs",
+          "case_category_Foundling"
+        ],
+        "n_features": 3,
+        "roc_auc": 0.7777777777777778,
+        "recall": 1.0,
+        "precision": 0.21739130434782608,
+        "f1": 0.35714285714285715
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T08:32:05.572884+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "sub_cat_sexual_abuse",
+        "case_category_Foundling",
+        "has_special_needs",
+        "age_at_admission",
+        "sub_cat_trafficked",
+        "initial_risk_num"
+      ],
+      "num_training_rows": 90,
+      "num_test_rows": 23,
+      "total_rows": 113,
+      "selfharm_metrics": {
+        "selected_model": "Pipeline(steps=[('clf',\n                 RandomForestClassifier(class_weight='balanced', max_depth=4,\n                                        min_samples_leaf=2, n_estimators=200,\n                                        random_state=42))])",
+        "selected_features": [
+          "initial_risk_num",
+          "sub_cat_sexual_abuse",
+          "sub_cat_trafficked"
+        ],
+        "n_features": 3,
+        "roc_auc": 1.0,
+        "recall": 1.0,
+        "precision": 0.1111111111111111,
+        "f1": 0.2
+      },
+      "runaway_metrics": {
+        "selected_model": "Pipeline(steps=[('scaler', StandardScaler()),\n                ('clf',\n                 LogisticRegression(C=0.01, class_weight='balanced',\n                                    max_iter=2000, random_state=42))])",
+        "selected_features": [
+          "age_at_admission",
+          "has_special_needs",
+          "case_category_Foundling"
+        ],
+        "n_features": 3,
+        "roc_auc": 0.7777777777777778,
+        "recall": 1.0,
+        "precision": 0.21739130434782608,
+        "f1": 0.35714285714285715
+      }
+    },
+    {
+      "model_name": "incident-early-warning",
+      "model_version": "20260410",
+      "trained_at_utc": "2026-04-10T08:52:47.893359+00:00",
+      "model_type": "dual_classifier",
+      "features": [
+        "age_at_admission",
+        "case_category_Foundling",
+        "case_category_Neglected",
+        "case_category_Surrendered",
+        "family_vulnerability_score",
+        "has_special_needs",
+        "initial_risk_num",
+        "is_pwd",
+        "sub_cat_physical_abuse",
+        "sub_cat_sexual_abuse",
+        "sub_cat_trafficked",
+        "trauma_severity_score"
+      ],
+      "num_training_rows": 90,
+      "num_test_rows": 23,
+      "total_rows": 113,
+      "selfharm_metrics": {
+        "selected_model": "GradientBoosting",
+        "selected_features": [
+          "age_at_admission",
+          "initial_risk_num",
+          "family_vulnerability_score",
+          "sub_cat_physical_abuse",
+          "case_category_Neglected"
+        ],
+        "n_features": 5,
+        "recall": 1.0,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
+        "roc_auc": 0.9666666666666667
+      },
+      "runaway_metrics": {
+        "selected_model": "GradientBoosting",
+        "selected_features": [
+          "age_at_admission",
+          "initial_risk_num",
+          "trauma_severity_score",
+          "family_vulnerability_score",
+          "sub_cat_sexual_abuse",
+          "sub_cat_trafficked",
+          "sub_cat_physical_abuse",
+          "has_special_needs",
+          "is_pwd",
+          "case_category_Foundling",
+          "case_category_Neglected",
+          "case_category_Surrendered"
+        ],
+        "n_features": 12,
+        "recall": 0.6,
+        "precision": 0.42857142857142855,
+        "f1": 0.5,
+        "roc_auc": 0.7444444444444445
+      }
     }
   ]
 }

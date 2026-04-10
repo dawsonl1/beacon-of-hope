@@ -122,10 +122,14 @@ def run_inference() -> list[dict]:
         score = float(row["predicted_engagement_rate"])
         rank = int(row["rank_within_platform"])
 
+        # Stable numeric ID from the combination so upsert works
+        # (NULL entity_id causes O(n²) UPDATE scans).
+        entity_id = hash((platform, day, hour)) % (2**31)
+
         records.append(
             {
                 "entity_type": "platform_timing",
-                "entity_id": None,
+                "entity_id": entity_id,
                 "model_name": MODEL_NAME_SOCIAL_TIMING,
                 "model_version": model_version,
                 "score": score,

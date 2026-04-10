@@ -91,9 +91,45 @@ def upsert_predictions(client: Engine, records: list[dict]) -> None:
             metadata      = EXCLUDED.metadata
     """)
 
+    # NULL entity_id can't match via ON CONFLICT (NULL != NULL in SQL),
+    # so we handle those with an explicit UPDATE-then-INSERT fallback.
+    update_null_sql = text("""
+        UPDATE ml_predictions
+        SET model_version = :model_version,
+            score         = :score,
+            score_label   = :score_label,
+            predicted_at  = :predicted_at,
+            metadata      = :metadata
+        WHERE entity_type = :entity_type
+          AND entity_id IS NULL
+          AND model_name = :model_name
+    """)
+    insert_sql = text("""
+        INSERT INTO ml_predictions
+            (entity_type, entity_id, model_name, model_version, score, score_label, predicted_at, metadata)
+        VALUES
+            (:entity_type, :entity_id, :model_name, :model_version, :score, :score_label, :predicted_at, :metadata)
+    """)
+
     with client.begin() as conn:
+        # Batch non-null entity_id records in one executemany call
+        bulk_params = []
+        null_records = []
         for r in records:
-            conn.execute(upsert_sql, _prepare_params(r))
+            params = _prepare_params(r)
+            if r.get("entity_id") is None:
+                null_records.append(params)
+            else:
+                bulk_params.append(params)
+
+        if bulk_params:
+            conn.execute(upsert_sql, bulk_params)
+
+        # NULL entity_id rows need row-by-row UPDATE-then-INSERT
+        for params in null_records:
+            result = conn.execute(update_null_sql, params)
+            if result.rowcount == 0:
+                conn.execute(insert_sql, params)
 
     logger.info(f"Upserted {len(records)} rows to {TABLE_ML_PREDICTIONS}")
 
@@ -114,9 +150,9 @@ def insert_history(client: Engine, records: list[dict]) -> None:
             (:entity_type, :entity_id, :model_name, :model_version, :score, :score_label, :predicted_at, :metadata)
     """)
 
+    all_params = [_prepare_params(r) for r in records]
     with client.begin() as conn:
-        for r in records:
-            conn.execute(insert_sql, _prepare_params(r))
+        conn.execute(insert_sql, all_params)
 
     logger.info(f"Inserted {len(records)} rows to {TABLE_ML_PREDICTION_HISTORY}")
 

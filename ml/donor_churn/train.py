@@ -273,6 +273,12 @@ def run_training() -> dict:
     X_train_final = X_train[final_features]
     X_test_final = X_test[final_features]
 
+    # Cross-validated AUC on training set (more reliable than single test split)
+    cv_scores = cross_val_score(best_estimator, X_train_final, y_train, cv=cv, scoring="roc_auc")
+    cv_auc_mean = float(cv_scores.mean())
+    cv_auc_std = float(cv_scores.std())
+    logger.info("Final CV AUC: %.4f +/- %.4f", cv_auc_mean, cv_auc_std)
+
     best_estimator.fit(X_train_final, y_train)
     y_proba = best_estimator.predict_proba(X_test_final)[:, 1]
     y_pred = (y_proba >= 0.4).astype(int)  # threshold from notebook
@@ -306,13 +312,16 @@ def run_training() -> dict:
         f1=test_f1,
         accuracy=test_acc,
         classification_report=report,
+        cv_auc=cv_auc_mean,
+        cv_auc_std=cv_auc_std,
     )
 
     logger.info("Donor churn model saved successfully.")
     return {
         "model_name": "donor-churn",
         "model_type": best_name,
-        "cv_auc": best["cv_auc"] if best else 0.0,
+        "cv_auc": cv_auc_mean,
+        "cv_auc_std": cv_auc_std,
         "test_auc": test_auc,
         "test_f1": test_f1,
         "test_accuracy": test_acc,
