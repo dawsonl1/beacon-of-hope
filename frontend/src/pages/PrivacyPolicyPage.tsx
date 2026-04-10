@@ -1,3 +1,7 @@
+// [SECURITY-9] Privacy — Privacy policy: GDPR-compliant privacy policy customized for
+// Beacon of Hope. Covers 12 sections: data collection, usage, minors' protection, data
+// sharing, international transfers, retention, user rights, cookies, security, breach
+// notification, contact info, and policy changes. Linked from footer on all pages.
 import { useCookieConsent } from '../contexts/CookieConsentContext';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import styles from './PrivacyPolicyPage.module.css';

@@ -6,10 +6,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Endpoints;
 
+// [SECURITY-3] Auth — Username/password authentication: Login, register, and session
+// management endpoints. Login and register correctly do NOT require auth. Logout requires auth.
+// [SECURITY-5] Auth — Pages/API require auth: /api/auth/login, /api/auth/register, and
+// /api/auth/me are intentionally public. All other endpoints in the app require authentication.
 public static class AuthEndpoints
 {
     public static void MapAuthEndpoints(this WebApplication app)
     {
+        // [SECURITY-3] Login endpoint — no auth required (correct)
         app.MapPost("/api/auth/login", async (
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
@@ -58,12 +63,15 @@ public static class AuthEndpoints
             });
         });
 
+        // [SECURITY-5] Logout endpoint — requires auth (correct: only authenticated users can log out)
         app.MapPost("/api/auth/logout", async (SignInManager<ApplicationUser> signInManager) =>
         {
             await signInManager.SignOutAsync();
             return Results.Ok(new { message = "Logged out" });
         }).RequireAuthorization();
 
+        // [SECURITY-3] Register endpoint — no auth required (correct: new users need to register)
+        // [SECURITY-6] New users are assigned the "Donor" role by default (least privilege)
         app.MapPost("/api/auth/register", async (
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
@@ -126,6 +134,7 @@ public static class AuthEndpoints
             });
         });
 
+        // [SECURITY-5] Me endpoint — no auth required (correct: returns isAuthenticated=false for guests)
         app.MapGet("/api/auth/me", async (
             HttpContext httpContext,
             UserManager<ApplicationUser> userManager,

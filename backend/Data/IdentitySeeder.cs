@@ -6,6 +6,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace backend.Data;
 
+// [SECURITY-6] Auth — RBAC: Defines and seeds the four application roles (Admin, Staff,
+// Donor, SocialMediaManager). Admin can CUD all data, Staff is scoped to assigned safehouses,
+// Donor can only view their own donation history, SocialMediaManager manages social content.
 public static class IdentitySeeder
 {
     public static async Task SeedAsync(IServiceProvider services)
@@ -14,6 +17,7 @@ public static class IdentitySeeder
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var env = services.GetRequiredService<IWebHostEnvironment>();
 
+        // [SECURITY-6] Role definitions — these roles control access throughout the app
         string[] roles = { "Admin", "Staff", "Donor", "SocialMediaManager" };
         foreach (var role in roles)
         {

@@ -1,3 +1,8 @@
+// [SECURITY-13d] Additional — Browser-accessible cookie: These utility functions manage
+// non-HttpOnly cookies (boh_cookie_consent, boh_theme) that store user preferences.
+// React reads these cookies to change page behavior (cookie consent state, UI theme).
+// [SECURITY-10] Privacy — Cookie consent: deleteAnalyticsCookies() removes GA cookies
+// when the user revokes analytics consent, making the cookie consent fully functional.
 export function setCookie(name: string, value: string, maxAgeDays: number): void {
   const maxAge = maxAgeDays * 24 * 60 * 60;
   document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAge}; SameSite=Lax`;

@@ -1,3 +1,6 @@
+// [SECURITY-7] Integrity — Confirmation to delete: Reusable modal dialog that requires
+// explicit user confirmation before any delete operation. Used across all admin pages
+// (Resident, Incident, Supporter, Visitation, Recording, Partner, Donation, User).
 import { AlertTriangle, X } from 'lucide-react';
 import styles from './DeleteConfirmDialog.module.css';
 

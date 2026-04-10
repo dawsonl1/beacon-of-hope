@@ -1,3 +1,5 @@
+// [SECURITY-9] Privacy — Privacy policy link: Footer links to /privacy-policy on every page.
+// [SECURITY-10] Privacy — Cookie consent: "Cookie Settings" button reopens the consent modal.
 import { Link } from 'react-router-dom';
 import { Heart } from 'lucide-react';
 import { APP_TODAY } from '../constants';

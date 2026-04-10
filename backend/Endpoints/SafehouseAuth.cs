@@ -6,8 +6,9 @@ using Microsoft.EntityFrameworkCore;
 namespace backend.Endpoints;
 
 /// <summary>
-/// Shared helpers for enforcing per-user safehouse access restrictions.
-/// Admins see everything; staff see only their assigned safehouses.
+/// [SECURITY-6] Auth — RBAC (safehouse scoping): Shared helpers for enforcing per-user
+/// safehouse access restrictions. Admins see everything; staff see only data from their
+/// assigned safehouses. This provides data-level authorization beyond just role checks.
 /// </summary>
 public static class SafehouseAuth
 {
