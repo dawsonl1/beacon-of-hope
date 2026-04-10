@@ -122,6 +122,11 @@ def _infer_chart(columns: list[str], rows: list[dict]) -> ChartDescriptor | None
     if not rows or len(rows) < 2 or len(columns) < 2:
         return None
 
+    # Skip charts for record-level data (many columns = detail rows, not aggregations)
+    # A good chart needs aggregated data, not raw records.
+    if len(columns) > 4:
+        return None
+
     # Look for a string column (labels/x-axis) and a numeric column (values/y-axis)
     str_col = None
     num_col = None
@@ -138,18 +143,24 @@ def _infer_chart(columns: list[str], rows: list[dict]) -> ChartDescriptor | None
     x = [str(row.get(str_col, "")) for row in rows]
     y = [float(row.get(num_col, 0) or 0) for row in rows]
 
+    # Skip if x-axis labels look like IDs or codes (not meaningful for a chart)
+    id_pattern = re.compile(r'^[A-Z]{0,3}\d{3,}$|^\d+$', re.I)
+    if all(id_pattern.match(val) for val in x[:5]):
+        return None
+
     # Choose chart type based on data shape
-    if len(rows) <= 6:
-        chart_type = "bar"
-    elif len(rows) <= 12:
-        # Check if x values look like dates/months
-        date_pattern = re.compile(r"\d{4}[-/]\d{2}|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec", re.I)
-        if any(date_pattern.search(val) for val in x[:3]):
-            chart_type = "line"
-        else:
-            chart_type = "bar"
-    else:
+    date_pattern = re.compile(r"\d{4}[-/]\d{2}|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec", re.I)
+    is_time_series = any(date_pattern.search(val) for val in x[:3])
+
+    if is_time_series:
         chart_type = "line"
+    elif len(rows) <= 6:
+        chart_type = "bar"
+    elif len(rows) <= 15:
+        chart_type = "bar"
+    else:
+        # Too many non-time-series rows for a useful chart
+        return None
 
     # Use pie chart for small categorical data with proportions
     if len(rows) <= 5 and all(v >= 0 for v in y):
@@ -191,11 +202,14 @@ def _generate_summary(
                     "role": "system",
                     "content": (
                         "You are a helpful data assistant for a nonprofit managing safehouses for at-risk girls. "
-                        "Given a user's question and the query results, write a brief, conversational summary "
-                        "(2-4 sentences) that explains what the data shows and helps the user interpret it. "
-                        "Use natural language, highlight key numbers in **bold**, and explain what the numbers "
-                        "represent so the user can trust the results. Do not mention SQL or technical details. "
-                        "If the data is a time series, note any trends. Be warm and professional."
+                        "Given a user's question and the query results, write a brief, plain-text summary "
+                        "(1-3 sentences) that answers the question directly and helps the user understand the data. "
+                        "Rules: "
+                        "- Write in plain text only. No markdown, no asterisks, no bold formatting. "
+                        "- No em dashes. Use commas or periods instead. "
+                        "- Be direct and concise. State the key number first, then briefly explain what it means. "
+                        "- Do not mention SQL, queries, or technical details. "
+                        "- Do not be flowery or overly enthusiastic. Just be clear and helpful."
                     ),
                 },
                 {
