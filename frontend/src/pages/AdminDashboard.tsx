@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowUpRight, AlertTriangle, Calendar, UserPlus, DollarSign, FileText } from 'lucide-react';
 import { useSafehouse } from '../contexts/SafehouseContext';
@@ -117,6 +117,20 @@ export default function AdminDashboard() {
   const [donorsAtRisk, setDonorsAtRisk] = useState(0);
   const [incidentAlerts, setIncidentAlerts] = useState(0);
   const [reintegrationReady, setReintegrationReady] = useState(0);
+  const rightColRef = useRef<HTMLDivElement>(null);
+  const tableCardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const rightCol = rightColRef.current;
+    if (!rightCol) return;
+    const observer = new ResizeObserver(() => {
+      if (tableCardRef.current) {
+        tableCardRef.current.style.maxHeight = `${rightCol.offsetHeight}px`;
+      }
+    });
+    observer.observe(rightCol);
+    return () => observer.disconnect();
+  }, []);
 
   const fetchData = useCallback((shId: number | null) => {
     const onErr = (e: unknown) => { console.error('API fetch failed', e); };
@@ -276,7 +290,7 @@ export default function AdminDashboard() {
       {/* ── Two-column: Table + Donations ──────────────── */}
       <section className={styles.mainGrid}>
         {/* Residents Table */}
-        <div className={styles.tableCard}>
+        <div className={styles.tableCard} ref={tableCardRef}>
           <div className={styles.cardHeader}>
             <h2 className={styles.cardTitle}>Girls Impacted</h2>
             <div className={styles.legendRow}>
@@ -343,7 +357,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Right column: Recent Donations + Channel breakdown */}
-        <div className={styles.rightCol}>
+        <div className={styles.rightCol} ref={rightColRef}>
           <div className={styles.donationsCard}>
             <div className={styles.cardHeader}>
               <h2 className={styles.cardTitle}>Recent Donations</h2>
