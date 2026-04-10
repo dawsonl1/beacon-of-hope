@@ -11,7 +11,7 @@ import styles from './VisitationFormPage.module.css';
 
 interface SafehouseOption {
   safehouseId: number;
-  label: string;
+  name: string;
 }
 
 interface FilterOptions {
@@ -296,7 +296,7 @@ export default function ResidentFormPage() {
             </div>
             <div className={styles.field}>
               <div className={styles.label}>Safehouse <span className={styles.required}>*</span></div>
-              <Dropdown value={form.safehouseId} placeholder="Select safehouse..." options={options?.safehouses.map(s => ({ value: String(s.safehouseId), label: s.label })) ?? []} onChange={v => u('safehouseId', v)} />
+              <Dropdown value={form.safehouseId} placeholder="Select safehouse..." options={options?.safehouses.map(s => ({ value: String(s.safehouseId), label: s.name })) ?? []} onChange={v => u('safehouseId', v)} />
             </div>
             <div className={styles.field}>
               <div className={styles.label}>Case Category <span className={styles.required}>*</span></div>

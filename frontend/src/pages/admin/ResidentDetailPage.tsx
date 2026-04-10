@@ -692,7 +692,7 @@ export default function ResidentDetailPage() {
 
 /* ── Plan Tab Component ────────────────────────── */
 
-const PLAN_CATEGORIES = ['Safety', 'Education', 'Physical Health', 'Psychosocial', 'Legal', 'Reintegration'];
+const PLAN_CATEGORIES = ['Safety', 'Education', 'Physical Health'];
 const PLAN_STATUSES = ['Open', 'In Progress', 'Achieved', 'On Hold', 'Closed'];
 const PLAN_STATUS_COLORS: Record<string, string> = {
   Open: '#3498db', 'In Progress': '#f39c12', Achieved: '#27ae60', 'On Hold': '#95a5a6', Closed: '#95a5a6',
@@ -817,7 +817,7 @@ function PlanTab({ resident, conferences, setConferences, id }: {
                 value={planCategory}
                 placeholder="Select category..."
                 options={PLAN_CATEGORIES.map(c => ({ value: c, label: c }))}
-                onChange={setPlanCategory}
+                onChange={v => { setPlanCategory(v); setTargetValue(''); }}
               />
             </div>
             <div className={formStyles.field}>
@@ -829,10 +829,24 @@ function PlanTab({ resident, conferences, setConferences, id }: {
               />
             </div>
             <div className={formStyles.field}>
-              <label className={formStyles.label}>Target Value</label>
-              <input type="number" step="0.01" className={formStyles.input} value={targetValue} onChange={e => setTargetValue(e.target.value)} placeholder="e.g. 80" />
+              <label className={formStyles.label}>
+                Target Value
+                {planCategory === 'Education'
+                  ? <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginLeft: '0.35rem' }}>(0–1 scale, e.g. 0.85)</span>
+                  : planCategory
+                    ? <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginLeft: '0.35rem' }}>(1–5 scale)</span>
+                    : null}
+              </label>
+              {planCategory === 'Education' ? (
+                <input type="number" step="0.01" min="0" max="1" className={formStyles.input} value={targetValue} onChange={e => setTargetValue(e.target.value)} placeholder="e.g. 0.85" />
+              ) : (
+                <select className={formStyles.input} value={targetValue} onChange={e => setTargetValue(e.target.value)}>
+                  <option value="">Select...</option>
+                  {[1, 2, 3, 4, 5].map(n => <option key={n} value={String(n)}>{n}</option>)}
+                </select>
+              )}
             </div>
-            <div className={formStyles.field}>
+            <div className={`${formStyles.field} ${formStyles.fieldFull}`}>
               <div className={formStyles.label}>Target Date</div>
               <DatePicker value={targetDate} onChange={setTargetDate} placeholder="Select date..." />
             </div>

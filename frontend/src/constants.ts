@@ -16,7 +16,9 @@ export function formatMonthLabel(year: number, month: number): string {
 
 export function formatDate(dateStr: string | null | undefined): string {
   if (!dateStr) return '-';
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  // Parse as local date to avoid UTC timezone shift (e.g. "2026-02-23" showing as Feb 22 in US timezones)
+  const [y, m, d] = dateStr.split('T')[0].split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 export function formatAmount(amount: number | null | undefined): string {
