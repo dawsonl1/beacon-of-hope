@@ -65,9 +65,78 @@
 }
 
 .okrTarget {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-muted);
+}
+
+.okrGoalEditBtn {
+  padding: 0.15rem 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.okrGoalEditBtn:hover {
+  background: rgba(37, 99, 235, 0.15);
+}
+
+.okrGoalEdit {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.okrGoalInput {
+  width: 4rem;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.78rem;
+  border: 1px solid rgba(15, 27, 45, 0.2);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+}
+
+.okrGoalInput:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.okrGoalSaveBtn {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #fff;
+  background: #2563eb;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.okrGoalSaveBtn:disabled {
+  opacity: 0.5;
+}
+
+.okrGoalCancelBtn {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid rgba(15, 27, 45, 0.15);
+  border-radius: var(--radius-md);
+  cursor: pointer;
 }
 
 .okrProgress {

@@ -80,6 +80,9 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
     // Donor Outreach
     public virtual DbSet<DonorOutreach> DonorOutreaches { get; set; }
 
+    // App Settings
+    public virtual DbSet<AppSetting> AppSettings { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -1050,6 +1053,15 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.HasOne(e => e.Supporter)
                 .WithMany(s => s.DonorOutreaches)
                 .HasForeignKey(e => e.SupporterId);
+        });
+
+        modelBuilder.Entity<AppSetting>(entity =>
+        {
+            entity.HasKey(e => e.Key).HasName("app_settings_pkey");
+            entity.ToTable("app_settings");
+            entity.Property(e => e.Key).HasColumnName("key");
+            entity.Property(e => e.Value).HasColumnName("value");
+            entity.HasData(new AppSetting { Key = "okr_reintegration_goal", Value = "10" });
         });
 
         OnModelCreatingPartial(modelBuilder);

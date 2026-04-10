@@ -847,19 +847,46 @@ function MlInsightsTab() {
 }
 
 // ── Main Page ────────────────────────────────────────────
-const OKR_GOAL = 10;
+
+interface SummaryData {
+  totalResidents: number;
+  activeResidents: number;
+  activeSafehouses: number;
+  completedReintegrations: number;
+  reintegrationRate: number;
+  okrGoal: number;
+}
 
 function OkrBanner() {
-  const [data, setData] = useState<{ totalResidents: number; activeResidents: number; activeSafehouses: number; completedReintegrations: number; reintegrationRate: number } | null>(null);
+  const [data, setData] = useState<SummaryData | null>(null);
+  const [editingGoal, setEditingGoal] = useState(false);
+  const [goalInput, setGoalInput] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    apiFetch<{ totalResidents: number; activeResidents: number; activeSafehouses: number; completedReintegrations: number; reintegrationRate: number }>('/api/impact/summary')
+    apiFetch<SummaryData>('/api/impact/summary')
       .then(setData)
       .catch(() => {});
   }, []);
 
   if (!data) return null;
-  const progress = Math.min(100, (data.completedReintegrations / OKR_GOAL) * 100);
+  const goal = data.okrGoal;
+  const progress = Math.min(100, (data.completedReintegrations / goal) * 100);
+
+  async function handleSaveGoal() {
+    const parsed = parseInt(goalInput, 10);
+    if (!parsed || parsed < 1) return;
+    setSaving(true);
+    try {
+      await apiFetch('/api/admin/settings/okr-goal', {
+        method: 'PUT',
+        body: JSON.stringify({ goal: parsed }),
+      });
+      setData(prev => prev ? { ...prev, okrGoal: parsed } : prev);
+      setEditingGoal(false);
+    } catch { /* best effort */ }
+    setSaving(false);
+  }
 
   return (
     <div className={styles.okrBanner}>
@@ -867,13 +894,34 @@ function OkrBanner() {
         <div className={styles.okrHeadline}>
           <span className={styles.okrLabel}>Objective: Help girls reintegrate into society</span>
           <h2 className={styles.okrRate}>{data.completedReintegrations}</h2>
-          <span className={styles.okrTarget}>Goal: {OKR_GOAL} this year</span>
+          {editingGoal ? (
+            <span className={styles.okrGoalEdit}>
+              <span>Goal:</span>
+              <input
+                type="number"
+                min="1"
+                className={styles.okrGoalInput}
+                value={goalInput}
+                onChange={e => setGoalInput(e.target.value)}
+                autoFocus
+              />
+              <button className={styles.okrGoalSaveBtn} onClick={handleSaveGoal} disabled={saving}>Save</button>
+              <button className={styles.okrGoalCancelBtn} onClick={() => setEditingGoal(false)}>Cancel</button>
+            </span>
+          ) : (
+            <span className={styles.okrTarget}>
+              Goal: {goal} this year
+              <button className={styles.okrGoalEditBtn} onClick={() => { setGoalInput(String(goal)); setEditingGoal(true); }}>
+                Update goal
+              </button>
+            </span>
+          )}
         </div>
         <div className={styles.okrProgress}>
           <div className={styles.okrBarTrack}>
             <div className={styles.okrBarFill} style={{ width: `${progress}%` }} />
           </div>
-          <span className={styles.okrBarLabel}>{data.completedReintegrations} of {OKR_GOAL} girls successfully reintegrated this year</span>
+          <span className={styles.okrBarLabel}>{data.completedReintegrations} of {goal} girls successfully reintegrated this year</span>
         </div>
       </div>
       <div className={styles.okrDetails}>
