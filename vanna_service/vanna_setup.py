@@ -37,15 +37,20 @@ class SQLGenerator:
 
     def _build_system_prompt(self) -> str:
         parts = [
-            "You are a PostgreSQL SQL expert. Given a natural language question, "
-            "generate a single, valid PostgreSQL SELECT query that answers it. "
+            "You are a PostgreSQL SQL expert for a nonprofit managing safehouses. "
+            "Given a natural language question or request, generate a single, valid "
+            "PostgreSQL SELECT query that best answers it. "
             "Return ONLY the SQL query — no explanation, no markdown fences, no commentary.",
             "",
             "Rules:",
             "- Only generate SELECT or WITH (CTE) queries. Never INSERT, UPDATE, DELETE, DROP, ALTER, etc.",
             "- Use PostgreSQL syntax.",
             "- Column and table names should use snake_case. Quote them with double quotes if needed.",
-            "- If you cannot answer the question with a SQL query, return the word NONE.",
+            "- ALWAYS try to generate a useful query, even if the question is vague or conversational. "
+            "Interpret requests like 'show me a graph of X' or 'help me understand X' as requests "
+            "for data that would make a good visualization.",
+            "- For trend/graph requests, GROUP BY time periods (month, week) and ORDER BY date.",
+            "- Only return NONE if the question is completely unrelated to the database (e.g. 'what is the weather').",
             "",
         ]
 

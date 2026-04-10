@@ -98,5 +98,29 @@
   {
     "question": "What are the top performing social media posts?",
     "sql": "SELECT platform, caption, COALESCE(likes, 0) + COALESCE(shares, 0) + COALESCE(comments, 0) AS total_engagement FROM social_media_posts ORDER BY total_engagement DESC LIMIT 10"
+  },
+  {
+    "question": "Show me a graph of how social media posts have been doing lately",
+    "sql": "SELECT TO_CHAR(created_at, 'YYYY-MM') AS month, COUNT(*) AS posts, ROUND(AVG(engagement_rate)::numeric, 2) AS avg_engagement_rate, SUM(COALESCE(likes, 0)) AS total_likes, SUM(COALESCE(shares, 0)) AS total_shares FROM social_media_posts GROUP BY TO_CHAR(created_at, 'YYYY-MM') ORDER BY month"
+  },
+  {
+    "question": "How is our social media doing?",
+    "sql": "SELECT TO_CHAR(created_at, 'YYYY-MM') AS month, COUNT(*) AS posts, SUM(COALESCE(likes, 0)) AS total_likes, SUM(COALESCE(comments, 0)) AS total_comments, SUM(COALESCE(shares, 0)) AS total_shares FROM social_media_posts GROUP BY TO_CHAR(created_at, 'YYYY-MM') ORDER BY month"
+  },
+  {
+    "question": "Help me understand donation trends",
+    "sql": "SELECT TO_CHAR(donation_date, 'YYYY-MM') AS month, COUNT(*) AS donation_count, SUM(amount) AS total_amount, ROUND(AVG(amount)::numeric, 2) AS avg_amount FROM donations GROUP BY TO_CHAR(donation_date, 'YYYY-MM') ORDER BY month"
+  },
+  {
+    "question": "Graph of incidents over time",
+    "sql": "SELECT TO_CHAR(incident_date, 'YYYY-MM') AS month, COUNT(*) AS incident_count, severity FROM incident_reports GROUP BY TO_CHAR(incident_date, 'YYYY-MM'), severity ORDER BY month"
+  },
+  {
+    "question": "How are we doing with admissions?",
+    "sql": "SELECT TO_CHAR(date_of_admission, 'YYYY-MM') AS month, COUNT(*) AS new_admissions FROM residents WHERE date_of_admission IS NOT NULL GROUP BY TO_CHAR(date_of_admission, 'YYYY-MM') ORDER BY month"
+  },
+  {
+    "question": "Which platform gets the most engagement?",
+    "sql": "SELECT platform, COUNT(*) AS posts, ROUND(AVG(engagement_rate)::numeric, 2) AS avg_engagement_rate, SUM(COALESCE(likes, 0)) AS total_likes, SUM(COALESCE(shares, 0)) AS total_shares, SUM(COALESCE(comments, 0)) AS total_comments FROM social_media_posts GROUP BY platform ORDER BY avg_engagement_rate DESC"
   }
 ]
