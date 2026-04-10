@@ -64,9 +64,12 @@ export default function AdminChatWidget() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
+  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
   const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const loadingTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const dragState = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null);
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -86,6 +89,37 @@ export default function AdminChatWidget() {
   useEffect(() => {
     return () => loadingTimers.current.forEach(clearTimeout);
   }, []);
+
+  // Reset position when toggling expanded mode
+  useEffect(() => {
+    setPosition(null);
+  }, [expanded]);
+
+  // Drag handlers
+  const onDragStart = (e: React.PointerEvent) => {
+    // Only drag from the header, not buttons
+    if ((e.target as HTMLElement).closest('button')) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    const rect = panel.getBoundingClientRect();
+    dragState.current = { startX: e.clientX, startY: e.clientY, origX: rect.left, origY: rect.top };
+    panel.style.transition = 'none';
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  };
+
+  const onDragMove = (e: React.PointerEvent) => {
+    if (!dragState.current) return;
+    const dx = e.clientX - dragState.current.startX;
+    const dy = e.clientY - dragState.current.startY;
+    setPosition({ x: dragState.current.origX + dx, y: dragState.current.origY + dy });
+  };
+
+  const onDragEnd = () => {
+    dragState.current = null;
+    const panel = panelRef.current;
+    if (panel) panel.style.transition = '';
+  };
 
   const startLoadingStages = () => {
     loadingTimers.current.forEach(clearTimeout);
@@ -178,11 +212,20 @@ export default function AdminChatWidget() {
   }
 
   const panelClass = `${styles.panel} ${expanded ? styles.panelExpanded : ''}`;
+  const panelStyle: React.CSSProperties = position
+    ? { top: position.y, left: position.x, bottom: 'auto', right: 'auto', transform: 'none' }
+    : {};
 
   return (
-    <div className={panelClass}>
-      {/* Header */}
-      <div className={styles.header}>
+    <div className={panelClass} style={panelStyle} ref={panelRef}>
+      {/* Header (drag handle) */}
+      <div
+        className={styles.header}
+        style={{ cursor: 'grab' }}
+        onPointerDown={onDragStart}
+        onPointerMove={onDragMove}
+        onPointerUp={onDragEnd}
+      >
         <div className={styles.headerLeft}>
           <span className={styles.headerDot} />
           <span className={styles.headerTitle}>Data Assistant</span>
