@@ -284,10 +284,8 @@ def generate_newsletter_endpoint(req: GenerateNewsletterRequest):
     """Generate a monthly newsletter using GPT, aggregating data from the DB."""
     from datetime import datetime
     from ai_harness.llm import build_system_prompt
-    from ai_harness.config import OPENAI_API_KEY, OPENAI_MODEL
+    from ai_harness.config import OPENAI_API_KEY, OPENAI_MODEL, APP_TODAY
     from openai import OpenAI
-
-    from ai_harness.config import APP_TODAY
     year = req.year or APP_TODAY.year
     month = req.month or APP_TODAY.month
 
