@@ -201,36 +201,59 @@ public static class NewsletterEndpoints
 
         // ── Admin: generate via AI harness ─────────────────────────────
 
-        app.MapPost("/api/admin/newsletters/generate", async (AppDbContext db, IConfiguration config) =>
+        app.MapPost("/api/admin/newsletters/generate", async (AppDbContext db, IConfiguration config, ILoggerFactory loggerFactory) =>
         {
+            var logger = loggerFactory.CreateLogger("NewsletterGenerate");
             var harnessUrl = config["AiHarness:Url"] ?? "http://localhost:8001";
             var harnessKey = config["AiHarness:ApiKey"] ?? "";
+
+            logger.LogInformation("Generating newsletter via AI harness at {Url}", harnessUrl);
 
             using var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(120) };
             if (!string.IsNullOrEmpty(harnessKey))
                 httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {harnessKey}");
 
-            var now = AppConstants.DataCutoffUtc;
-            var genResp = await httpClient.PostAsJsonAsync($"{harnessUrl}/generate-newsletter",
-                new { year = now.Year, month = now.Month });
+            HttpResponseMessage genResp;
+            try
+            {
+                var now = AppConstants.DataCutoffUtc;
+                genResp = await httpClient.PostAsJsonAsync($"{harnessUrl}/generate-newsletter",
+                    new { year = now.Year, month = now.Month });
+            }
+            catch (TaskCanceledException)
+            {
+                logger.LogError("AI harness request timed out after 120s");
+                return Results.BadRequest(new { error = "AI harness request timed out. The service may be starting up — try again in a minute." });
+            }
+            catch (HttpRequestException ex)
+            {
+                logger.LogError(ex, "Failed to reach AI harness at {Url}", harnessUrl);
+                return Results.BadRequest(new { error = $"Cannot reach AI harness: {ex.Message}" });
+            }
 
             if (!genResp.IsSuccessStatusCode)
-                return Results.BadRequest(new { error = $"AI harness returned {genResp.StatusCode}" });
+            {
+                var body = await genResp.Content.ReadAsStringAsync();
+                logger.LogError("AI harness returned {Status}: {Body}", genResp.StatusCode, body);
+                return Results.BadRequest(new { error = $"AI harness returned {genResp.StatusCode}: {body}" });
+            }
 
             var genJson = await genResp.Content.ReadFromJsonAsync<JsonElement>();
+            var now2 = AppConstants.DataCutoffUtc;
 
             var newsletter = new Newsletter
             {
-                Subject = genJson.TryGetProperty("subject", out var s) ? s.GetString() : $"Beacon of Hope — {now:MMMM yyyy}",
+                Subject = genJson.TryGetProperty("subject", out var s) ? s.GetString() : $"Beacon of Hope — {now2:MMMM yyyy}",
                 HtmlContent = genJson.TryGetProperty("html_content", out var h) ? h.GetString() : null,
                 PlainText = genJson.TryGetProperty("plain_text", out var p) ? p.GetString() : null,
                 Status = "draft",
                 GeneratedAt = AppConstants.DataCutoffUtc,
-                MonthYear = now.Year * 100 + now.Month
+                MonthYear = now2.Year * 100 + now2.Month
             };
 
             db.Newsletters.Add(newsletter);
             await db.SaveChangesAsync();
+            logger.LogInformation("Newsletter draft created: {Id}", newsletter.NewsletterId);
             return Results.Created($"/api/admin/newsletters/{newsletter.NewsletterId}", newsletter);
         }).RequireAuthorization(p => p.RequireRole("Admin"));
 
