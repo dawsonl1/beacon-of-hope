@@ -14,7 +14,7 @@ load_dotenv(PROJECT_ROOT / ".env")
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
-OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o")
+OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.4")
 
 DATABASE_URL_READONLY = os.environ.get("DATABASE_URL_READONLY", "")
 
