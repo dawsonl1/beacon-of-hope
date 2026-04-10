@@ -63,12 +63,14 @@ public static class ReportEndpoints
             var completedTotal = byType.Sum(b => b.count);
             var successRate = total > 0 ? Math.Round((double)completedTotal / total * 100, 1) : 0;
 
-            var avgLengthOfStay = await residentsQuery
+            var stayDates = await residentsQuery
                 .Where(r => r.ReintegrationStatus == "Completed"
                     && r.DateOfAdmission != null && r.DateClosed != null)
-                .Select(r => (double)(r.DateClosed!.Value.DayNumber - r.DateOfAdmission!.Value.DayNumber))
-                .DefaultIfEmpty(0)
-                .AverageAsync();
+                .Select(r => new { r.DateOfAdmission, r.DateClosed })
+                .ToListAsync();
+            var avgLengthOfStay = stayDates.Count > 0
+                ? stayDates.Average(r => (r.DateClosed!.Value.DayNumber - r.DateOfAdmission!.Value.DayNumber))
+                : 0.0;
 
             return new
             {

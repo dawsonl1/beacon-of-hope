@@ -266,7 +266,13 @@
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-strong);
-  margin-bottom: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.chartSub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0 0 0.75rem;
 }
 
 .chartContainer {

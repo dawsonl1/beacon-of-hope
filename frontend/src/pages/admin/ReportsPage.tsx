@@ -40,6 +40,7 @@ interface SafehouseRow {
 interface SummaryData {
   totalResidents: number; activeResidents: number; activeSafehouses: number;
   totalDonations: number; completedReintegrations: number; reintegrationRate: number;
+  okrGoal: number;
 }
 
 // ── Tab config ───────────────────────────────────────────
@@ -68,18 +69,24 @@ function Loading() {
 function OverviewTab() {
   const [summary, setSummary] = useState<SummaryData | null>(null);
   const [avgHealth, setAvgHealth] = useState<number | null>(null);
+  const [trends, setTrends] = useState<MonthRow[]>([]);
+  const [outcomes, setOutcomes] = useState<OutcomeData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
       try {
-        const [s, health] = await Promise.all([
+        const [s, health, t, o] = await Promise.all([
           apiFetch<SummaryData>('/api/impact/summary'),
           apiFetch<HealthRow[]>('/api/impact/health-trends'),
+          apiFetch<MonthRow[]>('/api/impact/donations-by-month').catch(() => []),
+          apiFetch<OutcomeData>('/api/admin/reports/resident-outcomes').catch(() => null),
         ]);
         if (cancelled) return;
         setSummary(s);
+        setTrends(t as MonthRow[]);
+        setOutcomes(o);
         if (health.length > 0) {
           setAvgHealth(health[health.length - 1].avgHealth);
         }
@@ -93,13 +100,20 @@ function OverviewTab() {
     return () => { cancelled = true; };
   }, []);
 
+  const recentTrends = trends.slice(-6).map(d => ({
+    month: formatMonthLabel(d.year, d.month),
+    total: Number(d.total),
+  }));
+
+  const donutData = outcomes?.byType.map(d => ({ name: d.type, value: d.count })) ?? [];
+
   return (
     <>
       <div className={styles.kpiGrid}>
         <KpiCard
-          label="Total Residents"
+          label="Total Residents Served"
           value={summary?.totalResidents.toLocaleString() ?? '--'}
-          sub={`${summary?.activeResidents ?? 0} currently active`}
+          sub={`${summary?.activeResidents ?? 0} currently in care`}
           loading={loading}
         />
         <KpiCard
@@ -111,7 +125,7 @@ function OverviewTab() {
         <KpiCard
           label="Reintegration Rate"
           value={summary ? `${summary.reintegrationRate}%` : '--'}
-          sub={`${summary?.completedReintegrations ?? 0} completed`}
+          sub={`${summary?.completedReintegrations ?? 0} girls reintegrated this year`}
           loading={loading}
         />
         <KpiCard
@@ -120,6 +134,56 @@ function OverviewTab() {
           sub="Latest monthly average"
           loading={loading}
         />
+      </div>
+
+      <div className={styles.chartsRow}>
+        {/* Mini donation trend */}
+        {recentTrends.length > 0 && (
+          <div className={styles.chartCard}>
+            <h3 className={styles.chartTitle}>Donation Trend</h3>
+            <p className={styles.chartSub}>Last 6 months</p>
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={recentTrends}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#F0EDE6" />
+                <XAxis dataKey="month" tick={{ fontSize: 10 }} stroke="#B0A99F" />
+                <YAxis tick={{ fontSize: 10 }} stroke="#B0A99F" tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} />
+                <Tooltip content={<ChartTooltip prefix="$" />} />
+                <Line type="monotone" dataKey="total" stroke="#D4A853" strokeWidth={2.5} dot={{ r: 3, fill: '#D4A853' }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
+        {/* Reintegration by type */}
+        {donutData.length > 0 && (
+          <div className={styles.chartCard}>
+            <h3 className={styles.chartTitle}>Reintegration by Type</h3>
+            <p className={styles.chartSub}>All-time breakdown of how girls were reintegrated</p>
+            <ResponsiveContainer width="100%" height={220}>
+              <PieChart>
+                <Pie
+                  data={donutData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%" cy="50%"
+                  innerRadius={50} outerRadius={80}
+                  paddingAngle={3}
+                >
+                  {donutData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className={styles.legend}>
+              {donutData.map((d, i) => (
+                <span key={d.name} className={styles.legendItem}>
+                  <span className={styles.legendDot} style={{ background: COLORS[i % COLORS.length] }} />
+                  {d.name} ({d.value})
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
@@ -167,6 +231,7 @@ function DonationsTab() {
       {/* Monthly trend line chart */}
       <div className={styles.chartCard}>
         <h3 className={styles.chartTitle}>Monthly Donation Trends</h3>
+        <p className={styles.chartSub}>Total contributions received each month, all time</p>
         <div className={styles.chartContainer}>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={trendData}>
@@ -184,6 +249,7 @@ function DonationsTab() {
         {/* By source bar chart */}
         <div className={styles.chartCard}>
           <h3 className={styles.chartTitle}>Donations by Source</h3>
+          <p className={styles.chartSub}>Where contributions come from</p>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={bySrc.map(d => ({ ...d, total: Number(d.total) }))} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#F0EDE6" />
@@ -198,6 +264,7 @@ function DonationsTab() {
         {/* By campaign bar chart */}
         <div className={styles.chartCard}>
           <h3 className={styles.chartTitle}>Donations by Campaign</h3>
+          <p className={styles.chartSub}>Top 8 campaigns by total raised</p>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={byCampaign.slice(0, 8).map(d => ({ ...d, total: Number(d.total) }))} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#F0EDE6" />
@@ -229,14 +296,14 @@ function OutcomesTab() {
           ? `/api/admin/reports/resident-outcomes?safehouseId=${activeSafehouseId}`
           : '/api/admin/reports/resident-outcomes';
         const [o, e, h] = await Promise.all([
-          apiFetch<OutcomeData>(outcomesUrl),
-          apiFetch<EduRow[]>('/api/impact/education-trends'),
-          apiFetch<HealthRow[]>('/api/impact/health-trends'),
+          apiFetch<OutcomeData>(outcomesUrl).catch(() => null),
+          apiFetch<EduRow[]>('/api/impact/education-trends').catch(() => []),
+          apiFetch<HealthRow[]>('/api/impact/health-trends').catch(() => []),
         ]);
         if (cancelled) return;
         setOutcomes(o);
-        setEdu(e);
-        setHealth(h);
+        setEdu(e as EduRow[]);
+        setHealth(h as HealthRow[]);
       } catch (e) {
         console.error('Failed to load outcomes', e);
       } finally {
@@ -292,6 +359,7 @@ function OutcomesTab() {
         {/* Reintegration donut */}
         <div className={styles.chartCard}>
           <h3 className={styles.chartTitle}>Reintegration by Type</h3>
+          <p className={styles.chartSub}>How girls were placed after completing the program</p>
           <ResponsiveContainer width="100%" height={260}>
             <PieChart>
               <Pie data={donutData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={95} paddingAngle={3}>
@@ -319,6 +387,7 @@ function OutcomesTab() {
         {/* Education progress line */}
         <div className={styles.chartCard}>
           <h3 className={styles.chartTitle}>Education Progress Over Time</h3>
+          <p className={styles.chartSub}>Monthly averages for academic progress and attendance rates</p>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={eduData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#F0EDE6" />
@@ -335,6 +404,7 @@ function OutcomesTab() {
       {/* Health scores line */}
       <div className={styles.chartCard}>
         <h3 className={styles.chartTitle}>Health Scores Over Time</h3>
+        <p className={styles.chartSub}>Monthly averages for general health, nutrition, sleep quality, and energy levels</p>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={healthData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#F0EDE6" />
@@ -448,6 +518,7 @@ function SafehousesTab() {
       <div className={styles.chartsRow}>
         <div className={styles.chartCard}>
           <h3 className={styles.chartTitle}>Occupancy by Safehouse</h3>
+          <p className={styles.chartSub}>Current capacity utilization at each location</p>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#F0EDE6" />
@@ -461,6 +532,7 @@ function SafehousesTab() {
 
         <div className={styles.chartCard}>
           <h3 className={styles.chartTitle}>Incidents by Safehouse</h3>
+          <p className={styles.chartSub}>Total reported incidents at each location</p>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#F0EDE6" />
@@ -488,6 +560,7 @@ function SafehousesTab() {
         return (
           <div className={styles.chartCard}>
             <h3 className={styles.chartTitle}>Incident Trends by Safehouse</h3>
+            <p className={styles.chartSub}>Monthly incident counts over the last 6 months by location</p>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(15,27,45,0.06)" />
@@ -667,6 +740,7 @@ function MlInsightsTab() {
           <div style={headerStyle}>
             <h3 className={styles.chartTitle} style={{ margin: 0 }}>What Drives Reintegration Success</h3>
           </div>
+          <p className={styles.chartSub}>Factors that most influence whether a girl successfully reintegrates. Green arrows mean the factor helps; red arrows mean it hinders.</p>
           <div style={{ marginBottom: '1rem' }}>
             <ResponsiveContainer width="100%" height={Math.max(reintDrivers.length * 32, 120)}>
               <BarChart data={reintDrivers.slice(0, 8).map(d => ({ name: humanize(d.feature), value: d.coefficient }))} layout="vertical" margin={{ left: 120, right: 20, top: 4, bottom: 4 }}>
@@ -706,6 +780,7 @@ function MlInsightsTab() {
           <div style={headerStyle}>
             <h3 className={styles.chartTitle} style={{ margin: 0 }}>What Drives Donor Retention</h3>
           </div>
+          <p className={styles.chartSub}>Factors that predict whether a donor will continue giving. Higher values mean a stronger effect on retention.</p>
           {donorDrivers.map((d, i) => (
             <div key={d.feature} style={rowStyle}>
               <span style={rankStyle}>{i + 1}</span>
@@ -733,6 +808,7 @@ function MlInsightsTab() {
           <div style={headerStyle}>
             <h3 className={styles.chartTitle} style={{ margin: 0 }}>Incident Risk Factors</h3>
           </div>
+          <p className={styles.chartSub}>Conditions that increase or decrease the likelihood of incidents. Red values indicate higher risk; green indicates lower risk.</p>
 
           {selfharmDrivers.length > 0 && (
             <>
@@ -790,6 +866,7 @@ function MlInsightsTab() {
           <div style={headerStyle}>
             <h3 className={styles.chartTitle} style={{ margin: 0 }}>Social Media Insights</h3>
           </div>
+          <p className={styles.chartSub}>What to post and when to post it for maximum engagement.</p>
 
           {contentFindings.length > 0 && (
             <>
@@ -847,15 +924,6 @@ function MlInsightsTab() {
 }
 
 // ── Main Page ────────────────────────────────────────────
-
-interface SummaryData {
-  totalResidents: number;
-  activeResidents: number;
-  activeSafehouses: number;
-  completedReintegrations: number;
-  reintegrationRate: number;
-  okrGoal: number;
-}
 
 function OkrBanner() {
   const [data, setData] = useState<SummaryData | null>(null);
