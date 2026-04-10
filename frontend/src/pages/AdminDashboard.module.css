@@ -172,7 +172,12 @@
   box-shadow: var(--shadow-sm);
 }
 
-.tableCard,
+.tableCard {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
 .donationsCard {
   overflow: hidden;
 }
@@ -225,6 +230,9 @@
 
 .tableWrapper {
   overflow-x: auto;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 .table {
