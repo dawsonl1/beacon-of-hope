@@ -3,6 +3,8 @@
 backend/bin/
 backend/obj/
 backend/publish/
+backend.Tests/bin/
+backend.Tests/obj/
 *.user
 *.suo
 
