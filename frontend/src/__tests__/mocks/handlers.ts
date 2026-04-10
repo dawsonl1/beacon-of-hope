@@ -26,6 +26,7 @@ import {
   mockDonationsByCampaign,
   mockOutcomes,
   mockSafehouseComparison,
+  mockOutreachRecords,
 } from './data';
 
 const API = 'http://localhost:5001';
@@ -152,6 +153,28 @@ export const adminHandlers = [
 
   http.delete(`${API}/api/admin/supporters/:id`, () =>
     HttpResponse.json({ message: 'Deleted' }),
+  ),
+
+  http.get(`${API}/api/admin/supporters/:id/outreach`, () =>
+    HttpResponse.json(mockOutreachRecords),
+  ),
+
+  http.post(`${API}/api/admin/supporters/:id/outreach`, () =>
+    HttpResponse.json({ id: 99 }),
+  ),
+
+  http.put(`${API}/api/admin/outreach/:outreachId`, () =>
+    HttpResponse.json({ id: 1 }),
+  ),
+
+  http.delete(`${API}/api/admin/outreach/:outreachId`, () =>
+    HttpResponse.json({ deleted: true }),
+  ),
+
+  http.get(`${API}/api/ml/predictions/supporter/:id`, () =>
+    HttpResponse.json([
+      { id: 10, modelName: 'donor-churn', score: 85, scoreLabel: 'High', predictedAt: '2026-02-16', metadata: '{}' },
+    ]),
   ),
 
   http.get(`${API}/api/admin/donations`, () =>

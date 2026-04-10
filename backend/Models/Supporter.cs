@@ -36,4 +36,6 @@ public partial class Supporter
     public DateTime? CreatedAt { get; set; }
 
     public virtual ICollection<Donation> Donations { get; set; } = new List<Donation>();
+
+    public virtual ICollection<DonorOutreach> DonorOutreaches { get; set; } = new List<DonorOutreach>();
 }

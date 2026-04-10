@@ -293,6 +293,25 @@ export const mockSupporterDetail = {
   totalDonated: 50000,
 };
 
+export const mockOutreachRecords = [
+  {
+    id: 1,
+    staffEmail: 'admin@beaconofhope.org',
+    staffName: 'Director Reyes',
+    outreachType: 'Email',
+    note: null,
+    createdAt: '2026-02-15T00:00:00Z',
+  },
+  {
+    id: 2,
+    staffEmail: 'staff@beaconofhope.org',
+    staffName: 'Elena Reyes',
+    outreachType: 'Note',
+    note: 'Called donor to thank for recent contribution',
+    createdAt: '2026-02-14T00:00:00Z',
+  },
+];
+
 export const mockSummaryData = {
   totalResidents: 124,
   activeResidents: 42,

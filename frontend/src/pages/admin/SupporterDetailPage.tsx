@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Pencil, Trash2, Loader2 } from 'lucide-react';
+import { ArrowLeft, Pencil, Trash2, Loader2, Mail, StickyNote, X, Check } from 'lucide-react';
 import { apiFetch } from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import { formatDate, formatAmount, formatEnumLabel } from '../../constants';
@@ -52,6 +52,15 @@ interface MlPrediction {
   metadata: string | null;
 }
 
+interface OutreachRecord {
+  id: number;
+  staffEmail: string;
+  staffName: string;
+  outreachType: string;
+  note: string | null;
+  createdAt: string;
+}
+
 export default function SupporterDetailPage() {
   useDocumentTitle('Supporter Detail');
   const { id } = useParams<{ id: string }>();
@@ -66,6 +75,12 @@ export default function SupporterDetailPage() {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [churn, setChurn] = useState<MlPrediction | null>(null);
+  const [outreachRecords, setOutreachRecords] = useState<OutreachRecord[]>([]);
+  const [showNoteInput, setShowNoteInput] = useState(false);
+  const [noteText, setNoteText] = useState('');
+  const [savingOutreach, setSavingOutreach] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editText, setEditText] = useState('');
 
   useEffect(() => {
     if (!id) return;
@@ -81,6 +96,10 @@ export default function SupporterDetailPage() {
         setChurn(c ?? null);
       })
       .catch(() => { /* ML predictions are non-critical */ });
+
+    apiFetch<OutreachRecord[]>(`/api/admin/supporters/${id}/outreach`)
+      .then(setOutreachRecords)
+      .catch(() => { /* Outreach records are non-critical */ });
   }, [id]);
 
   function churnColor(label: string) {
@@ -93,14 +112,78 @@ export default function SupporterDetailPage() {
     }
   }
 
-  function parseRiskFactors(metadata: string | null): string[] {
-    if (!metadata) return [];
+  function refreshOutreach() {
+    if (!id) return;
+    apiFetch<OutreachRecord[]>(`/api/admin/supporters/${id}/outreach`)
+      .then(setOutreachRecords)
+      .catch(() => {});
+  }
+
+  async function handleSendEmail() {
+    if (!id || !data) return;
+    setSavingOutreach(true);
     try {
-      const parsed = JSON.parse(metadata);
-      return Array.isArray(parsed.top_risk_factors) ? parsed.top_risk_factors : [];
-    } catch {
-      return [];
-    }
+      await apiFetch(`/api/admin/supporters/${id}/outreach`, {
+        method: 'POST',
+        body: JSON.stringify({ outreachType: 'Email' }),
+      });
+      refreshOutreach();
+    } catch { /* best effort */ }
+    setSavingOutreach(false);
+
+    const s = data.supporter;
+    const donorName = s.firstName || s.displayName || 'there';
+    const count = data.donations.length;
+    const total = formatAmount(s.totalDonated);
+    const staffName = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || 'Staff';
+    const subject = encodeURIComponent('Your impact at Beacon of Hope');
+    const body = encodeURIComponent(
+      `Hi ${donorName},\n\n` +
+      `Thank you for your generous support of Beacon of Hope. Your ${count} contribution${count !== 1 ? 's' : ''} ` +
+      `totaling ${total} have made a real difference \u2014 helping us provide safe housing, ` +
+      `mentorship, and life-skills training to residents working toward independence.\n\n` +
+      `We\u2019d love to share more about what\u2019s been happening \u2014 would you be open to a quick call or visit?\n\n` +
+      `With gratitude,\n${staffName}\nBeacon of Hope`,
+    );
+    window.open(`mailto:${s.email ?? ''}?subject=${subject}&body=${body}`, '_self');
+  }
+
+  async function handleSaveNote() {
+    if (!id || !noteText.trim()) return;
+    setSavingOutreach(true);
+    try {
+      await apiFetch(`/api/admin/supporters/${id}/outreach`, {
+        method: 'POST',
+        body: JSON.stringify({ outreachType: 'Note', note: noteText.trim() }),
+      });
+      setNoteText('');
+      setShowNoteInput(false);
+      refreshOutreach();
+    } catch { /* best effort */ }
+    setSavingOutreach(false);
+  }
+
+  async function handleDeleteOutreach(outreachId: number) {
+    setSavingOutreach(true);
+    try {
+      await apiFetch(`/api/admin/outreach/${outreachId}`, { method: 'DELETE' });
+      refreshOutreach();
+    } catch { /* best effort */ }
+    setSavingOutreach(false);
+  }
+
+  async function handleUpdateNote(outreachId: number) {
+    setSavingOutreach(true);
+    try {
+      await apiFetch(`/api/admin/outreach/${outreachId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ note: editText.trim() || null }),
+      });
+      setEditingId(null);
+      setEditText('');
+      refreshOutreach();
+    } catch { /* best effort */ }
+    setSavingOutreach(false);
   }
 
   async function handleDelete() {
@@ -231,16 +314,89 @@ export default function SupporterDetailPage() {
               {churn.scoreLabel}
             </span>
           </div>
-          {parseRiskFactors(churn.metadata).length > 0 && (
-            <div className={styles.riskFactors}>
-              <span className={styles.riskFactorsLabel}>Top risk factors</span>
-              <ul className={styles.riskFactorsList}>
-                {parseRiskFactors(churn.metadata).map((f, i) => (
-                  <li key={i}>{f}</li>
-                ))}
-              </ul>
+          {(churn.scoreLabel === 'High' || churn.scoreLabel === 'Critical') && (
+            <div className={styles.outreachActions}>
+              <button className={`${styles.outreachBtn} ${styles.outreachBtnEmail}`} onClick={handleSendEmail} disabled={savingOutreach}>
+                <Mail size={14} /> Send email
+              </button>
+              <button className={`${styles.outreachBtn} ${styles.outreachBtnNote}`} onClick={() => setShowNoteInput(v => !v)} disabled={savingOutreach}>
+                <StickyNote size={14} /> Log note
+              </button>
             </div>
           )}
+          {showNoteInput && (
+            <div className={styles.noteInputArea}>
+              <textarea
+                className={styles.noteTextarea}
+                placeholder="Add a note about this outreach..."
+                value={noteText}
+                onChange={e => setNoteText(e.target.value)}
+                rows={3}
+              />
+              <button className={styles.noteSaveBtn} onClick={handleSaveNote} disabled={savingOutreach || !noteText.trim()}>
+                Save note
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Outreach History — always visible when records exist */}
+      {outreachRecords.length > 0 && (
+        <div className={styles.outreachHistoryCard}>
+          <span className={styles.outreachHistoryTitle}>Outreach History</span>
+          <ul className={styles.outreachList}>
+            {outreachRecords.map(r => (
+              <li key={r.id} className={styles.outreachItem}>
+                <div className={styles.outreachItemRow}>
+                  <span className={styles.outreachItemType}>{r.outreachType}</span>
+                  <span className={styles.outreachItemMeta}>
+                    {r.staffName} &middot; {formatDate(r.createdAt)}
+                  </span>
+                  <span className={styles.outreachItemActions}>
+                    {r.outreachType === 'Note' && editingId !== r.id && (
+                      <button
+                        className={styles.outreachIconBtn}
+                        title="Edit note"
+                        onClick={() => { setEditingId(r.id); setEditText(r.note ?? ''); }}
+                        disabled={savingOutreach}
+                      >
+                        <Pencil size={12} />
+                      </button>
+                    )}
+                    <button
+                      className={`${styles.outreachIconBtn} ${styles.outreachIconBtnDanger}`}
+                      title="Delete"
+                      onClick={() => handleDeleteOutreach(r.id)}
+                      disabled={savingOutreach}
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </span>
+                </div>
+                {editingId === r.id ? (
+                  <div className={styles.editNoteArea}>
+                    <textarea
+                      className={styles.noteTextarea}
+                      value={editText}
+                      onChange={e => setEditText(e.target.value)}
+                      rows={2}
+                    />
+                    <div className={styles.editNoteButtons}>
+                      <button className={styles.noteSaveBtn} onClick={() => handleUpdateNote(r.id)} disabled={savingOutreach}>
+                        <Check size={12} /> Save
+                      </button>
+                      <button className={styles.outreachBtnNote} onClick={() => setEditingId(null)}>
+                        <X size={12} /> Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  r.note && <span className={styles.outreachItemNote}>{r.note}</span>
+                )}
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 
