@@ -7,16 +7,32 @@ data + chart descriptors.
 
 import logging
 import re
+import traceback
+import uuid
 from datetime import date, datetime
 from decimal import Decimal
-from fastapi import Depends, FastAPI, HTTPException, Header
+from fastapi import Depends, FastAPI, HTTPException, Header, Request
 from pydantic import BaseModel
 from vanna_service.config import VANNA_API_KEY, APP_TODAY
 from vanna_service.db import execute_sql
 from vanna_service.vanna_setup import get_vanna
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s (%(request_id)s): %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+# Add a filter so non-request logs don't crash on missing request_id
+class RequestIdFilter(logging.Filter):
+    def filter(self, record):
+        if not hasattr(record, "request_id"):
+            record.request_id = "no-req"
+        return True
+
 logger = logging.getLogger(__name__)
+logger.addFilter(RequestIdFilter())
+logging.getLogger().addFilter(RequestIdFilter())
 
 
 # -- Auth --
@@ -68,6 +84,7 @@ class AskResponse(BaseModel):
     chart: ChartDescriptor | None = None
     summary: str | None = None
     error: str | None = None
+    debug_error: str | None = None  # detailed error info for backend logs
 
 
 def _serialize_value(v):
@@ -152,8 +169,11 @@ def _infer_chart(columns: list[str], rows: list[dict]) -> ChartDescriptor | None
 # -- Main endpoint --
 
 @app.post("/ask", response_model=AskResponse, dependencies=[Depends(verify_key)])
-def ask(req: AskRequest):
-    logger.info("Question: %s | Safehouses: %s", req.question, req.safehouse_ids)
+def ask(req: AskRequest, request: Request):
+    request_id = request.headers.get("X-Request-Id", str(uuid.uuid4())[:8])
+    extra = {"request_id": request_id}
+
+    logger.info("Question: %s | Safehouses: %s", req.question, req.safehouse_ids, extra=extra)
 
     vn = get_vanna()
 
@@ -170,18 +190,22 @@ def ask(req: AskRequest):
 
     try:
         # Generate SQL using Vanna
+        logger.info("Generating SQL via OpenAI...", extra=extra)
         sql = vn.generate_sql(question=enhanced_question)
 
         if not sql or sql.strip().upper() == "NONE":
+            logger.warning("SQL generation returned NONE for question: %s", req.question, extra=extra)
             return AskResponse(
                 error="I couldn't generate a query for that question. Try rephrasing it."
             )
 
-        logger.info("Generated SQL: %s", sql)
+        logger.info("Generated SQL: %s", sql, extra=extra)
 
         # Execute the SQL
+        logger.info("Executing SQL...", extra=extra)
         columns, rows = execute_sql(sql)
         rows = _serialize_rows(rows)
+        logger.info("Query returned %d rows, %d columns", len(rows), len(columns), extra=extra)
 
         # Infer chart from results
         chart = _infer_chart(columns, rows)
@@ -209,16 +233,27 @@ def ask(req: AskRequest):
         )
 
     except ValueError as e:
-        logger.warning("SQL safety check failed: %s", e)
+        logger.warning("SQL safety check failed: %s", e, extra=extra)
         return AskResponse(error=str(e))
 
     except Exception as e:
-        logger.exception("Error processing question")
-        error_msg = str(e)
-        if "statement timeout" in error_msg.lower():
-            error_msg = "Your query was too complex and timed out. Try a simpler question."
-        elif "permission denied" in error_msg.lower():
-            error_msg = "You don't have access to the requested data."
+        tb = traceback.format_exc()
+        logger.error(
+            "Error processing question [%s]: %s\n%s",
+            type(e).__name__, e, tb,
+            extra=extra,
+        )
+
+        raw_error = str(e)
+        if "statement timeout" in raw_error.lower():
+            user_msg = "Your query was too complex and timed out. Try a simpler question."
+        elif "permission denied" in raw_error.lower():
+            user_msg = "You don't have access to the requested data."
         else:
-            error_msg = "Something went wrong processing your question. Try rephrasing it."
-        return AskResponse(error=error_msg)
+            user_msg = "Something went wrong processing your question. Try rephrasing it."
+
+        # Include the real error details so the .NET backend can log them
+        return AskResponse(
+            error=user_msg,
+            debug_error=f"[{request_id}] {type(e).__name__}: {raw_error}",
+        )

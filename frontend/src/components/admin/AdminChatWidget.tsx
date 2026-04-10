@@ -116,10 +116,22 @@ export default function AdminChatWidget() {
     startLoadingStages();
 
     try {
+      console.log('[DataAssistant] Sending question:', question.trim());
       const resp = await apiFetch<ApiResponse>('/api/chat/ask', {
         method: 'POST',
         body: JSON.stringify({ question: question.trim() }),
       });
+
+      if (resp.error) {
+        console.warn('[DataAssistant] Server returned error:', resp.error);
+      } else {
+        console.log('[DataAssistant] Success:', {
+          rows: resp.data?.length ?? 0,
+          columns: resp.columns?.length ?? 0,
+          hasChart: !!resp.chart,
+          sql: resp.sql,
+        });
+      }
 
       const botMsg: ChatMessage = {
         id: crypto.randomUUID(),
@@ -133,7 +145,8 @@ export default function AdminChatWidget() {
           : undefined,
       };
       setMessages(prev => [...prev, botMsg]);
-    } catch {
+    } catch (err) {
+      console.error('[DataAssistant] Request failed:', err);
       setMessages(prev => [
         ...prev,
         {
