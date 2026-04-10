@@ -90,6 +90,17 @@ export default function AdminNewsletterPage() {
     setActionLoading(null);
   }
 
+  async function handleDelete(id: number) {
+    setActionLoading(id);
+    try {
+      await apiFetch(`/api/admin/newsletters/${id}`, { method: 'DELETE' });
+      setExpandedId(null);
+      setEditingId(null);
+      await fetchData();
+    } catch { /* ignore */ }
+    setActionLoading(null);
+  }
+
   function startEdit(nl: Newsletter) {
     setEditingId(nl.newsletterId);
     setEditSubject(nl.subject ?? '');
@@ -223,6 +234,12 @@ export default function AdminNewsletterPage() {
                         <button className={styles.btnSend} onClick={() => handleSend(nl.newsletterId)}
                           disabled={actionLoading === nl.newsletterId}>
                           {actionLoading === nl.newsletterId ? 'Sending...' : 'Send to Subscribers'}
+                        </button>
+                      )}
+                      {nl.status !== 'sending' && (
+                        <button className={styles.btnDelete} onClick={() => handleDelete(nl.newsletterId)}
+                          disabled={actionLoading === nl.newsletterId}>
+                          {actionLoading === nl.newsletterId ? 'Deleting...' : 'Delete'}
                         </button>
                       )}
                     </div>

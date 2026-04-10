@@ -1010,7 +1010,7 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.HasKey(e => e.NewsletterId).HasName("newsletters_pkey");
             entity.ToTable("newsletters");
             entity.HasIndex(e => e.Status).HasDatabaseName("newsletters_status_idx");
-            entity.HasIndex(e => e.MonthYear).IsUnique().HasDatabaseName("newsletters_month_year_idx");
+            entity.HasIndex(e => e.MonthYear).HasDatabaseName("newsletters_month_year_idx");
             entity.Property(e => e.NewsletterId).HasColumnName("newsletter_id");
             entity.Property(e => e.Subject).HasColumnName("subject");
             entity.Property(e => e.HtmlContent).HasColumnName("html_content");

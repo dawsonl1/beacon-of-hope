@@ -257,6 +257,19 @@ public static class NewsletterEndpoints
             return Results.Created($"/api/admin/newsletters/{newsletter.NewsletterId}", newsletter);
         }).RequireAuthorization(p => p.RequireRole("Admin"));
 
+        // ── Admin: delete newsletter ──────────────────────────────────
+
+        app.MapDelete("/api/admin/newsletters/{id}", async (int id, AppDbContext db) =>
+        {
+            var nl = await db.Newsletters.FindAsync(id);
+            if (nl == null) return Results.NotFound();
+            if (nl.Status == "sending") return Results.BadRequest(new { error = "Cannot delete a newsletter that is currently sending." });
+
+            db.Newsletters.Remove(nl);
+            await db.SaveChangesAsync();
+            return Results.Ok(new { deleted = true });
+        }).RequireAuthorization(p => p.RequireRole("Admin"));
+
         // ── Admin: subscriber list ─────────────────────────────────────
 
         app.MapGet("/api/admin/newsletter-subscribers", async (int page, int pageSize, AppDbContext db) =>

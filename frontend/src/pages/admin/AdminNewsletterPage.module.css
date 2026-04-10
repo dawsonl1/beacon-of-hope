@@ -236,6 +236,28 @@
   cursor: not-allowed;
 }
 
+.btnDelete {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  border: 1px solid #dc2626;
+  background: transparent;
+  color: #dc2626;
+}
+
+.btnDelete:hover {
+  background: #fef2f2;
+}
+
+.btnDelete:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .previewFrame {
   width: 100%;
   border: 1px solid #e5e7eb;
