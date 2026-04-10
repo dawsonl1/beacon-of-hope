@@ -149,20 +149,19 @@ export default function ImpactPage() {
         </div>
       </section>
 
-      {/* ── OKR: Reintegration Rate ──────────────────────────── */}
-      {summary && summary.reintegrationRate > 0 && (
+      {/* ── OKR: Reintegration Count ─────────────────────────── */}
+      {summary && summary.completedReintegrations > 0 && (
         <section className={styles.okrSection}>
           <div className={styles.okrInner}>
             <div className={styles.okrContent}>
               <p className={styles.okrEyebrow}>Our North-Star Metric</p>
               <h2 className={styles.okrHeadline}>
-                <span className={styles.okrNumber}>{summary.reintegrationRate}%</span> Reintegration Rate
+                <span className={styles.okrNumber}>{summary.completedReintegrations}</span> girls reintegrated
               </h2>
               <p className={styles.okrBody}>
-                Of all children who have entered our care, {summary.completedReintegrations} have
-                successfully reintegrated into family, foster care, or independent living.
-                This is the single most important measure of our success &mdash; because every
-                service we provide exists to reach this outcome.
+                Our goal is to reintegrate 10 girls into safe, permanent homes this year.
+                Every donation funds the counseling, education, and care that makes
+                this possible &mdash; each number represents a life transformed.
               </p>
             </div>
           </div>

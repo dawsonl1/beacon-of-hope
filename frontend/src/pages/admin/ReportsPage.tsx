@@ -847,7 +847,7 @@ function MlInsightsTab() {
 }
 
 // ── Main Page ────────────────────────────────────────────
-const OKR_TARGET = 30;
+const OKR_GOAL = 10;
 
 function OkrBanner() {
   const [data, setData] = useState<{ totalResidents: number; activeResidents: number; activeSafehouses: number; completedReintegrations: number; reintegrationRate: number } | null>(null);
@@ -859,31 +859,31 @@ function OkrBanner() {
   }, []);
 
   if (!data) return null;
-  const progress = Math.min(100, (data.reintegrationRate / OKR_TARGET) * 100);
+  const progress = Math.min(100, (data.completedReintegrations / OKR_GOAL) * 100);
 
   return (
     <div className={styles.okrBanner}>
       <div className={styles.okrMain}>
         <div className={styles.okrHeadline}>
-          <span className={styles.okrLabel}>OKR: Reintegration Success</span>
-          <h2 className={styles.okrRate}>{data.reintegrationRate}%</h2>
-          <span className={styles.okrTarget}>Target: {OKR_TARGET}%</span>
+          <span className={styles.okrLabel}>Objective: Help girls reintegrate into society</span>
+          <h2 className={styles.okrRate}>{data.completedReintegrations}</h2>
+          <span className={styles.okrTarget}>Goal: {OKR_GOAL} this year</span>
         </div>
         <div className={styles.okrProgress}>
           <div className={styles.okrBarTrack}>
             <div className={styles.okrBarFill} style={{ width: `${progress}%` }} />
           </div>
-          <span className={styles.okrBarLabel}>{data.completedReintegrations} of {data.totalResidents} residents successfully reintegrated</span>
+          <span className={styles.okrBarLabel}>{data.completedReintegrations} of {OKR_GOAL} girls successfully reintegrated this year</span>
         </div>
       </div>
       <div className={styles.okrDetails}>
         <div className={styles.okrStat}>
-          <span className={styles.okrStatValue}>{data.completedReintegrations}</span>
-          <span className={styles.okrStatLabel}>Completed reintegrations</span>
-        </div>
-        <div className={styles.okrStat}>
           <span className={styles.okrStatValue}>{data.activeResidents}</span>
           <span className={styles.okrStatLabel}>Currently in care</span>
+        </div>
+        <div className={styles.okrStat}>
+          <span className={styles.okrStatValue}>{data.totalResidents}</span>
+          <span className={styles.okrStatLabel}>Total served</span>
         </div>
         <div className={styles.okrStat}>
           <span className={styles.okrStatValue}>{data.activeSafehouses}</span>
@@ -891,9 +891,10 @@ function OkrBanner() {
         </div>
       </div>
       <p className={styles.okrWhy}>
-        Reintegration rate is our north-star metric because every service we provide &mdash; counseling,
-        education, medical care, and legal support &mdash; exists to reach one outcome: safely returning
-        each child to family, foster care, or independent living.
+        This is our north-star metric. Every service we provide &mdash; counseling,
+        education, medical care, and legal support &mdash; exists to reach one outcome: safely
+        reintegrating each child into family, foster care, or independent living. Each number
+        represents a girl whose life has been transformed.
       </p>
     </div>
   );
