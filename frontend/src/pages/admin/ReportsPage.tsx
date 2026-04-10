@@ -4,12 +4,10 @@ import {
   ResponsiveContainer,
   LineChart, Line,
   BarChart, Bar,
-  PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip,
+  XAxis, YAxis, CartesianGrid, Tooltip, Cell,
 } from 'recharts';
 import { apiFetch } from '../../api';
 import { formatMonthLabel, formatEnumLabel } from '../../constants';
-import { useSafehouse } from '../../contexts/SafehouseContext';
 import { ChartTooltip } from '../../components/ChartTooltip';
 import KpiCard from '../../components/admin/KpiCard';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
@@ -17,6 +15,41 @@ import styles from './ReportsPage.module.css';
 
 // ── Palette ──────────────────────────────────────────────
 const COLORS = ['#D4A853', '#7A9E7E', '#C4756E', '#4A6FA5', '#9B8EC2', '#D4916E', '#6EB5C4', '#B8A04C'];
+
+// ── InfoTip ──────────────────────────────────────────────
+function InfoTip({ text }: { text: string }) {
+  return (
+    <span className={styles.infoTip} title={text}>?</span>
+  );
+}
+
+// ── Feature description lookup for ML tab ────────────────
+const FEATURE_DESCRIPTIONS: Record<string, string> = {
+  recency_days: 'Days since the donor last gave',
+  gap_trend: 'Whether gaps between donations are growing',
+  total_donated: 'Total lifetime donation amount',
+  donation_count: 'Number of donations made',
+  avg_donation: 'Average donation amount',
+  frequency_days: 'Average days between donations',
+  is_recurring: 'Whether the donor gives on a recurring schedule',
+  months_since_first: 'Months since the donor first gave',
+  campaign_count: 'Number of campaigns the donor has contributed to',
+  age_at_admission: 'Age when the girl entered the program',
+  length_of_stay_days: 'Days spent in the safehouse program',
+  has_special_needs: 'Whether the girl has developmental or health needs',
+  education_progress: 'Academic progress percentage',
+  health_score: 'General health score (1-5)',
+  session_count: 'Number of counseling sessions attended',
+  incident_count: 'Number of incidents during stay',
+  family_engagement: 'Level of family involvement during care',
+  emotional_progress: 'Improvement in emotional state over sessions',
+  sleep_quality_score: 'Sleep quality rating (1-5)',
+  nutrition_score: 'Nutrition quality rating (1-5)',
+  energy_level_score: 'Daytime energy rating (1-5)',
+  general_health_score: 'Overall health rating (1-5)',
+  attendance_rate: 'School/program attendance rate',
+  progress_percent: 'Academic progress percentage',
+};
 
 // ── Types ────────────────────────────────────────────────
 interface MonthRow { year: number; month: number; total: number; count: number }
@@ -42,6 +75,12 @@ interface SummaryData {
   totalDonations: number; completedReintegrations: number; reintegrationRate: number;
   okrGoal: number;
 }
+interface AARCategory {
+  category: string;
+  serviceCount: number;
+  beneficiaryCount: number;
+  services: { service: string; count: number; beneficiaries: number }[];
+}
 
 // ── Tab config ───────────────────────────────────────────
 const TABS = [
@@ -49,7 +88,6 @@ const TABS = [
   { key: 'donations', label: 'Donations' },
   { key: 'outcomes', label: 'Outcomes' },
   { key: 'safehouses', label: 'Safehouses' },
-  { key: 'aar', label: 'Annual Report' },
   { key: 'ml', label: 'ML Insights' },
 ] as const;
 
@@ -71,22 +109,30 @@ function OverviewTab() {
   const [avgHealth, setAvgHealth] = useState<number | null>(null);
   const [trends, setTrends] = useState<MonthRow[]>([]);
   const [outcomes, setOutcomes] = useState<OutcomeData | null>(null);
+  const [aarCategories, setAarCategories] = useState<AARCategory[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // OKR goal editing state
+  const [editingGoal, setEditingGoal] = useState(false);
+  const [goalInput, setGoalInput] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
       try {
-        const [s, health, t, o] = await Promise.all([
+        const [s, health, t, o, aar] = await Promise.all([
           apiFetch<SummaryData>('/api/impact/summary'),
           apiFetch<HealthRow[]>('/api/impact/health-trends'),
           apiFetch<MonthRow[]>('/api/impact/donations-by-month').catch(() => []),
           apiFetch<OutcomeData>('/api/admin/reports/resident-outcomes').catch(() => null),
+          apiFetch<{ categories: AARCategory[]; totalBeneficiaries: number }>('/api/admin/reports/aar-summary').catch(() => null),
         ]);
         if (cancelled) return;
         setSummary(s);
         setTrends(t as MonthRow[]);
         setOutcomes(o);
+        if (aar) setAarCategories(aar.categories);
         if (health.length > 0) {
           setAvgHealth(health[health.length - 1].avgHealth);
         }
@@ -100,15 +146,100 @@ function OverviewTab() {
     return () => { cancelled = true; };
   }, []);
 
+  async function handleSaveGoal() {
+    const parsed = parseInt(goalInput, 10);
+    if (!parsed || parsed < 1) return;
+    setSaving(true);
+    try {
+      await apiFetch('/api/admin/settings/okr-goal', {
+        method: 'PUT',
+        body: JSON.stringify({ goal: parsed }),
+      });
+      setSummary(prev => prev ? { ...prev, okrGoal: parsed } : prev);
+      setEditingGoal(false);
+    } catch { /* best effort */ }
+    setSaving(false);
+  }
+
   const recentTrends = trends.slice(-6).map(d => ({
     month: formatMonthLabel(d.year, d.month),
     total: Number(d.total),
   }));
 
-  const donutData = outcomes?.byType.map(d => ({ name: d.type, value: d.count })) ?? [];
+  const barData = outcomes?.byType.map(d => ({ name: d.type, value: d.count })) ?? [];
+
+  const CATEGORY_COLORS: Record<string, string> = {
+    Caring: '#3498db',
+    Healing: '#27ae60',
+    Teaching: '#f39c12',
+  };
+
+  const goal = summary?.okrGoal ?? 1;
+  const progress = summary ? Math.min(100, (summary.completedReintegrations / goal) * 100) : 0;
 
   return (
     <>
+      {/* OKR Banner */}
+      {summary && (
+        <div className={styles.okrBanner}>
+          <div className={styles.okrMain}>
+            <div className={styles.okrHeadline}>
+              <span className={styles.okrLabel}>Objective: Help girls reintegrate into society</span>
+              <h2 className={styles.okrRate}>{summary.completedReintegrations}</h2>
+              {editingGoal ? (
+                <span className={styles.okrGoalEdit}>
+                  <span>Goal:</span>
+                  <input
+                    type="number"
+                    min="1"
+                    className={styles.okrGoalInput}
+                    value={goalInput}
+                    onChange={e => setGoalInput(e.target.value)}
+                    autoFocus
+                  />
+                  <button className={styles.okrGoalSaveBtn} onClick={handleSaveGoal} disabled={saving}>Save</button>
+                  <button className={styles.okrGoalCancelBtn} onClick={() => setEditingGoal(false)}>Cancel</button>
+                </span>
+              ) : (
+                <span className={styles.okrTarget}>
+                  Goal: {goal} this year
+                  <button className={styles.okrGoalEditBtn} onClick={() => { setGoalInput(String(goal)); setEditingGoal(true); }}>
+                    Update goal
+                  </button>
+                </span>
+              )}
+            </div>
+            <div className={styles.okrProgress}>
+              <div className={styles.okrBarTrack}>
+                <div className={styles.okrBarFill} style={{ width: `${progress}%` }} />
+              </div>
+              <span className={styles.okrBarLabel}>{summary.completedReintegrations} of {goal} girls successfully reintegrated this year</span>
+            </div>
+          </div>
+          <div className={styles.okrDetails}>
+            <div className={styles.okrStat}>
+              <span className={styles.okrStatValue}>{summary.activeResidents}</span>
+              <span className={styles.okrStatLabel}>Currently in care</span>
+            </div>
+            <div className={styles.okrStat}>
+              <span className={styles.okrStatValue}>{summary.totalResidents}</span>
+              <span className={styles.okrStatLabel}>Total served</span>
+            </div>
+            <div className={styles.okrStat}>
+              <span className={styles.okrStatValue}>{summary.activeSafehouses}</span>
+              <span className={styles.okrStatLabel}>Active safehouses</span>
+            </div>
+          </div>
+          <p className={styles.okrWhy}>
+            This is our north-star metric. Every service we provide &mdash; counseling,
+            education, medical care, and legal support &mdash; exists to reach one outcome: safely
+            reintegrating each child into family, foster care, or independent living. Each number
+            represents a girl whose life has been transformed.
+          </p>
+        </div>
+      )}
+
+      {/* KPI Cards */}
       <div className={styles.kpiGrid}>
         <KpiCard
           label="Total Residents Served"
@@ -130,7 +261,7 @@ function OverviewTab() {
         />
         <KpiCard
           label="Avg Health Score"
-          value={avgHealth !== null ? avgHealth.toFixed(1) : '--'}
+          value={avgHealth !== null ? `${avgHealth.toFixed(1)} / 5` : '--'}
           sub="Latest monthly average"
           loading={loading}
         />
@@ -154,37 +285,49 @@ function OverviewTab() {
           </div>
         )}
 
-        {/* Reintegration by type */}
-        {donutData.length > 0 && (
+        {/* Reintegration by type — horizontal bar chart */}
+        {barData.length > 0 && (
           <div className={styles.chartCard}>
             <h3 className={styles.chartTitle}>Reintegration by Type</h3>
             <p className={styles.chartSub}>All-time breakdown of how girls were reintegrated</p>
             <ResponsiveContainer width="100%" height={220}>
-              <PieChart>
-                <Pie
-                  data={donutData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%" cy="50%"
-                  innerRadius={50} outerRadius={80}
-                  paddingAngle={3}
-                >
-                  {donutData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-                </Pie>
-                <Tooltip />
-              </PieChart>
+              <BarChart data={barData} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="#F0EDE6" />
+                <XAxis type="number" tick={{ fontSize: 11 }} stroke="#B0A99F" />
+                <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} stroke="#B0A99F" width={120} />
+                <Tooltip content={<ChartTooltip />} />
+                <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                  {barData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                </Bar>
+              </BarChart>
             </ResponsiveContainer>
-            <div className={styles.legend}>
-              {donutData.map((d, i) => (
-                <span key={d.name} className={styles.legendItem}>
-                  <span className={styles.legendDot} style={{ background: COLORS[i % COLORS.length] }} />
-                  {d.name} ({d.value})
-                </span>
-              ))}
-            </div>
           </div>
         )}
       </div>
+
+      {/* AAR Category Cards */}
+      {aarCategories.length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginTop: '0.5rem' }}>
+          {aarCategories.map(cat => {
+            const color = CATEGORY_COLORS[cat.category] || '#8A8078';
+            return (
+              <div key={cat.category} style={{ background: '#fff', border: '1px solid rgba(15,27,45,0.08)', borderRadius: '12px', padding: '1.25rem', borderLeft: `4px solid ${color}` }}>
+                <div style={{ fontSize: '1rem', fontWeight: 700, color, marginBottom: '0.75rem' }}>{cat.category}</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Services Delivered</div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-strong)' }}>{cat.serviceCount}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Beneficiaries</div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-strong)' }}>{cat.beneficiaryCount}</div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </>
   );
 }
@@ -282,7 +425,6 @@ function DonationsTab() {
 
 // ── Outcomes Tab ─────────────────────────────────────────
 function OutcomesTab() {
-  const { activeSafehouseId } = useSafehouse();
   const [outcomes, setOutcomes] = useState<OutcomeData | null>(null);
   const [edu, setEdu] = useState<EduRow[]>([]);
   const [health, setHealth] = useState<HealthRow[]>([]);
@@ -292,11 +434,8 @@ function OutcomesTab() {
     let cancelled = false;
     async function load() {
       try {
-        const outcomesUrl = activeSafehouseId
-          ? `/api/admin/reports/resident-outcomes?safehouseId=${activeSafehouseId}`
-          : '/api/admin/reports/resident-outcomes';
         const [o, e, h] = await Promise.all([
-          apiFetch<OutcomeData>(outcomesUrl).catch(() => null),
+          apiFetch<OutcomeData>('/api/admin/reports/resident-outcomes').catch(() => null),
           apiFetch<EduRow[]>('/api/impact/education-trends').catch(() => []),
           apiFetch<HealthRow[]>('/api/impact/health-trends').catch(() => []),
         ]);
@@ -312,12 +451,11 @@ function OutcomesTab() {
     }
     load();
     return () => { cancelled = true; };
-  }, [activeSafehouseId]);
+  }, []);
 
   if (loading) return <Loading />;
 
-  const donutData = outcomes?.byType.map(d => ({ name: d.type, value: d.count })) ?? [];
-  const eduData = edu.map(d => ({ month: formatMonthLabel(d.year, d.month), avgProgress: d.avgProgress, avgAttendance: d.avgAttendance }));
+  const barData = outcomes?.byType.map(d => ({ name: d.type, value: d.count })) ?? [];
   const healthData = health.map(d => ({
     month: formatMonthLabel(d.year, d.month),
     health: d.avgHealth,
@@ -328,14 +466,22 @@ function OutcomesTab() {
 
   const latestEdu = edu.length > 0 ? edu[edu.length - 1] : null;
   const latestHealth = health.length > 0 ? health[health.length - 1] : null;
+  const avgLosMonths = outcomes?.avgLengthOfStayDays ? Math.round(outcomes.avgLengthOfStayDays / 30) : null;
+
+  // Education metrics for bar chart
+  const eduBarData = latestEdu ? [
+    { name: 'Education Progress', value: latestEdu.avgProgress },
+    { name: 'Attendance Rate', value: Math.round(latestEdu.avgAttendance * 100) },
+  ] : [];
 
   return (
     <>
       {/* KPI Summary Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
         <div className={styles.kpi}>
-          <div className={styles.kpiLabel}>Success Rate</div>
+          <div className={styles.kpiLabel}>Reintegration Success Rate</div>
           <div className={styles.kpiValue}>{outcomes?.successRate ?? 0}%</div>
+          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>Percent of all residents who completed reintegration</div>
         </div>
         <div className={styles.kpi}>
           <div className={styles.kpiLabel}>Avg Education Progress</div>
@@ -343,39 +489,38 @@ function OutcomesTab() {
         </div>
         <div className={styles.kpi}>
           <div className={styles.kpiLabel}>Avg Attendance</div>
-          <div className={styles.kpiValue}>{latestEdu?.avgAttendance ?? '-'}%</div>
+          <div className={styles.kpiValue}>{latestEdu ? `${Math.round(latestEdu.avgAttendance * 100)}%` : '-'}</div>
         </div>
         <div className={styles.kpi}>
           <div className={styles.kpiLabel}>Avg Health Score</div>
-          <div className={styles.kpiValue}>{latestHealth?.avgHealth ?? '-'}<span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>/100</span></div>
+          <div className={styles.kpiValue}>{latestHealth?.avgHealth ?? '-'}<span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}> / 5</span></div>
         </div>
         <div className={styles.kpi}>
           <div className={styles.kpiLabel}>Avg Length of Stay</div>
-          <div className={styles.kpiValue}>{outcomes?.avgLengthOfStayDays ?? '-'} <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>days</span></div>
+          <div className={styles.kpiValue}>{avgLosMonths ?? '-'} <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>months</span></div>
         </div>
       </div>
 
       <div className={styles.chartsRow}>
-        {/* Reintegration donut */}
+        {/* Reintegration by type — horizontal bar chart */}
         <div className={styles.chartCard}>
           <h3 className={styles.chartTitle}>Reintegration by Type</h3>
           <p className={styles.chartSub}>How girls were placed after completing the program</p>
           <ResponsiveContainer width="100%" height={260}>
-            <PieChart>
-              <Pie data={donutData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={95} paddingAngle={3}>
-                {donutData.map((_, i) => (
+            <BarChart data={barData} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke="#F0EDE6" />
+              <XAxis type="number" tick={{ fontSize: 11 }} stroke="#B0A99F" />
+              <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} stroke="#B0A99F" width={120} />
+              <Tooltip content={<ChartTooltip />} />
+              <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                {barData.map((_, i) => (
                   <Cell key={i} fill={COLORS[i % COLORS.length]} />
                 ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
+              </Bar>
+            </BarChart>
           </ResponsiveContainer>
-          <div className={styles.donutCenter}>
-            <span className={styles.donutBig}>{outcomes?.successRate ?? 0}%</span>
-            <span className={styles.donutLabel}>Success Rate</span>
-          </div>
           <div className={styles.legend}>
-            {donutData.map((d, i) => (
+            {barData.map((d, i) => (
               <span key={d.name} className={styles.legendItem}>
                 <span className={styles.legendDot} style={{ background: COLORS[i % COLORS.length] }} />
                 {d.name} ({d.value})
@@ -384,20 +529,26 @@ function OutcomesTab() {
           </div>
         </div>
 
-        {/* Education progress line */}
+        {/* Current Education Metrics */}
         <div className={styles.chartCard}>
-          <h3 className={styles.chartTitle}>Education Progress Over Time</h3>
-          <p className={styles.chartSub}>Monthly averages for academic progress and attendance rates</p>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={eduData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F0EDE6" />
-              <XAxis dataKey="month" tick={{ fontSize: 11 }} stroke="#B0A99F" />
-              <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} stroke="#B0A99F" tickFormatter={v => `${v}%`} />
-              <Tooltip content={<ChartTooltip />} />
-              <Line type="monotone" dataKey="avgProgress" stroke="#7A9E7E" strokeWidth={2.5} dot={{ r: 3, fill: '#7A9E7E' }} name="Avg Progress %" />
-              <Line type="monotone" dataKey="avgAttendance" stroke="#4A6FA5" strokeWidth={2} dot={{ r: 2, fill: '#4A6FA5' }} name="Avg Attendance %" strokeDasharray="5 5" />
-            </LineChart>
-          </ResponsiveContainer>
+          <h3 className={styles.chartTitle}>Current Education Metrics</h3>
+          <p className={styles.chartSub}>Latest month education progress and attendance rate</p>
+          {eduBarData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={eduBarData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#F0EDE6" />
+                <XAxis dataKey="name" tick={{ fontSize: 11 }} stroke="#B0A99F" />
+                <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} stroke="#B0A99F" tickFormatter={v => `${v}%`} />
+                <Tooltip content={<ChartTooltip />} />
+                <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                  <Cell fill="#7A9E7E" />
+                  <Cell fill="#4A6FA5" />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className={styles.loading}>No education data available</div>
+          )}
         </div>
       </div>
 
@@ -409,7 +560,7 @@ function OutcomesTab() {
           <LineChart data={healthData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#F0EDE6" />
             <XAxis dataKey="month" tick={{ fontSize: 11 }} stroke="#B0A99F" />
-            <YAxis tick={{ fontSize: 11 }} stroke="#B0A99F" domain={[0, 100]} label={{ value: 'Score (0–100)', angle: -90, position: 'insideLeft', style: { fontSize: 11, fill: '#8A8078' } }} />
+            <YAxis tick={{ fontSize: 11 }} stroke="#B0A99F" domain={[0, 5]} label={{ value: 'Score (1\u20135)', angle: -90, position: 'insideLeft', style: { fontSize: 11, fill: '#8A8078' } }} />
             <Tooltip />
             <Line type="monotone" dataKey="health" stroke="#D4A853" strokeWidth={2} dot={{ r: 2 }} name="Health" />
             <Line type="monotone" dataKey="nutrition" stroke="#7A9E7E" strokeWidth={2} dot={{ r: 2 }} name="Nutrition" />
@@ -464,8 +615,11 @@ function SafehousesTab() {
 
   if (loading) return <Loading />;
 
-  const occupancyColor = (pct: number) =>
-    pct > 95 ? styles.occupancyRed : pct > 80 ? styles.occupancyYellow : styles.occupancyGreen;
+  // Compute occupancy from activeResidents / capacityGirls
+  const tableData = data.map(s => {
+    const pct = s.capacityGirls > 0 ? Math.round((s.activeResidents / s.capacityGirls) * 100) : 0;
+    return { ...s, computedOccupancyPct: pct };
+  });
 
   return (
     <>
@@ -480,29 +634,27 @@ function SafehousesTab() {
               <tr>
                 <th>Safehouse</th>
                 <th>City</th>
-                <th>Occupancy</th>
-                <th>Active</th>
+                <th>Occupancy <InfoTip text="Number of active residents vs. safehouse capacity" /></th>
                 <th>Incidents</th>
-                <th>Sessions</th>
-                <th>Avg Edu %</th>
-                <th>Avg Health</th>
+                <th>Counseling Sessions <InfoTip text="Total process recording sessions conducted" /></th>
+                <th>Avg Education <InfoTip text="Average education progress percentage across residents" /></th>
+                <th>Avg Health Score <InfoTip text="Average general health score (1-5 scale)" /></th>
               </tr>
             </thead>
             <tbody>
-              {data.map(s => (
+              {tableData.map(s => (
                 <tr key={s.safehouseId}>
                   <td style={{ fontWeight: 600, color: 'var(--color-deep-navy)' }}>{s.safehouseCode} {s.name}</td>
                   <td>{s.city}</td>
                   <td>
-                    <span>{s.currentOccupancy}/{s.capacityGirls}</span>
+                    <span>{s.activeResidents}/{s.capacityGirls}</span>
                     <div className={styles.occupancyBar}>
                       <div
-                        className={`${styles.occupancyFill} ${occupancyColor(s.occupancyPct)}`}
-                        style={{ width: `${Math.min(s.occupancyPct, 100)}%` }}
+                        className={styles.occupancyFill}
+                        style={{ width: `${Math.min(s.computedOccupancyPct, 100)}%`, background: '#D4A853' }}
                       />
                     </div>
                   </td>
-                  <td>{s.activeResidents}</td>
                   <td>{s.incidents}</td>
                   <td>{s.recordings}</td>
                   <td>{s.avgEducation}%</td>
@@ -520,7 +672,7 @@ function SafehousesTab() {
           <h3 className={styles.chartTitle}>Occupancy by Safehouse</h3>
           <p className={styles.chartSub}>Current capacity utilization at each location</p>
           <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={data}>
+            <BarChart data={tableData.map(s => ({ ...s, occupancyPct: s.computedOccupancyPct }))}>
               <CartesianGrid strokeDasharray="3 3" stroke="#F0EDE6" />
               <XAxis dataKey="safehouseCode" tick={{ fontSize: 11 }} stroke="#B0A99F" />
               <YAxis tick={{ fontSize: 11 }} stroke="#B0A99F" tickFormatter={v => `${v}%`} />
@@ -597,6 +749,15 @@ function humanize(s: string): string {
   return s
     .replace(/_/g, ' ')
     .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function FeatureName({ feature }: { feature: string }) {
+  const desc = FEATURE_DESCRIPTIONS[feature];
+  return (
+    <span style={{ flex: 1, color: 'var(--text-strong)', fontWeight: 500 }}>
+      {humanize(feature)}{desc && <InfoTip text={desc} />}
+    </span>
+  );
 }
 
 function MlInsightsTab() {
@@ -758,9 +919,7 @@ function MlInsightsTab() {
           {reintDrivers.map((d, i) => (
             <div key={d.feature} style={rowStyle}>
               <span style={rankStyle}>{i + 1}</span>
-              <span style={{ flex: 1, color: 'var(--text-strong)', fontWeight: 500 }}>
-                {humanize(d.feature)}
-              </span>
+              <FeatureName feature={d.feature} />
               <span style={{
                 fontSize: '1rem',
                 color: d.coefficient >= 0 ? '#2d6a4f' : '#c0392b',
@@ -784,9 +943,7 @@ function MlInsightsTab() {
           {donorDrivers.map((d, i) => (
             <div key={d.feature} style={rowStyle}>
               <span style={rankStyle}>{i + 1}</span>
-              <span style={{ flex: 1, color: 'var(--text-strong)', fontWeight: 500 }}>
-                {humanize(d.feature)}
-              </span>
+              <FeatureName feature={d.feature} />
               <span style={{
                 fontSize: '0.8rem',
                 fontWeight: 600,
@@ -818,9 +975,7 @@ function MlInsightsTab() {
               {selfharmDrivers.map((d, i) => (
                 <div key={d.feature} style={rowStyle}>
                   <span style={rankStyle}>{i + 1}</span>
-                  <span style={{ flex: 1, color: 'var(--text-strong)', fontWeight: 500 }}>
-                    {humanize(d.feature)}
-                  </span>
+                  <FeatureName feature={d.feature} />
                   <span style={{
                     fontSize: '0.8rem',
                     fontWeight: 600,
@@ -842,9 +997,7 @@ function MlInsightsTab() {
               {runawayDrivers.map((d, i) => (
                 <div key={d.feature} style={rowStyle}>
                   <span style={rankStyle}>{i + 1}</span>
-                  <span style={{ flex: 1, color: 'var(--text-strong)', fontWeight: 500 }}>
-                    {humanize(d.feature)}
-                  </span>
+                  <FeatureName feature={d.feature} />
                   <span style={{
                     fontSize: '0.8rem',
                     fontWeight: 600,
@@ -875,9 +1028,7 @@ function MlInsightsTab() {
               </h4>
               {contentFindings.map((f, i) => (
                 <div key={i} style={rowStyle}>
-                  <span style={{ flex: 1, color: 'var(--text-strong)', fontWeight: 500 }}>
-                    {humanize(f.feature)}
-                  </span>
+                  <FeatureName feature={f.feature} />
                   <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
                     {f.effect}
                   </span>
@@ -915,7 +1066,7 @@ function MlInsightsTab() {
       )}
 
       {predictions.length === 0 && (
-        <div className={styles.empty} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
+        <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
           No ML insights available yet. Run the ML pipelines to generate org-level predictions.
         </div>
       )}
@@ -924,97 +1075,6 @@ function MlInsightsTab() {
 }
 
 // ── Main Page ────────────────────────────────────────────
-
-function OkrBanner() {
-  const [data, setData] = useState<SummaryData | null>(null);
-  const [editingGoal, setEditingGoal] = useState(false);
-  const [goalInput, setGoalInput] = useState('');
-  const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    apiFetch<SummaryData>('/api/impact/summary')
-      .then(setData)
-      .catch(() => {});
-  }, []);
-
-  if (!data) return null;
-  const goal = data.okrGoal;
-  const progress = Math.min(100, (data.completedReintegrations / goal) * 100);
-
-  async function handleSaveGoal() {
-    const parsed = parseInt(goalInput, 10);
-    if (!parsed || parsed < 1) return;
-    setSaving(true);
-    try {
-      await apiFetch('/api/admin/settings/okr-goal', {
-        method: 'PUT',
-        body: JSON.stringify({ goal: parsed }),
-      });
-      setData(prev => prev ? { ...prev, okrGoal: parsed } : prev);
-      setEditingGoal(false);
-    } catch { /* best effort */ }
-    setSaving(false);
-  }
-
-  return (
-    <div className={styles.okrBanner}>
-      <div className={styles.okrMain}>
-        <div className={styles.okrHeadline}>
-          <span className={styles.okrLabel}>Objective: Help girls reintegrate into society</span>
-          <h2 className={styles.okrRate}>{data.completedReintegrations}</h2>
-          {editingGoal ? (
-            <span className={styles.okrGoalEdit}>
-              <span>Goal:</span>
-              <input
-                type="number"
-                min="1"
-                className={styles.okrGoalInput}
-                value={goalInput}
-                onChange={e => setGoalInput(e.target.value)}
-                autoFocus
-              />
-              <button className={styles.okrGoalSaveBtn} onClick={handleSaveGoal} disabled={saving}>Save</button>
-              <button className={styles.okrGoalCancelBtn} onClick={() => setEditingGoal(false)}>Cancel</button>
-            </span>
-          ) : (
-            <span className={styles.okrTarget}>
-              Goal: {goal} this year
-              <button className={styles.okrGoalEditBtn} onClick={() => { setGoalInput(String(goal)); setEditingGoal(true); }}>
-                Update goal
-              </button>
-            </span>
-          )}
-        </div>
-        <div className={styles.okrProgress}>
-          <div className={styles.okrBarTrack}>
-            <div className={styles.okrBarFill} style={{ width: `${progress}%` }} />
-          </div>
-          <span className={styles.okrBarLabel}>{data.completedReintegrations} of {goal} girls successfully reintegrated this year</span>
-        </div>
-      </div>
-      <div className={styles.okrDetails}>
-        <div className={styles.okrStat}>
-          <span className={styles.okrStatValue}>{data.activeResidents}</span>
-          <span className={styles.okrStatLabel}>Currently in care</span>
-        </div>
-        <div className={styles.okrStat}>
-          <span className={styles.okrStatValue}>{data.totalResidents}</span>
-          <span className={styles.okrStatLabel}>Total served</span>
-        </div>
-        <div className={styles.okrStat}>
-          <span className={styles.okrStatValue}>{data.activeSafehouses}</span>
-          <span className={styles.okrStatLabel}>Active safehouses</span>
-        </div>
-      </div>
-      <p className={styles.okrWhy}>
-        This is our north-star metric. Every service we provide &mdash; counseling,
-        education, medical care, and legal support &mdash; exists to reach one outcome: safely
-        reintegrating each child into family, foster care, or independent living. Each number
-        represents a girl whose life has been transformed.
-      </p>
-    </div>
-  );
-}
 
 export default function ReportsPage() {
   useDocumentTitle('Reports & Analytics');
@@ -1033,8 +1093,6 @@ export default function ReportsPage() {
         <p className={styles.subtitle}>Aggregated insights and trends for decision-making</p>
       </div>
 
-      <OkrBanner />
-
       <div className={styles.tabs}>
         {TABS.map(t => (
           <button
@@ -1051,97 +1109,7 @@ export default function ReportsPage() {
       {activeTab === 'donations' && <DonationsTab />}
       {activeTab === 'outcomes' && <OutcomesTab />}
       {activeTab === 'safehouses' && <SafehousesTab />}
-      {activeTab === 'aar' && <AARTab />}
       {activeTab === 'ml' && <MlInsightsTab />}
-    </div>
-  );
-}
-
-// ── AAR (Annual Accomplishment Report) Tab ──────────────
-interface AARCategory {
-  category: string;
-  serviceCount: number;
-  beneficiaryCount: number;
-  services: { service: string; count: number; beneficiaries: number }[];
-}
-
-function AARTab() {
-  const [data, setData] = useState<{ categories: AARCategory[]; totalBeneficiaries: number } | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    apiFetch<{ categories: AARCategory[]; totalBeneficiaries: number }>('/api/admin/reports/aar-summary')
-      .then(setData)
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) return <Loading />;
-  if (!data) return <div className={styles.empty}>Failed to load AAR data.</div>;
-
-  const CATEGORY_COLORS: Record<string, string> = {
-    Caring: '#3498db',
-    Healing: '#27ae60',
-    Teaching: '#f39c12',
-  };
-
-  return (
-    <div>
-      <h2 className={styles.sectionTitle}>Annual Accomplishment Report</h2>
-      <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-        Services categorized by Philippine DSWD Annual Accomplishment Report framework: Caring, Healing, and Teaching.
-      </p>
-
-      {/* Total beneficiaries */}
-      <div style={{ background: 'linear-gradient(135deg, #B8913A 0%, #D4A853 100%)', borderRadius: '12px', padding: '1.25rem', marginBottom: '1.5rem', color: '#fff' }}>
-        <div style={{ fontSize: '0.82rem', fontWeight: 600, opacity: 0.9 }}>Total Unique Beneficiaries</div>
-        <div style={{ fontSize: '2rem', fontWeight: 700 }}>{data.totalBeneficiaries}</div>
-      </div>
-
-      {/* Category cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-        {data.categories.map(cat => {
-          const color = CATEGORY_COLORS[cat.category] || '#8A8078';
-          return (
-            <div key={cat.category} style={{ background: '#fff', border: '1px solid rgba(15,27,45,0.08)', borderRadius: '12px', padding: '1.25rem', borderLeft: `4px solid ${color}` }}>
-              <div style={{ fontSize: '1rem', fontWeight: 700, color, marginBottom: '0.75rem' }}>{cat.category}</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                <div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Services Delivered</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-strong)' }}>{cat.serviceCount}</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Beneficiaries</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-strong)' }}>{cat.beneficiaryCount}</div>
-                </div>
-              </div>
-              <div style={{ borderTop: '1px solid rgba(15,27,45,0.06)', paddingTop: '0.5rem' }}>
-                {cat.services.map(s => (
-                  <div key={s.service} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', padding: '0.25rem 0' }}>
-                    <span style={{ color: 'var(--text-muted)' }}>{s.service}</span>
-                    <span style={{ fontWeight: 600 }}>{s.count} ({s.beneficiaries} beneficiaries)</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Bar chart comparing categories */}
-      <div className={styles.chartCard}>
-        <h3 className={styles.chartTitle}>Service Delivery by Category</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={data.categories} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(15,27,45,0.06)" />
-            <XAxis dataKey="category" tick={{ fontSize: 12 }} />
-            <YAxis tick={{ fontSize: 12 }} />
-            <Tooltip content={<ChartTooltip />} />
-            <Bar dataKey="serviceCount" name="Services" fill="#3498db" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="beneficiaryCount" name="Beneficiaries" fill="#27ae60" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
     </div>
   );
 }
