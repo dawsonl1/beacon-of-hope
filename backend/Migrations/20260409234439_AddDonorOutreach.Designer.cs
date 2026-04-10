@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using backend.Data;
@@ -11,9 +12,11 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260409234439_AddDonorOutreach")]
+    partial class AddDonorOutreach
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1484,8 +1487,7 @@ namespace backend.Migrations
                         .HasColumnName("family_solo_parent");
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("text")
-                        .HasColumnName("first_name");
+                        .HasColumnType("text");
 
                     b.Property<bool?>("HasSpecialNeeds")
                         .HasColumnType("boolean")
@@ -1508,8 +1510,7 @@ namespace backend.Migrations
                         .HasColumnName("is_pwd");
 
                     b.Property<string>("LastName")
-                        .HasColumnType("text")
-                        .HasColumnName("last_name");
+                        .HasColumnType("text");
 
                     b.Property<string>("LengthOfStay")
                         .HasColumnType("text")

@@ -77,6 +77,9 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
     public virtual DbSet<Newsletter> Newsletters { get; set; }
     public virtual DbSet<NewsletterSubscriber> NewsletterSubscribers { get; set; }
 
+    // Donor Outreach
+    public virtual DbSet<DonorOutreach> DonorOutreaches { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -1030,6 +1033,23 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(e => e.SubscribedAt).HasColumnName("subscribed_at");
             entity.Property(e => e.UnsubscribeToken).HasColumnName("unsubscribe_token");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
+        });
+
+        modelBuilder.Entity<DonorOutreach>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("donor_outreaches_pkey");
+            entity.ToTable("donor_outreaches");
+            entity.HasIndex(e => new { e.SupporterId, e.CreatedAt }).HasDatabaseName("idx_donor_outreaches_supporter");
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.SupporterId).HasColumnName("supporter_id");
+            entity.Property(e => e.StaffEmail).HasColumnName("staff_email");
+            entity.Property(e => e.StaffName).HasColumnName("staff_name");
+            entity.Property(e => e.OutreachType).HasColumnName("outreach_type");
+            entity.Property(e => e.Note).HasColumnName("note");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.HasOne(e => e.Supporter)
+                .WithMany(s => s.DonorOutreaches)
+                .HasForeignKey(e => e.SupporterId);
         });
 
         OnModelCreatingPartial(modelBuilder);

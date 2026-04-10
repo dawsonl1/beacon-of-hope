@@ -359,7 +359,8 @@ export default function DonorsPage() {
     }
   }
 
-  const hasFilters = search || supporterType || status || donationType;
+  const riskFilter = searchParams.get('risk') || '';
+  const hasFilters = search || supporterType || status || donationType || riskFilter;
 
   return (
     <div className={styles.page}>
@@ -448,6 +449,19 @@ export default function DonorsPage() {
               onChange={v => setParam('status', v)}
               compact
             />
+            <Dropdown
+              value={riskFilter}
+              placeholder="All Risk Levels"
+              options={[
+                { value: '', label: 'All Risk Levels' },
+                { value: 'Critical', label: 'Critical' },
+                { value: 'High', label: 'High' },
+                { value: 'Medium', label: 'Medium' },
+                { value: 'Low', label: 'Low' },
+              ]}
+              onChange={v => setParam('risk', v)}
+              compact
+            />
           </>
         )}
         {activeTab === 'partners' && (
@@ -506,13 +520,20 @@ export default function DonorsPage() {
       </div>
 
       {/* Supporters Table */}
-      {activeTab === 'supporters' && (
+      {activeTab === 'supporters' && (() => {
+        const filteredSupporters = supporters && riskFilter
+          ? supporters.items.filter(s => {
+              const churn = churnMap.get(s.supporterId);
+              return churn?.scoreLabel === riskFilter;
+            })
+          : supporters?.items ?? [];
+        return (
         <div className={styles.tableCard}>
           {sLoading ? (
             <div className={styles.loading}><Loader2 size={28} className={styles.spinner} /></div>
           ) : sError ? (
             <div className={styles.error}>{sError}</div>
-          ) : !supporters || supporters.items.length === 0 ? (
+          ) : !supporters || filteredSupporters.length === 0 ? (
             <div className={styles.empty}>No supporters found</div>
           ) : (
             <>
@@ -531,7 +552,7 @@ export default function DonorsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {supporters.items.map(s => (
+                    {filteredSupporters.map(s => (
                       <tr key={s.supporterId} onClick={() => navigate(`/admin/donors/${s.supporterId}`)}>
                         <td>
                           <span className={styles.supporterName}>{s.displayName || `${s.firstName ?? ''} ${s.lastName ?? ''}`.trim() || 'Unnamed'}</span>
@@ -567,13 +588,14 @@ export default function DonorsPage() {
               <Pagination
                 page={supporters.page}
                 pageSize={supporters.pageSize}
-                totalCount={supporters.totalCount}
+                totalCount={riskFilter ? filteredSupporters.length : supporters.totalCount}
                 onPageChange={p => setParam('page', String(p))}
               />
             </>
           )}
         </div>
-      )}
+        );
+      })()}
 
       {/* Partners Table */}
       {activeTab === 'partners' && (
