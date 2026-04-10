@@ -2,6 +2,29 @@
   "git": {
     "deploymentEnabled": false
   },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com https://generativelanguage.googleapis.com https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'none'; form-action 'self'; base-uri 'self'"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     { "source": "/api/:path*", "destination": "https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net/api/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }

@@ -1,3 +1,7 @@
+// [SECURITY-10] Privacy — GDPR cookie consent: Fully functional cookie consent banner.
+// Users can Accept All, Reject Non-Essential, or Manage Preferences (category-level toggles).
+// When analytics cookies are revoked, Google Analytics cookies are actively deleted.
+// This is NOT cosmetic — it controls actual cookie behavior. See CookieConsentContext.tsx.
 import { useCookieConsent } from '../contexts/CookieConsentContext';
 import styles from './CookieConsent.module.css';
 

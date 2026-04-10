@@ -10,6 +10,9 @@ backend/publish/
 frontend/node_modules/
 frontend/dist/
 
+# [SECURITY-8] Credentials — Stored securely: Environment files containing secrets are
+# excluded from version control. Production credentials are injected via Azure App Service
+# environment variables (OS-level). .env.example files with placeholders are committed.
 # Environment
 .env
 .env.local

@@ -1,3 +1,6 @@
+// [SECURITY-3] Auth — Frontend auth state management: Verifies authentication via
+// /api/auth/me on app load. Caches auth in sessionStorage (cleared on browser close).
+// [SECURITY-5] Auth — Dispatches 'auth:unauthorized' event on 401 to force logout.
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import { apiFetch } from '../api';

@@ -1,3 +1,7 @@
+// [SECURITY-10] Privacy — GDPR cookie consent (context): Manages consent state with three
+// categories: Necessary (always on), Analytics (toggleable), Functional (toggleable).
+// Consent is persisted in a non-HttpOnly cookie (boh_cookie_consent) with version tracking.
+// When analytics consent is revoked, deleteAnalyticsCookies() removes GA cookies immediately.
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import { getCookie, setCookie, deleteAnalyticsCookies } from '../utils/cookies';
