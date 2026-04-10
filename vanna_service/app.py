@@ -167,6 +167,62 @@ def _infer_chart(columns: list[str], rows: list[dict]) -> ChartDescriptor | None
     )
 
 
+def _generate_summary(
+    vn, question: str, sql: str, columns: list[str], rows: list[dict], extra: dict
+) -> str:
+    """Use the LLM to generate a conversational summary of query results."""
+    if not rows:
+        return "No results found for your query."
+
+    # Build a compact data preview (max 10 rows to keep prompt small)
+    preview_rows = rows[:10]
+    data_preview = "\n".join(
+        " | ".join(f"{col}: {row.get(col, '')}" for col in columns)
+        for row in preview_rows
+    )
+    if len(rows) > 10:
+        data_preview += f"\n... and {len(rows) - 10} more rows"
+
+    try:
+        response = vn._client.chat.completions.create(
+            model=vn._model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a helpful data assistant for a nonprofit managing safehouses for at-risk girls. "
+                        "Given a user's question and the query results, write a brief, conversational summary "
+                        "(2-4 sentences) that explains what the data shows and helps the user interpret it. "
+                        "Use natural language, highlight key numbers in **bold**, and explain what the numbers "
+                        "represent so the user can trust the results. Do not mention SQL or technical details. "
+                        "If the data is a time series, note any trends. Be warm and professional."
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        f"User's question: {question}\n\n"
+                        f"Columns: {', '.join(columns)}\n"
+                        f"Total rows: {len(rows)}\n"
+                        f"Data:\n{data_preview}"
+                    ),
+                },
+            ],
+            temperature=0.3,
+            max_completion_tokens=200,
+        )
+        summary = response.choices[0].message.content.strip()
+        logger.info("Generated summary: %s", summary, extra=extra)
+        return summary
+    except Exception as e:
+        logger.warning("Summary generation failed, using fallback: %s", e, extra=extra)
+        # Fallback to simple summary
+        if len(rows) == 1 and len(columns) == 1:
+            val = rows[0].get(columns[0], "")
+            return f"The answer is **{val}**."
+        return f"Found **{len(rows)}** result{'s' if len(rows) != 1 else ''}."
+
+
 # -- Main endpoint --
 
 @app.post("/ask", response_model=AskResponse, dependencies=[Depends(verify_key)])
@@ -211,19 +267,8 @@ def ask(req: AskRequest, request: Request):
         # Infer chart from results
         chart = _infer_chart(columns, rows)
 
-        # Generate a brief summary
-        summary = None
-        if rows:
-            if len(rows) == 1 and len(columns) == 1:
-                val = rows[0].get(columns[0], "")
-                summary = f"The answer is **{val}**."
-            elif len(rows) == 1:
-                parts = [f"{col}: {rows[0].get(col, '')}" for col in columns]
-                summary = " | ".join(parts)
-            else:
-                summary = f"Found **{len(rows)}** result{'s' if len(rows) != 1 else ''}."
-        else:
-            summary = "No results found for your query."
+        # Generate a conversational summary using the LLM
+        summary = _generate_summary(vn, req.question, sql, columns, rows, extra)
 
         return AskResponse(
             sql=sql,
