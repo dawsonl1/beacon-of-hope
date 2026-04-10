@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { apiFetch } from '../api';
+import { useAuth } from '../contexts/AuthContext';
 
 /**
  * Demo entry point for presentation QR codes.
@@ -13,6 +13,7 @@ import { apiFetch } from '../api';
 export default function DemoEntry() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   useEffect(() => {
     async function setup() {
@@ -33,20 +34,15 @@ export default function DemoEntry() {
         }
       }
 
-      // Log out any existing session (ignore errors)
-      try {
-        await apiFetch('/api/auth/logout', { method: 'POST' });
-      } catch {
-        // Not logged in — fine
-      }
-      sessionStorage.removeItem('auth_user');
+      // Log out any existing session (clears server session + AuthContext state)
+      await logout();
 
       // Redirect to landing page
       navigate('/', { replace: true });
     }
 
     setup();
-  }, [searchParams, navigate]);
+  }, [searchParams, navigate, logout]);
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', color: '#666', fontFamily: 'sans-serif' }}>
