@@ -4,4 +4,4 @@ openai>=1.60,<2
 sqlalchemy>=2.0,<3
 psycopg2-binary>=2.9,<3
 python-dotenv>=1.0,<2
-vanna[openai,chromadb]>=0.7,<1
+vanna==0.7.9
