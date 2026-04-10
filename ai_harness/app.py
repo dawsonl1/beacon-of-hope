@@ -363,8 +363,18 @@ Generate a monthly newsletter email. Return valid JSON with exactly these fields
 
 Design guidelines:
 - Use inline CSS only (no <style> tags — email clients strip them).
-- Brand colors: primary #1a1a2e, accent #e94560, warm #f5f0e8.
+- Brand colors:
+  - Sage green (primary accent): #0f8f7d — use for buttons, links, and highlights.
+  - Deep navy (headings): #0f1b2d — use for headlines and strong text.
+  - Cream (background): #f8f7f3 — use for the email body background.
+  - White: #ffffff — use for content card backgrounds.
+  - Rose (warm accent): #cb5768 — use sparingly for emphasis or secondary elements.
+  - Amber (highlight): #ff9f43 — use for impact numbers or callout badges.
+  - Muted text: #526178 — use for secondary/body text.
+- Fonts: Use 'Plus Jakarta Sans', system-ui, sans-serif for body text. Use Georgia, serif for headings (as a web-safe fallback for the brand display font).
 - Max width 600px, centered. Mobile-friendly with single-column layout.
+- The donate button should be sage green (#0f8f7d) with white text, rounded corners.
+- Impact numbers grid should use amber (#ff9f43) or sage (#0f8f7d) for the numbers.
 - The donate button should link to {{{{donate_url}}}}.
 - Include {{{{unsubscribe_url}}}} in the footer for the unsubscribe link."""
 

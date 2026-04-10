@@ -14,7 +14,7 @@ load_dotenv(PROJECT_ROOT / ".env")
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
-OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o")  # gpt-5.4 when available
+OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.4")
 
 # In production, DATABASE_URL_READONLY must be set explicitly.
 # The local dev default only applies when .env.local is loaded above.
