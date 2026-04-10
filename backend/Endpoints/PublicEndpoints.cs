@@ -33,13 +33,15 @@ public static class PublicEndpoints
 
         app.MapGet("/api/impact/summary", async (AppDbContext db) =>
         {
+            var currentYear = AppConstants.DataCutoff.Year;
             var r = await db.Residents
                 .GroupBy(_ => 1)
                 .Select(g => new
                 {
                     total = g.Count(),
                     active = g.Count(r => r.CaseStatus == "Active"),
-                    completed = g.Count(r => r.ReintegrationStatus == "Completed")
+                    completed = g.Count(r => r.ReintegrationStatus == "Completed"
+                        && r.DateClosed != null && r.DateClosed.Value.Year == currentYear)
                 })
                 .FirstOrDefaultAsync() ?? new { total = 0, active = 0, completed = 0 };
 
@@ -48,6 +50,9 @@ public static class PublicEndpoints
                 .Where(d => d.DonationDate <= AppConstants.DataCutoff)
                 .SumAsync(d => (decimal?)d.Amount ?? 0);
 
+            var goalSetting = await db.AppSettings.FindAsync("okr_reintegration_goal");
+            var okrGoal = int.TryParse(goalSetting?.Value, out var g) ? g : 10;
+
             return new
             {
                 totalResidents = r.total,
@@ -55,9 +60,29 @@ public static class PublicEndpoints
                 activeSafehouses,
                 totalDonations,
                 completedReintegrations = r.completed,
-                reintegrationRate = r.total > 0 ? Math.Round((double)r.completed / r.total * 100) : 0
+                reintegrationRate = r.total > 0 ? Math.Round((double)r.completed / r.total * 100) : 0,
+                okrGoal,
             };
         });
+
+        app.MapPut("/api/admin/settings/okr-goal", async (HttpContext httpContext, AppDbContext db) =>
+        {
+            var body = await httpContext.Request.ReadFromJsonAsync<OkrGoalRequest>();
+            if (body == null || body.Goal < 1) return Results.BadRequest(new { error = "Goal must be at least 1." });
+
+            var setting = await db.AppSettings.FindAsync("okr_reintegration_goal");
+            if (setting == null)
+            {
+                setting = new backend.Models.AppSetting { Key = "okr_reintegration_goal", Value = body.Goal.ToString() };
+                db.AppSettings.Add(setting);
+            }
+            else
+            {
+                setting.Value = body.Goal.ToString();
+            }
+            await db.SaveChangesAsync();
+            return Results.Ok(new { goal = body.Goal });
+        }).RequireAuthorization(p => p.RequireRole("Admin", "Staff"));
 
         app.MapGet("/api/impact/donations-by-month", async (AppDbContext db) =>
         {
