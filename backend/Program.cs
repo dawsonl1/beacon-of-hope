@@ -120,6 +120,10 @@ using (var scope = app.Services.CreateScope())
     // Always reset sequences so inserts don't collide with seeded data
     try { await DataSeeder.ResetSequencesAsync(db); }
     catch (Exception ex) { Console.WriteLine($"Sequence reset skipped: {ex.Message}"); }
+
+    // One-time data fixups (idempotent)
+    try { await DataSeeder.ApplyDataFixupsAsync(db); }
+    catch (Exception ex) { Console.WriteLine($"Data fixups skipped: {ex.Message}"); }
 }
 
 if (app.Environment.IsDevelopment())

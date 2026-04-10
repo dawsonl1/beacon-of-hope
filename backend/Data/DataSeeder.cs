@@ -16,15 +16,15 @@ public static class DataSeeder
         // 1. Safehouses (9 rows - all required for FK references)
         var safehouses = new List<Safehouse>
         {
-            new() { SafehouseId = 1, SafehouseCode = "SH01", Name = "Lighthouse Safehouse 1", Region = "Northern", City = "Dededo", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 1, 1), Status = "Active", CapacityGirls = 8, CapacityStaff = 4, CurrentOccupancy = 8, Notes = null },
-            new() { SafehouseId = 2, SafehouseCode = "SH02", Name = "Lighthouse Safehouse 2", Region = "Central", City = "Tamuning", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 2, 15), Status = "Active", CapacityGirls = 10, CapacityStaff = 5, CurrentOccupancy = 8, Notes = null },
-            new() { SafehouseId = 3, SafehouseCode = "SH03", Name = "Lighthouse Safehouse 3", Region = "Southern", City = "Inarajan", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 4, 1), Status = "Active", CapacityGirls = 9, CapacityStaff = 4, CurrentOccupancy = 9, Notes = null },
-            new() { SafehouseId = 4, SafehouseCode = "SH04", Name = "Lighthouse Safehouse 4", Region = "Central", City = "Mangilao", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 5, 16), Status = "Active", CapacityGirls = 12, CapacityStaff = 4, CurrentOccupancy = 12, Notes = null },
-            new() { SafehouseId = 5, SafehouseCode = "SH05", Name = "Lighthouse Safehouse 5", Region = "Northern", City = "Yigo", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 6, 30), Status = "Active", CapacityGirls = 11, CapacityStaff = 4, CurrentOccupancy = 9, Notes = null },
-            new() { SafehouseId = 6, SafehouseCode = "SH06", Name = "Lighthouse Safehouse 6", Region = "Central", City = "Barrigada", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 8, 14), Status = "Active", CapacityGirls = 8, CapacityStaff = 5, CurrentOccupancy = 6, Notes = null },
-            new() { SafehouseId = 7, SafehouseCode = "SH07", Name = "Lighthouse Safehouse 7", Region = "Southern", City = "Agat", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 9, 28), Status = "Active", CapacityGirls = 12, CapacityStaff = 4, CurrentOccupancy = 12, Notes = null },
-            new() { SafehouseId = 8, SafehouseCode = "SH08", Name = "Lighthouse Safehouse 8", Region = "Northern", City = "Hagatna", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 11, 12), Status = "Active", CapacityGirls = 9, CapacityStaff = 7, CurrentOccupancy = 7, Notes = null },
-            new() { SafehouseId = 9, SafehouseCode = "SH09", Name = "Lighthouse Safehouse 9", Region = "Southern", City = "Santa Rita", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 12, 27), Status = "Active", CapacityGirls = 6, CapacityStaff = 3, CurrentOccupancy = 6, Notes = null },
+            new() { SafehouseId = 1, SafehouseCode = "SH01", Name = "Safehouse 1", Region = "Northern", City = "Dededo", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 1, 1), Status = "Active", CapacityGirls = 12, CapacityStaff = 4, CurrentOccupancy = 8, Notes = "[cap+4]" },
+            new() { SafehouseId = 2, SafehouseCode = "SH02", Name = "Safehouse 2", Region = "Central", City = "Tamuning", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 2, 15), Status = "Active", CapacityGirls = 14, CapacityStaff = 5, CurrentOccupancy = 8, Notes = "[cap+4]" },
+            new() { SafehouseId = 3, SafehouseCode = "SH03", Name = "Safehouse 3", Region = "Southern", City = "Inarajan", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 4, 1), Status = "Active", CapacityGirls = 13, CapacityStaff = 4, CurrentOccupancy = 9, Notes = "[cap+4]" },
+            new() { SafehouseId = 4, SafehouseCode = "SH04", Name = "Safehouse 4", Region = "Central", City = "Mangilao", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 5, 16), Status = "Active", CapacityGirls = 16, CapacityStaff = 4, CurrentOccupancy = 12, Notes = "[cap+4]" },
+            new() { SafehouseId = 5, SafehouseCode = "SH05", Name = "Safehouse 5", Region = "Northern", City = "Yigo", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 6, 30), Status = "Active", CapacityGirls = 15, CapacityStaff = 4, CurrentOccupancy = 9, Notes = "[cap+4]" },
+            new() { SafehouseId = 6, SafehouseCode = "SH06", Name = "Safehouse 6", Region = "Central", City = "Barrigada", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 8, 14), Status = "Active", CapacityGirls = 12, CapacityStaff = 5, CurrentOccupancy = 6, Notes = "[cap+4]" },
+            new() { SafehouseId = 7, SafehouseCode = "SH07", Name = "Safehouse 7", Region = "Southern", City = "Agat", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 9, 28), Status = "Active", CapacityGirls = 16, CapacityStaff = 4, CurrentOccupancy = 12, Notes = "[cap+4]" },
+            new() { SafehouseId = 8, SafehouseCode = "SH08", Name = "Safehouse 8", Region = "Northern", City = "Hagatna", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 11, 12), Status = "Active", CapacityGirls = 13, CapacityStaff = 7, CurrentOccupancy = 7, Notes = "[cap+4]" },
+            new() { SafehouseId = 9, SafehouseCode = "SH09", Name = "Safehouse 9", Region = "Southern", City = "Santa Rita", Province = "Guam", Country = "USA", OpenDate = new DateOnly(2022, 12, 27), Status = "Active", CapacityGirls = 10, CapacityStaff = 3, CurrentOccupancy = 6, Notes = "[cap+4]" },
         };
         db.Safehouses.AddRange(safehouses);
         await db.SaveChangesAsync();
@@ -524,5 +524,142 @@ public static class DataSeeder
                 // Sequence may not exist if using a non-PostgreSQL database
             }
         }
+    }
+
+    /// <summary>
+    /// Idempotent data fixups applied on every startup.
+    /// - Rename "Lighthouse Safehouse N" → "Safehouse N"
+    /// - Increase capacity_girls by 4 (only if not already increased)
+    /// </summary>
+    public static async Task ApplyDataFixupsAsync(AppDbContext db)
+    {
+        var safehouses = await db.Safehouses.ToListAsync();
+        var changed = false;
+
+        foreach (var sh in safehouses)
+        {
+            // Rename: strip "Lighthouse " prefix
+            if (sh.Name != null && sh.Name.StartsWith("Lighthouse "))
+            {
+                sh.Name = sh.Name.Replace("Lighthouse ", "");
+                changed = true;
+            }
+
+            // Increase capacity by 4 — use a marker in Notes to make it idempotent
+            if (sh.Notes == null || !sh.Notes.Contains("[cap+4]"))
+            {
+                sh.CapacityGirls = (sh.CapacityGirls ?? 0) + 4;
+                sh.Notes = string.IsNullOrEmpty(sh.Notes) ? "[cap+4]" : sh.Notes + " [cap+4]";
+                changed = true;
+            }
+        }
+
+        if (changed)
+        {
+            await db.SaveChangesAsync();
+        }
+
+        // Fix health_wellbeing_records: columns were swapped during CSV import.
+        // Re-import from CSV if any score is wrong (> 5 means it holds height/weight/bmi,
+        // or == 5.00 means it was previously clamped by a bad fixup).
+        // Detect by checking if most general_health_scores equal exactly 5.00.
+        var healthCount = await db.HealthWellbeingRecords.CountAsync();
+        bool needsReimport;
+        if (healthCount == 0)
+        {
+            // Table is empty (likely from a failed prior reimport) — reimport
+            needsReimport = true;
+        }
+        else
+        {
+            var sampleScores = await db.HealthWellbeingRecords
+                .OrderBy(h => h.HealthRecordId)
+                .Take(20)
+                .Select(h => h.GeneralHealthScore)
+                .ToListAsync();
+            needsReimport = sampleScores.Count(s => s == 5.00m || s > 5m) > sampleScores.Count / 2;
+        }
+
+        if (needsReimport)
+        {
+            await ReimportHealthRecordsFromCsvAsync(db);
+        }
+    }
+
+    private static async Task ReimportHealthRecordsFromCsvAsync(AppDbContext db)
+    {
+        // Find the repo root by walking up from CWD or BaseDirectory until we find "data/"
+        string? csvPath = null;
+        foreach (var start in new[] { Directory.GetCurrentDirectory(), AppContext.BaseDirectory })
+        {
+            var dir = start;
+            for (int depth = 0; depth < 8 && dir != null; depth++)
+            {
+                var candidate = Path.Combine(dir, "data", "health_wellbeing_records.csv");
+                if (File.Exists(candidate))
+                {
+                    csvPath = candidate;
+                    break;
+                }
+                dir = Directory.GetParent(dir)?.FullName;
+            }
+            if (csvPath != null) break;
+        }
+        if (csvPath == null)
+        {
+            Console.WriteLine($"Health CSV not found — skipping reimport. CWD={Directory.GetCurrentDirectory()}, BaseDir={AppContext.BaseDirectory}");
+            return;
+        }
+
+        Console.WriteLine($"Re-importing health records from {csvPath}...");
+
+        // Delete all existing records (if any)
+        var existing = await db.HealthWellbeingRecords.CountAsync();
+        if (existing > 0)
+        {
+            // Use raw SQL for speed on large tables
+            await db.Database.ExecuteSqlRawAsync("DELETE FROM health_wellbeing_records");
+        }
+
+        // Parse CSV and insert with correct column mapping
+        var lines = await File.ReadAllLinesAsync(csvPath);
+        var records = new List<HealthWellbeingRecord>();
+        for (int i = 1; i < lines.Length; i++) // skip header
+        {
+            var cols = lines[i].Split(',');
+            if (cols.Length < 14) continue;
+
+            records.Add(new HealthWellbeingRecord
+            {
+                HealthRecordId = int.Parse(cols[0]),
+                ResidentId = int.Parse(cols[1]),
+                RecordDate = DateOnly.Parse(cols[2]),
+                GeneralHealthScore = decimal.Parse(cols[3]),
+                NutritionScore = decimal.Parse(cols[4]),
+                SleepQualityScore = decimal.Parse(cols[5]),
+                EnergyLevelScore = decimal.Parse(cols[6]),
+                HeightCm = decimal.Parse(cols[7]),
+                WeightKg = decimal.Parse(cols[8]),
+                Bmi = decimal.Parse(cols[9]),
+                MedicalCheckupDone = bool.Parse(cols[10]),
+                DentalCheckupDone = bool.Parse(cols[11]),
+                PsychologicalCheckupDone = bool.Parse(cols[12]),
+                Notes = cols.Length > 13 ? cols[13] : null,
+            });
+        }
+
+        db.HealthWellbeingRecords.AddRange(records);
+        await db.SaveChangesAsync();
+
+        // Reset sequence
+        try
+        {
+            var maxId = records.Max(r => r.HealthRecordId);
+            await db.Database.ExecuteSqlRawAsync(
+                $"SELECT setval(pg_get_serial_sequence('health_wellbeing_records', 'health_record_id'), {maxId})");
+        }
+        catch { /* non-PG database */ }
+
+        Console.WriteLine($"Re-imported {records.Count} health records with correct column mapping.");
     }
 }
