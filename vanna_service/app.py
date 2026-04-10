@@ -17,22 +17,23 @@ from vanna_service.config import VANNA_API_KEY, APP_TODAY
 from vanna_service.db import execute_sql
 from vanna_service.vanna_setup import get_vanna
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s (%(request_id)s): %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-
-# Add a filter so non-request logs don't crash on missing request_id
 class RequestIdFilter(logging.Filter):
     def filter(self, record):
         if not hasattr(record, "request_id"):
             record.request_id = "no-req"
         return True
 
+# Apply the filter to the root logger so ALL loggers (including httpx, openai, etc.) get it
+_rid_filter = RequestIdFilter()
+logging.root.addFilter(_rid_filter)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s (%(request_id)s): %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
 logger = logging.getLogger(__name__)
-logger.addFilter(RequestIdFilter())
-logging.getLogger().addFilter(RequestIdFilter())
 
 
 # -- Auth --
