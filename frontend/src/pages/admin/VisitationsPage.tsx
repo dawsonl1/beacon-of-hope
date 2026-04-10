@@ -15,6 +15,8 @@ interface VisitationRow {
   visitationId: number;
   residentId: number;
   residentCode: string | null;
+  residentFirstName: string | null;
+  residentLastName: string | null;
   visitDate: string | null;
   socialWorker: string | null;
   visitType: string | null;
@@ -175,7 +177,9 @@ export default function VisitationsPage() {
                           {formatDate(v.visitDate)}
                         </td>
                         <td style={{ fontWeight: 600, color: 'var(--color-deep-navy)' }}>
-                          {v.residentCode ?? `#${v.residentId}`}
+                          {v.residentFirstName && v.residentLastName
+                            ? `${v.residentFirstName} ${v.residentLastName[0]}.`
+                            : v.residentCode ?? `#${v.residentId}`}
                         </td>
                         <td>{v.socialWorker ?? '--'}</td>
                         <td>

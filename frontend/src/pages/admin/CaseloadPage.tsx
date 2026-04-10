@@ -272,7 +272,7 @@ export default function CaseloadPage() {
                 <thead>
                   <tr>
                     <th onClick={() => handleSort('internalcode')} className={styles.sortable}>
-                      Code <SortIcon col="internalcode" />
+                      Name <SortIcon col="internalcode" />
                     </th>
                     <th onClick={() => handleSort('casecontrolno')} className={styles.sortable}>
                       Case No. <SortIcon col="casecontrolno" />

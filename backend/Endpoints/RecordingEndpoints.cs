@@ -50,6 +50,14 @@ public static class RecordingEndpoints
                         .Where(res => res.ResidentId == r.ResidentId)
                         .Select(res => res.InternalCode)
                         .FirstOrDefault(),
+                    residentFirstName = db.Residents
+                        .Where(res => res.ResidentId == r.ResidentId)
+                        .Select(res => res.FirstName)
+                        .FirstOrDefault(),
+                    residentLastName = db.Residents
+                        .Where(res => res.ResidentId == r.ResidentId)
+                        .Select(res => res.LastName)
+                        .FirstOrDefault(),
                     r.SessionDate,
                     r.SocialWorker,
                     r.SessionType,

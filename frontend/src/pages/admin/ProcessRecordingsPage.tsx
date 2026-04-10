@@ -14,6 +14,8 @@ interface RecordingRow {
   recordingId: number;
   residentId: number;
   residentCode: string | null;
+  residentFirstName: string | null;
+  residentLastName: string | null;
   sessionDate: string | null;
   socialWorker: string | null;
   sessionType: string | null;
@@ -205,7 +207,7 @@ export default function ProcessRecordingsPage() {
                   <tr>
                     <th>Date</th>
                     <th>Resident</th>
-                    <th>Social Worker</th>
+                    <th>Worker</th>
                     <th>Type</th>
                     <th>Emotional State</th>
                     <th>Summary</th>
@@ -221,7 +223,11 @@ export default function ProcessRecordingsPage() {
                     >
                       <td className={styles.dateCell}>{formatDate(r.sessionDate)}</td>
                       <td>
-                        <span className={styles.residentCode}>{r.residentCode ?? '--'}</span>
+                        <span className={styles.residentCode}>
+                          {r.residentFirstName && r.residentLastName
+                            ? `${r.residentFirstName} ${r.residentLastName[0]}.`
+                            : r.residentCode ?? '--'}
+                        </span>
                       </td>
                       <td>
                         <span className={styles.workerName}>{r.socialWorker ?? '--'}</span>

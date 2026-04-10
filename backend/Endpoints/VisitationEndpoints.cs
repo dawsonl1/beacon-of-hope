@@ -53,6 +53,14 @@ public static class VisitationEndpoints
                         .Where(r => r.ResidentId == v.ResidentId)
                         .Select(r => r.InternalCode)
                         .FirstOrDefault(),
+                    residentFirstName = db.Residents
+                        .Where(r => r.ResidentId == v.ResidentId)
+                        .Select(r => r.FirstName)
+                        .FirstOrDefault(),
+                    residentLastName = db.Residents
+                        .Where(r => r.ResidentId == v.ResidentId)
+                        .Select(r => r.LastName)
+                        .FirstOrDefault(),
                     v.VisitDate,
                     v.SocialWorker,
                     v.VisitType,
