@@ -99,7 +99,10 @@ export default function AdminDashboard() {
   useDocumentTitle('Dashboard');
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { activeSafehouseId: safehouseId } = useSafehouse();
+  const { activeSafehouseId: safehouseId, safehouses } = useSafehouse();
+  const activeSafehouseName = safehouseId
+    ? safehouses.find(s => s.safehouseId === safehouseId)?.name ?? 'selected safehouse'
+    : null;
   const displayRole = user?.roles?.[0] ?? 'Staff';
 
   const [metrics, setMetrics] = useState<Metrics | null>(null);
@@ -215,7 +218,7 @@ export default function AdminDashboard() {
           <div className={styles.metricRow}>
             <span className={styles.metricNumber}>{metrics.activeResidents}</span>
           </div>
-          <span className={styles.metricSub}>across all safehouses</span>
+          <span className={styles.metricSub}>{activeSafehouseName ?? 'across all safehouses'}</span>
         </div>
         <div className={styles.metricCard}>
           <span className={styles.metricLabel}>Open Incidents</span>
