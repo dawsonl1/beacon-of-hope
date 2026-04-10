@@ -1,5 +1,5 @@
 """
-vanna_setup.py — Configure Vanna instance with OpenAI LLM and in-memory vector store.
+vanna_setup.py — Configure Vanna instance with OpenAI LLM and ChromaDB vector store.
 Loads training data from JSON files at startup.
 """
 
@@ -7,6 +7,7 @@ import json
 import logging
 from pathlib import Path
 from vanna.openai import OpenAI_Chat
+from vanna.chromadb import ChromaDB_VectorStore
 
 from vanna_service.config import OPENAI_API_KEY, OPENAI_MODEL, DATABASE_URL_READONLY
 
@@ -15,55 +16,15 @@ logger = logging.getLogger(__name__)
 TRAINING_DIR = Path(__file__).parent / "training_data"
 
 
-class BeaconVanna(OpenAI_Chat):
-    """Vanna instance using OpenAI + in-memory training data."""
+class BeaconVanna(ChromaDB_VectorStore, OpenAI_Chat):
+    """Vanna instance using OpenAI for LLM + ChromaDB for in-memory vector store."""
 
     def __init__(self):
+        ChromaDB_VectorStore.__init__(self, config={})
         OpenAI_Chat.__init__(self, config={
             "api_key": OPENAI_API_KEY,
             "model": OPENAI_MODEL,
         })
-        self._training_data: list[dict] = []
-        self._ddl_statements: list[str] = []
-        self._documentation: list[str] = []
-
-    def add_ddl(self, ddl: str) -> str:
-        self._ddl_statements.append(ddl)
-        return f"Added DDL: {ddl[:50]}..."
-
-    def add_documentation(self, documentation: str) -> str:
-        self._documentation.append(documentation)
-        return f"Added doc: {documentation[:50]}..."
-
-    def add_question_sql(self, question: str, sql: str) -> str:
-        self._training_data.append({"question": question, "sql": sql})
-        return f"Added Q&A: {question[:50]}..."
-
-    def get_similar_question_sql(self, question: str) -> list[dict]:
-        """Simple keyword matching for similar questions."""
-        words = set(question.lower().split())
-        scored = []
-        for item in self._training_data:
-            q_words = set(item["question"].lower().split())
-            overlap = len(words & q_words)
-            if overlap > 0:
-                scored.append((overlap, item))
-        scored.sort(key=lambda x: x[0], reverse=True)
-        return [item for _, item in scored[:5]]
-
-    def get_related_ddl(self, question: str) -> list[str]:
-        """Return all DDL — the set is small enough."""
-        return self._ddl_statements
-
-    def get_related_documentation(self, question: str) -> list[str]:
-        """Return all documentation — the set is small enough."""
-        return self._documentation
-
-    def get_training_data(self) -> list[dict]:
-        return self._training_data
-
-    def remove_training_data(self, id: str) -> bool:
-        return True
 
 
 _vn: BeaconVanna | None = None
