@@ -157,6 +157,7 @@
 .mainGrid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
+  align-items: start;
   gap: 1rem;
   margin-bottom: 1.25rem;
 }
