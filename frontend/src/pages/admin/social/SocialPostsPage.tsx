@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Loader2, Check, X, Clock, Edit3, ThumbsUp, ThumbsDown, Copy, ExternalLink, BarChart2, ChevronLeft, ChevronRight, Sparkles, CameraIcon } from 'lucide-react';
+import { Loader2, Check, X, Clock, Edit3, ThumbsUp, ThumbsDown, Copy, ExternalLink, BarChart2, ChevronLeft, ChevronRight, Sparkles, CameraIcon, Trash2 } from 'lucide-react';
 import { apiFetch, getApiUrl } from '../../../api';
 import { APP_TODAY } from '../../../constants';
 import TextArea from '../../../components/admin/TextArea';
@@ -217,6 +217,21 @@ export default function SocialPostsPage() {
         setDialog(null);
         await apiFetch(`/api/admin/social/posts/${id}/reject`, { method: 'PATCH', body: JSON.stringify({ rejectionReason: '' }) });
         showToast('Post rejected');
+        fetchAll();
+      },
+    });
+  }
+
+  function handleDeletePost(id: number) {
+    setDialog({
+      title: 'Delete Post',
+      message: 'This post will be permanently deleted.',
+      confirmLabel: 'Delete',
+      onConfirm: async () => {
+        setDialog(null);
+        await apiFetch(`/api/admin/social/posts/${id}`, { method: 'DELETE' });
+        setSelectedPost(null);
+        showToast('Post deleted');
         fetchAll();
       },
     });
@@ -533,6 +548,7 @@ export default function SocialPostsPage() {
                   <button className={styles.btnEdit} onClick={() => setCalEditing(true)}><Edit3 size={14} /> Edit</button>
                 )}
                 <button className={styles.btnCopy} onClick={() => handleCopy(selectedPost.content)}><Copy size={14} /> Copy</button>
+                <button className={styles.btnDelete} onClick={() => handleDeletePost(selectedPost.automatedPostId)}><Trash2 size={14} /> Delete</button>
               </div>
             </div>
           </>

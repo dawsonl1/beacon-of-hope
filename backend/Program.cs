@@ -571,6 +571,15 @@ app.MapPatch("/api/admin/social/posts/{id}/reject", async (int id, HttpContext c
     return Results.Ok(post);
 }).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
 
+app.MapDelete("/api/admin/social/posts/{id}", async (int id, AppDbContext db) =>
+{
+    var post = await db.AutomatedPosts.FindAsync(id);
+    if (post == null) return Results.NotFound();
+    db.AutomatedPosts.Remove(post);
+    await db.SaveChangesAsync();
+    return Results.Ok(new { deleted = true });
+}).RequireAuthorization(p => p.RequireRole("Admin", "SocialMediaManager"));
+
 app.MapPatch("/api/admin/social/posts/{id}/snooze", async (int id, HttpContext ctx, AppDbContext db) =>
 {
     var post = await db.AutomatedPosts.FindAsync(id);
