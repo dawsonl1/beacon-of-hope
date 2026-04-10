@@ -3,6 +3,8 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using backend.Data;
 using backend.Models;
 
@@ -131,11 +133,19 @@ public static class NewsletterEndpoints
 
         // ── Admin: send ────────────────────────────────────────────────
 
-        app.MapPost("/api/admin/newsletters/{id}/send", async (int id, AppDbContext db, IConfiguration config) =>
+        app.MapPost("/api/admin/newsletters/{id}/send", async (int id, AppDbContext db, IConfiguration config, ILoggerFactory loggerFactory) =>
         {
             var nl = await db.Newsletters.FindAsync(id);
             if (nl == null) return Results.NotFound();
             if (nl.Status != "approved") return Results.BadRequest(new { error = "Newsletter must be approved before sending." });
+
+            var apiKey = config["SendGrid:ApiKey"];
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                nl.Status = "failed";
+                await db.SaveChangesAsync();
+                return Results.BadRequest(new { error = "SendGrid API key not configured." });
+            }
 
             nl.Status = "sending";
             await db.SaveChangesAsync();
@@ -144,26 +154,13 @@ public static class NewsletterEndpoints
                 .Where(s => s.IsActive)
                 .ToListAsync();
 
-            var smtpHost = config["Smtp:Host"] ?? "";
-            var smtpPort = int.TryParse(config["Smtp:Port"], out var p2) ? p2 : 587;
-            var smtpUser = config["Smtp:Username"] ?? "";
-            var smtpPass = config["Smtp:Password"] ?? "";
-            var fromEmail = config["Smtp:From"] ?? "noreply@beaconofhope.org";
+            var fromEmail = config["SendGrid:FromEmail"] ?? "noreply@beaconofhope.org";
+            var fromName = config["SendGrid:FromName"] ?? "Beacon of Hope";
             var baseUrl = config["App:BaseUrl"] ?? "https://intex2-1.vercel.app";
 
-            if (string.IsNullOrEmpty(smtpHost))
-            {
-                nl.Status = "failed";
-                await db.SaveChangesAsync();
-                return Results.BadRequest(new { error = "SMTP not configured." });
-            }
-
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress(fromEmail, fromName);
             int sent = 0;
-            using var smtp = new System.Net.Mail.SmtpClient(smtpHost, smtpPort)
-            {
-                Credentials = new System.Net.NetworkCredential(smtpUser, smtpPass),
-                EnableSsl = true
-            };
 
             foreach (var sub in subscribers)
             {
@@ -175,17 +172,24 @@ public static class NewsletterEndpoints
                     var plain = (nl.PlainText ?? "").Replace("{{unsubscribe_url}}", unsubUrl)
                                                      .Replace("{{donate_url}}", $"{baseUrl}/donate");
 
-                    var msg = new System.Net.Mail.MailMessage(fromEmail, sub.Email, nl.Subject ?? "Monthly Newsletter", html)
-                    {
-                        IsBodyHtml = true
-                    };
-                    if (!string.IsNullOrEmpty(plain))
-                        msg.AlternateViews.Add(System.Net.Mail.AlternateView.CreateAlternateViewFromString(plain, null, "text/plain"));
+                    var to = new EmailAddress(sub.Email);
+                    var msg = MailHelper.CreateSingleEmail(from, to, nl.Subject ?? "Monthly Newsletter", plain, html);
+                    var response = await client.SendEmailAsync(msg);
 
-                    await smtp.SendMailAsync(msg);
-                    sent++;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        sent++;
+                    }
+                    else
+                    {
+                        var body = await response.Body.ReadAsStringAsync();
+                        loggerFactory.CreateLogger("NewsletterSend").LogError("SendGrid failed for {Email}: {Status} {Body}", sub.Email, response.StatusCode, body);
+                    }
                 }
-                catch { /* log and continue */ }
+                catch (Exception ex)
+                {
+                    loggerFactory.CreateLogger("NewsletterSend").LogError(ex, "Failed to send newsletter to {Email}", sub.Email);
+                }
             }
 
             nl.Status = "sent";
