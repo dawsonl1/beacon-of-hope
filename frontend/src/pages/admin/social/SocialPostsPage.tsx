@@ -234,7 +234,7 @@ export default function SocialPostsPage() {
         setDialog(null);
         const parsed = parseInt(val || '4');
         if (isNaN(parsed) || parsed < 1 || parsed > 168) { setError('Enter a number between 1 and 168.'); return; }
-        await apiFetch(`/api/admin/social/posts/${id}/snooze`, { method: 'PATCH', body: JSON.stringify({ snoozedUntil: new Date(Date.now() + parsed * 3600000).toISOString() }) });
+        await apiFetch(`/api/admin/social/posts/${id}/snooze`, { method: 'PATCH', body: JSON.stringify({ snoozedUntil: new Date(APP_TODAY.getTime() + parsed * 3600000).toISOString() }) });
         showToast(`Snoozed for ${parsed} hours`);
         fetchAll();
       },
