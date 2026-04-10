@@ -9,6 +9,7 @@ import pandas as pd
 
 from ml.config import (
     INCIDENT_LABELS,
+    MODEL_INCIDENT_RISK_DRIVERS,
     MODEL_NAME_INCIDENT_WARNING_RUNAWAY,
     MODEL_NAME_INCIDENT_WARNING_SELFHARM,
     TABLE_RESIDENTS,
@@ -30,16 +31,34 @@ def _load_model_version() -> str:
     return "unknown"
 
 
-def _top_factors(row: pd.Series, hints: list[str]) -> list[str]:
-    present: list[str] = []
-    for key in hints:
-        val = row.get(key, 0)
-        try:
-            if float(val) > 0:
-                present.append(key)
-        except (TypeError, ValueError):
-            continue
-    return present[:3]
+def _load_significant_drivers() -> dict[str, list[str]]:
+    """Load statistically significant features from the incident risk drivers model."""
+    try:
+        from ml.incident_risk_drivers.artifacts import load_model_bundle as load_drivers_bundle
+
+        if not MODEL_INCIDENT_RISK_DRIVERS.exists():
+            return {"selfharm": [], "runaway": []}
+        bundle = load_drivers_bundle()
+        result: dict[str, list[str]] = {}
+        for key, logit_key in [("selfharm", "selfharm_logit"), ("runaway", "runaway_logit")]:
+            logit = bundle.get(logit_key)
+            if logit is None or not hasattr(logit, "pvalues"):
+                result[key] = []
+                continue
+            drivers = []
+            for name in logit.params.index:
+                if name in ("const", "Intercept"):
+                    continue
+                pval = float(logit.pvalues[name])
+                if pval > 0.05:
+                    continue
+                drivers.append((name, abs(float(logit.params[name]))))
+            drivers.sort(key=lambda x: x[1], reverse=True)
+            result[key] = [name for name, _ in drivers]
+        return result
+    except Exception as e:
+        logger.warning("Could not load incident risk drivers: %s", e)
+        return {"selfharm": [], "runaway": []}
 
 
 def _build_records(
@@ -47,17 +66,17 @@ def _build_records(
     selfharm_scores: np.ndarray,
     runaway_scores: np.ndarray,
     model_version: str,
+    significant_drivers: dict[str, list[str]] | None = None,
 ) -> list[dict]:
     timestamp = now_utc()
     records: list[dict] = []
+    selfharm_factors = (significant_drivers or {}).get("selfharm", [])
+    runaway_factors = (significant_drivers or {}).get("runaway", [])
 
     for i, row in features.reset_index(drop=True).iterrows():
         resident_id = int(row["resident_id"])
         selfharm_pct = float(np.clip(selfharm_scores[i] * 100.0, 0.0, 100.0))
         runaway_pct = float(np.clip(runaway_scores[i] * 100.0, 0.0, 100.0))
-
-        selfharm_factors = _top_factors(row, ["sub_cat_sexual_abuse", "initial_risk_num", "sub_cat_osaec"])
-        runaway_factors = _top_factors(row, ["sub_cat_trafficked", "initial_risk_num", "sub_cat_physical_abuse"])
 
         records.append(
             {
@@ -136,7 +155,8 @@ def run_inference() -> list[dict]:
     selfharm_scores = selfharm_model.predict_proba(_align(selfharm_model, X_all.copy()))[:, 1]
     runaway_scores = runaway_model.predict_proba(_align(runaway_model, X_all.copy()))[:, 1]
 
-    records = _build_records(features, selfharm_scores, runaway_scores, _load_model_version())
+    significant_drivers = _load_significant_drivers()
+    records = _build_records(features, selfharm_scores, runaway_scores, _load_model_version(), significant_drivers)
     write_predictions(client, records)
     logger.info("Wrote %s incident early warning predictions.", len(records))
     return records
