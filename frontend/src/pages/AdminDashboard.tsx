@@ -333,13 +333,11 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               </div>
-              {totalResidents > residents.length && (
-                <div className={styles.viewAllRow}>
-                  <button className={styles.viewAllBtn} onClick={() => navigate('/admin/caseload')}>
-                    View all {totalResidents} residents
-                  </button>
-                </div>
-              )}
+              <div className={styles.viewAllRow}>
+                <button className={styles.viewAllBtn} onClick={() => navigate('/admin/caseload')}>
+                  View all {totalResidents} residents
+                </button>
+              </div>
             </>
           )}
         </div>
