@@ -991,22 +991,6 @@ function MlInsightsTab() {
     fontSize: '0.85rem',
   };
 
-  const sigBadge = (pValue: number) => {
-    const isSig = pValue < 0.05;
-    return (
-      <span style={{
-        fontSize: '0.65rem',
-        fontWeight: 600,
-        padding: '0.1rem 0.4rem',
-        borderRadius: '999px',
-        background: isSig ? 'rgba(122,158,126,0.12)' : 'rgba(138,128,120,0.1)',
-        color: isSig ? '#2d6a4f' : '#8A8078',
-      }}>
-        {isSig ? 'significant' : 'suggestive'}
-      </span>
-    );
-  };
-
   return (
     <>
       {/* Section 1: Reintegration Drivers */}
