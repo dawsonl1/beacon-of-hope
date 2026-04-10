@@ -23,6 +23,8 @@ interface FilterOptions {
 }
 
 interface FormData {
+  firstName: string;
+  lastName: string;
   caseControlNo: string;
   internalCode: string;
   safehouseId: string;
@@ -75,7 +77,7 @@ interface FormData {
 const today = APP_TODAY_STR;
 
 const EMPTY_FORM: FormData = {
-  caseControlNo: '', internalCode: '', safehouseId: '', caseStatus: 'Active',
+  firstName: '', lastName: '', caseControlNo: '', internalCode: '', safehouseId: '', caseStatus: 'Active',
   sex: 'Female', dateOfBirth: '', birthStatus: '', placeOfBirth: '', religion: '',
   caseCategory: '',
   subCatOrphaned: false, subCatTrafficked: false, subCatChildLabor: false,
@@ -117,6 +119,8 @@ const FAMILY_FIELDS = [
 function toPayload(form: FormData) {
   return {
     ...form,
+    firstName: form.firstName || null,
+    lastName: form.lastName || null,
     safehouseId: form.safehouseId ? parseInt(form.safehouseId, 10) : null,
     dateOfBirth: form.dateOfBirth || null,
     dateOfAdmission: form.dateOfAdmission || null,
@@ -194,6 +198,8 @@ export default function ResidentFormPage() {
     apiFetch<Record<string, unknown>>(`/api/admin/residents/${id}`)
       .then((data) => {
         setForm({
+          firstName: (data.firstName as string) ?? '',
+          lastName: (data.lastName as string) ?? '',
           caseControlNo: (data.caseControlNo as string) ?? '',
           internalCode: (data.internalCode as string) ?? '',
           safehouseId: data.safehouseId != null ? String(data.safehouseId) : '',
@@ -280,6 +286,14 @@ export default function ResidentFormPage() {
         <div className={styles.formCard}>
           <h2 className={styles.formSection}>Admission & Assignment</h2>
           <div className={styles.fieldGrid}>
+            <div className={styles.field}>
+              <label className={styles.label}>First Name</label>
+              <input className={styles.input} value={form.firstName} onChange={e => u('firstName', e.target.value)} placeholder="First name" />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Last Name</label>
+              <input className={styles.input} value={form.lastName} onChange={e => u('lastName', e.target.value)} placeholder="Last name" />
+            </div>
             <div className={styles.field}>
               <div className={styles.label}>Safehouse <span className={styles.required}>*</span></div>
               <Dropdown value={form.safehouseId} placeholder="Select safehouse..." options={options?.safehouses.map(s => ({ value: String(s.safehouseId), label: s.label })) ?? []} onChange={v => u('safehouseId', v)} />

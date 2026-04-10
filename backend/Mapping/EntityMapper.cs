@@ -7,6 +7,8 @@ public static class EntityMapper
 {
     public static void MapResident(Resident entity, ResidentRequest body)
     {
+        entity.FirstName = body.FirstName;
+        entity.LastName = body.LastName;
         entity.CaseControlNo = body.CaseControlNo;
         entity.InternalCode = body.InternalCode;
         entity.SafehouseId = body.SafehouseId;
