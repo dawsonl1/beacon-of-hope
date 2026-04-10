@@ -223,6 +223,17 @@ export default function AdminChatWidget() {
         )}
       </div>
 
+      {/* Inline suggestions in expanded mode */}
+      {expanded && messages.length > 0 && !loading && (
+        <div className={styles.inlineSuggestions}>
+          {SUGGESTIONS.map(q => (
+            <button key={q} className={styles.inlineSuggestionBtn} onClick={() => sendMessage(q)}>
+              {q}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Input */}
       <div className={styles.inputArea}>
         <input

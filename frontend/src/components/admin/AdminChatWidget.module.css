@@ -397,6 +397,36 @@
   background: rgba(15, 143, 125, 0.1);
 }
 
+/* ── Inline Suggestions (expanded mode) ──────────────── */
+.inlineSuggestions {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  overflow-x: auto;
+  border-top: 1px solid rgba(15, 27, 45, 0.06);
+  flex-shrink: 0;
+}
+
+.inlineSuggestionBtn {
+  flex-shrink: 0;
+  padding: 0.3rem 0.65rem;
+  border: 1.5px solid rgba(15, 143, 125, 0.15);
+  border-radius: 999px;
+  background: rgba(15, 143, 125, 0.04);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.inlineSuggestionBtn:hover {
+  border-color: var(--color-sage);
+  background: rgba(15, 143, 125, 0.1);
+  color: var(--text-strong);
+}
+
 /* ── Responsive ──────────────────────────────────────── */
 @media (max-width: 520px) {
   .panel {
