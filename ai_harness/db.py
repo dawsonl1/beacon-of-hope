@@ -241,3 +241,22 @@ def fetch_impact_snapshot() -> dict | None:
             """)
         ).mappings().first()
         return dict(row) if row else None
+
+
+def fetch_best_timing(platform: str, limit: int = 3) -> list[dict]:
+    """Return top ML-predicted day/hour combos for a platform from ml_predictions."""
+    with get_engine().connect() as conn:
+        rows = conn.execute(
+            text("""
+                SELECT metadata::jsonb->>'day' as day,
+                       (metadata::jsonb->>'hour')::int as hour,
+                       score
+                FROM ml_predictions
+                WHERE model_name = 'social-media-timing'
+                  AND metadata::jsonb->>'platform' = :platform
+                ORDER BY score DESC
+                LIMIT :limit
+            """),
+            {"platform": platform, "limit": limit},
+        ).mappings().all()
+        return [dict(r) for r in rows]

@@ -257,7 +257,7 @@ public static class DonationEndpoints
                 SafehouseId = body.SafehouseId,
                 ProgramArea = body.ProgramArea,
                 AmountAllocated = body.AmountAllocated,
-                AllocationDate = body.AllocationDate ?? DateOnly.FromDateTime(DateTime.UtcNow),
+                AllocationDate = body.AllocationDate ?? AppConstants.DataCutoff,
                 AllocationNotes = body.AllocationNotes
             };
 

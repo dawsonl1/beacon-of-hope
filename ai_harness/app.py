@@ -230,28 +230,44 @@ class PredictScheduleRequest(BaseModel):
 @app.post("/predict-schedule")
 def predict_schedule_endpoint(req: PredictScheduleRequest):
     """
-    ML-powered scheduling. Returns optimal posting time.
-    Currently returns industry defaults — ML model will be trained once
-    enough engagement data accumulates.
+    ML-powered scheduling. Queries the pre-computed timing predictions
+    from ml_predictions (written nightly by the ML pipeline) to find the
+    optimal day/hour for the given platform, then returns the next
+    occurrence of that slot within 7 days of the frozen app date.
+    Falls back to industry defaults if no ML predictions exist.
     """
     from datetime import datetime, timedelta
+    from config import APP_TODAY
 
-    # Industry defaults by platform
-    defaults = {
-        "instagram": {"hour": 9, "weekday": 1},   # Tuesday 9am
-        "facebook": {"hour": 12, "weekday": 3},    # Thursday noon
-        "twitter": {"hour": 10, "weekday": 2},     # Wednesday 10am
+    DAY_TO_WEEKDAY = {
+        "Monday": 0, "Tuesday": 1, "Wednesday": 2, "Thursday": 3,
+        "Friday": 4, "Saturday": 5, "Sunday": 6,
     }
 
-    d = defaults.get(req.platform, {"hour": 10, "weekday": 1})
+    # Try ML predictions first (platform names in DB are title-case)
+    platform_title = req.platform.title() if req.platform else ""
+    best = db.fetch_best_timing(platform_title, limit=1)
 
-    # Find the next occurrence of the target weekday
-    now = datetime.utcnow()
-    days_ahead = d["weekday"] - now.weekday()
+    if best and best[0].get("day") in DAY_TO_WEEKDAY:
+        target_weekday = DAY_TO_WEEKDAY[best[0]["day"]]
+        target_hour = int(best[0]["hour"])
+    else:
+        # Fallback: industry defaults
+        defaults = {
+            "instagram": {"hour": 9, "weekday": 1},
+            "facebook": {"hour": 12, "weekday": 3},
+            "twitter": {"hour": 10, "weekday": 2},
+        }
+        d = defaults.get(req.platform, {"hour": 10, "weekday": 1})
+        target_weekday = d["weekday"]
+        target_hour = d["hour"]
+
+    # Find next occurrence of that weekday within 7 days of frozen date
+    days_ahead = target_weekday - APP_TODAY.weekday()
     if days_ahead <= 0:
         days_ahead += 7
-    target = now + timedelta(days=days_ahead)
-    target = target.replace(hour=d["hour"], minute=0, second=0, microsecond=0)
+    target = APP_TODAY + timedelta(days=days_ahead)
+    target = target.replace(hour=target_hour, minute=0, second=0, microsecond=0)
 
     return {"scheduled_at": target.isoformat() + "Z"}
 
@@ -271,9 +287,9 @@ def generate_newsletter_endpoint(req: GenerateNewsletterRequest):
     from ai_harness.config import OPENAI_API_KEY, OPENAI_MODEL
     from openai import OpenAI
 
-    now = datetime.utcnow()
-    year = req.year or now.year
-    month = req.month or now.month
+    from config import APP_TODAY
+    year = req.year or APP_TODAY.year
+    month = req.month or APP_TODAY.month
 
     # Aggregate monthly data
     posts = db.fetch_monthly_published_posts(year, month)

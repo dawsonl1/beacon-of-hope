@@ -29,3 +29,7 @@ AZURE_STORAGE_CONNECTION_STRING = os.environ.get("AZURE_STORAGE_CONNECTION_STRIN
 AZURE_STORAGE_CONTAINER = os.environ.get("AZURE_STORAGE_CONTAINER", "media")
 
 MAX_TOOL_ROUNDS = 10
+
+# App is frozen to Feb 16, 2026. All "today" references must use this date.
+from datetime import datetime
+APP_TODAY = datetime(2026, 2, 16, 0, 0, 0)
