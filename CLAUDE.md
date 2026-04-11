@@ -96,3 +96,5 @@ intex2/
 8. [PROCESS] Never push directly to main. Always create a feature branch, push to it, and open a PR — because direct pushes bypass review and can break the shared branch.
 
 9. [DATA] The app is frozen to February 16, 2026. All timestamps and "today" references MUST use `AppConstants.DataCutoff` (DateOnly) or `AppConstants.DataCutoffUtc` (DateTime) in backend C#, and `APP_TODAY` / `APP_TODAY_STR` in frontend TypeScript. Never use `DateTime.UtcNow`, `DateTime.Now`, `new Date()`, or `Date.now()` for data-facing logic. The only exception is real timer scheduling math in background jobs (calculating delays for `Task.Delay`). If you see `DateTime.UtcNow` in a merge conflict, always pick the `AppConstants.DataCutoffUtc` side.
+
+10. [PROCESS] Supersedes rules 2 and 8. Push directly to main — this is a solo repo with one contributor, so branches and PRs add unnecessary overhead. Commit and push to main after each meaningful change.
