@@ -31,7 +31,7 @@ jobs:
         run: |
           cd frontend
           npm ci
-          VITE_API_URL=https://intex2.dawsonsprojects.com/api npm run build
+          VITE_API_URL=https://intex2.dawsonsprojects.com npm run build
 
       - name: Setup SSH key
         run: |
