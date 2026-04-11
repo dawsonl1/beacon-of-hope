@@ -55,20 +55,19 @@ builder.Services.AddDataProtection()
 
 // [SECURITY-3] Auth — Cookie configuration: Secure cookie settings for authentication.
 // HttpOnly prevents JavaScript access. Secure=Always in production enforces HTTPS-only
-// cookies. SameSite=None allows cross-origin requests (frontend on Vercel, backend on Azure).
+// cookies. SameSite=Lax is safe because frontend and backend are same-origin (Nginx proxy).
 builder.Services.ConfigureApplicationCookie(opts =>
 {
     opts.Cookie.HttpOnly = true;
     if (builder.Environment.IsDevelopment())
     {
         opts.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-        opts.Cookie.SameSite = SameSiteMode.Lax;
     }
     else
     {
         opts.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        opts.Cookie.SameSite = SameSiteMode.None;
     }
+    opts.Cookie.SameSite = SameSiteMode.Lax;
     opts.Cookie.Name = "BeaconAuth";
     opts.ExpireTimeSpan = TimeSpan.FromHours(8);
     opts.SlidingExpiration = true;
@@ -102,9 +101,8 @@ builder.Services.AddCors(options =>
                 "http://localhost:5174",
                 "http://localhost:5175",
                 "http://localhost:5176",
-                "https://intex2-1.vercel.app",
                 "https://intex2.dawsonsprojects.com",
-                "https://intex-backend-hehbb8gwb2e3b8b6.westus2-01.azurewebsites.net")
+                "http://129.146.129.59")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
