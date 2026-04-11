@@ -136,7 +136,7 @@ public static class DonorPortalEndpoints
                     await userManager.AddToRoleAsync(newUser, "Donor");
 
                     // Send login credentials email
-                    var baseUrl = config["App:BaseUrl"] ?? "https://intex2.dawsonsprojects.com";
+                    var baseUrl = config["App:BaseUrl"] ?? "https://beaconofhope.dawsonsprojects.com";
                     var log = loggerFactory.CreateLogger("DonorPortal");
                     log.LogInformation("Sending welcome email to {Email}", email);
                     await emailService.SendDonorWelcomeEmail(email, password, baseUrl);

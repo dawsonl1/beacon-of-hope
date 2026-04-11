@@ -156,7 +156,7 @@ public static class NewsletterEndpoints
 
             var fromEmail = config["SendGrid:FromEmail"] ?? "noreply@beaconofhope.org";
             var fromName = config["SendGrid:FromName"] ?? "Beacon of Hope";
-            var baseUrl = config["App:BaseUrl"] ?? "https://intex2-1.vercel.app";
+            var baseUrl = config["App:BaseUrl"] ?? "https://beaconofhope.dawsonsprojects.com";
 
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress(fromEmail, fromName);
