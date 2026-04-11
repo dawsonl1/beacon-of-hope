@@ -1,0 +1,89 @@
+name: Deploy Python Services
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ai_harness/**'
+      - 'vanna_service/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.ORACLE_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Detect changed services
+        id: changes
+        run: |
+          # Check which services changed in this push
+          if git diff --name-only HEAD~1 HEAD | grep -q '^ai_harness/'; then
+            echo "harness=true" >> "$GITHUB_OUTPUT"
+          fi
+          if git diff --name-only HEAD~1 HEAD | grep -q '^vanna_service/'; then
+            echo "vanna=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Deploy AI Harness
+        if: steps.changes.outputs.harness == 'true'
+        run: |
+          tar czf ai-harness.tar.gz ai_harness/
+          scp ai-harness.tar.gz ubuntu@${{ secrets.ORACLE_HOST }}:/tmp/
+          ssh ubuntu@${{ secrets.ORACLE_HOST }} << 'EOF'
+            sudo systemctl stop ai-harness
+            # Preserve .env and venv
+            cp /opt/ai-harness/.env /tmp/ai-harness-env.bak
+            # Clear old code, keep venv
+            find /opt/ai-harness/ai_harness -name "*.py" -delete 2>/dev/null || true
+            # Extract new code
+            tar xzf /tmp/ai-harness.tar.gz --strip-components=1 -C /opt/ai-harness/ai_harness/
+            # Restore .env
+            cp /tmp/ai-harness-env.bak /opt/ai-harness/.env
+            # Update dependencies
+            /opt/ai-harness/venv/bin/pip install -q -r /opt/ai-harness/requirements.txt
+            sudo systemctl start ai-harness
+            rm -f /tmp/ai-harness.tar.gz /tmp/ai-harness-env.bak
+            sleep 3
+            echo "AI Harness: $(systemctl is-active ai-harness)"
+          EOF
+
+      - name: Deploy Vanna Service
+        if: steps.changes.outputs.vanna == 'true'
+        run: |
+          tar czf vanna-service.tar.gz vanna_service/
+          scp vanna-service.tar.gz ubuntu@${{ secrets.ORACLE_HOST }}:/tmp/
+          ssh ubuntu@${{ secrets.ORACLE_HOST }} << 'EOF'
+            sudo systemctl stop vanna-service
+            # Preserve .env and venv
+            cp /opt/vanna-service/.env /tmp/vanna-env.bak
+            # Clear old code, keep venv
+            find /opt/vanna-service/vanna_service -name "*.py" -delete 2>/dev/null || true
+            # Extract new code
+            tar xzf /tmp/vanna-service.tar.gz --strip-components=1 -C /opt/vanna-service/vanna_service/
+            # Restore .env
+            cp /tmp/vanna-env.bak /opt/vanna-service/.env
+            # Update dependencies
+            /opt/vanna-service/venv/bin/pip install -q -r /opt/vanna-service/requirements.txt
+            sudo systemctl start vanna-service
+            rm -f /tmp/vanna-service.tar.gz /tmp/vanna-env.bak
+            sleep 3
+            echo "Vanna: $(systemctl is-active vanna-service)"
+          EOF
+
+      - name: Verify services
+        run: |
+          sleep 3
+          ssh ubuntu@${{ secrets.ORACLE_HOST }} << 'EOF'
+            echo "AI Harness: $(systemctl is-active ai-harness)"
+            echo "Vanna: $(systemctl is-active vanna-service)"
+            curl -s -o /dev/null -w "Harness health: HTTP %{http_code}\n" -H "Authorization: Bearer $(grep HARNESS_API_KEY /opt/ai-harness/.env | cut -d= -f2)" http://localhost:8001/health
+            curl -s -o /dev/null -w "Vanna health: HTTP %{http_code}\n" http://localhost:8002/health
+          EOF

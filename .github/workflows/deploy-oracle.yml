@@ -31,7 +31,7 @@ jobs:
         run: |
           cd frontend
           npm ci
-          VITE_API_URL=https://intex2.dawsonsprojects.com npm run build
+          npm run build
 
       - name: Setup SSH key
         run: |
@@ -44,18 +44,45 @@ jobs:
         run: |
           tar czf backend.tar.gz -C backend-publish .
           scp backend.tar.gz ubuntu@${{ secrets.ORACLE_HOST }}:/tmp/
-          ssh ubuntu@${{ secrets.ORACLE_HOST }} 'sudo systemctl stop intex2 && sudo rm -rf /opt/intex2/*.dll /opt/intex2/*.json /opt/intex2/*.deps /opt/intex2/runtimes && sudo tar xzf /tmp/backend.tar.gz -C /opt/intex2 && sudo cp /tmp/appsettings.Production.json /opt/intex2/ 2>/dev/null; sudo systemctl start intex2'
+          ssh ubuntu@${{ secrets.ORACLE_HOST }} << 'EOF'
+            sudo systemctl stop intex2
+            # Preserve production config and data protection keys
+            cp /opt/intex2/appsettings.Production.json /tmp/appsettings.Production.json.bak 2>/dev/null || true
+            cp -r /opt/intex2/dp-keys /tmp/dp-keys-bak 2>/dev/null || true
+            # Clear old binaries
+            sudo rm -f /opt/intex2/*.dll /opt/intex2/*.pdb /opt/intex2/backend /opt/intex2/backend.deps.json /opt/intex2/backend.runtimeconfig.json /opt/intex2/backend.staticwebassets.endpoints.json
+            sudo rm -rf /opt/intex2/wwwroot
+            # Extract new binaries
+            sudo tar xzf /tmp/backend.tar.gz -C /opt/intex2
+            # Restore production config and dp-keys
+            sudo cp /tmp/appsettings.Production.json.bak /opt/intex2/appsettings.Production.json 2>/dev/null || true
+            sudo cp -r /tmp/dp-keys-bak /opt/intex2/dp-keys 2>/dev/null || true
+            rm -f /tmp/backend.tar.gz /tmp/appsettings.Production.json.bak
+            rm -rf /tmp/dp-keys-bak
+            sudo systemctl start intex2
+          EOF
 
       - name: Deploy frontend
         run: |
           tar czf frontend.tar.gz -C frontend/dist .
           scp frontend.tar.gz ubuntu@${{ secrets.ORACLE_HOST }}:/tmp/
-          ssh ubuntu@${{ secrets.ORACLE_HOST }} 'sudo rm -rf /var/www/intex2/* && sudo tar xzf /tmp/frontend.tar.gz -C /var/www/intex2'
+          ssh ubuntu@${{ secrets.ORACLE_HOST }} << 'FRONTEND'
+            sudo rm -rf /var/www/intex2/*
+            sudo tar xzf /tmp/frontend.tar.gz -C /var/www/intex2
+            # Restore robots.txt
+            sudo tee /var/www/intex2/robots.txt > /dev/null << 'ROBOTS'
+          User-agent: *
+          Allow: /
+          Disallow: /api/
+          Sitemap: https://beaconofhope.dawsonsprojects.com/sitemap.xml
+          ROBOTS
+            rm -f /tmp/frontend.tar.gz
+          FRONTEND
 
       - name: Verify deployment
         run: |
           sleep 5
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://intex2.dawsonsprojects.com/api/auth/me)
+          STATUS=$(ssh ubuntu@${{ secrets.ORACLE_HOST }} 'curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/api/health')
           if [ "$STATUS" -ne 200 ]; then
             echo "Deployment verification failed: HTTP $STATUS"
             ssh ubuntu@${{ secrets.ORACLE_HOST }} 'sudo journalctl -u intex2 --no-pager -n 20'

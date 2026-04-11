@@ -21,10 +21,22 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_URL: ${{ secrets.ORACLE_DATABASE_URL }}
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup SSH tunnel to Oracle DB
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.ORACLE_HOST }} >> ~/.ssh/known_hosts
+          # Forward local port 5432 to Oracle VM's PostgreSQL
+          ssh -f -N -L 5432:localhost:5432 ubuntu@${{ secrets.ORACLE_HOST }}
+          # Wait for tunnel to be ready
+          sleep 2
+          echo "SSH tunnel established"
 
       - name: Setup Python
         uses: actions/setup-python@v5
