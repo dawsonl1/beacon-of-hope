@@ -1,0 +1,64 @@
+name: Deploy to Oracle Cloud
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Publish backend
+        run: dotnet publish backend/backend.csproj -c Release -r linux-x64 --self-contained false -o ./backend-publish
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm ci
+          VITE_API_URL=https://intex2.dawsonsprojects.com/api npm run build
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.ORACLE_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy backend
+        run: |
+          tar czf backend.tar.gz -C backend-publish .
+          scp backend.tar.gz ubuntu@${{ secrets.ORACLE_HOST }}:/tmp/
+          ssh ubuntu@${{ secrets.ORACLE_HOST }} 'sudo systemctl stop intex2 && sudo rm -rf /opt/intex2/*.dll /opt/intex2/*.json /opt/intex2/*.deps /opt/intex2/runtimes && sudo tar xzf /tmp/backend.tar.gz -C /opt/intex2 && sudo cp /tmp/appsettings.Production.json /opt/intex2/ 2>/dev/null; sudo systemctl start intex2'
+
+      - name: Deploy frontend
+        run: |
+          tar czf frontend.tar.gz -C frontend/dist .
+          scp frontend.tar.gz ubuntu@${{ secrets.ORACLE_HOST }}:/tmp/
+          ssh ubuntu@${{ secrets.ORACLE_HOST }} 'sudo rm -rf /var/www/intex2/* && sudo tar xzf /tmp/frontend.tar.gz -C /var/www/intex2'
+
+      - name: Verify deployment
+        run: |
+          sleep 5
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://intex2.dawsonsprojects.com/api/auth/me)
+          if [ "$STATUS" -ne 200 ]; then
+            echo "Deployment verification failed: HTTP $STATUS"
+            ssh ubuntu@${{ secrets.ORACLE_HOST }} 'sudo journalctl -u intex2 --no-pager -n 20'
+            exit 1
+          fi
+          echo "Deployment successful: HTTP $STATUS"
