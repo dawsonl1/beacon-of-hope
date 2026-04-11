@@ -102,6 +102,7 @@ builder.Services.AddCors(options =>
                 "http://localhost:5175",
                 "http://localhost:5176",
                 "https://intex2.dawsonsprojects.com",
+                "https://beaconofhope.dawsonsprojects.com",
                 "http://129.146.129.59")
               .AllowAnyHeader()
               .AllowAnyMethod()
