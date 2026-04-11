@@ -146,9 +146,9 @@ if (app.Environment.IsDevelopment())
 }
 
 // [SECURITY-1] Confidentiality — HTTPS/TLS: All connections use HTTPS. Backend enforces
-// HTTPS redirection; Vercel (frontend) and Azure App Service (backend) provide TLS certificates.
+// HTTPS redirection; Cloudflare provides edge TLS and the origin uses a Cloudflare Origin Certificate.
 // [SECURITY-2] Confidentiality — HTTP→HTTPS redirect: UseHttpsRedirection() redirects any
-// HTTP requests to HTTPS. Vercel also returns 308 Permanent Redirect for the frontend.
+// HTTP requests to HTTPS. Nginx also redirects HTTP to HTTPS at the reverse proxy layer.
 app.UseHttpsRedirection();
 // [SECURITY-13b] Additional — HSTS: HTTP Strict Transport Security tells browsers to only
 // connect via HTTPS for 1 year, including subdomains. Vercel also sends HSTS with preload.
@@ -178,8 +178,8 @@ app.Use(async (context, next) =>
 // [SECURITY-11] Attack Mitigations — CSP header: Content-Security-Policy restricts which
 // sources the browser can load scripts, styles, images, and connections from. This mitigates
 // XSS and data injection attacks. Set as an HTTP header (not meta tag) per rubric requirement.
-// NOTE: This CSP applies to backend API responses. The frontend CSP is set in frontend/vercel.json
-// so that it appears on page load in browser dev tools (which is what graders check).
+// NOTE: This CSP applies to backend API responses. Nginx also adds security headers for
+// static file responses (X-Content-Type-Options, X-Frame-Options, etc.).
 // [SECURITY-13c] Additional — Security headers: X-Content-Type-Options prevents MIME-sniffing,
 // X-Frame-Options blocks clickjacking, Referrer-Policy limits referrer leakage.
 app.Use(async (context, next) =>
