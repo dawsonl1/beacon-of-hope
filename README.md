@@ -118,12 +118,12 @@ Eight models run nightly via GitHub Actions, connecting to the production databa
 
 ### Predictive Models
 
-| Model | Method | Purpose |
-|-------|--------|---------|
-| Reintegration Readiness | Stacking Classifier (10 base models) | Score 0-100 indicating readiness for reintegration |
-| Donor Churn | Stacking Classifier (9 base models) | Predict likelihood a donor stops giving |
-| Incident Early Warning | Dual Gradient Boosting | Separate self-harm and runaway risk scores |
-| Social Media Timing | Random Forest | Optimal posting day/hour per platform |
+| Model | Candidates Evaluated | Purpose |
+|-------|---------------------|---------|
+| Reintegration Readiness | 11 (incl. stacking ensemble) | Score 0-100 indicating readiness for reintegration |
+| Donor Churn | 10 (incl. stacking ensemble) | Predict likelihood a donor stops giving |
+| Incident Early Warning | 4 per risk type | Separate self-harm and runaway risk scores |
+| Social Media Timing | 9 (incl. stacking ensemble) | Optimal posting day/hour per platform |
 
 ### Explanatory Models
 
@@ -134,7 +134,7 @@ Eight models run nightly via GitHub Actions, connecting to the production databa
 | Incident Risk Drivers | Logistic Regression | Factors driving self-harm and runaway incidents |
 | Content Effectiveness | OLS Regression | Content attributes that drive donation referrals |
 
-All models use permutation feature importance for iterative pruning and GridSearchCV for hyperparameter tuning.
+Each predictive model uses GridSearchCV to compare multiple algorithm types (Logistic Regression, Random Forest, Gradient Boosting, SVM, KNN, AdaBoost, ExtraTrees, stacking ensembles, etc.) and automatically selects the best performer. Models are retrained nightly so the winning algorithm can change as new data arrives. Permutation feature importance drives iterative feature pruning to prevent overfitting.
 
 ---
 
