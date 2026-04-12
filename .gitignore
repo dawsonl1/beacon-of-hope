@@ -57,6 +57,7 @@ backend/wwwroot/media/library/
 # Claude Code local config
 .claude/settings.local.json
 .claude/worktrees/
+.claude/plans/
 
 # Audit screenshots
 audit/

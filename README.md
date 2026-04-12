@@ -165,7 +165,8 @@ beacon-of-hope/
 │   ├── churn/            Donor churn prediction + drivers
 │   ├── incident/         Early warning + risk drivers
 │   └── social_media/     Timing optimization + content effectiveness
-├── data/                 17 CSV seed files
+├── models/               Trained model artifacts (.sav)
+├── docs/                 Architecture, schemas, security documentation
 └── .github/workflows/    CI/CD pipelines
 ```
 
