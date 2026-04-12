@@ -1,0 +1,175 @@
+newsletter_id,subject,html_content,plain_text,status,generated_at,approved_by,approved_at,sent_at,recipient_count,month_year
+17,February Update: Hope and Progress at Beacon of Hope,"<div style=""max-width: 600px; margin: auto; font-family: Arial, sans-serif; line-height: 1.6; color: #1a1a2e; background-color: #f5f0e8; padding: 20px;"">
+    <div style=""text-align: center;"">
+        <h1 style=""color: #e94560;"">Beacon of Hope</h1>
+        <h2>February 2026 Update</h2>
+    </div>
+    <div style=""background-color: #fff; padding: 15px; border-radius: 8px; margin-bottom: 20px;"">
+        <h3 style=""color: #1a1a2e;"">Impact at a Glance</h3>
+        <div style=""display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;"">
+            <div style=""background-color: #e94560; color: white; padding: 10px; border-radius: 5px;"">
+                <strong>Total Raised:</strong> $17,234.30
+            </div>
+            <div style=""background-color: #e94560; color: white; padding: 10px; border-radius: 5px;"">
+                <strong>Unique Donors:</strong> 16
+            </div>
+            <div style=""background-color: #e94560; color: white; padding: 10px; border-radius: 5px;"">
+                <strong>Active Residents:</strong> 88
+            </div>
+            <div style=""background-color: #e94560; color: white; padding: 10px; border-radius: 5px;"">
+                <strong>Avg Education Progress:</strong> 71%
+            </div>
+            <div style=""background-color: #e94560; color: white; padding: 10px; border-radius: 5px;"">
+                <strong>Avg Health Score:</strong> 3.8
+            </div>
+        </div>
+    </div>
+    <div style=""background-color: #fff; padding: 15px; border-radius: 8px; margin-bottom: 20px;"">
+        <h3 style=""color: #1a1a2e;"">Monthly Highlights</h3>
+        <p>This month, our community came together to make significant strides in education and health for our residents. The average education progress stands at an encouraging 71%, and our residents' health is steadily improving. None of this would be possible without your unwavering support.</p>
+    </div>
+    <div style=""text-align: center; margin: 20px 0;"">
+        <a href=""{{donate_url}}"" style=""background-color: #e94560; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;"">Donate Today</a>
+    </div>
+    <div style=""font-size: 12px; text-align: center; color: #1a1a2e;"">
+        <p>If you wish to unsubscribe, please <a href=""{{unsubscribe_url}}"" style=""color: #e94560;"">click here</a>.</p>
+    </div>
+</div>","Beacon of Hope
+February 2026 Update
+
+Impact at a Glance
+- Total Raised: $17,234.30
+- Unique Donors: 16
+- Active Residents: 88
+- Avg Education Progress: 71%
+- Avg Health Score: 3.8
+
+Monthly Highlights
+This month, our community came together to make significant strides in education and health for our residents. The average education progress stands at an encouraging 71%, and our residents' health is steadily improving. None of this would be possible without your unwavering support.
+
+Donate Today: {{donate_url}}
+
+If you wish to unsubscribe, please click here: {{unsubscribe_url}}",draft,2026-02-16 00:00:00+00,,,,0,202602
+16,February 2026 Update: Community Impact & Hope,"<div style=""font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f5f0e8; color: #1a1a2e; padding: 20px;"">
+    <div style=""text-align: center;"">
+        <h1 style=""color: #e94560;"">Beacon of Hope</h1>
+        <h2>February 2026 Update</h2>
+    </div>
+    <div style=""display: flex; justify-content: space-between; padding: 10px 0;"">
+        <div style=""flex: 1; text-align: center; padding: 10px; border: 1px solid #1a1a2e;"">
+            <h3>Total Raised</h3>
+            <p>$16,484.30</p>
+        </div>
+        <div style=""flex: 1; text-align: center; padding: 10px; border: 1px solid #1a1a2e;"">
+            <h3>Unique Donors</h3>
+            <p>15</p>
+        </div>
+        <div style=""flex: 1; text-align: center; padding: 10px; border: 1px solid #1a1a2e;"">
+            <h3>Total Donations</h3>
+            <p>19</p>
+        </div>
+    </div>
+    <div style=""padding: 10px 0;"">
+        <h3>Safehouse Metrics</h3>
+        <ul>
+            <li>Active Residents: 88</li>
+            <li>Avg Education Progress: 71%</li>
+            <li>Avg Health Score: 3.8</li>
+        </ul>
+    </div>
+    <div style=""padding: 10px 0;"">
+        <h3>Monthly Highlights</h3>
+        <p>In February, our community continued to thrive with significant progress in education and well-being. Thanks to your support, residents are achieving new milestones and building brighter futures.</p>
+    </div>
+    <div style=""padding: 10px 0; text-align: center;"">
+        <a href=""{{donate_url}}"" style=""background-color: #e94560; color: #fff; padding: 15px 25px; text-decoration: none; border-radius: 5px;"">Donate Now</a>
+    </div>
+    <div style=""padding: 10px 0; text-align: center; font-size: 12px;"">
+        <p>Thank you for being a beacon of hope. Together, we are making a lasting impact.</p>
+        <p><a href=""{{unsubscribe_url}}"" style=""color: #1a1a2e; text-decoration: none;"">Unsubscribe</a></p>
+    </div>
+</div>","Beacon of Hope
+February 2026 Update
+
+Total Raised: $16,484.30
+Unique Donors: 15
+Total Donations: 19
+
+Safehouse Metrics
+- Active Residents: 88
+- Avg Education Progress: 71%
+- Avg Health Score: 3.8
+
+Monthly Highlights
+In February, our community continued to thrive with significant progress in education and well-being. Thanks to your support, residents are achieving new milestones and building brighter futures.
+
+Donate Now: {{donate_url}}
+
+Thank you for being a beacon of hope. Together, we are making a lasting impact.
+
+Unsubscribe: {{unsubscribe_url}}",sent,2026-02-16 00:00:00+00,admin@beaconofhope.org,2026-02-16 00:00:00+00,2026-02-16 00:00:00+00,5,202602
+18,New Beginnings: February 2026 at Beacon of Hope,"<div style=""max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; color: #1a1a2e;""><div style=""background-color: #f5f0e8; padding: 20px; text-align: center;""><h1 style=""color: #e94560;"">Beacon of Hope</h1><h2>February 2026 Update</h2></div><div style=""padding: 20px;""><h3 style=""color: #e94560;"">Impact at a Glance</h3><div style=""display: flex; flex-wrap: wrap; justify-content: space-between; text-align: center;""><div style=""flex: 1; margin: 10px; background-color: #f5f0e8; padding: 10px; border-radius: 8px;""><h4>Total Raised</h4><p>$17,234.30</p></div><div style=""flex: 1; margin: 10px; background-color: #f5f0e8; padding: 10px; border-radius: 8px;""><h4>Unique Donors</h4><p>16</p></div><div style=""flex: 1; margin: 10px; background-color: #f5f0e8; padding: 10px; border-radius: 8px;""><h4>Active Residents</h4><p>88</p></div><div style=""flex: 1; margin: 10px; background-color: #f5f0e8; padding: 10px; border-radius: 8px;""><h4>Education Progress</h4><p>71%</p></div><div style=""flex: 1; margin: 10px; background-color: #f5f0e8; padding: 10px; border-radius: 8px;""><h4>Health Score</h4><p>3.8</p></div></div><h3 style=""color: #e94560;"">Highlights</h3><p>Thanks to your unwavering support, 88 residents are experiencing brighter futures with an average education progress of 71%. Their health score reflects ongoing improvement at an average of 3.8. Each donation paves the way for new opportunities and a renewed sense of hope.</p><h3 style=""color: #e94560;"">Join Us</h3><p>Stay tuned for upcoming events where we can gather as a community to further our mission. Your participation fuels our progress and makes a tangible difference.</p><div style=""text-align: center; margin: 20px 0;""><a href=""{{donate_url}}"" style=""background-color: #e94560; color: #f5f0e8; padding: 10px 20px; text-decoration: none; border-radius: 5px;"">Donate Now</a></div><p>With gratitude and hope,</p><p>The Beacon of Hope Team</p></div><div style=""background-color: #f5f0e8; padding: 10px; text-align: center;""><p style=""font-size: 12px;"">To unsubscribe, click <a href=""{{unsubscribe_url}}"" style=""color: #e94560; text-decoration: none;"">here</a>.</p></div></div>","Beacon of Hope
+February 2026 Update
+
+Impact at a Glance
+------------------
+- Total Raised: $17,234.30
+- Unique Donors: 16
+- Active Residents: 88
+- Education Progress: 71%
+- Health Score: 3.8
+
+Highlights
+----------
+Thanks to your unwavering support, 88 residents are experiencing brighter futures with an average education progress of 71%. Their health score reflects ongoing improvement at an average of 3.8. Each donation paves the way for new opportunities and a renewed sense of hope.
+
+Join Us
+-------
+Stay tuned for upcoming events where we can gather as a community to further our mission. Your participation fuels our progress and makes a tangible difference.
+
+Donate Now: {{donate_url}}
+
+With gratitude and hope,
+The Beacon of Hope Team
+
+To unsubscribe, click here: {{unsubscribe_url}}",draft,2026-02-16 00:00:00+00,,,,0,202602
+19,February 2026: Beacon of Hope's Journey Forward,"<div style=""max-width:600px;margin:0 auto;padding:20px;background-color:#f5f0e8;font-family:Arial,sans-serif;color:#1a1a2e;"">
+    <h1 style=""text-align:center;color:#e94560;"">Beacon of Hope - February 2026</h1>
+    <p style=""text-align:center;"">Together, we're lighting the way for brighter futures.</p>
+    <div style=""display:flex;justify-content:space-around;margin-top:20px;"">
+        <div style=""flex:1;text-align:center;padding:10px;background-color:#e94560;color:#fff;"">
+            <h2>$17,234.30</h2>
+            <p>Total Raised</p>
+        </div>
+        <div style=""flex:1;text-align:center;padding:10px;background-color:#e94560;color:#fff;"">
+            <h2>16</h2>
+            <p>Unique Donors</p>
+        </div>
+        <div style=""flex:1;text-align:center;padding:10px;background-color:#e94560;color:#fff;"">
+            <h2>21</h2>
+            <p>Total Donations</p>
+        </div>
+    </div>
+    <div style=""margin-top:20px;"">
+        <h3 style=""color:#e94560;"">Monthly Highlights</h3>
+        <p>With the support of our community, we've been able to maintain a safe and nurturing environment for 88 residents. The dedication to education has shown a remarkable average progress of 71%, and our health initiatives have achieved a commendable average health score of 3.8. These numbers reflect our ongoing commitment to making a tangible difference.</p>
+    </div>
+    <div style=""margin-top:20px;text-align:center;"">
+        <a href=""{{donate_url}}"" style=""display:inline-block;padding:10px 20px;background-color:#e94560;color:#fff;text-decoration:none;border-radius:5px;"">Donate Now</a>
+    </div>
+    <footer style=""text-align:center;margin-top:20px;color:#1a1a2e;"">
+        <p>Thank you for being a part of our journey. <a href=""{{unsubscribe_url}}"" style=""color:#e94560;text-decoration:none;"">Unsubscribe</a></p>
+    </footer>
+</div>","Beacon of Hope - February 2026
+Together, we're lighting the way for brighter futures.
+
+Total Raised: $17,234.30
+Unique Donors: 16
+Total Donations: 21
+
+Monthly Highlights:
+With the support of our community, we've been able to maintain a safe and nurturing environment for 88 residents. The dedication to education has shown a remarkable average progress of 71%, and our health initiatives have achieved a commendable average health score of 3.8. These numbers reflect our ongoing commitment to making a tangible difference.
+
+Donate Now: {{donate_url}}
+
+Thank you for being a part of our journey. Unsubscribe: {{unsubscribe_url}}",draft,2026-02-16 00:00:00+00,,,,0,202602

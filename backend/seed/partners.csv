@@ -29,3 +29,5 @@ partner_id,partner_name,partner_type,role_type,contact_name,email,phone,region,s
 28,Paul Yap,Organization,Education,Paul Yap,paul-yap@globalfoundation.ph,+63 915 980 6413,Visayas,Inactive,2023-06-25,2025-12-31,Secondary contractor
 29,June Cortez,Individual,Education,June Cortez,june-cortez@smart.com.ph,+63 955 652 3167,Luzon,Inactive,2023-07-15,2025-12-31,Secondary contractor
 30,Lara Soriano,Individual,Logistics,Lara Soriano,lara-soriano@eastern.com.ph,+63 921 348 8749,Mindanao,Inactive,2023-08-04,2025-12-31,Secondary contractor
+31,Anthropic,Organization,SafehouseOps,Claude,test@anthropic.com,"",Northern,Prospective,2026-02-16,,""
+32,Test,Organization,Prospective,Test,test@example.com,555-1234,,Prospective,2026-02-16,,

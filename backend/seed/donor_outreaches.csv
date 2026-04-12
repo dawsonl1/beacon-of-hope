@@ -1,0 +1,11 @@
+id,supporter_id,staff_email,staff_name,outreach_type,note,created_at
+1,60,admin@beaconofhope.org,Director Reyes,Note,This is a test,2026-02-16 00:00:00+00
+2,60,admin@beaconofhope.org,Director Reyes,Email,,2026-02-16 00:00:00+00
+3,60,admin@beaconofhope.org,Director Reyes,Email,,2026-02-16 00:00:00+00
+4,60,staff@beaconofhope.org,Elena Reye,Note,"person is hostile, do not attempt to contatct",2026-02-16 00:00:00+00
+5,60,staff@beaconofhope.org,Elena Reye,Email,,2026-02-16 00:00:00+00
+6,60,staff@beaconofhope.org,Elena Reye,Email,,2026-02-16 00:00:00+00
+7,60,sw02@beaconofhope.org,Elena Cruz,Email,,2026-02-16 00:00:00+00
+8,60,sw02@beaconofhope.org,Elena Cruz,Note,Test,2026-02-16 00:00:00+00
+9,59,admin@beaconofhope.org,Director Reyes,Email,,2026-02-16 00:00:00+00
+10,60,admin@beaconofhope.org,Director Reyes,Email,,2026-02-16 00:00:00+00

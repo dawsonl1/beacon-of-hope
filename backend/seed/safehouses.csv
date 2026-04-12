@@ -1,0 +1,10 @@
+safehouse_id,safehouse_code,name,region,city,province,country,open_date,status,capacity_girls,capacity_staff,current_occupancy,notes
+2,SH02,Safehouse 2,Central,Tamuning,Guam,USA,2022-02-15,Active,14,5,8,[cap+4]
+3,SH03,Safehouse 3,Southern,Inarajan,Guam,USA,2022-04-01,Active,13,4,6,[cap+4]
+4,SH04,Safehouse 4,Central,Mangilao,Guam,USA,2022-05-16,Active,16,4,9,[cap+4]
+7,SH07,Safehouse 7,Southern,Agat,Guam,USA,2022-09-28,Active,16,4,13,[cap+4]
+8,SH08,Safehouse 8,Northern,Hagatna,Guam,USA,2022-11-12,Active,13,7,6,[cap+4]
+9,SH09,Safehouse 9,Southern,Santa Rita,Guam,USA,2022-12-27,Active,10,3,8,[cap+4]
+5,SH05,Safehouse 5,Northern,Yigo,Guam,USA,2022-06-30,Active,15,4,7,[cap+4]
+6,SH06,Safehouse 6,Central,Barrigada,Guam,USA,2022-08-14,Active,12,5,7,[cap+4]
+1,SH01,Safehouse 1,Northern,Dededo,Guam,USA,2022-01-01,Active,12,4,13,[cap+4]

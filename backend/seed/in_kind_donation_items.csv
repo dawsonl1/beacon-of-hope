@@ -12,9 +12,9 @@ item_id,donation_id,item_name,item_category,quantity,unit_of_measure,estimated_u
 11,44,Medicines,SchoolMaterials,5,boxes,1045.38,Education,New
 12,48,School Supplies,Furniture,17,boxes,45.13,Health,New
 13,48,Books,Medical,1,pcs,943.77,Education,Good
-14,51,Bags,Food,30,pcs,143.1,Health,New
+14,51,Bags,Food,30,pcs,143.10,Health,New
 15,51,Books,Supplies,18,sets,1072.69,Meals,New
-16,60,Books,Hygiene,5,boxes,1195.2,Education,Fair
+16,60,Books,Hygiene,5,boxes,1195.20,Education,Fair
 17,61,Blankets,SchoolMaterials,28,kg,1109.97,Shelter,New
 18,65,School Supplies,Hygiene,27,pcs,1052.09,Hygiene,New
 19,68,Rice,Supplies,21,packs,396.55,Health,Good
@@ -57,7 +57,7 @@ item_id,donation_id,item_name,item_category,quantity,unit_of_measure,estimated_u
 56,195,Furniture,SchoolMaterials,14,boxes,1138.03,Meals,New
 57,204,Books,SchoolMaterials,10,kg,475.62,Health,Fair
 58,210,Blankets,Food,4,packs,884.82,Education,Good
-59,213,Hygiene Kits,Medical,13,packs,280.5,Health,Good
+59,213,Hygiene Kits,Medical,13,packs,280.50,Health,Good
 60,215,Medicines,SchoolMaterials,1,sets,361.19,Meals,New
 61,215,Hygiene Kits,SchoolMaterials,26,boxes,886.66,Shelter,Good
 62,221,School Supplies,Medical,16,pcs,475.72,Hygiene,Fair
@@ -83,7 +83,7 @@ item_id,donation_id,item_name,item_category,quantity,unit_of_measure,estimated_u
 82,270,Uniforms,Furniture,21,boxes,1126.79,Meals,Good
 83,273,Hygiene Kits,Clothing,27,kg,74.46,Hygiene,New
 84,273,School Supplies,Clothing,24,kg,352.54,Education,Good
-85,275,Furniture,Food,12,boxes,1015.6,Shelter,Good
+85,275,Furniture,Food,12,boxes,1015.60,Shelter,Good
 86,285,Rice,Supplies,11,pcs,615.11,Health,New
 87,287,Rice,Hygiene,13,kg,695.28,Shelter,New
 88,287,Books,Clothing,20,kg,33.86,Hygiene,Good
@@ -93,7 +93,7 @@ item_id,donation_id,item_name,item_category,quantity,unit_of_measure,estimated_u
 92,298,Bags,Supplies,11,sets,731.53,Education,New
 93,298,Blankets,Medical,7,kg,102.56,Health,Good
 94,299,Rice,Clothing,15,boxes,706.58,Health,New
-95,304,Medicines,SchoolMaterials,29,packs,878.9,Hygiene,New
+95,304,Medicines,SchoolMaterials,29,packs,878.90,Hygiene,New
 96,306,Furniture,Food,22,sets,1009.03,Hygiene,New
 97,308,Books,Clothing,16,boxes,1050.44,Hygiene,Fair
 98,308,Blankets,Furniture,29,sets,1165.36,Meals,New
@@ -107,18 +107,18 @@ item_id,donation_id,item_name,item_category,quantity,unit_of_measure,estimated_u
 106,320,Furniture,Medical,4,kg,86.03,Education,New
 107,322,Furniture,Food,18,pcs,776.36,Hygiene,New
 108,327,Books,Clothing,14,sets,187.34,Meals,Good
-109,331,Rice,Hygiene,15,boxes,88.6,Shelter,New
+109,331,Rice,Hygiene,15,boxes,88.60,Shelter,New
 110,337,Furniture,Clothing,22,packs,658.92,Meals,New
 111,337,School Supplies,Supplies,20,pcs,596.36,Meals,New
 112,342,Hygiene Kits,Clothing,17,boxes,455.07,Shelter,New
 113,342,Uniforms,Medical,14,packs,578.05,Shelter,New
 114,348,School Supplies,Supplies,5,pcs,109.62,Shelter,New
 115,348,Rice,Medical,18,pcs,653.14,Health,New
-116,349,Blankets,Supplies,10,packs,813.7,Hygiene,New
+116,349,Blankets,Supplies,10,packs,813.70,Hygiene,New
 117,356,Bags,Clothing,25,sets,334.07,Education,Fair
 118,367,Furniture,Medical,15,packs,1007.62,Health,New
 119,385,Medicines,SchoolMaterials,16,packs,778.65,Education,New
-120,386,Uniforms,Food,11,kg,793.8,Shelter,Good
+120,386,Uniforms,Food,11,kg,793.80,Shelter,Good
 121,388,Furniture,Food,1,packs,125.76,Health,Good
 122,389,Uniforms,Clothing,21,pcs,794.85,Health,Fair
 123,393,Books,Supplies,28,kg,212.68,Meals,New

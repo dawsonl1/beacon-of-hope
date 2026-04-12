@@ -1,0 +1,151 @@
+incident_id,resident_id,safehouse_id,incident_date,incident_type,severity,description,response_taken,resolved,resolution_date,reported_by,follow_up_required
+1,1,4,2024-06-22,Medical,Medium,Medical incident reported on 2024-06-22,Response to medical,t,2024-07-01,Alma Pascual,f
+103,3,1,2026-02-16,Runaway,High,Test,,t,2026-02-16,Elena Cruz,t
+101,3,1,2026-02-16,Runaway,Medium,wer,wer,f,,Werrr,t
+102,3,1,2026-02-16,SelfHarm,Critical,wer,wer,f,,Wer,t
+56,32,6,2025-05-28,RunawayAttempt,High,RunawayAttempt incident reported on 2025-05-28,Response to runawayattempt,t,2025-06-06,Joy Rivera,t
+57,32,6,2026-01-20,SelfHarm,Low,SelfHarm incident reported on 2026-01-20,Response to selfharm,f,,Liza Mendoza,t
+58,33,7,2025-04-22,ConflictWithPeer,High,ConflictWithPeer incident reported on 2025-04-22,Response to conflictwithpeer,f,,Maria Santos,t
+59,34,7,2024-01-03,RunawayAttempt,Low,RunawayAttempt incident reported on 2024-01-03,Response to runawayattempt,t,2024-01-15,Linda Perez,f
+60,34,7,2023-08-13,Security,High,Security incident reported on 2023-08-13,Response to security,f,,Maria Santos,t
+49,26,3,2024-09-04,RunawayAttempt,Medium,RunawayAttempt incident reported on 2024-09-04,Response to runawayattempt,t,2024-09-14,Elena Cruz,f
+50,26,3,2023-11-15,SelfHarm,High,SelfHarm incident reported on 2023-11-15,Response to selfharm,t,2023-11-20,Joy Rivera,t
+51,26,3,2024-06-04,Security,Low,Security incident reported on 2024-06-04,Response to security,t,2024-06-15,Grace Flores,f
+52,28,3,2024-04-03,Behavioral,Low,Behavioral incident reported on 2024-04-03,Response to behavioral,t,2024-04-12,Grace Flores,f
+53,30,5,2024-08-04,Behavioral,Medium,Behavioral incident reported on 2024-08-04,Response to behavioral,t,2024-08-06,Liza Mendoza,f
+54,30,5,2025-08-07,RunawayAttempt,Medium,RunawayAttempt incident reported on 2025-08-07,Response to runawayattempt,f,,Esther Soriano,t
+55,31,1,2024-01-19,Behavioral,Medium,Behavioral incident reported on 2024-01-19,Response to behavioral,t,2024-01-30,SW-18,f
+35,19,4,2024-10-22,RunawayAttempt,Medium,RunawayAttempt incident reported on 2024-10-22,Response to runawayattempt,f,,Joy Rivera,t
+61,35,3,2025-04-16,Behavioral,Low,Behavioral incident reported on 2025-04-16,Response to behavioral,f,,Sarah Aquino,t
+62,35,3,2024-09-18,SelfHarm,Medium,SelfHarm incident reported on 2024-09-18,Response to selfharm,f,,SW-18,t
+64,36,1,2025-11-11,SelfHarm,Medium,SelfHarm incident reported on 2025-11-11,Response to selfharm,t,2025-11-18,Joy Rivera,f
+65,36,1,2023-04-08,SelfHarm,High,SelfHarm incident reported on 2023-04-08,Response to selfharm,f,,Sarah Aquino,t
+157,83,1,2025-12-12,ConflictWithPeer,Low,Behavioral incident observed during group activity. Resident became agitated and needed de-escalation support from staff.,De-escalation techniques applied; counseling session scheduled,t,2025-12-19,Maria Santos,t
+159,87,3,2026-02-04,ConflictWithPeer,Medium,Resident expressed distress and showed signs of self-harm ideation during evening check-in. Crisis protocol initiated.,De-escalation techniques applied; counseling session scheduled,t,2026-02-11,Ana Reyes,f
+161,89,4,2026-01-20,ConflictWithPeer,Low,Behavioral incident observed during group activity. Resident became agitated and needed de-escalation support from staff.,Mediation conducted; both parties agreed to conflict resolution plan,t,2026-01-27,Linda Perez,t
+162,91,4,2026-01-17,ConflictWithPeer,Low,Verbal altercation between residents during meal time. Situation was mediated by on-duty staff and both parties calmed.,De-escalation techniques applied; counseling session scheduled,t,2026-01-24,Linda Perez,f
+164,96,6,2025-12-04,RunawayAttempt,Medium,Medical concern reported by house parent. Resident complained of persistent headaches and was taken to clinic for evaluation.,Medical evaluation completed; treatment plan initiated,t,2025-12-11,Hope Ramos,f
+165,98,7,2026-02-12,RunawayAttempt,Medium,Unauthorized area access detected during evening rounds. Resident found in restricted section and escorted back.,Safety assessment completed; supervision increased temporarily,f,,Liza Mendoza,t
+166,99,7,2026-02-16,ConflictWithPeer,Medium,Resident expressed distress and showed signs of self-harm ideation during evening check-in. Crisis protocol initiated.,De-escalation techniques applied; counseling session scheduled,t,2026-02-23,Liza Mendoza,f
+167,101,7,2025-12-15,ConflictWithPeer,Low,Behavioral incident observed during group activity. Resident became agitated and needed de-escalation support from staff.,Mediation conducted; both parties agreed to conflict resolution plan,t,2025-12-22,Diana Castro,t
+168,102,8,2025-12-23,RunawayAttempt,Medium,Medical concern reported by house parent. Resident complained of persistent headaches and was taken to clinic for evaluation.,Safety assessment completed; supervision increased temporarily,f,,Sarah Aquino,f
+169,104,9,2025-12-20,RunawayAttempt,Medium,Unauthorized area access detected during evening rounds. Resident found in restricted section and escorted back.,Medical evaluation completed; treatment plan initiated,t,2025-12-27,Ruth Villanueva,t
+170,107,9,2026-01-30,ConflictWithPeer,Low,Behavioral incident observed during group activity. Resident became agitated and needed de-escalation support from staff.,De-escalation techniques applied; counseling session scheduled,t,2026-02-06,Alma Pascual,t
+171,109,3,2025-12-11,ConflictWithPeer,Low,Verbal altercation between residents during meal time. Situation was mediated by on-duty staff and both parties calmed.,Mediation conducted; both parties agreed to conflict resolution plan,t,2025-12-18,Nina Cortez,f
+172,111,1,2026-02-13,ConflictWithPeer,Medium,Resident expressed distress and showed signs of self-harm ideation during evening check-in. Crisis protocol initiated.,De-escalation techniques applied; counseling session scheduled,t,2026-02-20,Nina Cortez,f
+187,83,1,2025-12-25,Medical,High,Medical concern reported by house parent. Resident complained of persistent headaches and was taken to clinic for evaluation.,Medical evaluation completed; treatment plan initiated,t,2026-01-01,Maria Santos,f
+189,87,3,2026-01-03,Medical,Medium,Resident attempted to leave safehouse premises without authorization. Intercepted by security at perimeter.,Medical evaluation completed; treatment plan initiated,t,2026-01-10,Ana Reyes,f
+190,88,3,2026-02-10,SelfHarm,Medium,Behavioral incident observed during group activity. Resident became agitated and needed de-escalation support from staff.,Mediation conducted; both parties agreed to conflict resolution plan,t,2026-02-17,Ana Reyes,t
+191,91,4,2026-01-30,Medical,Medium,Unauthorized area access detected during evening rounds. Resident found in restricted section and escorted back.,Medical evaluation completed; treatment plan initiated,t,2026-02-06,Linda Perez,t
+192,96,6,2025-12-17,SelfHarm,Low,Verbal altercation between residents during meal time. Situation was mediated by on-duty staff and both parties calmed.,Mediation conducted; both parties agreed to conflict resolution plan,t,2025-12-24,Hope Ramos,f
+194,101,7,2025-12-28,Medical,High,Medical concern reported by house parent. Resident complained of persistent headaches and was taken to clinic for evaluation.,Safety assessment completed; supervision increased temporarily,f,,Diana Castro,f
+195,102,8,2026-01-05,SelfHarm,Low,Verbal altercation between residents during meal time. Situation was mediated by on-duty staff and both parties calmed.,De-escalation techniques applied; counseling session scheduled,t,2026-01-12,Sarah Aquino,f
+196,104,9,2026-01-02,SelfHarm,Low,Resident expressed distress and showed signs of self-harm ideation during evening check-in. Crisis protocol initiated.,Mediation conducted; both parties agreed to conflict resolution plan,t,2026-01-09,Ruth Villanueva,f
+197,107,9,2025-12-29,Medical,High,Medical concern reported by house parent. Resident complained of persistent headaches and was taken to clinic for evaluation.,Medical evaluation completed; treatment plan initiated,t,2026-01-05,Alma Pascual,f
+198,17,1,2026-02-16,SelfHarm,Medium,wer,wer,t,2026-02-16,Elena Cruz,t
+2,1,4,2026-02-10,Security,High,Security incident reported on 2026-02-10,Response to security,f,,Nina Cortez,t
+3,1,4,2024-02-03,RunawayAttempt,Low,RunawayAttempt incident reported on 2024-02-03,Response to runawayattempt,t,2024-02-10,SW-18,f
+4,1,4,2025-04-17,Behavioral,Low,Behavioral incident reported on 2025-04-17,Response to behavioral,t,2025-04-23,SW-12,f
+6,3,1,2025-02-06,Security,Low,Security incident reported on 2025-02-06,Response to security,f,,Maria Santos,t
+7,4,2,2024-10-01,Security,Low,Security incident reported on 2024-10-01,Response to security,t,2024-10-04,Esther Soriano,f
+8,4,2,2025-07-08,Security,Low,Security incident reported on 2025-07-08,Response to security,t,2025-07-10,SW-12,f
+9,4,2,2025-12-16,ConflictWithPeer,High,ConflictWithPeer incident reported on 2025-12-16,Response to conflictwithpeer,t,2025-12-27,Ana Reyes,t
+10,5,4,2024-02-12,Behavioral,High,Behavioral incident reported on 2024-02-12,Response to behavioral,t,2024-02-21,SW-12,t
+11,5,4,2024-07-02,Security,Medium,Security incident reported on 2024-07-02,Response to security,f,,Nina Cortez,t
+12,6,5,2025-12-30,ConflictWithPeer,Low,ConflictWithPeer incident reported on 2025-12-30,Response to conflictwithpeer,t,2025-12-31,Ana Reyes,f
+13,6,5,2025-11-22,Medical,Medium,Medical incident reported on 2025-11-22,Response to medical,t,2025-11-29,Faith Torres,f
+14,7,6,2025-09-06,Behavioral,Low,Behavioral incident reported on 2025-09-06,Response to behavioral,t,2025-09-08,Hope Ramos,f
+15,8,4,2024-08-18,ConflictWithPeer,Medium,ConflictWithPeer incident reported on 2024-08-18,Response to conflictwithpeer,t,2024-08-29,Grace Flores,f
+16,8,4,2024-03-07,SelfHarm,High,SelfHarm incident reported on 2024-03-07,Response to selfharm,t,2024-03-20,Rosa Garcia,t
+17,8,4,2024-09-09,Security,Medium,Security incident reported on 2024-09-09,Response to security,f,,Grace Flores,t
+18,10,1,2025-11-07,RunawayAttempt,High,RunawayAttempt incident reported on 2025-11-07,Response to runawayattempt,t,2025-11-15,Joy Rivera,t
+19,11,1,2024-03-19,RunawayAttempt,Medium,RunawayAttempt incident reported on 2024-03-19,Response to runawayattempt,t,2024-03-27,Esther Soriano,f
+20,12,3,2024-11-10,ConflictWithPeer,Medium,ConflictWithPeer incident reported on 2024-11-10,Response to conflictwithpeer,f,,Elena Cruz,t
+21,12,3,2024-08-22,ConflictWithPeer,High,ConflictWithPeer incident reported on 2024-08-22,Response to conflictwithpeer,t,2024-08-28,Grace Flores,t
+22,12,3,2025-02-19,Medical,Medium,Medical incident reported on 2025-02-19,Response to medical,t,2025-02-22,SW-18,f
+23,12,3,2024-07-04,Security,Medium,Security incident reported on 2024-07-04,Response to security,f,,Esther Soriano,t
+24,14,7,2025-11-16,RunawayAttempt,High,RunawayAttempt incident reported on 2025-11-16,Response to runawayattempt,t,2025-11-28,SW-18,t
+25,14,7,2025-11-28,RunawayAttempt,High,RunawayAttempt incident reported on 2025-11-28,Response to runawayattempt,f,,Maria Santos,t
+26,14,7,2025-03-21,RunawayAttempt,High,RunawayAttempt incident reported on 2025-03-21,Response to runawayattempt,f,,Elena Cruz,t
+27,14,7,2025-04-22,RunawayAttempt,High,RunawayAttempt incident reported on 2025-04-22,Response to runawayattempt,t,2025-05-06,Faith Torres,t
+28,15,8,2025-10-13,Security,Low,Security incident reported on 2025-10-13,Response to security,t,2025-10-14,SW-12,f
+29,17,1,2025-04-18,Behavioral,High,Behavioral incident reported on 2025-04-18,Response to behavioral,f,,Hope Ramos,t
+30,17,1,2025-04-30,ConflictWithPeer,Medium,ConflictWithPeer incident reported on 2025-04-30,Response to conflictwithpeer,t,2025-05-11,Elena Cruz,f
+31,17,1,2025-03-21,Medical,Medium,Medical incident reported on 2025-03-21,Response to medical,t,2025-03-29,Hope Ramos,f
+32,17,1,2025-10-20,Medical,Medium,Medical incident reported on 2025-10-20,Response to medical,t,2025-10-29,Mercy Dela Cruz,f
+33,17,1,2025-04-26,RunawayAttempt,Medium,RunawayAttempt incident reported on 2025-04-26,Response to runawayattempt,t,2025-05-04,Nina Cortez,f
+34,19,4,2025-12-06,RunawayAttempt,Medium,RunawayAttempt incident reported on 2025-12-06,Response to runawayattempt,t,2025-12-17,Rosa Garcia,f
+36,20,1,2025-10-09,SelfHarm,Medium,SelfHarm incident reported on 2025-10-09,Response to selfharm,t,2025-10-20,Alma Pascual,f
+37,20,1,2025-07-16,ConflictWithPeer,Medium,ConflictWithPeer incident reported on 2025-07-16,Response to conflictwithpeer,t,2025-07-27,Liza Mendoza,f
+38,21,5,2025-05-08,Behavioral,Medium,Behavioral incident reported on 2025-05-08,Response to behavioral,t,2025-05-13,Liza Mendoza,f
+39,21,5,2025-09-03,Security,Medium,Security incident reported on 2025-09-03,Response to security,f,,Ruth Villanueva,t
+40,22,6,2023-06-06,RunawayAttempt,Medium,RunawayAttempt incident reported on 2023-06-06,Response to runawayattempt,f,,Grace Flores,t
+41,22,6,2024-02-11,RunawayAttempt,Low,RunawayAttempt incident reported on 2024-02-11,Response to runawayattempt,f,,Maria Santos,t
+42,23,5,2024-08-06,Behavioral,Medium,Behavioral incident reported on 2024-08-06,Response to behavioral,t,2024-08-07,Mercy Dela Cruz,f
+43,23,5,2024-07-06,PropertyDamage,Medium,PropertyDamage incident reported on 2024-07-06,Response to propertydamage,t,2024-07-09,SW-18,f
+44,23,5,2023-09-24,Behavioral,High,Behavioral incident reported on 2023-09-24,Response to behavioral,t,2023-10-04,Linda Perez,t
+45,24,4,2025-03-11,Behavioral,Low,Behavioral incident reported on 2025-03-11,Response to behavioral,t,2025-03-21,Linda Perez,f
+46,25,1,2024-11-13,RunawayAttempt,Low,RunawayAttempt incident reported on 2024-11-13,Response to runawayattempt,f,,Esther Soriano,t
+47,25,1,2023-12-05,RunawayAttempt,Low,RunawayAttempt incident reported on 2023-12-05,Response to runawayattempt,t,2023-12-19,Rosa Garcia,f
+48,25,1,2025-09-23,RunawayAttempt,Medium,RunawayAttempt incident reported on 2025-09-23,Response to runawayattempt,t,2025-10-01,Liza Mendoza,f
+66,37,4,2024-09-30,SelfHarm,Medium,SelfHarm incident reported on 2024-09-30,Response to selfharm,t,2024-10-08,Grace Flores,f
+67,37,4,2024-10-19,ConflictWithPeer,Medium,ConflictWithPeer incident reported on 2024-10-19,Response to conflictwithpeer,t,2024-10-22,Alma Pascual,f
+68,41,9,2025-01-18,Behavioral,Low,Behavioral incident reported on 2025-01-18,Response to behavioral,t,2025-01-30,Alma Pascual,f
+69,41,9,2024-06-17,RunawayAttempt,Medium,RunawayAttempt incident reported on 2024-06-17,Response to runawayattempt,f,,Esther Soriano,t
+70,41,9,2024-11-09,SelfHarm,Medium,SelfHarm incident reported on 2024-11-09,Response to selfharm,t,2024-11-12,Carmen Bautista,f
+71,41,9,2024-04-15,ConflictWithPeer,Medium,ConflictWithPeer incident reported on 2024-04-15,Response to conflictwithpeer,t,2024-04-27,Joy Rivera,f
+72,41,9,2024-04-27,Behavioral,Low,Behavioral incident reported on 2024-04-27,Response to behavioral,t,2024-04-28,Ruth Villanueva,f
+73,42,6,2025-08-29,PropertyDamage,Low,PropertyDamage incident reported on 2025-08-29,Response to propertydamage,t,2025-09-07,Grace Flores,f
+74,44,9,2024-04-14,Security,Low,Security incident reported on 2024-04-14,Response to security,t,2024-04-25,Rosa Garcia,f
+75,44,9,2024-07-10,Behavioral,Low,Behavioral incident reported on 2024-07-10,Response to behavioral,t,2024-07-22,Faith Torres,f
+76,44,9,2023-11-23,Security,High,Security incident reported on 2023-11-23,Response to security,t,2023-12-02,Alma Pascual,t
+77,45,3,2023-11-19,RunawayAttempt,Medium,RunawayAttempt incident reported on 2023-11-19,Response to runawayattempt,t,2023-11-21,Ruth Villanueva,f
+78,46,7,2025-12-06,SelfHarm,Medium,SelfHarm incident reported on 2025-12-06,Response to selfharm,t,2025-12-07,Sarah Aquino,f
+79,46,7,2025-07-30,Security,Medium,Security incident reported on 2025-07-30,Response to security,t,2025-08-10,SW-18,f
+80,46,7,2025-09-29,SelfHarm,High,SelfHarm incident reported on 2025-09-29,Response to selfharm,t,2025-10-05,Alma Pascual,t
+81,48,5,2024-10-25,PropertyDamage,Medium,PropertyDamage incident reported on 2024-10-25,Response to propertydamage,t,2024-11-01,Diana Castro,f
+82,48,5,2025-09-04,Medical,Low,Medical incident reported on 2025-09-04,Response to medical,t,2025-09-17,Linda Perez,f
+83,50,4,2024-03-12,PropertyDamage,Medium,PropertyDamage incident reported on 2024-03-12,Response to propertydamage,t,2024-03-17,Ruth Villanueva,f
+84,50,4,2025-12-20,RunawayAttempt,Medium,RunawayAttempt incident reported on 2025-12-20,Response to runawayattempt,t,2025-12-26,Maria Santos,f
+85,50,4,2024-03-29,Behavioral,Low,Behavioral incident reported on 2024-03-29,Response to behavioral,t,2024-04-11,Elena Cruz,f
+86,52,2,2024-08-05,RunawayAttempt,High,RunawayAttempt incident reported on 2024-08-05,Response to runawayattempt,t,2024-08-06,Nina Cortez,t
+87,52,2,2024-09-01,RunawayAttempt,Medium,RunawayAttempt incident reported on 2024-09-01,Response to runawayattempt,t,2024-09-15,SW-12,f
+88,52,2,2024-09-21,SelfHarm,High,SelfHarm incident reported on 2024-09-21,Response to selfharm,f,,Grace Flores,t
+89,53,6,2025-07-07,RunawayAttempt,High,RunawayAttempt incident reported on 2025-07-07,Response to runawayattempt,f,,Carmen Bautista,t
+90,53,6,2026-01-22,ConflictWithPeer,Medium,ConflictWithPeer incident reported on 2026-01-22,Response to conflictwithpeer,f,,Nina Cortez,t
+91,54,7,2024-04-16,RunawayAttempt,Medium,RunawayAttempt incident reported on 2024-04-16,Response to runawayattempt,f,,Joy Rivera,t
+92,55,2,2025-08-09,Behavioral,Low,Behavioral incident reported on 2025-08-09,Response to behavioral,t,2025-08-17,Rosa Garcia,f
+93,55,2,2025-06-29,Behavioral,Low,Behavioral incident reported on 2025-06-29,Response to behavioral,t,2025-07-01,Nina Cortez,f
+94,56,1,2025-05-31,SelfHarm,Medium,SelfHarm incident reported on 2025-05-31,Response to selfharm,t,2025-06-01,Diana Castro,f
+95,56,1,2024-12-16,RunawayAttempt,High,RunawayAttempt incident reported on 2024-12-16,Response to runawayattempt,f,,Elena Cruz,t
+96,58,8,2025-05-20,Security,Medium,Security incident reported on 2025-05-20,Response to security,t,2025-05-30,Grace Flores,f
+97,58,8,2025-12-12,RunawayAttempt,Low,RunawayAttempt incident reported on 2025-12-12,Response to runawayattempt,f,,Liza Mendoza,t
+98,58,8,2026-04-09,Security,Medium,Security incident reported on 2026-04-09,Response to security,t,2026-04-17,Faith Torres,f
+99,58,8,2025-07-26,Behavioral,Medium,Behavioral incident reported on 2025-07-26,Response to behavioral,t,2025-08-09,Mercy Dela Cruz,f
+100,59,3,2023-12-26,RunawayAttempt,Low,RunawayAttempt incident reported on 2023-12-26,Response to runawayattempt,t,2024-01-06,Rosa Garcia,f
+63,36,1,2025-11-23,Behavioral,Medium,Behavioral incident reported on 2025-11-23,Response to behavioral (test),t,2025-12-03,Sarah Aquino,f
+5,3,1,2025-05-12,SelfHarm,High,SelfHarm incident reported on 2025-05-12 (test),Response to selfharm,f,,Joy Rivera,t
+109,83,1,2026-01-13,Security,Medium,Resident attempted to leave safehouse premises without authorization. Intercepted by security at perimeter.,Safety assessment completed; supervision increased temporarily,f,,Maria Santos,f
+110,84,2,2025-12-03,Behavioral,Low,Behavioral incident observed during group activity. Resident became agitated and needed de-escalation support from staff.,De-escalation techniques applied; counseling session scheduled,t,2025-12-10,Maria Santos,t
+111,85,1,2026-01-11,Security,Medium,Medical concern reported by house parent. Resident complained of persistent headaches and was taken to clinic for evaluation.,Medical evaluation completed; treatment plan initiated,t,2026-01-18,Elena Cruz,f
+113,87,3,2026-01-22,Security,High,Unauthorized area access detected during evening rounds. Resident found in restricted section and escorted back.,Safety assessment completed; supervision increased temporarily,f,,Ana Reyes,t
+116,90,4,2025-12-08,Behavioral,Low,Behavioral incident observed during group activity. Resident became agitated and needed de-escalation support from staff.,Mediation conducted; both parties agreed to conflict resolution plan,t,2025-12-15,Linda Perez,t
+117,91,4,2026-01-04,Security,Medium,Medical concern reported by house parent. Resident complained of persistent headaches and was taken to clinic for evaluation.,Safety assessment completed; supervision increased temporarily,f,,Linda Perez,f
+118,92,6,2025-12-12,Behavioral,Medium,Verbal altercation between residents during meal time. Situation was mediated by on-duty staff and both parties calmed.,De-escalation techniques applied; counseling session scheduled,t,2025-12-19,Grace Flores,f
+119,93,1,2026-02-07,Security,High,Unauthorized area access detected during evening rounds. Resident found in restricted section and escorted back.,Medical evaluation completed; treatment plan initiated,t,2026-02-14,Joy Rivera,t
+122,96,6,2026-01-05,Behavioral,Low,Behavioral incident observed during group activity. Resident became agitated and needed de-escalation support from staff.,De-escalation techniques applied; counseling session scheduled,t,2026-01-12,Hope Ramos,t
+123,97,6,2025-12-07,Security,Medium,Medical concern reported by house parent. Resident complained of persistent headaches and was taken to clinic for evaluation.,Medical evaluation completed; treatment plan initiated,t,2025-12-14,Hope Ramos,f
+124,98,7,2026-01-30,Behavioral,Medium,Verbal altercation between residents during meal time. Situation was mediated by on-duty staff and both parties calmed.,Mediation conducted; both parties agreed to conflict resolution plan,t,2026-02-06,Liza Mendoza,f
+125,99,7,2026-02-03,Security,High,Unauthorized area access detected during evening rounds. Resident found in restricted section and escorted back.,Safety assessment completed; supervision increased temporarily,f,,Liza Mendoza,t
+126,100,7,2026-01-21,Behavioral,Low,Resident expressed distress and showed signs of self-harm ideation during evening check-in. Crisis protocol initiated.,De-escalation techniques applied; counseling session scheduled,t,2026-01-28,Diana Castro,f
+127,101,7,2026-01-16,Security,Medium,Resident attempted to leave safehouse premises without authorization. Intercepted by security at perimeter.,Medical evaluation completed; treatment plan initiated,t,2026-01-23,Diana Castro,f
+128,102,8,2026-01-24,Behavioral,Low,Behavioral incident observed during group activity. Resident became agitated and needed de-escalation support from staff.,Mediation conducted; both parties agreed to conflict resolution plan,t,2026-01-31,Sarah Aquino,t
+129,103,8,2025-12-21,Security,Medium,Medical concern reported by house parent. Resident complained of persistent headaches and was taken to clinic for evaluation.,Safety assessment completed; supervision increased temporarily,f,,Sarah Aquino,f
+130,104,9,2025-12-07,Behavioral,Medium,Verbal altercation between residents during meal time. Situation was mediated by on-duty staff and both parties calmed.,De-escalation techniques applied; counseling session scheduled,t,2025-12-14,Ruth Villanueva,f
+131,105,7,2026-02-05,Security,High,Unauthorized area access detected during evening rounds. Resident found in restricted section and escorted back.,Medical evaluation completed; treatment plan initiated,t,2026-02-12,Esther Soriano,t
+132,106,7,2026-01-04,Behavioral,Low,Resident expressed distress and showed signs of self-harm ideation during evening check-in. Crisis protocol initiated.,Mediation conducted; both parties agreed to conflict resolution plan,t,2026-01-11,Mercy Dela Cruz,f
+133,107,9,2026-01-17,Security,Medium,Resident attempted to leave safehouse premises without authorization. Intercepted by security at perimeter.,Safety assessment completed; supervision increased temporarily,f,,Alma Pascual,f
+134,108,9,2026-01-07,Behavioral,Low,Behavioral incident observed during group activity. Resident became agitated and needed de-escalation support from staff.,De-escalation techniques applied; counseling session scheduled,t,2026-01-14,Alma Pascual,t
+135,109,3,2026-01-12,Security,Medium,Medical concern reported by house parent. Resident complained of persistent headaches and was taken to clinic for evaluation.,Medical evaluation completed; treatment plan initiated,t,2026-01-19,Nina Cortez,f
+136,110,1,2025-12-07,Behavioral,Medium,Verbal altercation between residents during meal time. Situation was mediated by on-duty staff and both parties calmed.,Mediation conducted; both parties agreed to conflict resolution plan,t,2025-12-14,Nina Cortez,f
+137,111,1,2026-01-31,Security,High,Unauthorized area access detected during evening rounds. Resident found in restricted section and escorted back.,Safety assessment completed; supervision increased temporarily,f,,Nina Cortez,t

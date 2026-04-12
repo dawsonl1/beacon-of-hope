@@ -1,0 +1,645 @@
+education_record_id,resident_id,record_date,education_level,attendance_rate,progress_percent,completion_status,notes,school_name,enrollment_status
+1,1,2023-10-01,Vocational,0.966,37.7,NotStarted,Progress: NotStarted,School 8,Enrolled
+2,1,2023-11-01,Secondary,0.693,33.0,InProgress,Progress: InProgress,School 20,Enrolled
+3,1,2023-12-01,Vocational,0.744,54.0,InProgress,Progress: InProgress,School 18,Enrolled
+4,1,2024-01-01,Primary,0.681,51.2,InProgress,Progress: InProgress,School 2,Enrolled
+5,1,2024-02-01,Vocational,0.721,44.2,InProgress,Progress: InProgress,School 3,Enrolled
+6,1,2024-03-01,Primary,0.493,52.8,InProgress,Progress: InProgress,School 2,Enrolled
+7,2,2023-03-01,Secondary,0.626,66.8,NotStarted,Progress: NotStarted,School 4,Enrolled
+8,2,2023-04-01,Secondary,0.758,73.7,InProgress,Progress: InProgress,School 12,Enrolled
+9,2,2023-05-01,Primary,0.923,83.2,InProgress,Progress: InProgress,School 6,Enrolled
+10,2,2023-06-01,Secondary,0.872,72.9,InProgress,Progress: InProgress,School 15,Enrolled
+11,2,2023-07-01,Secondary,0.82,66.0,InProgress,Progress: InProgress,School 7,Enrolled
+12,2,2023-08-01,CollegePrep,0.831,89.7,InProgress,Progress: InProgress,School 10,Enrolled
+13,2,2023-09-01,Primary,1.0,100.0,InProgress,Progress: InProgress,School 14,Enrolled
+14,2,2023-10-01,Vocational,0.894,100.0,InProgress,Progress: InProgress,School 8,Enrolled
+15,2,2023-11-01,Secondary,0.768,100.0,InProgress,Progress: InProgress,School 10,Enrolled
+16,2,2023-12-01,Secondary,0.851,100.0,InProgress,Progress: InProgress,School 11,Enrolled
+17,3,2024-05-01,Primary,0.706,41.6,NotStarted,Progress: NotStarted,School 15,Enrolled
+18,3,2024-06-01,Vocational,0.658,48.6,InProgress,Progress: InProgress,School 18,Enrolled
+19,3,2024-07-01,Secondary,0.468,50.5,InProgress,Progress: InProgress,School 12,Enrolled
+20,3,2024-08-01,Secondary,0.672,64.5,InProgress,Progress: InProgress,School 8,Enrolled
+21,3,2024-09-01,Vocational,0.771,70.3,InProgress,Progress: InProgress,School 13,Enrolled
+22,3,2024-10-01,Secondary,0.682,63.4,InProgress,Progress: InProgress,School 5,Enrolled
+23,3,2024-11-01,Primary,0.81,77.3,InProgress,Progress: InProgress,School 6,Enrolled
+24,3,2024-12-01,Secondary,0.731,71.2,InProgress,Progress: InProgress,School 5,Enrolled
+25,3,2025-01-01,Vocational,0.859,100.0,InProgress,Progress: InProgress,School 19,Enrolled
+26,3,2025-02-01,Secondary,0.894,100.0,Completed,Progress: Completed,School 9,Enrolled
+27,3,2025-03-01,Secondary,0.868,100.0,InProgress,Progress: InProgress,School 17,Enrolled
+28,4,2024-09-01,Secondary,0.696,69.8,NotStarted,Progress: NotStarted,School 1,Enrolled
+29,4,2024-10-01,CollegePrep,0.528,80.8,InProgress,Progress: InProgress,School 7,Enrolled
+30,4,2024-11-01,Primary,0.899,100.0,InProgress,Progress: InProgress,School 19,Enrolled
+31,4,2024-12-01,Secondary,0.744,100.0,InProgress,Progress: InProgress,School 13,Enrolled
+32,4,2025-01-01,Primary,0.744,100.0,InProgress,Progress: InProgress,School 9,Enrolled
+33,4,2025-02-01,Primary,0.881,100.0,InProgress,Progress: InProgress,School 6,Enrolled
+34,4,2025-03-01,Primary,0.622,100.0,InProgress,Progress: InProgress,School 13,Enrolled
+35,4,2025-04-01,Primary,0.784,100.0,InProgress,Progress: InProgress,School 10,Enrolled
+36,4,2025-05-01,Secondary,0.92,95.8,InProgress,Progress: InProgress,School 9,Enrolled
+37,4,2025-06-01,Secondary,0.636,99.1,InProgress,Progress: InProgress,School 2,Enrolled
+38,4,2025-07-01,Secondary,0.88,100.0,Completed,Progress: Completed,School 11,Enrolled
+39,5,2024-01-01,Secondary,0.596,28.4,NotStarted,Progress: NotStarted,School 16,Enrolled
+40,5,2024-02-01,Vocational,0.555,49.2,InProgress,Progress: InProgress,School 12,Enrolled
+41,5,2024-03-01,Vocational,0.676,63.3,InProgress,Progress: InProgress,School 18,Enrolled
+42,5,2024-04-01,Secondary,0.752,69.0,InProgress,Progress: InProgress,School 18,Enrolled
+43,5,2024-05-01,CollegePrep,0.561,51.0,InProgress,Progress: InProgress,School 11,Enrolled
+44,5,2024-06-01,Primary,0.634,64.4,InProgress,Progress: InProgress,School 3,Enrolled
+45,5,2024-07-01,Vocational,0.639,72.1,InProgress,Progress: InProgress,School 6,Enrolled
+46,5,2024-08-01,Secondary,0.744,74.3,InProgress,Progress: InProgress,School 1,Enrolled
+47,5,2024-09-01,Primary,0.856,80.8,InProgress,Progress: InProgress,School 9,Enrolled
+48,6,2023-08-01,Primary,0.648,54.3,NotStarted,Progress: NotStarted,School 13,Enrolled
+49,6,2023-09-01,Vocational,0.712,69.1,InProgress,Progress: InProgress,School 18,Enrolled
+50,6,2023-10-01,Vocational,0.654,80.0,InProgress,Progress: InProgress,School 6,Enrolled
+51,6,2023-11-01,Primary,0.752,92.1,InProgress,Progress: InProgress,School 5,Enrolled
+52,6,2023-12-01,Secondary,0.691,100.0,InProgress,Progress: InProgress,School 19,Enrolled
+53,6,2024-01-01,CollegePrep,0.791,100.0,InProgress,Progress: InProgress,School 10,Enrolled
+54,6,2024-02-01,Vocational,0.68,100.0,InProgress,Progress: InProgress,School 7,Enrolled
+55,6,2024-03-01,Vocational,0.882,100.0,InProgress,Progress: InProgress,School 11,Enrolled
+56,6,2024-04-01,Vocational,0.747,99.9,InProgress,Progress: InProgress,School 10,Enrolled
+57,6,2024-05-01,Primary,0.744,100.0,Completed,Progress: Completed,School 5,Enrolled
+58,6,2024-06-01,Vocational,0.764,100.0,InProgress,Progress: InProgress,School 3,Enrolled
+59,7,2024-06-01,Primary,0.77,53.9,NotStarted,Progress: NotStarted,School 3,Enrolled
+60,7,2024-07-01,Secondary,0.866,48.9,InProgress,Progress: InProgress,School 15,Enrolled
+61,7,2024-08-01,Secondary,0.472,41.3,InProgress,Progress: InProgress,School 11,Enrolled
+62,7,2024-09-01,Primary,0.754,55.1,InProgress,Progress: InProgress,School 14,Enrolled
+63,7,2024-10-01,Vocational,0.612,76.2,InProgress,Progress: InProgress,School 16,Enrolled
+64,7,2024-11-01,Primary,0.6,70.3,InProgress,Progress: InProgress,School 9,Enrolled
+65,7,2024-12-01,Secondary,0.639,72.7,InProgress,Progress: InProgress,School 10,Enrolled
+66,7,2025-01-01,Secondary,0.565,88.0,Completed,Progress: Completed,School 15,Enrolled
+67,7,2025-02-01,Vocational,0.881,100.0,Completed,Progress: Completed,School 5,Enrolled
+68,8,2024-02-01,Secondary,0.807,47.8,NotStarted,Progress: NotStarted,School 16,Enrolled
+69,8,2024-03-01,Primary,0.602,52.9,InProgress,Progress: InProgress,School 12,Enrolled
+70,8,2024-04-01,CollegePrep,0.677,59.7,InProgress,Progress: InProgress,School 20,Enrolled
+71,8,2024-05-01,Secondary,0.925,70.7,InProgress,Progress: InProgress,School 11,Enrolled
+72,8,2024-06-01,Primary,0.707,72.8,InProgress,Progress: InProgress,School 2,Enrolled
+73,8,2024-07-01,Primary,0.705,71.3,InProgress,Progress: InProgress,School 18,Enrolled
+74,9,2025-04-01,Vocational,0.59,3.2,NotStarted,Progress: NotStarted,School 8,Enrolled
+75,9,2025-05-01,Vocational,0.505,4.0,InProgress,Progress: InProgress,School 6,Enrolled
+76,9,2025-06-01,Secondary,0.449,0.0,InProgress,Progress: InProgress,School 19,Enrolled
+77,9,2025-07-01,Primary,0.398,4.6,InProgress,Progress: InProgress,School 3,Enrolled
+78,9,2025-08-01,Vocational,0.574,37.5,InProgress,Progress: InProgress,School 6,Enrolled
+79,9,2025-09-01,Secondary,0.555,13.0,InProgress,Progress: InProgress,School 10,Enrolled
+80,9,2025-10-01,Primary,0.556,28.1,InProgress,Progress: InProgress,School 17,Enrolled
+81,9,2025-11-01,Secondary,0.526,38.4,InProgress,Progress: InProgress,School 5,Enrolled
+82,9,2025-12-01,Vocational,0.62,44.4,InProgress,Progress: InProgress,School 14,Enrolled
+83,10,2023-10-01,Primary,0.554,44.8,NotStarted,Progress: NotStarted,School 7,Enrolled
+84,10,2023-11-01,CollegePrep,0.563,34.8,InProgress,Progress: InProgress,School 14,Enrolled
+85,10,2023-12-01,Primary,0.499,33.9,InProgress,Progress: InProgress,School 19,Enrolled
+86,10,2024-01-01,Secondary,0.483,41.4,InProgress,Progress: InProgress,School 15,Enrolled
+87,10,2024-02-01,Vocational,0.69,45.4,InProgress,Progress: InProgress,School 19,Enrolled
+88,10,2024-03-01,Vocational,0.668,55.4,InProgress,Progress: InProgress,School 18,Enrolled
+89,10,2024-04-01,Secondary,0.696,74.9,InProgress,Progress: InProgress,School 13,Enrolled
+90,10,2024-05-01,Primary,0.617,80.0,InProgress,Progress: InProgress,School 14,Enrolled
+91,11,2023-04-01,Primary,0.771,41.4,NotStarted,Progress: NotStarted,School 15,Enrolled
+92,11,2023-05-01,CollegePrep,0.551,38.0,InProgress,Progress: InProgress,School 14,Enrolled
+93,11,2023-06-01,Vocational,0.789,44.7,InProgress,Progress: InProgress,School 17,Enrolled
+94,11,2023-07-01,Secondary,0.755,46.8,InProgress,Progress: InProgress,School 2,Enrolled
+95,11,2023-08-01,Vocational,0.658,55.6,InProgress,Progress: InProgress,School 14,Enrolled
+96,11,2023-09-01,Secondary,0.923,89.9,InProgress,Progress: InProgress,School 16,Enrolled
+97,11,2023-10-01,Primary,0.669,100.0,InProgress,Progress: InProgress,School 17,Enrolled
+98,11,2023-11-01,Vocational,0.701,100.0,InProgress,Progress: InProgress,School 14,Enrolled
+99,11,2023-12-01,Primary,1.0,100.0,InProgress,Progress: InProgress,School 9,Enrolled
+100,12,2024-06-01,Vocational,0.384,11.4,NotStarted,Progress: NotStarted,School 16,Enrolled
+101,12,2024-07-01,Secondary,0.393,6.9,InProgress,Progress: InProgress,School 10,Enrolled
+102,12,2024-08-01,Secondary,0.734,26.0,InProgress,Progress: InProgress,School 3,Enrolled
+103,12,2024-09-01,Secondary,0.505,29.7,InProgress,Progress: InProgress,School 15,Enrolled
+104,12,2024-10-01,Secondary,0.713,52.9,InProgress,Progress: InProgress,School 5,Enrolled
+105,12,2024-11-01,Secondary,0.439,48.4,InProgress,Progress: InProgress,School 11,Enrolled
+106,12,2024-12-01,Primary,0.587,58.0,InProgress,Progress: InProgress,School 10,Enrolled
+107,12,2025-01-01,Secondary,0.65,72.0,InProgress,Progress: InProgress,School 14,Enrolled
+108,12,2025-02-01,Primary,0.938,91.9,InProgress,Progress: InProgress,School 2,Enrolled
+109,12,2025-03-01,Secondary,0.571,100.0,InProgress,Progress: InProgress,School 17,Enrolled
+110,12,2025-04-01,Primary,0.781,100.0,InProgress,Progress: InProgress,School 19,Enrolled
+111,12,2025-05-01,Vocational,0.681,100.0,InProgress,Progress: InProgress,School 5,Enrolled
+112,13,2023-02-01,Secondary,0.642,43.6,NotStarted,Progress: NotStarted,School 13,Enrolled
+113,13,2023-03-01,Primary,0.602,59.1,InProgress,Progress: InProgress,School 10,Enrolled
+114,13,2023-04-01,Secondary,0.714,75.4,InProgress,Progress: InProgress,School 11,Enrolled
+115,13,2023-05-01,Secondary,0.8,100.0,InProgress,Progress: InProgress,School 18,Enrolled
+116,13,2023-06-01,Primary,0.648,98.6,Completed,Progress: Completed,School 2,Enrolled
+117,13,2023-07-01,Secondary,0.83,100.0,InProgress,Progress: InProgress,School 17,Enrolled
+118,14,2025-01-01,CollegePrep,0.694,68.2,NotStarted,Progress: NotStarted,School 13,Enrolled
+119,14,2025-02-01,Primary,0.786,80.3,InProgress,Progress: InProgress,School 13,Enrolled
+120,14,2025-03-01,Vocational,0.885,100.0,InProgress,Progress: InProgress,School 11,Enrolled
+121,14,2025-04-01,Primary,0.833,100.0,InProgress,Progress: InProgress,School 4,Enrolled
+122,14,2025-05-01,Secondary,0.839,100.0,InProgress,Progress: InProgress,School 14,Enrolled
+123,14,2025-06-01,Vocational,0.518,100.0,InProgress,Progress: InProgress,School 5,Enrolled
+124,14,2025-07-01,Vocational,0.749,100.0,Completed,Progress: Completed,School 2,Enrolled
+125,14,2025-08-01,Primary,0.751,100.0,InProgress,Progress: InProgress,School 7,Enrolled
+126,15,2024-10-01,Secondary,0.825,45.1,NotStarted,Progress: NotStarted,School 18,Enrolled
+127,15,2024-11-01,Vocational,0.507,58.4,InProgress,Progress: InProgress,School 9,Enrolled
+128,15,2024-12-01,Secondary,0.499,69.8,InProgress,Progress: InProgress,School 15,Enrolled
+129,15,2025-01-01,Secondary,0.578,77.9,InProgress,Progress: InProgress,School 10,Enrolled
+130,15,2025-02-01,Secondary,0.814,82.0,InProgress,Progress: InProgress,School 10,Enrolled
+131,15,2025-03-01,CollegePrep,0.777,86.0,InProgress,Progress: InProgress,School 8,Enrolled
+132,15,2025-04-01,Primary,0.644,97.1,InProgress,Progress: InProgress,School 15,Enrolled
+133,15,2025-05-01,CollegePrep,1.0,100.0,InProgress,Progress: InProgress,School 12,Enrolled
+134,15,2025-06-01,Primary,0.699,100.0,InProgress,Progress: InProgress,School 7,Enrolled
+135,15,2025-07-01,Primary,0.784,100.0,InProgress,Progress: InProgress,School 5,Enrolled
+136,15,2025-08-01,Primary,0.77,100.0,Completed,Progress: Completed,School 16,Enrolled
+137,15,2025-09-01,Secondary,0.779,100.0,Completed,Progress: Completed,School 14,Enrolled
+138,16,2023-06-01,Primary,0.545,36.9,NotStarted,Progress: NotStarted,School 13,Enrolled
+139,16,2023-07-01,Secondary,0.753,60.8,InProgress,Progress: InProgress,School 14,Enrolled
+140,16,2023-08-01,Primary,0.558,67.8,InProgress,Progress: InProgress,School 20,Enrolled
+141,16,2023-09-01,CollegePrep,0.632,90.0,InProgress,Progress: InProgress,School 8,Enrolled
+142,16,2023-10-01,Vocational,0.672,100.0,InProgress,Progress: InProgress,School 17,Enrolled
+143,16,2023-11-01,CollegePrep,0.763,100.0,InProgress,Progress: InProgress,School 3,Enrolled
+144,17,2025-01-01,Secondary,0.66,54.3,NotStarted,Progress: NotStarted,School 11,Enrolled
+145,17,2025-02-01,Secondary,0.612,69.7,InProgress,Progress: InProgress,School 15,Enrolled
+146,17,2025-03-01,Primary,0.972,97.6,InProgress,Progress: InProgress,School 15,Enrolled
+147,17,2025-04-01,Secondary,0.833,100.0,InProgress,Progress: InProgress,School 17,Enrolled
+148,17,2025-05-01,Secondary,0.806,100.0,InProgress,Progress: InProgress,School 2,Enrolled
+149,17,2025-06-01,Secondary,0.95,100.0,InProgress,Progress: InProgress,School 14,Enrolled
+150,17,2025-07-01,Primary,0.749,100.0,InProgress,Progress: InProgress,School 2,Enrolled
+151,17,2025-08-01,CollegePrep,0.878,100.0,InProgress,Progress: InProgress,School 14,Enrolled
+152,17,2025-09-01,Secondary,0.712,100.0,Completed,Progress: Completed,School 2,Enrolled
+153,18,2023-12-01,Vocational,0.671,60.9,NotStarted,Progress: NotStarted,School 1,Enrolled
+154,18,2024-01-01,Primary,0.695,72.1,InProgress,Progress: InProgress,School 1,Enrolled
+155,18,2024-02-01,Primary,0.782,85.2,InProgress,Progress: InProgress,School 13,Enrolled
+156,18,2024-03-01,Secondary,0.821,89.3,InProgress,Progress: InProgress,School 20,Enrolled
+157,18,2024-04-01,Vocational,0.786,84.4,InProgress,Progress: InProgress,School 4,Enrolled
+158,18,2024-05-01,Secondary,0.57,100.0,InProgress,Progress: InProgress,School 13,Enrolled
+159,18,2024-06-01,Secondary,0.833,100.0,InProgress,Progress: InProgress,School 1,Enrolled
+160,18,2024-07-01,Secondary,0.87,100.0,Completed,Progress: Completed,School 16,Enrolled
+161,19,2024-01-01,Vocational,0.62,28.5,NotStarted,Progress: NotStarted,School 13,Enrolled
+162,19,2024-02-01,Vocational,0.83,29.1,InProgress,Progress: InProgress,School 5,Enrolled
+163,19,2024-03-01,Secondary,0.661,49.2,InProgress,Progress: InProgress,School 8,Enrolled
+164,19,2024-04-01,Secondary,0.593,55.4,InProgress,Progress: InProgress,School 3,Enrolled
+165,19,2024-05-01,Secondary,0.613,70.0,InProgress,Progress: InProgress,School 15,Enrolled
+166,19,2024-06-01,Primary,0.925,92.4,Completed,Progress: Completed,School 3,Enrolled
+167,20,2025-03-01,Vocational,0.835,56.9,NotStarted,Progress: NotStarted,School 17,Enrolled
+168,20,2025-04-01,Vocational,0.594,59.9,InProgress,Progress: InProgress,School 9,Enrolled
+169,20,2025-05-01,Secondary,0.628,78.7,InProgress,Progress: InProgress,School 3,Enrolled
+170,20,2025-06-01,Secondary,0.687,88.1,InProgress,Progress: InProgress,School 20,Enrolled
+171,20,2025-07-01,Vocational,0.69,65.7,InProgress,Progress: InProgress,School 14,Enrolled
+172,20,2025-08-01,Secondary,0.681,90.9,InProgress,Progress: InProgress,School 7,Enrolled
+173,20,2025-09-01,Secondary,0.606,100.0,InProgress,Progress: InProgress,School 14,Enrolled
+174,20,2025-10-01,CollegePrep,0.839,100.0,InProgress,Progress: InProgress,School 8,Enrolled
+175,20,2025-11-01,Vocational,0.631,95.1,Completed,Progress: Completed,School 9,Enrolled
+176,21,2023-10-01,Secondary,0.541,56.0,NotStarted,Progress: NotStarted,School 2,Enrolled
+177,21,2023-11-01,Vocational,0.651,68.2,InProgress,Progress: InProgress,School 9,Enrolled
+178,21,2023-12-01,CollegePrep,0.927,94.0,InProgress,Progress: InProgress,School 17,Enrolled
+179,21,2024-01-01,Vocational,0.959,100.0,InProgress,Progress: InProgress,School 3,Enrolled
+180,21,2024-02-01,Secondary,0.764,98.2,InProgress,Progress: InProgress,School 10,Enrolled
+181,21,2024-03-01,Vocational,0.885,100.0,InProgress,Progress: InProgress,School 4,Enrolled
+182,21,2024-04-01,Primary,0.852,98.7,InProgress,Progress: InProgress,School 7,Enrolled
+183,21,2024-05-01,Secondary,0.782,100.0,Completed,Progress: Completed,School 19,Enrolled
+184,22,2023-05-01,Primary,0.745,56.7,NotStarted,Progress: NotStarted,School 20,Enrolled
+185,22,2023-06-01,Secondary,0.632,59.4,InProgress,Progress: InProgress,School 5,Enrolled
+186,22,2023-07-01,Primary,0.584,62.1,InProgress,Progress: InProgress,School 5,Enrolled
+187,22,2023-08-01,Secondary,0.788,77.7,InProgress,Progress: InProgress,School 4,Enrolled
+188,22,2023-09-01,Primary,0.675,100.0,InProgress,Progress: InProgress,School 8,Enrolled
+189,22,2023-10-01,Secondary,0.867,100.0,InProgress,Progress: InProgress,School 12,Enrolled
+190,22,2023-11-01,Primary,0.839,100.0,Completed,Progress: Completed,School 16,Enrolled
+191,22,2023-12-01,Primary,0.802,100.0,InProgress,Progress: InProgress,School 16,Enrolled
+192,23,2023-02-01,Secondary,0.63,50.0,NotStarted,Progress: NotStarted,School 12,Enrolled
+193,23,2023-03-01,Primary,0.697,50.5,InProgress,Progress: InProgress,School 8,Enrolled
+194,23,2023-04-01,Primary,0.771,72.1,InProgress,Progress: InProgress,School 4,Enrolled
+195,23,2023-05-01,Primary,0.792,88.7,InProgress,Progress: InProgress,School 10,Enrolled
+196,23,2023-06-01,Primary,0.843,100.0,InProgress,Progress: InProgress,School 18,Enrolled
+197,23,2023-07-01,Primary,0.81,100.0,InProgress,Progress: InProgress,School 20,Enrolled
+198,23,2023-08-01,Secondary,0.797,100.0,InProgress,Progress: InProgress,School 8,Enrolled
+199,23,2023-09-01,Secondary,0.704,100.0,InProgress,Progress: InProgress,School 3,Enrolled
+200,23,2023-10-01,Vocational,0.81,100.0,InProgress,Progress: InProgress,School 17,Enrolled
+201,23,2023-11-01,Primary,0.816,100.0,InProgress,Progress: InProgress,School 20,Enrolled
+202,23,2023-12-01,Primary,0.664,100.0,Completed,Progress: Completed,School 7,Enrolled
+203,24,2024-11-01,Secondary,0.643,53.3,NotStarted,Progress: NotStarted,School 3,Enrolled
+204,24,2024-12-01,Secondary,0.64,76.2,InProgress,Progress: InProgress,School 16,Enrolled
+205,24,2025-01-01,Secondary,0.865,65.9,InProgress,Progress: InProgress,School 15,Enrolled
+206,24,2025-02-01,Primary,0.728,68.5,InProgress,Progress: InProgress,School 4,Enrolled
+207,24,2025-03-01,CollegePrep,0.667,94.8,InProgress,Progress: InProgress,School 4,Enrolled
+208,24,2025-04-01,Secondary,0.664,88.0,InProgress,Progress: InProgress,School 9,Enrolled
+209,24,2025-05-01,Secondary,0.98,95.4,Completed,Progress: Completed,School 20,Enrolled
+210,25,2023-06-01,Primary,0.613,47.6,NotStarted,Progress: NotStarted,School 18,Enrolled
+211,25,2023-07-01,Vocational,0.649,81.0,InProgress,Progress: InProgress,School 3,Enrolled
+212,25,2023-08-01,Vocational,0.717,90.0,InProgress,Progress: InProgress,School 17,Enrolled
+213,25,2023-09-01,Vocational,0.838,100.0,InProgress,Progress: InProgress,School 19,Enrolled
+214,25,2023-10-01,Vocational,0.719,100.0,InProgress,Progress: InProgress,School 4,Enrolled
+215,25,2023-11-01,CollegePrep,0.7,100.0,InProgress,Progress: InProgress,School 5,Enrolled
+216,25,2023-12-01,Primary,0.713,100.0,InProgress,Progress: InProgress,School 19,Enrolled
+217,25,2024-01-01,Secondary,0.651,100.0,InProgress,Progress: InProgress,School 13,Enrolled
+218,25,2024-02-01,CollegePrep,0.962,100.0,InProgress,Progress: InProgress,School 7,Enrolled
+219,25,2024-03-01,Vocational,0.574,100.0,InProgress,Progress: InProgress,School 5,Enrolled
+220,25,2024-04-01,Vocational,0.85,98.4,InProgress,Progress: InProgress,School 1,Enrolled
+221,25,2024-05-01,Secondary,0.726,100.0,Completed,Progress: Completed,School 12,Enrolled
+222,26,2023-07-01,Secondary,0.716,55.5,NotStarted,Progress: NotStarted,School 13,Enrolled
+223,26,2023-08-01,Secondary,0.716,52.7,InProgress,Progress: InProgress,School 13,Enrolled
+224,26,2023-09-01,Vocational,0.771,73.1,InProgress,Progress: InProgress,School 10,Enrolled
+225,26,2023-10-01,Secondary,0.726,81.0,InProgress,Progress: InProgress,School 14,Enrolled
+226,26,2023-11-01,Vocational,0.832,95.1,InProgress,Progress: InProgress,School 15,Enrolled
+227,26,2023-12-01,Secondary,0.744,100.0,InProgress,Progress: InProgress,School 15,Enrolled
+228,26,2024-01-01,Primary,0.786,100.0,InProgress,Progress: InProgress,School 3,Enrolled
+229,26,2024-02-01,CollegePrep,0.713,100.0,InProgress,Progress: InProgress,School 11,Enrolled
+230,27,2025-03-01,Primary,0.572,59.5,NotStarted,Progress: NotStarted,School 4,Enrolled
+231,27,2025-04-01,Secondary,0.745,78.8,InProgress,Progress: InProgress,School 6,Enrolled
+232,27,2025-05-01,CollegePrep,0.795,97.6,InProgress,Progress: InProgress,School 15,Enrolled
+233,27,2025-06-01,Primary,0.854,100.0,InProgress,Progress: InProgress,School 16,Enrolled
+234,27,2025-07-01,Secondary,0.867,100.0,InProgress,Progress: InProgress,School 11,Enrolled
+235,27,2025-08-01,Primary,0.719,100.0,InProgress,Progress: InProgress,School 17,Enrolled
+236,27,2025-09-01,CollegePrep,0.72,100.0,InProgress,Progress: InProgress,School 17,Enrolled
+237,27,2025-10-01,Primary,0.886,100.0,InProgress,Progress: InProgress,School 2,Enrolled
+238,27,2025-11-01,CollegePrep,0.741,100.0,InProgress,Progress: InProgress,School 16,Enrolled
+239,27,2025-12-01,Secondary,0.733,100.0,InProgress,Progress: InProgress,School 17,Enrolled
+240,28,2023-11-01,CollegePrep,0.822,81.0,NotStarted,Progress: NotStarted,School 16,Enrolled
+241,28,2023-12-01,Vocational,0.923,100.0,InProgress,Progress: InProgress,School 7,Enrolled
+242,28,2024-01-01,Secondary,0.797,100.0,InProgress,Progress: InProgress,School 3,Enrolled
+243,28,2024-02-01,Secondary,0.654,100.0,InProgress,Progress: InProgress,School 15,Enrolled
+244,28,2024-03-01,Secondary,0.574,100.0,InProgress,Progress: InProgress,School 4,Enrolled
+245,28,2024-04-01,Vocational,0.902,100.0,InProgress,Progress: InProgress,School 10,Enrolled
+246,28,2024-05-01,Vocational,0.714,80.1,InProgress,Progress: InProgress,School 20,Enrolled
+247,28,2024-06-01,Vocational,0.74,85.1,InProgress,Progress: InProgress,School 7,Enrolled
+248,28,2024-07-01,Vocational,0.569,100.0,InProgress,Progress: InProgress,School 13,Enrolled
+249,28,2024-08-01,Vocational,0.761,89.7,InProgress,Progress: InProgress,School 17,Enrolled
+250,28,2024-09-01,Secondary,0.634,100.0,Completed,Progress: Completed,School 17,Enrolled
+251,28,2024-10-01,Vocational,0.899,100.0,Completed,Progress: Completed,School 5,Enrolled
+252,29,2023-03-01,Secondary,0.748,70.6,NotStarted,Progress: NotStarted,School 9,Enrolled
+253,29,2023-04-01,Vocational,0.707,76.4,InProgress,Progress: InProgress,School 12,Enrolled
+254,29,2023-05-01,Secondary,0.623,99.9,InProgress,Progress: InProgress,School 9,Enrolled
+255,29,2023-06-01,Primary,0.898,100.0,InProgress,Progress: InProgress,School 16,Enrolled
+256,29,2023-07-01,Primary,0.894,100.0,InProgress,Progress: InProgress,School 8,Enrolled
+257,29,2023-08-01,Primary,0.752,100.0,InProgress,Progress: InProgress,School 8,Enrolled
+258,30,2024-01-01,Primary,0.714,52.5,NotStarted,Progress: NotStarted,School 3,Enrolled
+259,30,2024-02-01,Secondary,0.693,64.3,InProgress,Progress: InProgress,School 8,Enrolled
+260,30,2024-03-01,Vocational,0.649,82.7,InProgress,Progress: InProgress,School 6,Enrolled
+261,30,2024-04-01,Primary,0.792,100.0,InProgress,Progress: InProgress,School 2,Enrolled
+262,30,2024-05-01,Secondary,1.0,100.0,InProgress,Progress: InProgress,School 17,Enrolled
+263,30,2024-06-01,Vocational,0.73,100.0,InProgress,Progress: InProgress,School 16,Enrolled
+264,30,2024-07-01,CollegePrep,0.779,100.0,InProgress,Progress: InProgress,School 16,Enrolled
+265,30,2024-08-01,Primary,0.647,100.0,InProgress,Progress: InProgress,School 2,Enrolled
+266,30,2024-09-01,Primary,0.716,100.0,InProgress,Progress: InProgress,School 6,Enrolled
+267,30,2024-10-01,Vocational,0.625,100.0,Completed,Progress: Completed,School 16,Enrolled
+268,30,2024-11-01,Secondary,0.89,100.0,InProgress,Progress: InProgress,School 14,Enrolled
+269,31,2023-09-01,CollegePrep,0.681,36.0,NotStarted,Progress: NotStarted,School 11,Enrolled
+270,31,2023-10-01,Secondary,0.584,39.9,InProgress,Progress: InProgress,School 9,Enrolled
+271,31,2023-11-01,Primary,0.774,62.0,InProgress,Progress: InProgress,School 19,Enrolled
+272,31,2023-12-01,Primary,0.836,74.7,InProgress,Progress: InProgress,School 9,Enrolled
+273,31,2024-01-01,Secondary,0.968,100.0,InProgress,Progress: InProgress,School 11,Enrolled
+274,31,2024-02-01,Secondary,1.0,100.0,InProgress,Progress: InProgress,School 3,Enrolled
+275,31,2024-03-01,Vocational,0.844,100.0,InProgress,Progress: InProgress,School 12,Enrolled
+276,31,2024-04-01,CollegePrep,0.566,97.8,Completed,Progress: Completed,School 5,Enrolled
+277,31,2024-05-01,Secondary,0.918,100.0,InProgress,Progress: InProgress,School 4,Enrolled
+278,32,2025-02-01,Secondary,0.668,48.2,NotStarted,Progress: NotStarted,School 20,Enrolled
+279,32,2025-03-01,Primary,0.731,68.4,InProgress,Progress: InProgress,School 7,Enrolled
+280,32,2025-04-01,Secondary,0.808,94.1,InProgress,Progress: InProgress,School 11,Enrolled
+281,32,2025-05-01,Vocational,0.753,100.0,InProgress,Progress: InProgress,School 16,Enrolled
+282,32,2025-06-01,Primary,0.798,100.0,InProgress,Progress: InProgress,School 12,Enrolled
+283,32,2025-07-01,Vocational,0.565,91.6,InProgress,Progress: InProgress,School 10,Enrolled
+284,32,2025-08-01,CollegePrep,0.952,100.0,InProgress,Progress: InProgress,School 3,Enrolled
+285,32,2025-09-01,CollegePrep,0.932,100.0,Completed,Progress: Completed,School 16,Enrolled
+286,32,2025-10-01,Primary,0.972,100.0,InProgress,Progress: InProgress,School 19,Enrolled
+287,33,2024-12-01,Primary,0.442,25.0,NotStarted,Progress: NotStarted,School 4,Enrolled
+288,33,2025-01-01,Primary,0.701,33.3,InProgress,Progress: InProgress,School 5,Enrolled
+289,33,2025-02-01,Vocational,0.617,46.3,InProgress,Progress: InProgress,School 4,Enrolled
+290,33,2025-03-01,Primary,0.734,61.5,InProgress,Progress: InProgress,School 17,Enrolled
+291,33,2025-04-01,Secondary,0.776,66.3,InProgress,Progress: InProgress,School 4,Enrolled
+292,33,2025-05-01,CollegePrep,0.766,71.5,InProgress,Progress: InProgress,School 12,Enrolled
+293,33,2025-06-01,Vocational,0.644,90.0,InProgress,Progress: InProgress,School 3,Enrolled
+294,33,2025-07-01,Secondary,0.824,100.0,InProgress,Progress: InProgress,School 1,Enrolled
+295,34,2023-07-01,Vocational,0.746,51.8,NotStarted,Progress: NotStarted,School 10,Enrolled
+296,34,2023-08-01,Secondary,0.642,63.1,InProgress,Progress: InProgress,School 3,Enrolled
+297,34,2023-09-01,Secondary,0.786,85.6,InProgress,Progress: InProgress,School 8,Enrolled
+298,34,2023-10-01,Primary,0.908,100.0,InProgress,Progress: InProgress,School 3,Enrolled
+299,34,2023-11-01,Vocational,0.664,100.0,InProgress,Progress: InProgress,School 13,Enrolled
+300,34,2023-12-01,Primary,0.703,100.0,InProgress,Progress: InProgress,School 6,Enrolled
+301,34,2024-01-01,Primary,0.962,100.0,InProgress,Progress: InProgress,School 6,Enrolled
+302,34,2024-02-01,Vocational,0.736,100.0,InProgress,Progress: InProgress,School 13,Enrolled
+303,34,2024-03-01,Primary,0.755,100.0,InProgress,Progress: InProgress,School 8,Enrolled
+304,34,2024-04-01,Primary,0.758,100.0,Completed,Progress: Completed,School 4,Enrolled
+305,34,2024-05-01,Secondary,0.919,100.0,InProgress,Progress: InProgress,School 9,Enrolled
+306,35,2024-08-01,Primary,0.813,55.6,NotStarted,Progress: NotStarted,School 4,Enrolled
+307,35,2024-09-01,Primary,0.726,80.5,InProgress,Progress: InProgress,School 6,Enrolled
+308,35,2024-10-01,CollegePrep,0.753,96.3,InProgress,Progress: InProgress,School 3,Enrolled
+309,35,2024-11-01,Secondary,0.883,100.0,InProgress,Progress: InProgress,School 10,Enrolled
+310,35,2024-12-01,Secondary,0.842,100.0,InProgress,Progress: InProgress,School 12,Enrolled
+311,35,2025-01-01,Secondary,0.981,100.0,InProgress,Progress: InProgress,School 1,Enrolled
+312,35,2025-02-01,Secondary,0.964,100.0,InProgress,Progress: InProgress,School 13,Enrolled
+313,35,2025-03-01,Primary,0.735,100.0,InProgress,Progress: InProgress,School 14,Enrolled
+314,35,2025-04-01,CollegePrep,0.759,100.0,Completed,Progress: Completed,School 1,Enrolled
+315,35,2025-05-01,Secondary,0.663,100.0,InProgress,Progress: InProgress,School 15,Enrolled
+316,36,2023-03-01,Secondary,0.575,56.3,NotStarted,Progress: NotStarted,School 4,Enrolled
+317,36,2023-04-01,Primary,0.874,62.4,InProgress,Progress: InProgress,School 16,Enrolled
+318,36,2023-05-01,Primary,0.584,64.5,InProgress,Progress: InProgress,School 5,Enrolled
+319,36,2023-06-01,CollegePrep,0.69,90.2,InProgress,Progress: InProgress,School 19,Enrolled
+320,36,2023-07-01,Primary,0.784,97.0,InProgress,Progress: InProgress,School 15,Enrolled
+321,36,2023-08-01,Primary,0.737,100.0,Completed,Progress: Completed,School 17,Enrolled
+322,37,2024-01-01,Primary,0.666,43.8,NotStarted,Progress: NotStarted,School 5,Enrolled
+323,37,2024-02-01,Vocational,0.411,47.6,InProgress,Progress: InProgress,School 11,Enrolled
+324,37,2024-03-01,Primary,0.562,52.2,InProgress,Progress: InProgress,School 2,Enrolled
+325,37,2024-04-01,Primary,0.842,55.4,InProgress,Progress: InProgress,School 13,Enrolled
+326,37,2024-05-01,Secondary,0.599,64.4,InProgress,Progress: InProgress,School 6,Enrolled
+327,37,2024-06-01,Vocational,0.829,73.8,InProgress,Progress: InProgress,School 12,Enrolled
+328,37,2024-07-01,Secondary,0.673,80.0,InProgress,Progress: InProgress,School 12,Enrolled
+329,37,2024-08-01,CollegePrep,0.721,77.1,InProgress,Progress: InProgress,School 20,Enrolled
+330,37,2024-09-01,Secondary,0.807,75.2,InProgress,Progress: InProgress,School 10,Enrolled
+331,37,2024-10-01,Secondary,0.757,70.4,InProgress,Progress: InProgress,School 10,Enrolled
+332,37,2024-11-01,Primary,0.667,89.1,InProgress,Progress: InProgress,School 7,Enrolled
+333,37,2024-12-01,Vocational,0.776,100.0,Completed,Progress: Completed,School 2,Enrolled
+334,38,2024-04-01,Primary,0.585,44.4,NotStarted,Progress: NotStarted,School 2,Enrolled
+335,38,2024-05-01,Vocational,0.631,47.3,InProgress,Progress: InProgress,School 4,Enrolled
+336,38,2024-06-01,Secondary,0.612,59.4,InProgress,Progress: InProgress,School 18,Enrolled
+337,38,2024-07-01,Secondary,0.956,79.5,InProgress,Progress: InProgress,School 20,Enrolled
+338,38,2024-08-01,Primary,0.703,90.8,InProgress,Progress: InProgress,School 8,Enrolled
+339,38,2024-09-01,Secondary,0.724,100.0,InProgress,Progress: InProgress,School 20,Enrolled
+340,38,2024-10-01,Primary,0.879,100.0,InProgress,Progress: InProgress,School 19,Enrolled
+341,38,2024-11-01,Vocational,0.93,100.0,InProgress,Progress: InProgress,School 15,Enrolled
+342,38,2024-12-01,Secondary,0.838,91.9,Completed,Progress: Completed,School 18,Enrolled
+343,38,2025-01-01,Secondary,0.923,97.3,Completed,Progress: Completed,School 18,Enrolled
+344,39,2024-10-01,Secondary,0.596,39.8,NotStarted,Progress: NotStarted,School 15,Enrolled
+345,39,2024-11-01,Primary,0.693,34.2,InProgress,Progress: InProgress,School 11,Enrolled
+346,39,2024-12-01,Secondary,0.654,39.4,InProgress,Progress: InProgress,School 20,Enrolled
+347,39,2025-01-01,Secondary,0.671,64.7,InProgress,Progress: InProgress,School 14,Enrolled
+348,39,2025-02-01,Secondary,0.693,66.9,InProgress,Progress: InProgress,School 6,Enrolled
+349,39,2025-03-01,Primary,0.719,83.9,InProgress,Progress: InProgress,School 11,Enrolled
+350,39,2025-04-01,Secondary,0.719,92.5,InProgress,Progress: InProgress,School 4,Enrolled
+351,39,2025-05-01,Primary,0.777,96.6,InProgress,Progress: InProgress,School 20,Enrolled
+352,39,2025-06-01,Secondary,0.784,99.1,InProgress,Progress: InProgress,School 19,Enrolled
+353,39,2025-07-01,Primary,0.772,100.0,InProgress,Progress: InProgress,School 8,Enrolled
+354,39,2025-08-01,CollegePrep,0.71,100.0,Completed,Progress: Completed,School 17,Enrolled
+355,40,2025-03-01,Vocational,0.551,46.4,NotStarted,Progress: NotStarted,School 7,Enrolled
+356,40,2025-04-01,Secondary,0.635,63.8,InProgress,Progress: InProgress,School 15,Enrolled
+357,40,2025-05-01,Vocational,0.584,71.6,InProgress,Progress: InProgress,School 11,Enrolled
+358,40,2025-06-01,Vocational,0.834,85.0,InProgress,Progress: InProgress,School 2,Enrolled
+359,40,2025-07-01,Secondary,0.765,90.4,InProgress,Progress: InProgress,School 3,Enrolled
+360,40,2025-08-01,Primary,0.778,89.8,InProgress,Progress: InProgress,School 20,Enrolled
+361,40,2025-09-01,Vocational,0.764,95.3,InProgress,Progress: InProgress,School 7,Enrolled
+362,40,2025-10-01,Secondary,0.928,100.0,InProgress,Progress: InProgress,School 6,Enrolled
+363,40,2025-11-01,Secondary,0.8,84.2,InProgress,Progress: InProgress,School 14,Enrolled
+364,40,2025-12-01,Primary,0.832,94.2,InProgress,Progress: InProgress,School 17,Enrolled
+365,40,2026-01-01,Primary,0.886,100.0,Completed,Progress: Completed,School 18,Enrolled
+366,40,2026-02-01,Vocational,0.729,100.0,InProgress,Progress: InProgress,School 2,Enrolled
+367,41,2024-04-01,Secondary,0.839,33.3,NotStarted,Progress: NotStarted,School 7,Enrolled
+368,41,2024-05-01,CollegePrep,0.662,45.8,InProgress,Progress: InProgress,School 18,Enrolled
+369,41,2024-06-01,Vocational,0.784,68.0,InProgress,Progress: InProgress,School 12,Enrolled
+370,41,2024-07-01,Primary,0.868,97.8,InProgress,Progress: InProgress,School 14,Enrolled
+371,41,2024-08-01,Vocational,0.859,100.0,InProgress,Progress: InProgress,School 15,Enrolled
+372,41,2024-09-01,Secondary,0.894,100.0,InProgress,Progress: InProgress,School 5,Enrolled
+373,41,2024-10-01,Secondary,0.885,100.0,Completed,Progress: Completed,School 14,Enrolled
+374,41,2024-11-01,CollegePrep,1.0,100.0,InProgress,Progress: InProgress,School 18,Enrolled
+375,42,2024-12-01,Primary,0.657,46.8,NotStarted,Progress: NotStarted,School 13,Enrolled
+376,42,2025-01-01,Primary,0.48,60.9,InProgress,Progress: InProgress,School 13,Enrolled
+377,42,2025-02-01,Secondary,0.861,81.2,InProgress,Progress: InProgress,School 4,Enrolled
+378,42,2025-03-01,Primary,0.813,90.6,InProgress,Progress: InProgress,School 4,Enrolled
+379,42,2025-04-01,Secondary,0.853,100.0,InProgress,Progress: InProgress,School 12,Enrolled
+380,42,2025-05-01,Secondary,0.906,100.0,Completed,Progress: Completed,School 3,Enrolled
+381,42,2025-06-01,CollegePrep,0.766,100.0,Completed,Progress: Completed,School 14,Enrolled
+382,43,2024-07-01,Secondary,0.68,37.7,NotStarted,Progress: NotStarted,School 9,Enrolled
+383,43,2024-08-01,Primary,0.589,51.4,InProgress,Progress: InProgress,School 3,Enrolled
+384,43,2024-09-01,Secondary,0.756,76.6,InProgress,Progress: InProgress,School 2,Enrolled
+385,43,2024-10-01,Secondary,0.625,83.4,InProgress,Progress: InProgress,School 2,Enrolled
+386,43,2024-11-01,Secondary,0.759,100.0,InProgress,Progress: InProgress,School 19,Enrolled
+387,43,2024-12-01,CollegePrep,0.675,100.0,InProgress,Progress: InProgress,School 15,Enrolled
+388,43,2025-01-01,Secondary,0.928,100.0,Completed,Progress: Completed,School 19,Enrolled
+389,44,2023-09-01,Primary,0.577,50.4,NotStarted,Progress: NotStarted,School 14,Enrolled
+390,44,2023-10-01,Secondary,0.867,50.7,InProgress,Progress: InProgress,School 10,Enrolled
+391,44,2023-11-01,CollegePrep,0.674,38.7,InProgress,Progress: InProgress,School 3,Enrolled
+392,44,2023-12-01,Primary,0.67,40.0,InProgress,Progress: InProgress,School 18,Enrolled
+393,44,2024-01-01,Secondary,0.761,41.2,InProgress,Progress: InProgress,School 11,Enrolled
+394,44,2024-02-01,Primary,0.8,50.5,InProgress,Progress: InProgress,School 11,Enrolled
+395,44,2024-03-01,Primary,0.701,51.5,InProgress,Progress: InProgress,School 13,Enrolled
+396,44,2024-04-01,Secondary,0.536,56.9,InProgress,Progress: InProgress,School 19,Enrolled
+397,44,2024-05-01,Primary,0.759,56.5,InProgress,Progress: InProgress,School 6,Enrolled
+398,45,2023-02-01,Vocational,0.671,64.7,NotStarted,Progress: NotStarted,School 14,Enrolled
+399,45,2023-03-01,Vocational,0.781,79.4,InProgress,Progress: InProgress,School 12,Enrolled
+400,45,2023-04-01,Secondary,0.831,100.0,InProgress,Progress: InProgress,School 7,Enrolled
+401,45,2023-05-01,CollegePrep,0.899,100.0,InProgress,Progress: InProgress,School 17,Enrolled
+402,45,2023-06-01,Secondary,0.89,100.0,InProgress,Progress: InProgress,School 2,Enrolled
+403,45,2023-07-01,Primary,0.778,100.0,InProgress,Progress: InProgress,School 7,Enrolled
+404,45,2023-08-01,Secondary,0.777,100.0,InProgress,Progress: InProgress,School 7,Enrolled
+405,45,2023-09-01,CollegePrep,0.756,100.0,InProgress,Progress: InProgress,School 3,Enrolled
+406,45,2023-10-01,Vocational,0.799,100.0,Completed,Progress: Completed,School 9,Enrolled
+407,46,2024-01-01,Secondary,0.586,45.2,NotStarted,Progress: NotStarted,School 2,Enrolled
+408,46,2024-02-01,Primary,0.679,59.2,InProgress,Progress: InProgress,School 16,Enrolled
+409,46,2024-03-01,Vocational,0.925,79.6,InProgress,Progress: InProgress,School 18,Enrolled
+410,46,2024-04-01,Vocational,0.716,82.1,InProgress,Progress: InProgress,School 6,Enrolled
+411,46,2024-05-01,Primary,0.625,66.3,InProgress,Progress: InProgress,School 14,Enrolled
+412,46,2024-06-01,Secondary,0.931,83.5,InProgress,Progress: InProgress,School 9,Enrolled
+413,46,2024-07-01,Vocational,0.759,95.2,Completed,Progress: Completed,School 11,Enrolled
+414,46,2024-08-01,Secondary,0.825,96.3,InProgress,Progress: InProgress,School 12,Enrolled
+415,47,2023-07-01,Primary,0.667,47.6,NotStarted,Progress: NotStarted,School 6,Enrolled
+416,47,2023-08-01,Secondary,0.593,73.9,InProgress,Progress: InProgress,School 13,Enrolled
+417,47,2023-09-01,Secondary,0.715,81.6,InProgress,Progress: InProgress,School 2,Enrolled
+418,47,2023-10-01,Primary,0.609,80.9,InProgress,Progress: InProgress,School 17,Enrolled
+419,47,2023-11-01,CollegePrep,0.828,98.7,InProgress,Progress: InProgress,School 19,Enrolled
+420,47,2023-12-01,Secondary,1.0,99.0,InProgress,Progress: InProgress,School 9,Enrolled
+421,47,2024-01-01,Vocational,0.778,100.0,InProgress,Progress: InProgress,School 8,Enrolled
+422,47,2024-02-01,Secondary,0.753,100.0,Completed,Progress: Completed,School 3,Enrolled
+423,47,2024-03-01,Vocational,0.691,100.0,Completed,Progress: Completed,School 13,Enrolled
+424,48,2024-08-01,Secondary,0.632,39.6,NotStarted,Progress: NotStarted,School 8,Enrolled
+425,48,2024-09-01,Secondary,0.742,54.4,InProgress,Progress: InProgress,School 9,Enrolled
+426,48,2024-10-01,Primary,0.599,59.9,InProgress,Progress: InProgress,School 7,Enrolled
+427,48,2024-11-01,Vocational,0.78,72.1,InProgress,Progress: InProgress,School 4,Enrolled
+428,48,2024-12-01,Primary,0.905,74.9,InProgress,Progress: InProgress,School 10,Enrolled
+429,48,2025-01-01,Primary,0.812,95.9,Completed,Progress: Completed,School 16,Enrolled
+430,48,2025-02-01,Secondary,0.847,96.5,Completed,Progress: Completed,School 5,Enrolled
+431,49,2024-05-01,CollegePrep,0.697,45.3,NotStarted,Progress: NotStarted,School 16,Enrolled
+432,49,2024-06-01,CollegePrep,0.581,45.1,InProgress,Progress: InProgress,School 10,Enrolled
+433,49,2024-07-01,Secondary,0.689,60.3,InProgress,Progress: InProgress,School 4,Enrolled
+434,49,2024-08-01,Secondary,0.867,97.4,InProgress,Progress: InProgress,School 7,Enrolled
+435,49,2024-09-01,Secondary,0.821,100.0,InProgress,Progress: InProgress,School 17,Enrolled
+436,49,2024-10-01,Secondary,0.852,100.0,InProgress,Progress: InProgress,School 18,Enrolled
+437,49,2024-11-01,Secondary,0.725,100.0,InProgress,Progress: InProgress,School 1,Enrolled
+438,50,2023-01-01,CollegePrep,0.468,33.9,NotStarted,Progress: NotStarted,School 2,Enrolled
+439,50,2023-02-01,Secondary,0.684,45.9,InProgress,Progress: InProgress,School 8,Enrolled
+440,50,2023-03-01,Primary,0.718,53.8,InProgress,Progress: InProgress,School 2,Enrolled
+441,50,2023-04-01,Secondary,0.629,74.8,InProgress,Progress: InProgress,School 20,Enrolled
+442,50,2023-05-01,Primary,0.673,77.4,InProgress,Progress: InProgress,School 3,Enrolled
+443,50,2023-06-01,Secondary,0.8,93.0,InProgress,Progress: InProgress,School 12,Enrolled
+444,50,2023-07-01,Vocational,0.644,100.0,InProgress,Progress: InProgress,School 19,Enrolled
+445,50,2023-08-01,Secondary,0.764,100.0,InProgress,Progress: InProgress,School 14,Enrolled
+446,50,2023-09-01,Secondary,0.718,100.0,InProgress,Progress: InProgress,School 19,Enrolled
+447,50,2023-10-01,Secondary,0.951,100.0,InProgress,Progress: InProgress,School 12,Enrolled
+448,50,2023-11-01,Vocational,0.864,100.0,Completed,Progress: Completed,School 17,Enrolled
+449,50,2023-12-01,Primary,0.791,90.9,Completed,Progress: Completed,School 12,Enrolled
+450,51,2024-04-01,Secondary,0.58,48.7,NotStarted,Progress: NotStarted,School 1,Enrolled
+451,51,2024-05-01,Secondary,0.634,61.6,InProgress,Progress: InProgress,School 14,Enrolled
+452,51,2024-06-01,Primary,0.713,71.8,InProgress,Progress: InProgress,School 16,Enrolled
+453,51,2024-07-01,Primary,0.804,100.0,InProgress,Progress: InProgress,School 20,Enrolled
+454,51,2024-08-01,CollegePrep,1.0,100.0,Completed,Progress: Completed,School 19,Enrolled
+455,51,2024-09-01,Secondary,0.869,100.0,Completed,Progress: Completed,School 1,Enrolled
+456,52,2024-02-01,Vocational,0.505,33.2,NotStarted,Progress: NotStarted,School 3,Enrolled
+457,52,2024-03-01,Primary,0.633,26.9,InProgress,Progress: InProgress,School 1,Enrolled
+458,52,2024-04-01,CollegePrep,0.488,20.9,InProgress,Progress: InProgress,School 9,Enrolled
+459,52,2024-05-01,Secondary,0.67,27.3,InProgress,Progress: InProgress,School 4,Enrolled
+460,52,2024-06-01,Primary,0.612,35.3,InProgress,Progress: InProgress,School 17,Enrolled
+461,52,2024-07-01,CollegePrep,0.711,42.9,InProgress,Progress: InProgress,School 5,Enrolled
+462,52,2024-08-01,Secondary,0.531,36.4,InProgress,Progress: InProgress,School 7,Enrolled
+463,53,2023-10-01,Secondary,0.92,54.8,NotStarted,Progress: NotStarted,School 5,Enrolled
+464,53,2023-11-01,CollegePrep,0.732,83.4,InProgress,Progress: InProgress,School 12,Enrolled
+465,53,2023-12-01,Secondary,0.927,100.0,InProgress,Progress: InProgress,School 5,Enrolled
+466,53,2024-01-01,Secondary,0.807,100.0,InProgress,Progress: InProgress,School 4,Enrolled
+467,53,2024-02-01,Secondary,0.968,100.0,InProgress,Progress: InProgress,School 7,Enrolled
+468,53,2024-03-01,Secondary,0.762,100.0,InProgress,Progress: InProgress,School 6,Enrolled
+469,53,2024-04-01,Primary,0.872,100.0,InProgress,Progress: InProgress,School 4,Enrolled
+470,53,2024-05-01,Secondary,0.903,100.0,InProgress,Progress: InProgress,School 18,Enrolled
+471,53,2024-06-01,Secondary,0.964,100.0,InProgress,Progress: InProgress,School 15,Enrolled
+472,53,2024-07-01,Vocational,0.825,100.0,InProgress,Progress: InProgress,School 12,Enrolled
+473,53,2024-08-01,CollegePrep,0.645,100.0,InProgress,Progress: InProgress,School 5,Enrolled
+474,53,2024-09-01,Vocational,0.913,100.0,InProgress,Progress: InProgress,School 18,Enrolled
+475,54,2023-04-01,Secondary,0.558,51.3,NotStarted,Progress: NotStarted,School 1,Enrolled
+476,54,2023-05-01,Secondary,0.871,56.4,InProgress,Progress: InProgress,School 13,Enrolled
+477,54,2023-06-01,Primary,0.636,55.1,InProgress,Progress: InProgress,School 20,Enrolled
+478,54,2023-07-01,Secondary,0.77,67.0,InProgress,Progress: InProgress,School 11,Enrolled
+479,54,2023-08-01,Primary,0.737,80.1,InProgress,Progress: InProgress,School 15,Enrolled
+480,54,2023-09-01,Primary,0.62,81.7,InProgress,Progress: InProgress,School 3,Enrolled
+481,54,2023-10-01,Primary,0.804,79.7,InProgress,Progress: InProgress,School 12,Enrolled
+482,54,2023-11-01,CollegePrep,0.768,85.0,InProgress,Progress: InProgress,School 19,Enrolled
+483,54,2023-12-01,Secondary,0.562,82.4,InProgress,Progress: InProgress,School 9,Enrolled
+484,54,2024-01-01,Primary,0.816,91.4,InProgress,Progress: InProgress,School 8,Enrolled
+485,54,2024-02-01,Secondary,0.654,80.3,InProgress,Progress: InProgress,School 7,Enrolled
+486,54,2024-03-01,Vocational,0.729,78.1,InProgress,Progress: InProgress,School 13,Enrolled
+487,55,2025-04-01,Vocational,0.585,39.0,NotStarted,Progress: NotStarted,School 7,Enrolled
+488,55,2025-05-01,Vocational,0.665,61.6,InProgress,Progress: InProgress,School 9,Enrolled
+489,55,2025-06-01,Primary,0.677,65.7,InProgress,Progress: InProgress,School 9,Enrolled
+490,55,2025-07-01,Primary,0.65,59.7,InProgress,Progress: InProgress,School 10,Enrolled
+491,55,2025-08-01,Primary,0.72,68.1,InProgress,Progress: InProgress,School 9,Enrolled
+492,55,2025-09-01,CollegePrep,0.745,74.5,InProgress,Progress: InProgress,School 9,Enrolled
+493,55,2025-10-01,Vocational,0.761,98.3,Completed,Progress: Completed,School 13,Enrolled
+494,56,2024-10-01,Secondary,0.632,54.6,NotStarted,Progress: NotStarted,School 17,Enrolled
+495,56,2024-11-01,Primary,0.657,61.2,InProgress,Progress: InProgress,School 13,Enrolled
+496,56,2024-12-01,Secondary,0.765,83.2,InProgress,Progress: InProgress,School 6,Enrolled
+497,56,2025-01-01,CollegePrep,0.855,82.8,InProgress,Progress: InProgress,School 1,Enrolled
+498,56,2025-02-01,Primary,1.0,100.0,InProgress,Progress: InProgress,School 11,Enrolled
+499,56,2025-03-01,Vocational,0.674,100.0,InProgress,Progress: InProgress,School 1,Enrolled
+500,56,2025-04-01,Secondary,0.779,100.0,InProgress,Progress: InProgress,School 2,Enrolled
+501,56,2025-05-01,Vocational,0.634,100.0,InProgress,Progress: InProgress,School 4,Enrolled
+502,56,2025-06-01,Secondary,0.857,100.0,InProgress,Progress: InProgress,School 10,Enrolled
+503,56,2025-07-01,Vocational,0.743,100.0,InProgress,Progress: InProgress,School 18,Enrolled
+504,57,2023-04-01,CollegePrep,0.615,41.9,NotStarted,Progress: NotStarted,School 14,Enrolled
+505,57,2023-05-01,Secondary,0.835,74.1,InProgress,Progress: InProgress,School 8,Enrolled
+506,57,2023-06-01,Primary,0.814,95.6,InProgress,Progress: InProgress,School 11,Enrolled
+507,57,2023-07-01,Vocational,0.912,100.0,InProgress,Progress: InProgress,School 10,Enrolled
+508,57,2023-08-01,Secondary,0.708,100.0,InProgress,Progress: InProgress,School 7,Enrolled
+509,57,2023-09-01,Secondary,0.753,100.0,Completed,Progress: Completed,School 18,Enrolled
+510,57,2023-10-01,Vocational,0.94,100.0,InProgress,Progress: InProgress,School 11,Enrolled
+511,58,2025-03-01,Vocational,0.783,52.9,NotStarted,Progress: NotStarted,School 10,Enrolled
+512,58,2025-04-01,Primary,0.561,65.3,InProgress,Progress: InProgress,School 2,Enrolled
+513,58,2025-05-01,Primary,0.829,86.0,InProgress,Progress: InProgress,School 8,Enrolled
+514,58,2025-06-01,CollegePrep,0.775,79.6,InProgress,Progress: InProgress,School 2,Enrolled
+515,58,2025-07-01,Secondary,0.636,81.9,InProgress,Progress: InProgress,School 20,Enrolled
+516,58,2025-08-01,Secondary,0.703,86.5,InProgress,Progress: InProgress,School 10,Enrolled
+517,58,2025-09-01,Secondary,0.668,96.7,InProgress,Progress: InProgress,School 19,Enrolled
+518,58,2025-10-01,Secondary,0.677,100.0,Completed,Progress: Completed,School 1,Enrolled
+519,58,2025-11-01,Secondary,0.717,100.0,Completed,Progress: Completed,School 15,Enrolled
+520,59,2023-06-01,Primary,0.646,54.1,NotStarted,Progress: NotStarted,School 3,Enrolled
+521,59,2023-07-01,Vocational,0.572,64.6,InProgress,Progress: InProgress,School 16,Enrolled
+522,59,2023-08-01,CollegePrep,0.797,76.7,InProgress,Progress: InProgress,School 17,Enrolled
+523,59,2023-09-01,CollegePrep,0.876,100.0,InProgress,Progress: InProgress,School 11,Enrolled
+524,59,2023-10-01,Primary,0.853,100.0,InProgress,Progress: InProgress,School 17,Enrolled
+525,59,2023-11-01,Primary,0.777,100.0,InProgress,Progress: InProgress,School 4,Enrolled
+526,59,2023-12-01,Primary,0.753,100.0,InProgress,Progress: InProgress,School 9,Enrolled
+527,59,2024-01-01,Secondary,0.77,100.0,InProgress,Progress: InProgress,School 1,Enrolled
+528,59,2024-02-01,CollegePrep,0.677,100.0,InProgress,Progress: InProgress,School 19,Enrolled
+529,60,2024-01-01,CollegePrep,0.643,36.9,NotStarted,Progress: NotStarted,School 14,Enrolled
+530,60,2024-02-01,Primary,0.497,57.9,InProgress,Progress: InProgress,School 20,Enrolled
+531,60,2024-03-01,Vocational,1.0,67.3,InProgress,Progress: InProgress,School 18,Enrolled
+532,60,2024-04-01,Primary,0.582,80.2,InProgress,Progress: InProgress,School 8,Enrolled
+533,60,2024-05-01,Primary,0.71,96.6,InProgress,Progress: InProgress,School 4,Enrolled
+534,60,2024-06-01,Secondary,0.71,100.0,Completed,Progress: Completed,School 8,Enrolled
+698,61,2026-02-01,Primary,0.680,54.0,InProgress,Actively participating in class activities,School 2,Pending
+700,62,2026-02-01,Primary,0.750,65.0,InProgress,Good academic engagement this period,School 3,Pending
+702,63,2026-02-01,Primary,0.820,76.0,NotStarted,Showing progress in reading and comprehension,School 4,Pending
+704,64,2026-02-01,Secondary,0.890,87.0,InProgress,Needs additional support in mathematics,School 5,Pending
+706,65,2026-02-01,Secondary,0.960,98.0,InProgress,Actively participating in class activities,School 6,Pending
+708,66,2026-02-01,Primary,0.590,48.0,NotStarted,Good academic engagement this period,School 7,Pending
+710,83,2025-11-01,Primary,0.750,54.0,InProgress,Needs additional support in mathematics,School 4,Pending
+711,83,2025-12-01,Primary,0.880,61.0,NotStarted,Actively participating in class activities,School 4,Pending
+712,83,2026-01-01,Primary,0.770,45.0,InProgress,Good academic engagement this period,School 4,Enrolled
+713,83,2026-02-01,Primary,0.900,52.0,InProgress,Showing progress in reading and comprehension,School 4,Enrolled
+715,84,2025-11-01,Pre-Primary,0.820,65.0,NotStarted,Actively participating in class activities,School 5,Pending
+716,84,2025-12-01,Pre-Primary,0.950,72.0,InProgress,Good academic engagement this period,School 5,Pending
+717,84,2026-01-01,Pre-Primary,0.840,56.0,InProgress,Showing progress in reading and comprehension,School 5,Enrolled
+718,84,2026-02-01,Pre-Primary,0.970,63.0,NotStarted,Needs additional support in mathematics,School 5,Enrolled
+720,85,2025-12-01,Pre-Primary,0.580,83.0,InProgress,Showing progress in reading and comprehension,School 6,Pending
+721,85,2026-01-01,Pre-Primary,0.910,67.0,NotStarted,Needs additional support in mathematics,School 6,Pending
+722,85,2026-02-01,Primary,0.600,74.0,InProgress,Actively participating in class activities,School 6,Enrolled
+724,86,2026-01-01,Secondary,0.980,78.0,InProgress,Actively participating in class activities,School 7,Pending
+725,86,2026-02-01,Secondary,0.670,85.0,InProgress,Good academic engagement this period,School 7,Pending
+727,87,2025-12-01,Secondary,0.720,44.0,InProgress,Actively participating in class activities,School 8,Pending
+728,87,2026-01-01,Secondary,0.610,89.0,InProgress,Good academic engagement this period,School 8,Pending
+729,87,2026-02-01,Secondary,0.740,96.0,NotStarted,Showing progress in reading and comprehension,School 8,Enrolled
+731,88,2026-01-01,Primary,0.680,100.0,NotStarted,Showing progress in reading and comprehension,School 9,Pending
+732,88,2026-02-01,Primary,0.810,46.0,InProgress,Needs additional support in mathematics,School 9,Pending
+734,89,2026-01-01,Primary,0.750,50.0,InProgress,Needs additional support in mathematics,School 10,Pending
+735,89,2026-02-01,Primary,0.880,57.0,InProgress,Actively participating in class activities,School 10,Enrolled
+737,90,2025-12-01,Primary,0.930,77.0,InProgress,Needs additional support in mathematics,School 11,Pending
+738,90,2026-01-01,Primary,0.820,61.0,InProgress,Actively participating in class activities,School 11,Enrolled
+739,90,2026-02-01,Primary,0.950,68.0,NotStarted,Good academic engagement this period,School 11,Enrolled
+741,91,2025-12-01,Primary,0.560,88.0,InProgress,Actively participating in class activities,School 12,Pending
+742,91,2026-01-01,Primary,0.890,72.0,NotStarted,Good academic engagement this period,School 12,Pending
+743,91,2026-02-01,Primary,0.580,79.0,InProgress,Showing progress in reading and comprehension,School 12,Enrolled
+745,92,2025-11-01,Secondary,0.940,92.0,InProgress,Actively participating in class activities,School 13,Pending
+746,92,2025-12-01,Secondary,0.630,99.0,NotStarted,Good academic engagement this period,School 13,Pending
+747,92,2026-01-01,Secondary,0.960,83.0,InProgress,Showing progress in reading and comprehension,School 13,Enrolled
+748,92,2026-02-01,Secondary,0.650,90.0,InProgress,Needs additional support in mathematics,School 13,Enrolled
+750,93,2026-01-01,Secondary,0.590,94.0,InProgress,Needs additional support in mathematics,School 14,Pending
+751,93,2026-02-01,Secondary,0.720,40.0,NotStarted,Actively participating in class activities,School 14,Enrolled
+753,94,2026-01-01,Primary,0.660,44.0,NotStarted,Actively participating in class activities,School 15,Pending
+754,94,2026-02-01,Primary,0.790,51.0,InProgress,Good academic engagement this period,School 15,Pending
+756,95,2026-01-01,Primary,0.730,55.0,InProgress,Good academic engagement this period,School 16,Pending
+757,95,2026-02-01,Primary,0.860,62.0,InProgress,Showing progress in reading and comprehension,School 16,Enrolled
+759,96,2025-11-01,Pre-Primary,0.780,75.0,NotStarted,Actively participating in class activities,School 17,Pending
+760,96,2025-12-01,Pre-Primary,0.910,82.0,InProgress,Good academic engagement this period,School 17,Pending
+761,96,2026-01-01,Primary,0.800,66.0,InProgress,Showing progress in reading and comprehension,School 17,Enrolled
+762,96,2026-02-01,Primary,0.930,73.0,NotStarted,Needs additional support in mathematics,School 17,Enrolled
+764,97,2025-11-01,Secondary,0.850,86.0,InProgress,Good academic engagement this period,School 18,Pending
+765,97,2025-12-01,Secondary,0.980,93.0,InProgress,Showing progress in reading and comprehension,School 18,Pending
+766,97,2026-01-01,Secondary,0.870,77.0,NotStarted,Needs additional support in mathematics,School 18,Enrolled
+767,97,2026-02-01,Secondary,0.560,84.0,InProgress,Actively participating in class activities,School 18,Enrolled
+769,98,2026-01-01,Primary,0.940,88.0,InProgress,Actively participating in class activities,School 19,Pending
+770,98,2026-02-01,Primary,0.630,95.0,InProgress,Good academic engagement this period,School 19,Enrolled
+772,99,2026-01-01,Secondary,0.570,99.0,InProgress,Good academic engagement this period,School 20,Pending
+773,99,2026-02-01,Secondary,0.700,45.0,NotStarted,Showing progress in reading and comprehension,School 20,Enrolled
+775,100,2025-12-01,Primary,0.750,65.0,InProgress,Good academic engagement this period,School 1,Pending
+776,100,2026-01-01,Primary,0.640,49.0,NotStarted,Showing progress in reading and comprehension,School 1,Pending
+777,100,2026-02-01,Primary,0.770,56.0,InProgress,Needs additional support in mathematics,School 1,Enrolled
+779,101,2025-12-01,Secondary,0.820,76.0,NotStarted,Showing progress in reading and comprehension,School 2,Pending
+780,101,2026-01-01,Secondary,0.710,60.0,InProgress,Needs additional support in mathematics,School 2,Enrolled
+781,101,2026-02-01,Secondary,0.840,67.0,InProgress,Actively participating in class activities,School 2,Enrolled
+783,102,2025-12-01,Secondary,0.890,87.0,InProgress,Needs additional support in mathematics,School 3,Pending
+784,102,2026-01-01,Secondary,0.780,71.0,InProgress,Actively participating in class activities,School 3,Enrolled
+785,102,2026-02-01,Secondary,0.910,78.0,NotStarted,Good academic engagement this period,School 3,Enrolled
+787,103,2025-12-01,Primary,0.960,98.0,InProgress,Actively participating in class activities,School 4,Pending
+788,103,2026-01-01,Primary,0.850,82.0,NotStarted,Good academic engagement this period,School 4,Enrolled
+789,103,2026-02-01,Primary,0.980,89.0,InProgress,Showing progress in reading and comprehension,School 4,Enrolled
+791,104,2025-11-01,Primary,0.900,41.0,InProgress,Actively participating in class activities,School 5,Pending
+792,104,2025-12-01,Primary,0.590,48.0,NotStarted,Good academic engagement this period,School 5,Pending
+793,104,2026-01-01,Primary,0.920,93.0,InProgress,Showing progress in reading and comprehension,School 5,Enrolled
+794,104,2026-02-01,Primary,0.610,100.0,InProgress,Needs additional support in mathematics,School 5,Enrolled
+796,105,2026-01-01,Primary,0.550,43.0,InProgress,Needs additional support in mathematics,School 6,Pending
+797,105,2026-02-01,Primary,0.680,50.0,NotStarted,Actively participating in class activities,School 6,Enrolled
+799,106,2025-12-01,Primary,0.730,70.0,InProgress,Needs additional support in mathematics,School 7,Pending
+800,106,2026-01-01,Primary,0.620,54.0,NotStarted,Actively participating in class activities,School 7,Enrolled
+801,106,2026-02-01,Primary,0.750,61.0,InProgress,Good academic engagement this period,School 7,Enrolled
+803,107,2025-12-01,Primary,0.800,81.0,NotStarted,Actively participating in class activities,School 8,Pending
+804,107,2026-01-01,Primary,0.690,65.0,InProgress,Good academic engagement this period,School 8,Enrolled
+805,107,2026-02-01,Primary,0.820,72.0,InProgress,Showing progress in reading and comprehension,School 8,Enrolled
+807,108,2025-11-01,Secondary,0.740,85.0,NotStarted,Actively participating in class activities,School 9,Pending
+808,108,2025-12-01,Secondary,0.870,92.0,InProgress,Good academic engagement this period,School 9,Pending
+809,108,2026-01-01,Secondary,0.760,76.0,InProgress,Showing progress in reading and comprehension,School 9,Enrolled
+810,108,2026-02-01,Secondary,0.890,83.0,NotStarted,Needs additional support in mathematics,School 9,Enrolled
+812,109,2025-11-01,Primary,0.810,96.0,InProgress,Good academic engagement this period,School 10,Pending
+813,109,2025-12-01,Primary,0.940,42.0,InProgress,Showing progress in reading and comprehension,School 10,Pending
+814,109,2026-01-01,Primary,0.830,87.0,NotStarted,Needs additional support in mathematics,School 10,Enrolled
+815,109,2026-02-01,Primary,0.960,94.0,InProgress,Actively participating in class activities,School 10,Enrolled
+817,110,2025-11-01,Primary,0.880,46.0,InProgress,Showing progress in reading and comprehension,School 11,Pending
+818,110,2025-12-01,Primary,0.570,53.0,NotStarted,Needs additional support in mathematics,School 11,Pending
+819,110,2026-01-01,Primary,0.900,98.0,InProgress,Actively participating in class activities,School 11,Enrolled
+820,110,2026-02-01,Primary,0.590,44.0,InProgress,Good academic engagement this period,School 11,Enrolled
+822,111,2026-01-01,Primary,0.970,48.0,InProgress,Good academic engagement this period,School 12,Pending
+823,111,2026-02-01,Primary,0.660,55.0,NotStarted,Showing progress in reading and comprehension,School 12,Enrolled
+825,82,2026-02-01,Secondary,0.830,41.0,InProgress,Good academic engagement this period,School 3,Pending
+827,112,2026-02-01,Primary,0.730,66.0,InProgress,Needs additional support in mathematics,School 13,Pending
+829,113,2026-02-01,Primary,0.800,77.0,InProgress,Actively participating in class activities,School 14,Pending
+831,67,2026-02-01,Secondary,0.660,59.0,InProgress,Showing progress in reading and comprehension,School 8,Pending
+833,68,2026-02-01,Primary,0.730,70.0,InProgress,Needs additional support in mathematics,School 9,Pending
+835,69,2026-02-01,Primary,0.800,81.0,NotStarted,Actively participating in class activities,School 10,Pending
+837,70,2026-02-01,Primary,0.870,92.0,InProgress,Good academic engagement this period,School 11,Pending
+839,71,2026-02-01,Primary,0.940,42.0,InProgress,Showing progress in reading and comprehension,School 12,Pending
+841,72,2026-02-01,Primary,0.570,53.0,NotStarted,Needs additional support in mathematics,School 13,Pending
+843,73,2026-02-01,Primary,0.640,64.0,InProgress,Actively participating in class activities,School 14,Pending
+845,74,2026-02-01,Primary,0.710,75.0,InProgress,Good academic engagement this period,School 15,Pending
+847,75,2026-02-01,Primary,0.780,86.0,NotStarted,Showing progress in reading and comprehension,School 16,Pending
+849,76,2026-02-01,Pre-Primary,0.850,97.0,InProgress,Needs additional support in mathematics,School 17,Pending
+851,77,2026-02-01,Primary,0.920,47.0,InProgress,Actively participating in class activities,School 18,Pending
+853,78,2026-02-01,Secondary,0.550,58.0,NotStarted,Good academic engagement this period,School 19,Pending
+855,79,2026-02-01,Primary,0.620,69.0,InProgress,Showing progress in reading and comprehension,School 20,Pending
+857,80,2026-02-01,Primary,0.690,80.0,InProgress,Needs additional support in mathematics,School 1,Pending
+859,81,2026-02-01,Primary,0.760,91.0,NotStarted,Actively participating in class activities,School 2,Pending
