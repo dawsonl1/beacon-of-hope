@@ -2,25 +2,81 @@
 
 ## Table Overview
 
-| Table | Detail | Purpose |
-| :---- | :---- | :---- |
-| safehouses | One row per safehouse | Physical locations where girls are housed and served |
-| partners | One row per partner | Organizations and individuals who deliver services |
-| partner\_assignments | One row per partner × safehouse × program area | Which partners serve which safehouses and in what capacity |
-| supporters | One row per donor/supporter | People and organizations who donate money, goods, time, skills, or advocacy |
-| donations | One row per donation event | Individual donations across all types |
-| in\_kind\_donation\_items | One row per line item | Item-level details for in-kind donations |
-| donation\_allocations | One row per donation × safehouse × program area | How donation value is distributed across safehouses and program areas |
-| residents | One row per resident | Case records for girls currently or formerly served |
-| process\_recordings | One row per counseling session | Dated counseling session notes for each resident |
-| home\_visitations | One row per home/field visit | Home and field visit records for residents and families |
-| education\_records | One row per resident per month | Monthly education progress and attendance |
-| health\_wellbeing\_records | One row per resident per month | Monthly physical health, nutrition, sleep, and energy |
-| intervention\_plans | One row per intervention/goal | Individual intervention plans, goals, and services |
-| incident\_reports | One row per incident | Individual safety and behavioral incident records |
-| social\_media\_posts | One row per social media post | Organization social media activity, content, and engagement metrics (API-like schema) |
-| safehouse\_monthly\_metrics | One row per safehouse per month | Aggregated monthly outcome metrics for each safehouse |
-| public\_impact\_snapshots | One row per month | Anonymized aggregate impact reports for public/donor communication |
+### Core Domain
+
+| Table | Purpose |
+| :---- | :---- |
+| safehouses | Physical locations where girls are housed and served |
+| residents | Case records for girls currently or formerly served |
+| partners | Organizations and individuals who deliver services |
+| partner\_assignments | Which partners serve which safehouses and in what capacity |
+| supporters | People and organizations who donate money, goods, time, skills, or advocacy |
+| donations | Individual donations across all types |
+| in\_kind\_donation\_items | Item-level details for in-kind donations |
+| donation\_allocations | How donation value is distributed across safehouses and program areas |
+
+### Case Management
+
+| Table | Purpose |
+| :---- | :---- |
+| process\_recordings | Dated counseling session notes for each resident |
+| home\_visitations | Home and field visit records for residents and families |
+| education\_records | Monthly education progress and attendance |
+| health\_wellbeing\_records | Monthly physical health, nutrition, sleep, and energy |
+| intervention\_plans | Individual intervention plans, goals, and services |
+| incident\_reports | Individual safety and behavioral incident records |
+| case\_conferences | Team review meetings where multiple residents are discussed |
+| case\_conference\_residents | Residents included in a case conference |
+
+### Staff Workspace
+
+| Table | Purpose |
+| :---- | :---- |
+| staff\_tasks | Tasks assigned to staff from workflows, incidents, and manual creation |
+| calendar\_events | Staff calendar events for visits, sessions, and tasks |
+| user\_safehouses | Staff-to-safehouse assignments controlling row-level data access |
+| donor\_outreaches | Outreach interactions logged for supporter relationship management |
+
+### Social Media Automation
+
+| Table | Purpose |
+| :---- | :---- |
+| automated\_posts | AI-generated posts with approve/reject workflow |
+| social\_media\_settings | Global configuration for the automation system |
+| voice\_guide | Brand voice configuration for AI content generation |
+| content\_facts | Verified facts and statistics for content generation |
+| content\_fact\_candidates | Pending facts from web research agent, awaiting review |
+| content\_talking\_points | Reusable talking points for post generation |
+| media\_library | Photo and media assets for social media content |
+| generated\_graphics | AI-generated branded graphics (1080x1080) |
+| graphic\_templates | Design templates for graphic generation |
+| hashtag\_sets | Curated hashtag collections by platform and pillar |
+| awareness\_dates | Calendar of awareness dates for content planning |
+| cta\_configs | Call-to-action configurations for posts |
+| milestone\_rules | Rules for auto-generating celebration posts at metric thresholds |
+
+### Newsletters
+
+| Table | Purpose |
+| :---- | :---- |
+| newsletters | AI-generated monthly newsletters with approve/send workflow |
+| newsletter\_subscribers | Email subscribers with one-click unsubscribe |
+
+### Machine Learning
+
+| Table | Purpose |
+| :---- | :---- |
+| ml\_predictions | Current prediction scores, overwritten nightly by the ML pipeline |
+| ml\_prediction\_history | Append-only history of all predictions for trend analysis |
+
+### Analytics & Configuration
+
+| Table | Purpose |
+| :---- | :---- |
+| social\_media\_posts | Historical social media activity, content, and engagement metrics |
+| safehouse\_monthly\_metrics | Aggregated monthly outcome metrics for each safehouse |
+| public\_impact\_snapshots | Anonymized aggregate impact reports for public dashboards |
+| app\_settings | Key-value application configuration store |
 
 ---
 
@@ -437,3 +493,445 @@ Monthly anonymized aggregate impact reports intended for public-facing dashboard
 | metric\_payload\_json | string | JSON string of aggregated metrics |
 | is\_published | boolean | Whether the snapshot has been published |
 | published\_at | date | Publication date |
+
+---
+
+## app\_settings
+
+Key-value application configuration store.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| key | string | Setting name (primary key) |
+| value | string | Setting value |
+
+---
+
+## automated\_posts
+
+AI-generated social media posts managed through an approve/reject workflow.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| automated\_post\_id | integer | Primary key |
+| content | text | Post content (may be edited after generation) |
+| original\_content | text | Original AI-generated content before edits |
+| content\_pillar | string | One of: safehouse\_life, the\_problem, the\_solution, donor\_impact, call\_to\_action |
+| source | string | How the post was created (e.g., ai\_generated, manual, milestone, recycled) |
+| status | string | One of: draft, scheduled, ready, published, rejected, snoozed |
+| snoozed\_until | datetime | When a snoozed post should resurface (nullable) |
+| platform | string | Target platform (e.g., instagram, facebook, twitter) |
+| media\_id | integer | FK → media\_library.media\_library\_item\_id (nullable) |
+| generated\_graphic\_id | integer | FK → generated\_graphics.generated\_graphic\_id (nullable) |
+| fact\_id | integer | FK → content\_facts.content\_fact\_id (nullable) |
+| talking\_point\_id | integer | FK → content\_talking\_points.content\_talking\_point\_id (nullable) |
+| scheduled\_at | datetime | Scheduled publication time (nullable) |
+| approved\_by | string | Email of the user who approved (nullable) |
+| approved\_at | datetime | Approval timestamp (nullable) |
+| rejection\_reason | text | Reason for rejection (nullable) |
+| milestone\_rule\_id | integer | FK → milestone\_rules.milestone\_rule\_id (nullable) |
+| recycled\_from\_id | integer | FK → automated\_posts.automated\_post\_id (nullable, self-reference) |
+| engagement\_likes | integer | Likes after publishing (nullable) |
+| engagement\_shares | integer | Shares after publishing (nullable) |
+| engagement\_comments | integer | Comments after publishing (nullable) |
+| engagement\_donations | decimal | Donation value attributed to this post (nullable) |
+| created\_at | datetime | Record creation timestamp |
+| updated\_at | datetime | Last update timestamp |
+
+---
+
+## awareness\_dates
+
+Calendar of awareness dates and campaigns for content planning.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| awareness\_date\_id | integer | Primary key |
+| name | string | Name of the awareness date or campaign |
+| date\_start | date | Start date |
+| date\_end | date | End date |
+| recurrence | string | Recurrence pattern (e.g., annual) |
+| pillar\_emphasis | string | Content pillar to emphasize |
+| description | text | Description of the awareness date |
+| is\_active | boolean | Whether this date is active for content planning |
+| created\_at | datetime | Record creation timestamp |
+
+---
+
+## calendar\_events
+
+Staff calendar events for scheduling visits, sessions, and tasks.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| calendar\_event\_id | integer | Primary key |
+| staff\_user\_id | string | FK → AspNetUsers.Id |
+| safehouse\_id | integer | FK → safehouses.safehouse\_id |
+| resident\_id | integer | FK → residents.resident\_id (nullable) |
+| event\_type | string | One of: HomeVisit, ProcessRecording, CaseConference, Reintegration, Medical, Education, Other |
+| title | string | Event title |
+| description | text | Event description (nullable) |
+| event\_date | date | Date of the event |
+| start\_time | time | Start time (nullable) |
+| end\_time | time | End time (nullable) |
+| recurrence\_rule | string | Recurrence pattern (nullable) |
+| source\_task\_id | integer | FK → staff\_tasks.staff\_task\_id (nullable) |
+| status | string | One of: Scheduled, Completed, Cancelled |
+| created\_at | datetime | Record creation timestamp |
+
+---
+
+## case\_conferences
+
+Team review meetings where multiple residents are discussed.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| conference\_id | integer | Primary key |
+| safehouse\_id | integer | FK → safehouses.safehouse\_id |
+| scheduled\_date | date | Date of the conference |
+| status | string | One of: Scheduled, Completed, Cancelled |
+| notes | text | Conference notes (nullable) |
+| created\_at | datetime | Record creation timestamp |
+
+---
+
+## case\_conference\_residents
+
+Residents included in a case conference.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| id | integer | Primary key |
+| conference\_id | integer | FK → case\_conferences.conference\_id |
+| resident\_id | integer | FK → residents.resident\_id |
+| source | string | How the resident was added (e.g., ml\_flagged, manual) |
+| discussed | boolean | Whether the resident was discussed |
+| notes | text | Discussion notes (nullable) |
+| added\_at | datetime | When the resident was added to the conference |
+
+---
+
+## content\_facts
+
+Verified facts and statistics used in social media content generation.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| content\_fact\_id | integer | Primary key |
+| fact\_text | text | The fact or statistic |
+| source\_name | string | Source attribution |
+| source\_url | string | URL to the source |
+| category | string | Topic category |
+| pillar | string | Content pillar this fact supports |
+| usage\_count | integer | Number of times used in generated posts |
+| is\_active | boolean | Whether available for content generation |
+| added\_by | string | Who added this fact |
+| added\_at | datetime | When the fact was added |
+
+---
+
+## content\_fact\_candidates
+
+Pending facts discovered by the web research agent, awaiting human review.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| content\_fact\_candidate\_id | integer | Primary key |
+| fact\_text | text | The candidate fact |
+| source\_name | string | Source attribution |
+| source\_url | string | URL to the source |
+| category | string | Topic category |
+| search\_query | string | The search query that found this fact |
+| status | string | One of: pending, approved, rejected |
+| reviewed\_by | string | Who reviewed this candidate (nullable) |
+| reviewed\_at | datetime | Review timestamp (nullable) |
+| created\_at | datetime | When the candidate was discovered |
+
+---
+
+## content\_talking\_points
+
+Reusable talking points for social media content generation.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| content\_talking\_point\_id | integer | Primary key |
+| text | text | The talking point |
+| topic | string | Topic category |
+| usage\_count | integer | Number of times used |
+| is\_active | boolean | Whether available for content generation |
+| created\_at | datetime | Record creation timestamp |
+| updated\_at | datetime | Last update timestamp |
+
+---
+
+## cta\_configs
+
+Call-to-action configurations for social media posts.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| cta\_config\_id | integer | Primary key |
+| title | string | CTA title |
+| description | text | CTA description |
+| goal\_amount | decimal | Fundraising goal (nullable) |
+| current\_amount | decimal | Current progress (nullable) |
+| url | string | CTA destination URL |
+| is\_active | boolean | Whether this CTA is active |
+| priority | integer | Display priority |
+| created\_at | datetime | Record creation timestamp |
+| updated\_at | datetime | Last update timestamp |
+
+---
+
+## donor\_outreaches
+
+Outreach interactions logged by staff for supporter relationship management.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| id | integer | Primary key |
+| supporter\_id | integer | FK → supporters.supporter\_id |
+| staff\_email | string | Email of the staff member who made the outreach |
+| staff\_name | string | Name of the staff member |
+| outreach\_type | string | One of: Call, Email, Meeting, Event, Other |
+| note | text | Outreach notes (nullable) |
+| created\_at | datetime | When the outreach was logged |
+
+---
+
+## generated\_graphics
+
+AI-generated branded graphics (1080x1080) for social media posts.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| generated\_graphic\_id | integer | Primary key |
+| file\_path | string | Path to the generated image file |
+| template\_id | integer | FK → graphic\_templates.graphic\_template\_id (nullable) |
+| overlay\_text | text | Text overlay on the graphic |
+| created\_at | datetime | Generation timestamp |
+
+---
+
+## graphic\_templates
+
+Design templates for branded graphic generation.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| graphic\_template\_id | integer | Primary key |
+| name | string | Template name |
+| file\_path | string | Path to the background image |
+| text\_color | string | Text color hex code |
+| text\_position | string | Text positioning (e.g., center, bottom) |
+| suitable\_for | jsonb | Content pillars this template works for |
+| created\_at | datetime | Record creation timestamp |
+
+---
+
+## hashtag\_sets
+
+Curated hashtag collections for social media posts.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| hashtag\_set\_id | integer | Primary key |
+| name | string | Set name |
+| category | string | Topic category |
+| pillar | string | Content pillar |
+| platform | string | Target platform |
+| hashtags | jsonb | Array of hashtag strings |
+| created\_at | datetime | Record creation timestamp |
+| updated\_at | datetime | Last update timestamp |
+
+---
+
+## media\_library
+
+Photo and media assets for social media content.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| media\_library\_item\_id | integer | Primary key |
+| file\_path | string | Path or URL to the media file |
+| thumbnail\_path | string | Path to thumbnail (nullable) |
+| caption | text | Description of the media |
+| activity\_type | string | Type of activity depicted |
+| safehouse\_id | integer | FK → safehouses.safehouse\_id (nullable) |
+| uploaded\_by | string | Who uploaded the media |
+| consent\_confirmed | boolean | Whether consent for use was confirmed |
+| used\_count | integer | Number of times used in posts |
+| uploaded\_at | datetime | Upload timestamp |
+
+---
+
+## milestone\_rules
+
+Rules for automatically generating celebration posts when metrics reach thresholds.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| milestone\_rule\_id | integer | Primary key |
+| name | string | Rule name |
+| metric\_name | string | Metric to monitor (e.g., total\_donations) |
+| threshold\_type | string | Type of threshold (e.g., cumulative, per\_month) |
+| threshold\_value | decimal | Value that triggers the milestone |
+| cooldown\_days | integer | Minimum days between triggers |
+| post\_template | text | Template for the celebration post |
+| last\_triggered\_at | datetime | When this rule last triggered (nullable) |
+| is\_active | boolean | Whether this rule is active |
+| created\_at | datetime | Record creation timestamp |
+| updated\_at | datetime | Last update timestamp |
+
+---
+
+## ml\_predictions
+
+Current ML prediction scores for residents and supporters. Overwritten nightly by the ML pipeline.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| id | bigint | Primary key |
+| entity\_type | string | One of: resident, supporter |
+| entity\_id | integer | ID of the resident or supporter |
+| model\_name | string | Name of the ML model |
+| model\_version | string | Model version identifier |
+| score | decimal | Prediction score (0-100) |
+| score\_label | string | Risk category: Critical, High, Medium, Low |
+| predicted\_at | datetime | When the prediction was generated |
+| metadata | jsonb | Additional model-specific data (feature importances, drivers) |
+
+---
+
+## ml\_prediction\_history
+
+Append-only history of all ML predictions for trend analysis.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| id | bigint | Primary key |
+| entity\_type | string | One of: resident, supporter |
+| entity\_id | integer | ID of the resident or supporter |
+| model\_name | string | Name of the ML model |
+| model\_version | string | Model version identifier |
+| score | decimal | Prediction score (0-100) |
+| score\_label | string | Risk category: Critical, High, Medium, Low |
+| predicted\_at | datetime | When the prediction was generated |
+| metadata | jsonb | Additional model-specific data |
+
+---
+
+## newsletters
+
+AI-generated monthly newsletters with approve/send workflow.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| newsletter\_id | integer | Primary key |
+| subject | string | Email subject line |
+| html\_content | text | Full HTML email body |
+| plain\_text | text | Plain text fallback |
+| status | string | One of: draft, approved, sent |
+| generated\_at | datetime | When the newsletter was generated |
+| approved\_by | string | Who approved it (nullable) |
+| approved\_at | datetime | Approval timestamp (nullable) |
+| sent\_at | datetime | When it was sent (nullable) |
+| recipient\_count | integer | Number of recipients |
+| month\_year | integer | Encoded month/year (YYYYMM) |
+
+---
+
+## newsletter\_subscribers
+
+Email subscribers for monthly newsletters.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| newsletter\_subscriber\_id | integer | Primary key |
+| email | string | Subscriber email |
+| name | string | Subscriber name (nullable) |
+| subscribed\_at | datetime | Subscription timestamp |
+| unsubscribe\_token | string | Token for one-click unsubscribe |
+| is\_active | boolean | Whether the subscription is active |
+
+---
+
+## social\_media\_settings
+
+Global configuration for the social media automation system.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| social\_media\_settings\_id | integer | Primary key |
+| posts\_per\_week | integer | Target number of posts per week |
+| platforms\_active | jsonb | Array of active platform names |
+| timezone | string | Timezone for scheduling |
+| recycling\_enabled | boolean | Whether post recycling is enabled |
+| daily\_generation\_time | string | Time of day for auto-generation |
+| daily\_spend\_cap\_usd | decimal | Daily budget cap for boosted posts |
+| max\_batch\_size | integer | Max posts to generate per batch |
+| notification\_method | string | How to notify on new posts |
+| notification\_email | string | Email for notifications |
+| pillar\_ratio\_safehouse\_life | integer | Content mix percentage for Safehouse Life |
+| pillar\_ratio\_the\_problem | integer | Content mix percentage for The Problem |
+| pillar\_ratio\_the\_solution | integer | Content mix percentage for The Solution |
+| pillar\_ratio\_donor\_impact | integer | Content mix percentage for Donor Impact |
+| pillar\_ratio\_call\_to\_action | integer | Content mix percentage for Call to Action |
+| recycling\_cooldown\_days | integer | Days before a post can be recycled |
+| recycling\_min\_engagement | integer | Minimum engagement to qualify for recycling |
+| updated\_at | datetime | Last update timestamp |
+
+---
+
+## staff\_tasks
+
+Tasks assigned to staff members, generated automatically from incidents, visitations, and case management workflows.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| staff\_task\_id | integer | Primary key |
+| staff\_user\_id | string | FK → AspNetUsers.Id |
+| resident\_id | integer | FK → residents.resident\_id (nullable) |
+| safehouse\_id | integer | FK → safehouses.safehouse\_id |
+| task\_type | string | One of: ScheduleDoctor, InputHealthRecords, UpdateEducation, ScheduleHomeVisit, ScheduleReintegration, IncidentFollowUp, VisitationFollowUp, CaseConferencePrep, Manual |
+| title | string | Task title |
+| description | text | Task description (nullable) |
+| context\_json | jsonb | Additional context data (nullable) |
+| status | string | One of: Pending, Completed, Dismissed |
+| snooze\_until | datetime | Snoozed until this time (nullable) |
+| due\_trigger\_date | datetime | When the task was triggered (nullable) |
+| created\_at | datetime | Record creation timestamp |
+| completed\_at | datetime | Completion timestamp (nullable) |
+| source\_entity\_type | string | Source entity type (e.g., IncidentReport, HomeVisitation) (nullable) |
+| source\_entity\_id | integer | ID of the source entity (nullable) |
+
+---
+
+## user\_safehouses
+
+Many-to-many relationship between staff users and their assigned safehouses. Controls row-level data access.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| user\_safehouse\_id | integer | Primary key |
+| user\_id | string | FK → AspNetUsers.Id |
+| safehouse\_id | integer | FK → safehouses.safehouse\_id |
+
+---
+
+## voice\_guide
+
+Brand voice configuration for AI content generation.
+
+| Field | Type | Description |
+| :---- | :---- | :---- |
+| voice\_guide\_id | integer | Primary key |
+| org\_description | text | Organization description for AI context |
+| tone\_description | text | Desired tone of voice |
+| preferred\_terms | jsonb | Terms to prefer in generated content |
+| avoided\_terms | jsonb | Terms to avoid |
+| structural\_rules | text | Structural guidelines for posts |
+| visual\_rules | text | Visual style guidelines |
+| updated\_at | datetime | Last update timestamp |
