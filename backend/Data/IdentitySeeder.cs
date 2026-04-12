@@ -25,29 +25,40 @@ public static class IdentitySeeder
                 await roleManager.CreateAsync(new IdentityRole(role));
         }
 
-        if (env.IsDevelopment())
+        // Core demo accounts (all environments — needed for nightly reset in production)
+        await CreateUserIfNotExists(userManager, "admin@beaconofhope.org", "Admin",
+            "Director", "Reyes", "Test1234!@#$%^", null);
+        await CreateUserIfNotExists(userManager, "staff@beaconofhope.org", "Staff",
+            "Elena", "Reyes", "Test1234!@#$%^", null);
+        await CreateUserIfNotExists(userManager, "donor@beaconofhope.org", "Donor",
+            "Maria", "Chen", "Test1234!@#$%^", null);
+        await CreateUserIfNotExists(userManager, "social@beaconofhope.org", "SocialMediaManager",
+            "Rosa", "Santos", "Test1234!@#$%^", null);
+
+        // Staff social worker accounts
+        var staffAccounts = new (string code, string first, string last)[]
         {
-            await CreateUserIfNotExists(userManager, "admin@beaconofhope.org", "Admin",
-                "Director", "Reyes", "Test1234!@#$", null);
-            await CreateUserIfNotExists(userManager, "staff@beaconofhope.org", "Staff",
-                "Elena", "Reyes", "Test1234!@#$", null);
-            await CreateUserIfNotExists(userManager, "donor@beaconofhope.org", "Donor",
-                "Maria", "Chen", "Test1234!@#$", 1);
-            await CreateUserIfNotExists(userManager, "social@beaconofhope.org", "SocialMediaManager",
-                "Rosa", "Santos", "Test1234!@#$", null);
+            ("sw01", "Maria", "Santos"), ("sw02", "Elena", "Cruz"),
+            ("sw03", "Rosa", "Garcia"), ("sw04", "Ana", "Reyes"),
+            ("sw05", "Carmen", "Bautista"), ("sw06", "Linda", "Perez"),
+            ("sw07", "Grace", "Flores"), ("sw08", "Joy", "Rivera"),
+            ("sw09", "Faith", "Torres"), ("sw10", "Hope", "Ramos"),
+            ("sw11", "Liza", "Mendoza"), ("sw13", "Diana", "Castro"),
+            ("sw14", "Sarah", "Aquino"), ("sw15", "Ruth", "Villanueva"),
+            ("sw16", "Esther", "Soriano"), ("sw17", "Mercy", "Dela Cruz"),
+            ("sw19", "Alma", "Pascual"), ("sw20", "Nina", "Cortez"),
+        };
+        foreach (var (code, first, last) in staffAccounts)
+            await CreateUserIfNotExists(userManager, $"{code}@beaconofhope.org", "Staff",
+                first, last, "Test1234!@#$%^", null);
 
-            // Deletable test donor
-            await SeedDeleteTestDonorAsync(services, userManager);
-        }
-
-        await SeedDonorAccountsAsync(services, userManager);
     }
 
     /// <summary>
     /// One-time seed: creates a Donor account for every Supporter who has
     /// at least one Donation but does not yet have a linked ApplicationUser.
     /// </summary>
-    private static async Task SeedDonorAccountsAsync(
+    public static async Task SeedDonorAccountsAsync(
         IServiceProvider services,
         UserManager<ApplicationUser> userManager)
     {
@@ -78,7 +89,7 @@ public static class IdentitySeeder
                 "Donor",
                 supporter.FirstName ?? "",
                 supporter.LastName ?? "",
-                "Test1234!@#$",
+                "Test1234!@#$%^",
                 supporter.SupporterId);
         }
     }
@@ -130,7 +141,7 @@ public static class IdentitySeeder
         // Create user account linked to supporter
         await CreateUserIfNotExists(
             userManager, "delete@gmail.com", "Donor",
-            "Delete", "Me", "Test1234!@#$", supporter.SupporterId);
+            "Delete", "Me", "Test1234!@#$%^", supporter.SupporterId);
     }
 
     private static async Task CreateUserIfNotExists(

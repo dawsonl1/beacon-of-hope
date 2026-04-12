@@ -46,7 +46,7 @@ public class RemainingGapTests : IClassFixture<TestWebApplicationFactory>
         var resp = await client.PostAsJsonAsync("/api/auth/login", new
         {
             email = "nobody@nowhere.com",
-            password = "Test1234!@#$",
+            password = "Test1234!@#$%^",
             rememberMe = false
         });
         resp.StatusCode.Should().Be(HttpStatusCode.BadRequest);

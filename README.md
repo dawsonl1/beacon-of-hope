@@ -236,7 +236,7 @@ uvicorn vanna_service.app:app --port 8002
 
 ## Demo Credentials
 
-All accounts use password: `Test1234!@#$`
+All accounts use password: `Test1234!@#$%^`
 
 | Role | Email | Access |
 |------|-------|--------|

@@ -68,7 +68,7 @@ public static class SeedEndpoints
                     FirstName = names.first, LastName = names.last,
                     EmailConfirmed = true
                 };
-                var createResult = await userManager.CreateAsync(user, "Test1234!@#$");
+                var createResult = await userManager.CreateAsync(user, "Test1234!@#$%^");
                 if (createResult.Succeeded)
                 {
                     await userManager.AddToRoleAsync(user, "Staff");

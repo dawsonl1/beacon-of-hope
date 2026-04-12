@@ -30,7 +30,7 @@ public class UserSafehouseAndEdgeCaseTests : IClassFixture<TestWebApplicationFac
         var resp = await client.PostAsJsonAsync("/api/admin/users", new
         {
             email = $"test-sh-{Guid.NewGuid():N}@test.org",
-            password = "Test1234!@#$",
+            password = "Test1234!@#$%^",
             role = "Staff",
             firstName = "Test",
             lastName = "Safehouses",

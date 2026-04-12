@@ -8,7 +8,7 @@ public static class AuthHelper
     private const string StaffEmail = "staff@beaconofhope.org";
     private const string DonorEmail = "donor@beaconofhope.org";
     private const string SocialMediaManagerEmail = "social@beaconofhope.org";
-    private const string Password = "Test1234!@#$";
+    private const string Password = "Test1234!@#$%^";
 
     public static HttpClient GetAnonymousClient(TestWebApplicationFactory factory)
     {

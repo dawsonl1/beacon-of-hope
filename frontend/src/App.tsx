@@ -31,6 +31,7 @@ import CookiePreferencesModal from './components/CookiePreferencesModal';
 import AnalyticsLoader from './components/AnalyticsLoader';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
+import DemoBanner from './components/DemoBanner';
 import ChatWidget from './components/ChatWidget';
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
@@ -137,6 +138,7 @@ function App() {
     <AuthProvider>
       <CookieConsentProvider>
         <BrowserRouter>
+          <DemoBanner />
           <ScrollToTop />
           <Routes>
             {/* Public pages */}

@@ -23,7 +23,7 @@ public class LoginTests : IClassFixture<TestWebApplicationFactory>
         var response = await client.PostAsJsonAsync("/api/auth/login", new
         {
             email = "admin@beaconofhope.org",
-            password = "Test1234!@#$",
+            password = "Test1234!@#$%^",
             rememberMe = false
         });
 
@@ -55,7 +55,7 @@ public class LoginTests : IClassFixture<TestWebApplicationFactory>
         var response = await client.PostAsJsonAsync("/api/auth/login", new
         {
             email = "nonexistent@example.com",
-            password = "Test1234!@#$",
+            password = "Test1234!@#$%^",
             rememberMe = false
         });
 
@@ -71,7 +71,7 @@ public class LoginTests : IClassFixture<TestWebApplicationFactory>
         var response = await client.PostAsJsonAsync("/api/auth/login", new
         {
             email = "",
-            password = "Test1234!@#$",
+            password = "Test1234!@#$%^",
             rememberMe = false
         });
 
@@ -99,7 +99,7 @@ public class LoginTests : IClassFixture<TestWebApplicationFactory>
         var response = await client.PostAsJsonAsync("/api/auth/login", new
         {
             email = "admin@beaconofhope.org",
-            password = "Test1234!@#$",
+            password = "Test1234!@#$%^",
             rememberMe = false
         });
 
@@ -155,7 +155,7 @@ public class LoginTests : IClassFixture<TestWebApplicationFactory>
         var response = await client.PostAsJsonAsync("/api/auth/login", new
         {
             email = "staff@beaconofhope.org",
-            password = "Test1234!@#$",
+            password = "Test1234!@#$%^",
             rememberMe = false
         });
 
@@ -172,7 +172,7 @@ public class LoginTests : IClassFixture<TestWebApplicationFactory>
         var response = await client.PostAsJsonAsync("/api/auth/login", new
         {
             email = "donor@beaconofhope.org",
-            password = "Test1234!@#$",
+            password = "Test1234!@#$%^",
             rememberMe = false
         });
 

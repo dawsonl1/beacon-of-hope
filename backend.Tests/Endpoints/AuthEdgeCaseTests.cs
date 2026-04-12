@@ -39,7 +39,7 @@ public class AuthEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
         var resp = await client.PostAsJsonAsync("/api/auth/login", new
         {
             email = "admin@beaconofhope.org",
-            password = "Test1234!@#$",
+            password = "Test1234!@#$%^",
             rememberMe = false
         });
         // Should not return OK — either 400 (BadRequest) or 423 (Locked)
@@ -62,7 +62,7 @@ public class AuthEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
             firstName = "New",
             lastName = "User",
             email,
-            password = "Test1234!@#$"
+            password = "Test1234!@#$%^"
         });
         resp.StatusCode.Should().Be(HttpStatusCode.OK);
         var body = await resp.Content.ReadFromJsonAsync<JsonElement>();
@@ -78,7 +78,7 @@ public class AuthEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
             firstName = "Dup",
             lastName = "User",
             email = "admin@beaconofhope.org",
-            password = "Test1234!@#$"
+            password = "Test1234!@#$%^"
         });
         resp.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -106,7 +106,7 @@ public class AuthEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
             firstName = "No",
             lastName = "Email",
             email = "",
-            password = "Test1234!@#$"
+            password = "Test1234!@#$%^"
         });
         resp.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -125,7 +125,7 @@ public class AuthEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
         var createResp = await client.PostAsJsonAsync("/api/admin/users", new
         {
             email,
-            password = "Test1234!@#$",
+            password = "Test1234!@#$%^",
             role = "Staff",
             firstName = "Lifecycle",
             lastName = "Test"

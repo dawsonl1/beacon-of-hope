@@ -1,6 +1,6 @@
 # Generated Account Credentials
 
-All auto-generated accounts use the same password: `Test1234!@#$`
+All auto-generated accounts use the same password: `Test1234!@#$%^`
 
 ## Staff / Admin Accounts (Dev Seeds)
 

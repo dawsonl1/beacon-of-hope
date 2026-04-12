@@ -134,6 +134,11 @@ using (var scope = app.Services.CreateScope())
     try { await DataSeeder.SeedAsync(scope.ServiceProvider); }
     catch (Exception ex) { Console.WriteLine($"Data seeder skipped: {ex.Message}"); }
 
+    // Create donor user accounts from seeded supporter data (must run after DataSeeder)
+    try { await IdentitySeeder.SeedDonorAccountsAsync(scope.ServiceProvider,
+            scope.ServiceProvider.GetRequiredService<UserManager<backend.Models.ApplicationUser>>()); }
+    catch (Exception ex) { Console.WriteLine($"Donor accounts skipped: {ex.Message}"); }
+
     try { await DataSeeder.ResetSequencesAsync(db); }
     catch (Exception ex) { Console.WriteLine($"Sequence reset skipped: {ex.Message}"); }
 }

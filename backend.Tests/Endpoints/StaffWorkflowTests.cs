@@ -59,7 +59,7 @@ public class StaffWorkflowTests : IClassFixture<TestWebApplicationFactory>
         var response = await client.PostAsJsonAsync("/api/admin/users", new
         {
             email = "newuser@test.com",
-            password = "Test1234!@#$",
+            password = "Test1234!@#$%^",
             role = "Staff"
         });
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);

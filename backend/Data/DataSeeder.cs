@@ -63,30 +63,44 @@ public static class DataSeeder
         var connString = db.Database.GetConnectionString()!;
 
         // 1. Bulk-import all direct-copy tables via COPY FROM STDIN
-        await using var conn = new NpgsqlConnection(connString);
-        await conn.OpenAsync();
-
+        // Each table gets its own connection to isolate failures
         foreach (var table in DirectCopyTables)
         {
             var csvPath = Path.Combine(seedDir, $"{table}.csv");
             if (!File.Exists(csvPath)) continue;
 
-            var headers = (await File.ReadAllLinesAsync(csvPath))[0];
-            await using var writer = await conn.BeginTextImportAsync(
-                $"COPY {table} ({headers}) FROM STDIN WITH (FORMAT csv, HEADER true)");
-            await writer.WriteAsync(await File.ReadAllTextAsync(csvPath));
+            try
+            {
+                await using var conn = new NpgsqlConnection(connString);
+                await conn.OpenAsync();
 
-            var lineCount = (await File.ReadAllLinesAsync(csvPath)).Length - 1;
-            Console.WriteLine($"  {table}: {lineCount} rows");
+                // Disable FK checks (requires superuser, granted by reset-demo.sh)
+                try { await new NpgsqlCommand("SET session_replication_role = 'replica'", conn).ExecuteNonQueryAsync(); }
+                catch { /* non-superuser fallback */ }
+
+                var rawHeaders = (await File.ReadAllLinesAsync(csvPath))[0];
+                var quotedHeaders = string.Join(",", rawHeaders.Split(',').Select(h => $"\"{h.Trim()}\""));
+                await using var writer = await conn.BeginTextImportAsync(
+                    $"COPY {table} ({quotedHeaders}) FROM STDIN WITH (FORMAT csv, HEADER true)");
+                await writer.WriteAsync(await File.ReadAllTextAsync(csvPath));
+
+                var lineCount = (await File.ReadAllLinesAsync(csvPath)).Length - 1;
+                Console.WriteLine($"  {table}: {lineCount} rows");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"  {table}: SKIPPED ({ex.Message.Split('\n')[0]})");
+            }
         }
 
         // 2. Import user-linked tables (CSV has email, DB needs user ID)
+        await using var userConn = new NpgsqlConnection(connString);
+        await userConn.OpenAsync();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<backend.Models.ApplicationUser>>();
-        await ImportUserSafehousesAsync(conn, seedDir, userManager);
-        await ImportStaffTasksAsync(conn, seedDir, userManager);
-        await ImportCalendarEventsAsync(conn, seedDir, userManager);
-
-        await conn.CloseAsync();
+        await ImportUserSafehousesAsync(userConn, seedDir, userManager);
+        await ImportStaffTasksAsync(userConn, seedDir, userManager);
+        await ImportCalendarEventsAsync(userConn, seedDir, userManager);
+        await userConn.CloseAsync();
 
         // 3. Reset all sequences to match imported data
         await ResetSequencesAsync(db);
