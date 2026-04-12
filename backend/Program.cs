@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
-using Azure.Storage.Blobs;
 using backend.Data;
 using backend.DTOs;
 using backend.Endpoints;
@@ -900,11 +899,9 @@ app.MapPost("/api/social/media/upload", async (HttpContext ctx, AppDbContext db,
         if (!allowedTypes.Contains(file.ContentType.ToLowerInvariant()))
             return Results.BadRequest(new { error = "Only JPEG, PNG, WebP, and GIF images are allowed." });
 
-        // Save and compress
+        // Save and compress to local disk (served by Nginx)
         var fileName = $"{Guid.NewGuid()}.jpg";
         var thumbName = $"thumb_{fileName}";
-        var blobConnStr = builder.Configuration["AzureStorage:ConnectionString"] ?? "";
-        var blobContainer = builder.Configuration["AzureStorage:ContainerName"] ?? "media";
 
         using var image = await SixLabors.ImageSharp.Image.LoadAsync(file.OpenReadStream());
 
@@ -916,37 +913,7 @@ app.MapPost("/api/social/media/upload", async (HttpContext ctx, AppDbContext db,
                 Mode = SixLabors.ImageSharp.Processing.ResizeMode.Max
             }));
 
-        if (!string.IsNullOrEmpty(blobConnStr))
         {
-            // Production: upload to Azure Blob Storage
-            var blobService = new BlobServiceClient(blobConnStr);
-            var container = blobService.GetBlobContainerClient(blobContainer);
-
-            // Upload full image
-            using var fullStream = new MemoryStream();
-            await image.SaveAsJpegAsync(fullStream, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder { Quality = 80 });
-            fullStream.Position = 0;
-            var fullBlob = container.GetBlobClient($"library/{fileName}");
-            await fullBlob.UploadAsync(fullStream, new Azure.Storage.Blobs.Models.BlobHttpHeaders { ContentType = "image/jpeg" });
-
-            // Upload thumbnail
-            image.Mutate(x => x.Resize(new SixLabors.ImageSharp.Processing.ResizeOptions
-            {
-                Size = new SixLabors.ImageSharp.Size(400, 0),
-                Mode = SixLabors.ImageSharp.Processing.ResizeMode.Max
-            }));
-            using var thumbStream = new MemoryStream();
-            await image.SaveAsJpegAsync(thumbStream, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder { Quality = 75 });
-            thumbStream.Position = 0;
-            var thumbBlob = container.GetBlobClient($"library/{thumbName}");
-            await thumbBlob.UploadAsync(thumbStream, new Azure.Storage.Blobs.Models.BlobHttpHeaders { ContentType = "image/jpeg" });
-
-            filePath = fullBlob.Uri.ToString();
-            thumbnailPath = thumbBlob.Uri.ToString();
-        }
-        else
-        {
-            // Dev: save to local disk
             var mediaDir = Path.Combine(env.WebRootPath ?? Path.Combine(env.ContentRootPath, "wwwroot"), "media", "library");
             Directory.CreateDirectory(mediaDir);
             var fullPath = Path.Combine(mediaDir, fileName);

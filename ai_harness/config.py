@@ -24,9 +24,6 @@ DATABASE_URL_READONLY = os.environ.get("DATABASE_URL_READONLY", "")
 # verify_key() will reject all requests if this is empty.
 HARNESS_API_KEY = os.environ.get("HARNESS_API_KEY", "")
 
-# Azure Blob Storage (production). When set, graphics upload to blob instead of local disk.
-AZURE_STORAGE_CONNECTION_STRING = os.environ.get("AZURE_STORAGE_CONNECTION_STRING", "")
-AZURE_STORAGE_CONTAINER = os.environ.get("AZURE_STORAGE_CONTAINER", "media")
 
 MAX_TOOL_ROUNDS = 10
 
