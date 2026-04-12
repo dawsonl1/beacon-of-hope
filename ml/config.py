@@ -22,7 +22,7 @@ DATA_FREEZE = pd.Timestamp("2026-02-16")
 # ── Project paths ─────────────────────────────────────────────────────────────
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]  # root of the repo
-MODELS_DIR   = PROJECT_ROOT / "models"              # where .sav files live
+ML_DIR       = PROJECT_ROOT / "ml"                  # each pipeline stores its own artifacts
 
 # Load .env files for local runs (repo root first, then ml/.env).
 load_dotenv(PROJECT_ROOT / ".env")
@@ -50,43 +50,43 @@ TABLE_ML_PREDICTIONS         = "ml_predictions"          # current score — ups
 TABLE_ML_PREDICTION_HISTORY  = "ml_prediction_history"   # all scores ever — append only
 
 # ── Model file paths ───────────────────────────────────────────────────────────
-# Each model lives in its own subdirectory: models/<name>/model.sav, metadata.json, metrics.json
-MODEL_REINTEGRATION_READINESS = MODELS_DIR / "reintegration-readiness" / "model.sav"
-MODEL_REINTEGRATION_DRIVERS   = MODELS_DIR / "reintegration-drivers"   / "model.sav"
-MODEL_DONOR_CHURN             = MODELS_DIR / "donor-churn"             / "model.sav"
-MODEL_DONOR_CHURN_DRIVERS     = MODELS_DIR / "donor-churn-drivers"     / "model.sav"
-MODEL_SOCIAL_CONTENT          = MODELS_DIR / "social-media-content"    / "model.sav"
-MODEL_SOCIAL_TIMING           = MODELS_DIR / "social-media-timing"     / "model.sav"
-MODEL_INCIDENT_WARNING        = MODELS_DIR / "incident-early-warning"  / "model.sav"
-MODEL_INCIDENT_RISK_DRIVERS   = MODELS_DIR / "incident-risk-drivers"   / "model.sav"
+# Each pipeline stores its own artifacts: ml/<pipeline>/model.sav, model.json, metadata.json
+MODEL_REINTEGRATION_READINESS = ML_DIR / "reintegration_readiness" / "model.sav"
+MODEL_REINTEGRATION_DRIVERS   = ML_DIR / "reintegration_drivers"   / "model.sav"
+MODEL_DONOR_CHURN             = ML_DIR / "donor_churn"             / "model.sav"
+MODEL_DONOR_CHURN_DRIVERS     = ML_DIR / "donor_churn_drivers"     / "model.sav"
+MODEL_SOCIAL_CONTENT          = ML_DIR / "social_media_content"    / "model.sav"
+MODEL_SOCIAL_TIMING           = ML_DIR / "social_media_timing"     / "model.sav"
+MODEL_INCIDENT_WARNING        = ML_DIR / "incident_early_warning"  / "model.sav"
+MODEL_INCIDENT_RISK_DRIVERS   = ML_DIR / "incident_risk_drivers"   / "model.sav"
 
-META_REINTEGRATION_READINESS  = MODELS_DIR / "reintegration-readiness" / "metadata.json"
-META_REINTEGRATION_DRIVERS    = MODELS_DIR / "reintegration-drivers"   / "metadata.json"
-META_DONOR_CHURN              = MODELS_DIR / "donor-churn"             / "metadata.json"
-META_DONOR_CHURN_DRIVERS      = MODELS_DIR / "donor-churn-drivers"     / "metadata.json"
-META_SOCIAL_CONTENT           = MODELS_DIR / "social-media-content"    / "metadata.json"
-META_SOCIAL_TIMING            = MODELS_DIR / "social-media-timing"     / "metadata.json"
-META_INCIDENT_WARNING         = MODELS_DIR / "incident-early-warning"  / "metadata.json"
-META_INCIDENT_RISK_DRIVERS    = MODELS_DIR / "incident-risk-drivers"   / "metadata.json"
+META_REINTEGRATION_READINESS  = ML_DIR / "reintegration_readiness" / "metadata.json"
+META_REINTEGRATION_DRIVERS    = ML_DIR / "reintegration_drivers"   / "metadata.json"
+META_DONOR_CHURN              = ML_DIR / "donor_churn"             / "metadata.json"
+META_DONOR_CHURN_DRIVERS      = ML_DIR / "donor_churn_drivers"     / "metadata.json"
+META_SOCIAL_CONTENT           = ML_DIR / "social_media_content"    / "metadata.json"
+META_SOCIAL_TIMING            = ML_DIR / "social_media_timing"     / "metadata.json"
+META_INCIDENT_WARNING         = ML_DIR / "incident_early_warning"  / "metadata.json"
+META_INCIDENT_RISK_DRIVERS    = ML_DIR / "incident_risk_drivers"   / "metadata.json"
 
-METRICS_REINTEGRATION_READINESS = MODELS_DIR / "reintegration-readiness" / "metrics.json"
-METRICS_REINTEGRATION_DRIVERS   = MODELS_DIR / "reintegration-drivers"   / "metrics.json"
-METRICS_DONOR_CHURN             = MODELS_DIR / "donor-churn"             / "metrics.json"
-METRICS_DONOR_CHURN_DRIVERS     = MODELS_DIR / "donor-churn-drivers"     / "metrics.json"
-METRICS_SOCIAL_CONTENT          = MODELS_DIR / "social-media-content"    / "metrics.json"
-METRICS_SOCIAL_TIMING           = MODELS_DIR / "social-media-timing"     / "metrics.json"
-METRICS_INCIDENT_WARNING        = MODELS_DIR / "incident-early-warning"  / "metrics.json"
-METRICS_INCIDENT_RISK_DRIVERS   = MODELS_DIR / "incident-risk-drivers"   / "metrics.json"
+METRICS_REINTEGRATION_READINESS = ML_DIR / "reintegration_readiness" / "metrics.json"
+METRICS_REINTEGRATION_DRIVERS   = ML_DIR / "reintegration_drivers"   / "metrics.json"
+METRICS_DONOR_CHURN             = ML_DIR / "donor_churn"             / "metrics.json"
+METRICS_DONOR_CHURN_DRIVERS     = ML_DIR / "donor_churn_drivers"     / "metrics.json"
+METRICS_SOCIAL_CONTENT          = ML_DIR / "social_media_content"    / "metrics.json"
+METRICS_SOCIAL_TIMING           = ML_DIR / "social_media_timing"     / "metrics.json"
+METRICS_INCIDENT_WARNING        = ML_DIR / "incident_early_warning"  / "metrics.json"
+METRICS_INCIDENT_RISK_DRIVERS   = ML_DIR / "incident_risk_drivers"   / "metrics.json"
 
 # combined per-pipeline model run files (metadata + metrics, append-only runs)
-MODEL_RUNS_REINTEGRATION_READINESS = MODELS_DIR / "reintegration-readiness" / "model.json"
-MODEL_RUNS_REINTEGRATION_DRIVERS   = MODELS_DIR / "reintegration-drivers"   / "model.json"
-MODEL_RUNS_DONOR_CHURN             = MODELS_DIR / "donor-churn"             / "model.json"
-MODEL_RUNS_DONOR_CHURN_DRIVERS     = MODELS_DIR / "donor-churn-drivers"     / "model.json"
-MODEL_RUNS_SOCIAL_CONTENT          = MODELS_DIR / "social-media-content"    / "model.json"
-MODEL_RUNS_SOCIAL_TIMING           = MODELS_DIR / "social-media-timing"     / "model.json"
-MODEL_RUNS_INCIDENT_WARNING        = MODELS_DIR / "incident-early-warning"  / "model.json"
-MODEL_RUNS_INCIDENT_RISK_DRIVERS   = MODELS_DIR / "incident-risk-drivers"   / "model.json"
+MODEL_RUNS_REINTEGRATION_READINESS = ML_DIR / "reintegration_readiness" / "model.json"
+MODEL_RUNS_REINTEGRATION_DRIVERS   = ML_DIR / "reintegration_drivers"   / "model.json"
+MODEL_RUNS_DONOR_CHURN             = ML_DIR / "donor_churn"             / "model.json"
+MODEL_RUNS_DONOR_CHURN_DRIVERS     = ML_DIR / "donor_churn_drivers"     / "model.json"
+MODEL_RUNS_SOCIAL_CONTENT          = ML_DIR / "social_media_content"    / "model.json"
+MODEL_RUNS_SOCIAL_TIMING           = ML_DIR / "social_media_timing"     / "model.json"
+MODEL_RUNS_INCIDENT_WARNING        = ML_DIR / "incident_early_warning"  / "model.json"
+MODEL_RUNS_INCIDENT_RISK_DRIVERS   = ML_DIR / "incident_risk_drivers"   / "model.json"
 
 # ── Model name constants ───────────────────────────────────────────────────────
 # These are the values written to the model_name column in ml_predictions.

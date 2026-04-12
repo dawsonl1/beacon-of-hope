@@ -1,6 +1,6 @@
 # Beacon of Hope
 
-A full-stack case management, donor relations, and AI-powered social media platform for a nonprofit supporting survivors of abuse and trafficking across 9 safehouses in the Philippines.
+A full-stack case management, donor relations, and AI-powered social media platform for a nonprofit supporting survivors of abuse and trafficking across 9 safehouses in Guam.
 
 **Live:** [beaconofhope.dawsonsprojects.com](https://beaconofhope.dawsonsprojects.com)
 
@@ -161,11 +161,16 @@ beacon-of-hope/
 │   └── graphics.py       Branded graphic generation
 ├── vanna_service/        Natural language SQL chatbot
 ├── ml/                   Machine learning pipeline (8 models)
-│   ├── reintegration/    Readiness prediction + drivers
-│   ├── churn/            Donor churn prediction + drivers
-│   ├── incident/         Early warning + risk drivers
-│   └── social_media/     Timing optimization + content effectiveness
-├── models/               Trained model artifacts (.sav)
+│   ├── reintegration_readiness/   Readiness prediction (etl, train, infer, model.sav)
+│   ├── reintegration_drivers/     Readiness drivers (etl, train, infer, model.sav)
+│   ├── donor_churn/               Churn prediction (etl, train, infer, model.sav)
+│   ├── donor_churn_drivers/       Churn drivers (etl, train, infer, model.sav)
+│   ├── incident_early_warning/    Incident risk (etl, train, infer, model.sav)
+│   ├── incident_risk_drivers/     Incident drivers (etl, train, infer, model.sav)
+│   ├── social_media_content/      Content effectiveness (etl, train, infer, model.sav)
+│   ├── social_media_timing/       Timing optimization (etl, train, infer, model.sav)
+│   ├── notebooks/                 Jupyter exploration notebooks
+│   └── docs/                      Pipeline documentation
 ├── docs/                 Architecture, schemas, security documentation
 └── .github/workflows/    CI/CD pipelines
 ```
