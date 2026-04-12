@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
@@ -93,14 +92,38 @@ public static class DataSeeder
             }
         }
 
-        // 2. Import user-linked tables (CSV has email, DB needs user ID)
-        await using var userConn = new NpgsqlConnection(connString);
-        await userConn.OpenAsync();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<backend.Models.ApplicationUser>>();
-        await ImportUserSafehousesAsync(userConn, seedDir, userManager);
-        await ImportStaffTasksAsync(userConn, seedDir, userManager);
-        await ImportCalendarEventsAsync(userConn, seedDir, userManager);
-        await userConn.CloseAsync();
+        // 2. Import user-linked tables via temp table + COPY (email → user ID resolution in SQL)
+        await ImportViaTemp(connString, seedDir, "user_safehouses",
+            "user_safehouse_id int, user_email text, safehouse_id int",
+            @"INSERT INTO user_safehouses (user_safehouse_id, user_id, safehouse_id)
+              SELECT t.user_safehouse_id, u.""Id"", t.safehouse_id
+              FROM _tmp t JOIN ""AspNetUsers"" u ON u.""NormalizedEmail"" = upper(t.user_email)");
+
+        await ImportViaTemp(connString, seedDir, "staff_tasks",
+            @"staff_task_id int, staff_email text, resident_id int, safehouse_id int, task_type text,
+              title text, description text, context_json jsonb, status text,
+              snooze_until timestamptz, due_trigger_date timestamptz, created_at timestamptz,
+              completed_at timestamptz, source_entity_type text, source_entity_id int",
+            @"INSERT INTO staff_tasks (staff_task_id, staff_user_id, resident_id, safehouse_id, task_type,
+                  title, description, context_json, status, snooze_until, due_trigger_date,
+                  created_at, completed_at, source_entity_type, source_entity_id)
+              SELECT t.staff_task_id, u.""Id"", t.resident_id, t.safehouse_id, t.task_type,
+                  t.title, t.description, t.context_json, t.status, t.snooze_until, t.due_trigger_date,
+                  t.created_at, t.completed_at, t.source_entity_type, t.source_entity_id
+              FROM _tmp t JOIN ""AspNetUsers"" u ON u.""NormalizedEmail"" = upper(t.staff_email)");
+
+        await ImportViaTemp(connString, seedDir, "calendar_events",
+            @"calendar_event_id int, staff_email text, safehouse_id int, resident_id int,
+              event_type text, title text, description text, event_date date,
+              start_time time, end_time time, recurrence_rule text, source_task_id int,
+              status text, created_at timestamptz",
+            @"INSERT INTO calendar_events (calendar_event_id, staff_user_id, safehouse_id, resident_id,
+                  event_type, title, description, event_date, start_time, end_time,
+                  recurrence_rule, source_task_id, status, created_at)
+              SELECT t.calendar_event_id, u.""Id"", t.safehouse_id, t.resident_id,
+                  t.event_type, t.title, t.description, t.event_date, t.start_time, t.end_time,
+                  t.recurrence_rule, t.source_task_id, t.status, t.created_at
+              FROM _tmp t JOIN ""AspNetUsers"" u ON u.""NormalizedEmail"" = upper(t.staff_email)");
 
         // 3. Reset all sequences to match imported data
         await ResetSequencesAsync(db);
@@ -108,136 +131,40 @@ public static class DataSeeder
         Console.WriteLine("Seed complete.");
     }
 
-    private static async Task ImportUserSafehousesAsync(NpgsqlConnection conn, string seedDir,
-        UserManager<backend.Models.ApplicationUser> userManager)
+    /// <summary>
+    /// Imports a CSV with an email column into a table that expects a user ID.
+    /// Uses COPY into a temp table (handles all CSV quoting natively in PostgreSQL),
+    /// then INSERT...SELECT with a JOIN to resolve emails to user IDs.
+    /// </summary>
+    private static async Task ImportViaTemp(string connString, string seedDir,
+        string table, string tempColumns, string insertSelect)
     {
-        var csvPath = Path.Combine(seedDir, "user_safehouses.csv");
+        var csvPath = Path.Combine(seedDir, $"{table}.csv");
         if (!File.Exists(csvPath)) return;
 
-        var lines = await File.ReadAllLinesAsync(csvPath);
-        var count = 0;
-        for (int i = 1; i < lines.Length; i++)
+        try
         {
-            var cols = lines[i].Split(',');
-            if (cols.Length < 3) continue;
-            var user = await userManager.FindByEmailAsync(cols[1]);
-            if (user == null) continue;
+            await using var conn = new NpgsqlConnection(connString);
+            await conn.OpenAsync();
 
-            await using var cmd = new NpgsqlCommand(
-                "INSERT INTO user_safehouses (user_safehouse_id, user_id, safehouse_id) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING", conn);
-            cmd.Parameters.AddWithValue(int.Parse(cols[0]));
-            cmd.Parameters.AddWithValue(user.Id);
-            cmd.Parameters.AddWithValue(int.Parse(cols[2]));
-            await cmd.ExecuteNonQueryAsync();
-            count++;
-        }
-        Console.WriteLine($"  user_safehouses: {count} rows");
-    }
+            await new NpgsqlCommand($"CREATE TEMP TABLE _tmp ({tempColumns})", conn).ExecuteNonQueryAsync();
 
-    private static async Task ImportStaffTasksAsync(NpgsqlConnection conn, string seedDir,
-        UserManager<backend.Models.ApplicationUser> userManager)
-    {
-        var csvPath = Path.Combine(seedDir, "staff_tasks.csv");
-        if (!File.Exists(csvPath)) return;
-
-        var lines = await File.ReadAllLinesAsync(csvPath);
-        var headers = lines[0];
-        var count = 0;
-
-        // Build email → userId lookup
-        var emailCache = new Dictionary<string, string>();
-
-        for (int i = 1; i < lines.Length; i++)
-        {
-            var cols = ParseCsvLine(lines[i]);
-            if (cols.Length < 15) continue;
-
-            var email = cols[1];
-            if (!emailCache.TryGetValue(email, out var userId))
+            // COPY into temp table — writer must be disposed before running INSERT
+            using (var writer = await conn.BeginTextImportAsync(
+                "COPY _tmp FROM STDIN WITH (FORMAT csv, HEADER true)"))
             {
-                var user = await userManager.FindByEmailAsync(email);
-                if (user == null) continue;
-                userId = user.Id;
-                emailCache[email] = userId;
+                await writer.WriteAsync(await File.ReadAllTextAsync(csvPath));
             }
 
-            await using var cmd = new NpgsqlCommand(@"
-                INSERT INTO staff_tasks (staff_task_id, staff_user_id, resident_id, safehouse_id, task_type,
-                    title, description, context_json, status, snooze_until, due_trigger_date,
-                    created_at, completed_at, source_entity_type, source_entity_id)
-                VALUES ($1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9,$10,$11,$12,$13,$14,$15)
-                ON CONFLICT DO NOTHING", conn);
+            var rows = await new NpgsqlCommand(insertSelect, conn).ExecuteNonQueryAsync();
+            await new NpgsqlCommand("DROP TABLE _tmp", conn).ExecuteNonQueryAsync();
 
-            cmd.Parameters.AddWithValue(int.Parse(cols[0]));
-            cmd.Parameters.AddWithValue(userId);
-            cmd.Parameters.AddWithValue(ParseNullableInt(cols[2]));
-            cmd.Parameters.AddWithValue(int.Parse(cols[3]));
-            cmd.Parameters.AddWithValue(cols[4]);
-            cmd.Parameters.AddWithValue(cols[5]);
-            cmd.Parameters.AddWithValue(ParseNullableString(cols[6]));
-            cmd.Parameters.AddWithValue(ParseNullableString(cols[7]));
-            cmd.Parameters.AddWithValue(cols[8]);
-            cmd.Parameters.AddWithValue(ParseNullableTimestamp(cols[9]));
-            cmd.Parameters.AddWithValue(ParseNullableTimestamp(cols[10]));
-            cmd.Parameters.AddWithValue(DateTime.Parse(cols[11]).ToUniversalTime());
-            cmd.Parameters.AddWithValue(ParseNullableTimestamp(cols[12]));
-            cmd.Parameters.AddWithValue(ParseNullableString(cols[13]));
-            cmd.Parameters.AddWithValue(ParseNullableInt(cols[14]));
-            await cmd.ExecuteNonQueryAsync();
-            count++;
+            Console.WriteLine($"  {table}: {rows} rows");
         }
-        Console.WriteLine($"  staff_tasks: {count} rows");
-    }
-
-    private static async Task ImportCalendarEventsAsync(NpgsqlConnection conn, string seedDir,
-        UserManager<backend.Models.ApplicationUser> userManager)
-    {
-        var csvPath = Path.Combine(seedDir, "calendar_events.csv");
-        if (!File.Exists(csvPath)) return;
-
-        var lines = await File.ReadAllLinesAsync(csvPath);
-        var count = 0;
-        var emailCache = new Dictionary<string, string>();
-
-        for (int i = 1; i < lines.Length; i++)
+        catch (Exception ex)
         {
-            var cols = ParseCsvLine(lines[i]);
-            if (cols.Length < 14) continue;
-
-            var email = cols[1];
-            if (!emailCache.TryGetValue(email, out var userId))
-            {
-                var user = await userManager.FindByEmailAsync(email);
-                if (user == null) continue;
-                userId = user.Id;
-                emailCache[email] = userId;
-            }
-
-            await using var cmd = new NpgsqlCommand(@"
-                INSERT INTO calendar_events (calendar_event_id, staff_user_id, safehouse_id, resident_id,
-                    event_type, title, description, event_date, start_time, end_time,
-                    recurrence_rule, source_task_id, status, created_at)
-                VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
-                ON CONFLICT DO NOTHING", conn);
-
-            cmd.Parameters.AddWithValue(int.Parse(cols[0]));
-            cmd.Parameters.AddWithValue(userId);
-            cmd.Parameters.AddWithValue(int.Parse(cols[2]));
-            cmd.Parameters.AddWithValue(ParseNullableInt(cols[3]));
-            cmd.Parameters.AddWithValue(cols[4]);
-            cmd.Parameters.AddWithValue(cols[5]);
-            cmd.Parameters.AddWithValue(ParseNullableString(cols[6]));
-            cmd.Parameters.AddWithValue(DateOnly.Parse(cols[7]));
-            cmd.Parameters.AddWithValue(ParseNullableTime(cols[8]));
-            cmd.Parameters.AddWithValue(ParseNullableTime(cols[9]));
-            cmd.Parameters.AddWithValue(ParseNullableString(cols[10]));
-            cmd.Parameters.AddWithValue(ParseNullableInt(cols[11]));
-            cmd.Parameters.AddWithValue(cols[12]);
-            cmd.Parameters.AddWithValue(DateTime.Parse(cols[13]).ToUniversalTime());
-            await cmd.ExecuteNonQueryAsync();
-            count++;
+            Console.WriteLine($"  {table}: SKIPPED ({ex.Message.Split('\n')[0]})");
         }
-        Console.WriteLine($"  calendar_events: {count} rows");
     }
 
     public static async Task ResetSequencesAsync(AppDbContext db)
@@ -288,37 +215,4 @@ public static class DataSeeder
         return null;
     }
 
-    // Simple CSV line parser that handles quoted fields with commas
-    private static string[] ParseCsvLine(string line)
-    {
-        var fields = new List<string>();
-        var current = "";
-        var inQuotes = false;
-        for (int i = 0; i < line.Length; i++)
-        {
-            if (line[i] == '"')
-                inQuotes = !inQuotes;
-            else if (line[i] == ',' && !inQuotes)
-            {
-                fields.Add(current);
-                current = "";
-            }
-            else
-                current += line[i];
-        }
-        fields.Add(current);
-        return fields.ToArray();
-    }
-
-    private static object ParseNullableInt(string val) =>
-        string.IsNullOrEmpty(val) ? DBNull.Value : (object)int.Parse(val);
-
-    private static object ParseNullableString(string val) =>
-        string.IsNullOrEmpty(val) ? DBNull.Value : (object)val;
-
-    private static object ParseNullableTimestamp(string val) =>
-        string.IsNullOrEmpty(val) ? DBNull.Value : (object)DateTime.Parse(val).ToUniversalTime();
-
-    private static object ParseNullableTime(string val) =>
-        string.IsNullOrEmpty(val) ? DBNull.Value : (object)TimeOnly.Parse(val);
 }
