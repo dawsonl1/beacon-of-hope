@@ -63,5 +63,4 @@ audit/
 
 # Misc
 bugs.txt
-*.pptx
 *.vercel/
