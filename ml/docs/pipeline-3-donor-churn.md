@@ -1,11 +1,11 @@
 # Pipeline 3 — Donor Churn Risk System
 
 ## Files
-- **Notebook:** `ml-pipelines/donor-churn.ipynb`
+- **Notebook:** `ml/notebooks/donor-churn.ipynb`
 - **ETL:** `ml-scripts/jobs/etl_donor_churn.py`
 - **Infer:** `ml-scripts/jobs/infer_donor_churn.py`
 - **Features:** `ml-scripts/features/donor_features.py`
-- **Model:** `models/donor-churn.sav`
+- **Model:** `ml/donor_churn.sav`
 
 ---
 
@@ -147,9 +147,9 @@ Use stratified 5-fold cross-validation throughout. Tune hyperparameters with Gri
 - Honest limitation: n=57 is very small. Model is a guide. Will improve as org grows.
 
 **Saving artifacts — follow Ch. 17:**
-- Save to `models/donor-churn.sav`
-- Save `models/donor-churn-metadata.json`
-- Save `models/donor-churn-metrics.json`
+- Save to `ml/donor_churn.sav`
+- Save `ml/donor_churn-metadata.json`
+- Save `ml/donor_churn-metrics.json`
 
 ---
 
@@ -171,7 +171,7 @@ Import from `config.py`, `utils_db.py`, and `donor_features.py`.
 1. Fetch `supporters` and `donations`
 2. Filter to monetary donors only
 3. Run feature engineering from `donor_features.py`
-4. Load `models/donor-churn.sav`
+4. Load `ml/donor_churn.sav`
 5. Score every monetary donor
 6. Compute rule tier using `compute_rule_tier()` from `donor_features.py`
 7. Build records and call `write_predictions()`

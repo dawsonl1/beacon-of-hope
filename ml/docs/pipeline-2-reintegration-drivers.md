@@ -1,11 +1,11 @@
 # Pipeline 2 — Reintegration Drivers Explainer
 
 ## Files
-- **Notebook:** `ml-pipelines/reintegration-drivers.ipynb`
+- **Notebook:** `ml/notebooks/reintegration-drivers.ipynb`
 - **ETL:** `ml-scripts/jobs/etl_reintegration_drivers.py`
 - **Infer:** `ml-scripts/jobs/infer_reintegration_drivers.py`
 - **Features:** `ml-scripts/features/reintegration_features.py` (shared with Pipeline 1)
-- **Model:** `models/reintegration-drivers.sav`
+- **Model:** `ml/reintegration_drivers.sav`
 
 ---
 
@@ -103,9 +103,9 @@ Do NOT use ensemble methods as the primary model for this pipeline. Black-box mo
 - What should the org do differently based on these findings?
 
 **Saving artifacts — follow Ch. 17:**
-- Save model + scaler to `models/reintegration-drivers.sav`
-- Save `models/reintegration-drivers-metadata.json`
-- Save `models/reintegration-drivers-metrics.json` — Adjusted R², significant features, p-values
+- Save model + scaler to `ml/reintegration_drivers.sav`
+- Save `ml/reintegration_drivers-metadata.json`
+- Save `ml/reintegration_drivers-metrics.json` — Adjusted R², significant features, p-values
 
 ---
 
@@ -120,7 +120,7 @@ Identical to `etl_reintegration_readiness.py`. Import from `reintegration_featur
 This pipeline's inference output is different from Pipeline 1. It does not score individual residents. It produces an org-level insight — the coefficients — that gets written once and updated when the model retrains.
 
 1. Call `get_client()` from `utils_db.py`
-2. Load `models/reintegration-drivers.sav`
+2. Load `ml/reintegration_drivers.sav`
 3. Extract the top significant coefficients from the model
 4. Format them as plain-language findings
 5. Call `write_predictions()` with a single org-level record

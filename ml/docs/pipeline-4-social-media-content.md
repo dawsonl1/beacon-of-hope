@@ -1,11 +1,11 @@
 # Pipeline 4 — Social Media Content Strategy Explainer
 
 ## Files
-- **Notebook:** `ml-pipelines/social-media-content-strategy.ipynb`
+- **Notebook:** `ml/notebooks/social-media-content-strategy.ipynb`
 - **ETL:** `ml-scripts/jobs/etl_social_content.py`
 - **Infer:** `ml-scripts/jobs/infer_social_content.py`
 - **Features:** `ml-scripts/features/social_content_features.py`
-- **Model:** `models/social-media-content.sav`
+- **Model:** `ml/social_media_content.sav`
 
 ---
 
@@ -128,9 +128,9 @@ Standardize all numeric features before fitting OLS so coefficients are comparab
 - What would a randomized experiment look like to prove causality here?
 
 **Saving artifacts — follow Ch. 17:**
-- Save to `models/social-media-content.sav`
-- Save `models/social-media-content-metadata.json`
-- Save `models/social-media-content-metrics.json`
+- Save to `ml/social_media_content.sav`
+- Save `ml/social_media_content-metadata.json`
+- Save `ml/social_media_content-metrics.json`
 
 ---
 
@@ -150,7 +150,7 @@ Import from `config.py`, `utils_db.py`, and `social_content_features.py`.
 
 This pipeline produces an org-level insight, not per-post scores.
 
-1. Load `models/social-media-content.sav`
+1. Load `ml/social_media_content.sav`
 2. Extract significant coefficients from the trained model
 3. Format as plain-language findings
 4. Call `write_predictions()` with a single org-level record

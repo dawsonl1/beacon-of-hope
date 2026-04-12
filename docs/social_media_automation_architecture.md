@@ -1330,7 +1330,7 @@ The social media ML retraining adds steps to the existing pipeline (or a new wor
 
 1. **ETL step**: query `social_media_posts` where `status = published` and engagement data is logged. Build training DataFrames for each pipeline. Check minimum data thresholds — if not enough data for a model, skip it.
 2. **Training step**: for each model that has enough data, retrain on the full dataset. Compare new model performance to the current model. If the new model is worse (overfitting, data issue), keep the old one.
-3. **Export step**: serialize trained models as `.joblib` files. Write them to a known path in Azure Blob Storage (e.g., `models/social_media/engagement_prediction.joblib`).
+3. **Export step**: serialize trained models as `.joblib` files. Write them to a known path in Azure Blob Storage (e.g., `ml/social_media_content/engagement_prediction.joblib`).
 4. **Inference step**: run predictions using the current best models. Write results to a `ml_predictions` table in the DB that the Python harness reads from.
 5. **Pillar ratio update step** (Pipeline 4 only): if the pillar ratio optimizer has enough data and produces a recommendation, write the suggested ratios to `social_media_settings`. This is the one place where ML directly modifies a config value.
 

@@ -1,11 +1,11 @@
 # Pipeline 1 — Reintegration Readiness Classifier
 
 ## Files
-- **Notebook:** `ml-pipelines/reintegration-readiness.ipynb`
+- **Notebook:** `ml/notebooks/reintegration-readiness.ipynb`
 - **ETL:** `ml-scripts/jobs/etl_reintegration_readiness.py`
 - **Infer:** `ml-scripts/jobs/infer_reintegration_readiness.py`
 - **Features:** `ml-scripts/features/reintegration_features.py`
-- **Model:** `models/reintegration-readiness.sav`
+- **Model:** `ml/reintegration_readiness.sav`
 
 ---
 
@@ -150,9 +150,9 @@ For every model: tune hyperparameters using GridSearchCV or RandomizedSearchCV. 
 - Honest limitation: n=60 is small. Say this clearly.
 
 **Saving artifacts — follow Ch. 17:**
-- Save model + scaler + feature list to `models/reintegration-readiness.sav` using joblib
-- Save `models/reintegration-readiness-metadata.json` — training date, feature list, model type, row counts
-- Save `models/reintegration-readiness-metrics.json` — ROC-AUC, F1, accuracy from test set
+- Save model + scaler + feature list to `ml/reintegration_readiness.sav` using joblib
+- Save `ml/reintegration_readiness-metadata.json` — training date, feature list, model type, row counts
+- Save `ml/reintegration_readiness-metrics.json` — ROC-AUC, F1, accuracy from test set
 
 ---
 
@@ -173,7 +173,7 @@ Import from `config.py` and `utils_db.py`. Import feature engineering functions 
 Import from `config.py` and `utils_db.py`. Import feature engineering functions from `reintegration_features.py`.
 
 1. Call `get_client()` from `utils_db.py`
-2. Load `models/reintegration-readiness.sav` using joblib
+2. Load `ml/reintegration_readiness.sav` using joblib
 3. Fetch all 6 tables using `fetch_table()`
 4. Filter to `case_status == 'Active'` residents only
 5. Run all feature engineering from `reintegration_features.py`

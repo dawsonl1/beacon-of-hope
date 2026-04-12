@@ -1,11 +1,11 @@
 # Pipeline 5 — Resident Incident Early Warning
 
 ## Files
-- **Notebook:** `ml-pipelines/incident-early-warning.ipynb`
+- **Notebook:** `ml/notebooks/incident-early-warning.ipynb`
 - **ETL:** `ml-scripts/jobs/etl_incident_warning.py`
 - **Infer:** `ml-scripts/jobs/infer_incident_warning.py`
 - **Features:** `ml-scripts/features/incident_features.py`
-- **Model:** `models/incident-early-warning.sav`
+- **Model:** `ml/incident_early_warning.sav`
 
 ---
 
@@ -153,11 +153,11 @@ Use stratified 5-fold cross-validation. Primary metric: Recall (not just ROC-AUC
 - What are the risks of over-relying on this model? How should staff be trained to use it?
 
 **Saving artifacts — follow Ch. 17:**
-- Save Model A to `models/incident-early-warning-selfharm.sav`
-- Save Model B to `models/incident-early-warning-runaway.sav`
+- Save Model A to `ml/incident_early_warning-selfharm.sav`
+- Save Model B to `ml/incident_early_warning-runaway.sav`
 - Save combined metadata and metrics files:
-  - `models/incident-early-warning-metadata.json`
-  - `models/incident-early-warning-metrics.json`
+  - `ml/incident_early_warning-metadata.json`
+  - `ml/incident_early_warning-metrics.json`
 
 ---
 

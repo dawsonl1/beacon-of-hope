@@ -1,11 +1,11 @@
 # Pipeline 4B — Social Media Timing Optimizer
 
 ## Files
-- **Notebook:** `ml-pipelines/social-media-timing-optimizer.ipynb`
+- **Notebook:** `ml/notebooks/social-media-timing-optimizer.ipynb`
 - **ETL:** `ml-scripts/jobs/etl_social_timing.py`
 - **Infer:** `ml-scripts/jobs/infer_social_timing.py`
 - **Features:** `ml-scripts/features/social_timing_features.py`
-- **Model:** `models/social-media-timing.sav`
+- **Model:** `ml/social_media_timing.sav`
 
 ---
 
@@ -113,9 +113,9 @@ Use 5-fold cross-validation throughout. Tune hyperparameters with GridSearchCV o
 - Business interpretation: "Our predictions are off by X engagement rate points on average. Since mean engagement is 0.100, this is within Y% of the actual outcome."
 
 **Saving artifacts — follow Ch. 17:**
-- Save to `models/social-media-timing.sav`
-- Save `models/social-media-timing-metadata.json`
-- Save `models/social-media-timing-metrics.json`
+- Save to `ml/social_media_timing.sav`
+- Save `ml/social_media_timing-metadata.json`
+- Save `ml/social_media_timing-metrics.json`
 
 ---
 
@@ -135,7 +135,7 @@ Import from `config.py`, `utils_db.py`, and `social_timing_features.py`.
 
 This pipeline pre-computes a full recommendation matrix rather than scoring individual posts.
 
-1. Load `models/social-media-timing.sav`
+1. Load `ml/social_media_timing.sav`
 2. Generate all combinations of platform × day_of_week × post_hour (7 × 7 × 24 = 1,176 rows)
 3. Run all combinations through the model
 4. For each platform, rank combinations by predicted engagement rate
