@@ -1,6 +1,10 @@
 # Agent Instructions
 
-Configuration for AI-assisted development with [Claude Code](https://claude.ai/claude-code).
+Read this entire file before starting any task. Configuration for AI-assisted development with [Claude Code](https://claude.ai/claude-code).
+
+## Rules Engine
+
+When the user corrects an approach or states a preference, append a new rule to the Learned Rules section below. Format: `N. [CATEGORY] Instruction — rationale.` Categories: `[STYLE]`, `[CODE]`, `[ARCH]`, `[TOOL]`, `[PROCESS]`, `[DATA]`, `[UX]`. Higher-numbered rules supersede older ones if they conflict.
 
 ---
 
@@ -28,17 +32,28 @@ beacon-of-hope/
 └── CLAUDE.md             This file
 ```
 
-## Conventions
+### Structure Rules
 
-- **Build artifacts** (`dist/`, `node_modules/`, `bin/`, `obj/`) are gitignored.
-- **Tests** live next to what they test: `backend.Tests/` (xUnit), `frontend/src/__tests__/` (Vitest).
-- **Environment files** follow the `.env.example` pattern — templates committed, actual `.env` files gitignored.
+- **Never commit build artifacts.** `dist/`, `node_modules/`, `bin/`, `obj/` stay gitignored.
+- **ML code goes in `ml/`.** Each model gets its own subdirectory.
+- **Tests live next to what they test.** Backend: `backend.Tests/` (xUnit). Frontend: `frontend/src/__tests__/` (Vitest).
 - **Seed data** lives in `backend/seed/` as CSVs, imported by `DataSeeder.cs` on first startup.
-- **Database** is PostgreSQL 17, managed by EF Core. Migrations auto-apply on startup via `MigrateAsync()`.
-- **Npgsql** connection strings use camelCase keys: `SslMode`, `TrustServerCertificate`, `Username`.
+- **Environment files** follow `.env.example` pattern — templates committed, actual `.env` files gitignored.
 
-## Key Constraints
+---
 
-- **Frozen date:** The app treats February 16, 2026 as "today". Use `AppConstants.DataCutoff` (C#) or `APP_TODAY` (TypeScript) for all data-facing logic. Never use `DateTime.UtcNow` or `new Date()`.
-- **UX first:** Every UI decision should favor clean, intuitive design. No visual clutter.
-- **Push to main:** This is a solo repo — commit and push directly to main.
+## Learned Rules
+
+1. [UX] Prioritize user experience above all else. Every UI decision must favor clean, intuitive design — never add visual clutter or decorative elements that don't help the user accomplish their goals.
+
+2. [PROCESS] Follow test-driven development. Write tests before implementation. Backend: `cd backend.Tests && dotnet test`. Frontend: `cd frontend && npm test`. Run both before considering work complete.
+
+3. [PROCESS] Before modifying existing code, check what tests cover it. Update tests to reflect new behavior before making the code change.
+
+4. [DATA] The database is PostgreSQL 17, managed entirely by EF Core. `MigrateAsync()` runs at startup. To change schema: edit C# models, run `dotnet ef migrations add <Name>`, deploy — the backend applies it on next startup.
+
+5. [DATA] For Npgsql connection strings, use camelCase key names without spaces: `SslMode` (not `SSL Mode`), `TrustServerCertificate` (not `Trust Server Certificate`), `Username` (not `User Id`). Npgsql 10.x is strict about this.
+
+6. [DATA] The app is frozen to February 16, 2026. All timestamps and "today" references MUST use `AppConstants.DataCutoff` (DateOnly) or `AppConstants.DataCutoffUtc` (DateTime) in backend C#, and `APP_TODAY` / `APP_TODAY_STR` in frontend TypeScript. Never use `DateTime.UtcNow`, `DateTime.Now`, `new Date()`, or `Date.now()` for data-facing logic.
+
+7. [PROCESS] Push directly to main — this is a solo repo. Commit and push after each meaningful change.
