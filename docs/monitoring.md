@@ -4,8 +4,15 @@ How this project watches itself. Every cron, alert, log source, and database
 table that contributes to observability, written so that a future Dawson (or
 future Claude) can trace any symptom back to its source in one read.
 
-Server: `129.146.129.59` (Oracle Cloud, Always-Free tier)
-Domain: `intex2.dawsonsprojects.com` (admin) / `beaconofhope.dawsonsprojects.com` (public)
+This project is deployed to two different clouds. Only one of them is
+monitored — the other (the original school-project deployment) isn't.
+
+| Domain | Frontend | Backend | Monitored? |
+|---|---|---|---|
+| `beaconofhope.dawsonsprojects.com` | Nginx on the Oracle VM | .NET on the Oracle VM (`:5000`) | **Yes — everything in this doc is about this deployment.** |
+| `intex2.dawsonsprojects.com` | Vercel | Azure App Service (`intex-backend-…westus2-01.azurewebsites.net`) | No. Original school deployment, being retired ~2026-04-20. |
+
+Monitored server: `129.146.129.59` (Oracle Cloud, Always-Free tier)
 OS: Ubuntu 24.04, systemd-managed services
 
 ---
@@ -377,9 +384,9 @@ All alerts go to **`dawsonlpitcher@gmail.com`** via SendGrid.
 
 | Alert | Sender | Subject | Trigger |
 |---|---|---|---|
-| Service/resource failure | `healthcheck@dawsonsprojects.com` | `intex2.dawsonsprojects.com - Alert` | keepalive.sh finds any failed check, rate-limited to 1/hour |
+| Service/resource failure | `healthcheck@dawsonsprojects.com` | `beaconofhope.dawsonsprojects.com - Alert` | keepalive.sh finds any failed check, rate-limited to 1/hour |
 | Reclamation risk | `healthcheck@dawsonsprojects.com` | `intex2 - reclamation risk (p95 below threshold)` | daily-stats-collector.sh detects yesterday's CPU or Net p95 below 20% |
-| Monthly report | `healthcheck@dawsonsprojects.com` | `intex2 Monthly Report — <Month YYYY>` | 1st of month at 08:00 UTC |
+| Monthly report | `healthcheck@dawsonsprojects.com` | `beaconofhope Monthly Report — <Month YYYY>` | 1st of month at 08:00 UTC |
 
 SendGrid API key is hardcoded into the cron scripts (`/opt/keepalive.sh`, `/opt/keepalive-report.sh`, `/opt/daily-stats-collector.sh`) and the backend production config. Documented in `docs/ACCESS.local.md`.
 
