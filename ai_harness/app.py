@@ -5,7 +5,7 @@ Includes: content planning, post generation, photo selection, newsletter generat
 """
 
 import logging
-from fastapi import Depends, FastAPI, HTTPException, Header
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, Header
 from pydantic import BaseModel
 from ai_harness.config import HARNESS_API_KEY
 from ai_harness import db
@@ -28,13 +28,18 @@ def verify_key(authorization: str = Header(default="")):
         raise HTTPException(status_code=401, detail="Invalid API key")
 
 
-# All endpoints require auth by default
-app = FastAPI(title="Social Media AI Harness", version="0.1.0", dependencies=[Depends(verify_key)])
+app = FastAPI(title="Social Media AI Harness", version="0.1.0")
+
+# Routes registered on `public` are unauthenticated; routes on `authed` require a
+# valid Bearer token. Anything new goes on `authed` unless there's a deliberate
+# reason to expose it.
+public = APIRouter()
+authed = APIRouter(dependencies=[Depends(verify_key)])
 
 
-# ── Health (no auth) ───────────────────────────────────────────────────────
+# ── Health (public) ────────────────────────────────────────────────────────
 
-@app.get("/health", dependencies=[])  # override global auth
+@public.get("/health")
 def health():
     """Health check — verifies DB connectivity and API key presence."""
     try:
@@ -70,14 +75,14 @@ class GeneratePostResponse(BaseModel):
 
 # ── Endpoints ───────────────────────────────────────────────────────────────
 
-@app.post("/plan-content")
+@authed.post("/plan-content")
 def plan_content_endpoint(req: PlanContentRequest):
     """Agentic content planning — GPT decides what posts to generate."""
     plan = plan_content(max_posts=req.max_posts)
     return {"plan": plan}
 
 
-@app.post("/generate-post", response_model=GeneratePostResponse)
+@authed.post("/generate-post", response_model=GeneratePostResponse)
 def generate_post_endpoint(req: GeneratePostRequest):
     """Generate a single post from a plan item."""
     raw_material = ""
@@ -176,7 +181,7 @@ class SelectPhotoRequest(BaseModel):
     post_description: str
 
 
-@app.post("/select-photo")
+@authed.post("/select-photo")
 def select_photo_endpoint(req: SelectPhotoRequest):
     """Agentic photo selection — GPT picks the best photo for a post."""
     result = select_photo(
@@ -196,7 +201,7 @@ class GenerateGraphicRequest(BaseModel):
     text_position: str = "center"
 
 
-@app.post("/generate-graphic")
+@authed.post("/generate-graphic")
 def generate_graphic_endpoint(req: GenerateGraphicRequest):
     """Generate a branded graphic with text overlay."""
     result = generate_graphic(
@@ -212,7 +217,7 @@ class RefreshFactsRequest(BaseModel):
     categories: list[str] | None = None
 
 
-@app.post("/refresh-facts")
+@authed.post("/refresh-facts")
 def refresh_facts_endpoint(req: RefreshFactsRequest):
     """Agentic web research — finds new facts for admin review."""
     candidates = refresh_facts(categories=req.categories)
@@ -227,7 +232,7 @@ class PredictScheduleRequest(BaseModel):
     preferred_day: str | None = None
 
 
-@app.post("/predict-schedule")
+@authed.post("/predict-schedule")
 def predict_schedule_endpoint(req: PredictScheduleRequest):
     """
     ML-powered scheduling. Queries the pre-computed timing predictions
@@ -279,7 +284,7 @@ class GenerateNewsletterRequest(BaseModel):
     month: int | None = None
 
 
-@app.post("/generate-newsletter")
+@authed.post("/generate-newsletter")
 def generate_newsletter_endpoint(req: GenerateNewsletterRequest):
     """Generate a monthly newsletter using GPT, aggregating data from the DB."""
     from datetime import datetime
@@ -390,3 +395,7 @@ Design guidelines:
     import json
     result = json.loads(resp.choices[0].message.content)
     return result
+
+
+app.include_router(public)
+app.include_router(authed)
