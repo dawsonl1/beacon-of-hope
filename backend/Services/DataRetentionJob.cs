@@ -8,7 +8,7 @@ namespace backend.Services;
 ///
 /// Retention tiers:
 /// - Keep forever: published posts with engagement, approved facts, voice guide
-/// - 12 months then delete: rejected posts
+/// - 12 months then delete: rejected posts, visit events
 /// - 90 days then delete: rejected fact candidates
 /// - 30 days then auto-reject: stale snoozed posts
 /// - Immediately: orphaned generated graphics from deleted posts
@@ -119,6 +119,19 @@ public class DataRetentionJob : BackgroundService
             db.GeneratedGraphics.RemoveRange(orphanedGraphics);
             totalCleaned += orphanedGraphics.Count;
             _logger.LogInformation("Deleted {Count} orphaned generated graphics.", orphanedGraphics.Count);
+        }
+
+        // 5. Delete visit events older than 12 months — visitor-tracking data
+        // is kept only long enough for the monthly report. Uses wall-clock UTC
+        // (not DataCutoffUtc) because visit_events are real-time operational
+        // records, not demo-frozen business data.
+        var oldVisits = await db.VisitEvents
+            .Where(v => v.Timestamp < DateTime.UtcNow.AddMonths(-12))
+            .ExecuteDeleteAsync(ct);
+        if (oldVisits > 0)
+        {
+            totalCleaned += oldVisits;
+            _logger.LogInformation("Deleted {Count} visit events older than 12 months.", oldVisits);
         }
 
         if (totalCleaned > 0)

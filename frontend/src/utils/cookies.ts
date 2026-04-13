@@ -18,7 +18,7 @@ export function deleteCookie(name: string): void {
 }
 
 export function deleteAnalyticsCookies(): void {
-  const analyticsCookies = ['_ga', '_gid', '_gat', '_ga_*'];
+  const analyticsCookies = ['_ga', '_gid', '_gat', '_ga_*', 'boh_visitor_id'];
   const allCookies = document.cookie.split(';');
   for (const cookie of allCookies) {
     const cookieName = cookie.split('=')[0].trim();

@@ -30,7 +30,7 @@ export default function PrivacyPolicyPage() {
       <div className={styles.container}>
         <header className={styles.header}>
           <h1 className={styles.title}>Privacy Policy</h1>
-          <p className={styles.lastUpdated}>Last updated: April 6, 2026</p>
+          <p className={styles.lastUpdated}>Last updated: April 13, 2026</p>
           <button className={styles.printBtn} onClick={() => window.print()}>
             Print this page
           </button>
@@ -53,7 +53,15 @@ export default function PrivacyPolicyPage() {
             <h2 className={styles.sectionTitle}>1. Data We Collect</h2>
 
             <h3 className={styles.subTitle}>Visitor Data</h3>
-            <p>When you visit our website, we may collect information about pages visited, session duration, browser type, device information, and IP address. This data is collected through cookies and similar technologies, subject to your consent preferences.</p>
+            <p>When you visit our website (with your consent to analytics cookies), we collect:</p>
+            <ul className={styles.list}>
+              <li>Pages visited and time spent on each page.</li>
+              <li>Browser type, language, timezone, and general device information.</li>
+              <li>IP address, from which we derive approximate location (city, region, country — <strong>not street address</strong>) using MaxMind's offline GeoLite2 database. We do not store your raw IP; only a salted hash.</li>
+              <li>A <strong>browser fingerprint</strong> — a hash of several browser characteristics (canvas rendering, installed fonts, screen size, etc.) — used to recognize repeat visits from the same browser even if cookies are cleared. The fingerprint is not linked to your identity and cannot be used to track you across other websites.</li>
+              <li>Basic interaction signals (whether you scrolled, clicked, or spent at least two seconds on a page) used to distinguish real visitors from automated bots. We do <strong>not</strong> record keystrokes, mouse coordinates, or content you entered.</li>
+            </ul>
+            <p>All of this data is collected first-party (stored on our own servers) and is never shared with advertising networks.</p>
 
             <h3 className={styles.subTitle}>Donor Data</h3>
             <p>When you make a donation, we collect your name, email address, donation amount, and payment method type. We do <strong>not</strong> store credit card numbers or full payment details -- these are processed directly by our payment processor.</p>
@@ -108,22 +116,34 @@ export default function PrivacyPolicyPage() {
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Microsoft Azure</td>
-                    <td>Backend hosting & database</td>
+                    <td>Oracle Cloud Infrastructure</td>
+                    <td>Backend + database hosting</td>
                     <td>All stored application data, server-side logs</td>
-                    <td><a href="https://privacy.microsoft.com/en-us/privacystatement" target="_blank" rel="noopener noreferrer">Link</a></td>
+                    <td><a href="https://www.oracle.com/legal/privacy/" target="_blank" rel="noopener noreferrer">Link</a></td>
                   </tr>
                   <tr>
-                    <td>Vercel</td>
-                    <td>Frontend hosting</td>
-                    <td>Static assets, access logs</td>
-                    <td><a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">Link</a></td>
+                    <td>Cloudflare</td>
+                    <td>CDN, DNS, DDoS protection</td>
+                    <td>Request metadata (IP, headers, response codes)</td>
+                    <td><a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Link</a></td>
                   </tr>
                   <tr>
-                    <td>Donation Processing</td>
-                    <td>Donation recording</td>
-                    <td>Donor email, donation amount</td>
-                    <td>Internal</td>
+                    <td>MaxMind GeoLite2</td>
+                    <td>IP-to-city geolocation</td>
+                    <td>None sent to MaxMind at visit time — we download their database and run lookups locally on our server</td>
+                    <td><a href="https://www.maxmind.com/en/privacy-policy" target="_blank" rel="noopener noreferrer">Link</a></td>
+                  </tr>
+                  <tr>
+                    <td>SendGrid (Twilio)</td>
+                    <td>Transactional email delivery</td>
+                    <td>Recipient email address, message content</td>
+                    <td><a href="https://www.twilio.com/legal/privacy" target="_blank" rel="noopener noreferrer">Link</a></td>
+                  </tr>
+                  <tr>
+                    <td>OpenAI</td>
+                    <td>AI content generation for social media posts</td>
+                    <td>Only aggregated public content (facts, photo captions) — no donor or resident data</td>
+                    <td><a href="https://openai.com/privacy/" target="_blank" rel="noopener noreferrer">Link</a></td>
                   </tr>
                 </tbody>
               </table>
@@ -135,9 +155,9 @@ export default function PrivacyPolicyPage() {
           <section id="international-transfers">
             <h2 className={styles.sectionTitle}>5. International Data Transfers</h2>
             <ul className={styles.list}>
-              <li>Primary data storage: Microsoft Azure (PostgreSQL).</li>
-              <li>Backend hosted on Microsoft Azure (West US 2 region).</li>
-              <li>Frontend hosted on Vercel (global CDN).</li>
+              <li>Primary data storage: Oracle Cloud Infrastructure (PostgreSQL), U.S. region.</li>
+              <li>Backend hosted on Oracle Cloud (U.S. region).</li>
+              <li>CDN and DNS provided by Cloudflare (global edge network).</li>
               <li>Legal mechanism for cross-border transfers: Standard Contractual Clauses (SCCs) where applicable.</li>
               <li>Beacon of Hope honors the more protective standard -- either GDPR or applicable U.S. privacy law -- for all users regardless of location.</li>
             </ul>
@@ -168,8 +188,12 @@ export default function PrivacyPolicyPage() {
                     <td>Duration of employment + 1 year</td>
                   </tr>
                   <tr>
-                    <td>Website usage data</td>
+                    <td>Website usage data (pageviews, referrers)</td>
                     <td>2 years</td>
+                  </tr>
+                  <tr>
+                    <td>Visitor tracking events (fingerprint + interaction signals)</td>
+                    <td>12 months, then automatically deleted</td>
                   </tr>
                   <tr>
                     <td>Cookie consent records</td>
@@ -233,9 +257,9 @@ export default function PrivacyPolicyPage() {
                   </tr>
                   <tr>
                     <td>Analytics</td>
-                    <td>_ga, _gid (if enabled)</td>
-                    <td>Anonymized usage statistics</td>
-                    <td>2 years / 24 hours</td>
+                    <td>_ga, _gid (if enabled), boh_visitor_id</td>
+                    <td>Anonymized usage statistics; boh_visitor_id links your pageviews into a single visit and is stored only on our own servers</td>
+                    <td>2 years / 24 hours / 365 days</td>
                   </tr>
                   <tr>
                     <td>Functional</td>
@@ -294,6 +318,7 @@ export default function PrivacyPolicyPage() {
             <h2 className={styles.sectionTitle}>12. Changes to This Policy</h2>
             <p>The "Last updated" date at the top of this policy reflects the current version. Material changes will be announced via a banner on our website. If we make significant changes to how we handle your data, we will re-request your cookie consent.</p>
             <p><strong>Version 1.0</strong> -- Initial privacy policy (April 2026).</p>
+            <p><strong>Version 1.1</strong> -- April 13, 2026. Updated to reflect: migration from Azure/Vercel hosting to Oracle Cloud + Cloudflare; addition of first-party visitor tracking with browser fingerprinting and offline IP-to-city geolocation via MaxMind GeoLite2; addition of OpenAI for social-media content generation. All visitor tracking remains gated behind analytics cookie consent.</p>
           </section>
         </div>
       </div>
