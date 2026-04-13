@@ -29,6 +29,7 @@ import Footer from './components/Footer';
 import CookieConsent from './components/CookieConsent';
 import CookiePreferencesModal from './components/CookiePreferencesModal';
 import AnalyticsLoader from './components/AnalyticsLoader';
+import VisitTracker from './analytics/VisitTracker';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
 import DemoBanner from './components/DemoBanner';
@@ -140,6 +141,7 @@ function App() {
         <BrowserRouter>
           <DemoBanner />
           <ScrollToTop />
+          <VisitTracker />
           <Routes>
             {/* Public pages */}
             <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />

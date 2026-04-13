@@ -111,6 +111,8 @@ builder.Services.AddCors(options =>
 
 // Register social media services and background jobs
 builder.Services.AddSingleton<backend.Services.IEmailNotificationService, backend.Services.EmailNotificationService>();
+builder.Services.AddSingleton<backend.Services.IGeoIpService, backend.Services.GeoIpService>();
+builder.Services.AddSingleton<backend.Services.IVisitTokenService, backend.Services.VisitTokenService>();
 builder.Services.AddHostedService<backend.Services.ContentGenerationJob>();
 builder.Services.AddHostedService<backend.Services.PostReadinessJob>();
 builder.Services.AddHostedService<backend.Services.MilestoneEvaluationJob>();
@@ -238,6 +240,7 @@ app.MapSeedEndpoints();
 app.MapNewsletterEndpoints();
 app.MapOutreachEndpoints();
 app.MapChatbotEndpoints();
+app.MapTrackingEndpoints();
 
 // ── Social Media Automation Endpoints ──────────────────────
 

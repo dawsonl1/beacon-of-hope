@@ -83,6 +83,8 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
     // App Settings
     public virtual DbSet<AppSetting> AppSettings { get; set; }
 
+    public virtual DbSet<VisitEvent> VisitEvents { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -1062,6 +1064,41 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(e => e.Key).HasColumnName("key");
             entity.Property(e => e.Value).HasColumnName("value");
             entity.HasData(new AppSetting { Key = "okr_reintegration_goal", Value = "10" });
+        });
+
+        modelBuilder.Entity<VisitEvent>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("visit_events_pkey");
+            entity.ToTable("visit_events");
+
+            entity.HasIndex(e => e.Timestamp).HasDatabaseName("idx_visit_events_timestamp");
+            entity.HasIndex(e => e.VisitorId).HasDatabaseName("idx_visit_events_visitor");
+            entity.HasIndex(e => e.Verdict).HasDatabaseName("idx_visit_events_verdict");
+            entity.HasIndex(e => e.FingerprintHash).HasDatabaseName("idx_visit_events_fingerprint");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Timestamp).HasColumnName("timestamp").HasDefaultValueSql("now()");
+            entity.Property(e => e.VisitorId).HasColumnName("visitor_id");
+            entity.Property(e => e.FingerprintHash).HasColumnName("fingerprint_hash").HasMaxLength(128);
+            entity.Property(e => e.IpHash).HasColumnName("ip_hash").HasMaxLength(64);
+            entity.Property(e => e.IsNewVisitor).HasColumnName("is_new_visitor");
+            entity.Property(e => e.Path).HasColumnName("path").HasMaxLength(2048);
+            entity.Property(e => e.Referrer).HasColumnName("referrer").HasMaxLength(2048);
+            entity.Property(e => e.UserAgent).HasColumnName("user_agent").HasMaxLength(1024);
+            entity.Property(e => e.Language).HasColumnName("language").HasMaxLength(32);
+            entity.Property(e => e.Timezone).HasColumnName("timezone").HasMaxLength(64);
+            entity.Property(e => e.Verdict).HasColumnName("verdict").HasConversion<string>().HasMaxLength(16);
+            entity.Property(e => e.BotSignals).HasColumnName("bot_signals").HasColumnType("jsonb");
+            entity.Property(e => e.CfBotScore).HasColumnName("cf_bot_score");
+            entity.Property(e => e.InteractionMs).HasColumnName("interaction_ms");
+            entity.Property(e => e.ScrollDepthPct).HasColumnName("scroll_depth_pct");
+            entity.Property(e => e.Country).HasColumnName("country").HasMaxLength(2);
+            entity.Property(e => e.City).HasColumnName("city").HasMaxLength(128);
+            entity.Property(e => e.Region).HasColumnName("region").HasMaxLength(128);
+            entity.Property(e => e.Latitude).HasColumnName("latitude");
+            entity.Property(e => e.Longitude).HasColumnName("longitude");
+            entity.Property(e => e.Asn).HasColumnName("asn");
+            entity.Property(e => e.AsnOrg).HasColumnName("asn_org").HasMaxLength(256);
         });
 
         OnModelCreatingPartial(modelBuilder);
